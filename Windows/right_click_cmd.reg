@@ -1,0 +1,7 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Folder\shell\cmd]
+@="Open Command Prompt Here"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Folder\shell\cmd\command]
+@="cmd.exe /k pushd %L"

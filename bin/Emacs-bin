@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ $1 ]
+then
+        touch $1
+        open -a /Applications/Emacs.app "$1"
+else
+        open /Applications/Emacs.app
+fi

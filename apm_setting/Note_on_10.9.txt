@@ -1,0 +1,14 @@
+Note on 10.9 installation.
+
+1. libcURL needs to be installed from the source.
+./configure --prefix=/usr/local --enable-shared
+(Now we can use homebrew with this)
+
+2. pixmap support has been dropped due to missing xpm.h 
+(Fixed with XQuartz)
+
+3. libiconv is also missing... Also, needs to be installed from source.
+./configure --prefix=/usr/local
+(hombres can handle this as well)
+
+4. mcrypt can be installed from Homebrew.
