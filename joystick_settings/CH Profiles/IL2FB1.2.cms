@@ -1,0 +1,22 @@
+// CMS Script File
+//
+//     Game Title:
+//     Written By:
+//           Date:
+//
+script
+  
+	CMS.B1 = ([JS2.A3 < 23 ] AND [CURRENTMODE==MODE1]) ;  // WEP at 100% if in mode 1
+
+
+  IF ([JS3.A1 > JS3.A2]) then  // LEFT OR RIGHT TOE BRAKES
+    CMS.A1 = JS3.A1;
+  ELSE
+    CMS.A1 = JS3.A2;
+  endif
+
+  CMS.A2 = JS1.A1;
+  CMS.A4 = JS1.A2;
+  CMS.A3 = JS3.A3;
+
+endScript

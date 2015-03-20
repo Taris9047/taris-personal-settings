@@ -1,0 +1,247 @@
+// CMC Command File
+//
+//     Game Title: Enemy Engaged: Apache vs. Havoc
+//     Written By: Ken 'Ghost' King
+//           Date: 2004/08/03
+//
+// 
+//GAME KEYS 
+// 
+Quit_Mission/Campaign   CTL q 
+Exit_Game       CTL x 
+Pause_Single_Player     p 
+Increase_Time_Accelleration     CTL = 
+Decrease_Time_Acceleration      CTL - 
+// 
+//MAP SCREEN KEYS 
+// 
+Toggle_Cockpits/Menus   ENT 
+Scroll_Map_Left KBLEFT 
+Scroll_Map_Right        KBRIGHT 
+Scroll_Map_Up   KBUP 
+Scroll_Map_Down KBDOWN 
+// 
+//SCROLL MAP COARSE 
+// 
+Scroll_Map_Left SHF KBLEFT 
+Scroll_Map_Right        SHF KBRIGHT 
+Scroll_Map_Up   SHF KBUP 
+Scroll_Map_Down SHF KBDOWN 
+// 
+//SCROLL MAP FINE 
+// 
+Scroll_Map_Left ALT KBLEFT 
+Scroll_Map_Right        ALT KBRIGHT 
+Scroll_Map_Up   ALT KBUP 
+Scroll_Map_Down ALT KBDOWN 
+Zoom_Out        , 
+Zoom_In . 
+Move_Inset_Map  TAB 
+// 
+//FLIGHT CONTROL 
+// 
+Rotor_Brake     r 
+Wheel_Brakes    b 
+Increase_Collective     q 
+Decrease_Collective     a 
+Cyclic_Left     KBLEFT 
+Cyclic_Right    KBRIGHT 
+Cyclic_Forward  KBUP 
+Cyclic_Aft      KBDOWN 
+Tail_Rotor_Left z 
+Tail_Rotor_Right        x 
+Trim    t 
+Clear_Trim      SHF t 
+Autopilot       g 
+Hover_Hold      h 
+Stable_Hover_Hold SHF h
+// 
+// WEAPONS AND COUNTERMEASURES 
+// 
+Select_Next_Weapon      BKSPC 
+Select_Previous_Weapon  SHF BKSPC 
+Weapons_Safe    CTL BKSPC 
+Select_Turret_Gun       ALT BKSPC 
+Fire_Weapon     SPC 
+Increase_Rocket_Salvo   s 
+Decrease_Rocket_Salvo   SHF s 
+Hellfire_LOBL/LOAL_Toggle_Apache        l 
+Release_Chaff   c 
+Radar_Jammer    j 
+IR_Jammer       i 
+Auto_Countermeasures    CTL c 
+// 
+// TARGETING 
+// 
+// Select Target Acquisition System 
+// 
+Ground_Radar    KBINS 
+Air_Radar       KBHOME 
+IHADS(Apache)_HMS(Havoc)        KBPGUP 
+FLIR    KBDEL 
+DTV(Apache)_LLLTV(Havoc)        KBPGDOWN 
+// 
+// Radar Controls 
+// 
+Scan_Left       KP4 
+Scan_Center     KP5 
+Scan_Right      KP6 
+Increase_Scan_Size      KP8 
+Decrease_Scan_Size      KP2 
+Increase_Range  KP+ 
+Decrease_Range  KP- 
+Increase_Target_Priority_Ground_Radar   KP9 
+Decrease_Target_Priority_Ground_Radar   KP3 
+Engage_Auto-Target      KP1 
+Toggle_Allied_Aircraft  KP7 
+Toggle_Single_Continious_Sweep  KP* 
+Activate_Single_Radar_Sweep     KP/ 
+Lock_Unlock_Target      ENT 
+Padlock_Target  CTL ENT 
+Select_Next_Target      KP0 
+Select_Previous_Target  SHF KP0 
+Switch_Off      CTL KPDEL 
+// 
+// IHADSS (Apache) / HMS (Havoc) Controls 
+//Single view// 
+Pan_Fixed_Cockpit_View_Left     CTL KP4 
+Pan_Fixed_Cockpit_View_Right    CTL KP6 
+Pan_Fixed_Cockpit_View_Up       CTL KP8 
+Pan_Fixed_Cockpit_View_Down     CTL KP2 
+//Full Extent// 
+Pan_Fixed_Cockpit_View_Left     SHF KP4 
+Pan_Fixed_Cockpit_View_Right    SHF KP6 
+Pan_Fixed_Cockpit_View_Up       SHF KP8 
+Pan_Fixed_Cockpit_View_Down     SHF KP2 
+//Virtual Cockpit// 
+Pan_Virtual_Cockpit_View_Left   ALT KP4 
+Pan_Virtual_Cockpit_View_Right  ALT KP6 
+Pan_Virtual_Cockpit_View_Up     ALT KP8 
+Pan_Virtual_Cockpit_View_Down   ALT KP2 
+Lock/Unlock_Target      ENT 
+Padlock_Target  CTL ENT 
+Select_Next_Target      KP0 
+Select_Previous_Target  SHF KP0 
+Switch_Off      CTL KPDEL 
+// 
+// COCKPIT KEYS 
+// 
+Acknowledge_Master_Caution      m 
+Select_Next_Waypoint    w 
+Select_Previous_Waypoint        SHF w 
+Wiper   y 
+Toggle_Intermittent_Wipe        ALT y 
+Select_Next_IHADSS(Apache)/HUD(Havoc)_Color     k 
+Select_Previous_IHADSS(Apache)/HUD(Havoc)_Color SHF k 
+Toggle_HUD-Size(Havoc)  ALT k 
+Toggle_Night_Vision/PNVS(Apache)/NVG(Havoc)     n 
+Activate_Fire_Extinguisher      CTL f 
+Switch_Pilot_Copilot_Seats	ESC
+// 
+//MULTI-FUNCTION DISPLAY (APACHE) 
+// 
+//Cycle MFD Pages// 
+Select_Next_MFD_Page    [ 
+Select_Previous_MFD_Page        SHF [ 
+Left_MFD_On/Off CTL [ 
+Select_Right_MFD_Page   ] 
+Select_Previous_Right_MFD_Page  SHF ] 
+Right_MFD_On/Off        CTL] 
+//MFD Page Shortcuts// 
+Left_MFD_Page_1 CTL 1 
+Left_MFD_Page_2 CTL 2 
+Left_MFD_Page_3 CTL 3 
+Left_MFD_Page_4 CTL 4 
+Left_MFD_Page_5 CTL 5 
+Left_MFD_Page_6 CTL 6 
+Left_MFD_Page_7 CTL 7 
+Left_MFD_Page_8 CTL 8 
+Right_MFD_Page_1        ALT 1 
+Right_MFD_Page_2        ALT 2 
+Right_MFD_Page_3        ALT 3 
+Right_MFD_Page_4        ALT 4 
+Right_MFD_Page_5        ALT 5 
+Right_MFD_Page_6        ALT 6 
+Right_MFD_Page_7        ALT 7 
+Right_MFD_Page_8        ALT 8 
+Ground_Radar    1 
+Air_Radar       2 
+TADS    3 
+TSD     4 
+ASE     5 
+Weapon  6 
+System  7 
+Engine  8 
+Increase_TSD_and_ASE_Range      e 
+Decrease_TSD_and_ASE_Range      SHF e 
+SElect_Next_TSD_Declutter_Level SHF d 
+Toggle_ASE_Auto-Page    ATL a 
+// 
+//MESSAGE KEYS 
+// 
+Display_Radio_Message   TAB 
+Exit_From_Radio_Menu	ESC
+//Select Message 1-0// 
+// 
+//COCKPIT VIEW KEYS 
+// 
+//Main Cockpit Views// 
+Forward_View    F1 
+Toggle_Cockpit_Graphics CTL F1 
+Toggle_HUD_Resolution ALT F1
+Instrument_View F2 
+Left_MFD(Apache)/TV(Havoc)      F3 
+Right_MFD(Apache)/Large_HUD(Havoc)      F4 
+//View Panning// 
+//Pan Fixed Cockpit Single View// 
+Pan_Left        CTL KBLEFT 
+Pan_Right       CTL KBRIGHT 
+Pan_Up  CTL KBUP 
+Pan_Down        CTL KBDOWN 
+//Pan Fixed Cockpit Full Extent// 
+Pan_Left        SHF KBLEFT 
+Pan_Right       SHF KBRIGHT 
+Pan_Up  SHF KBUP 
+Pan_Down        SHF KBDOWN 
+//Pan Virtual Cockpit// 
+Pan_Left        ALT KBLEFT 
+Pan_Right       ALT KBRIGHT 
+Pan_Up  ALT KBUP 
+Pan_Down        ALT KBDOWN 
+// 
+//EXTERNAL VIEW KEYS 
+// 
+//Select Object To View// 
+View_Players_Gunship    F5 
+View_Players_Target     SHF F5 
+View_Next_Force(air/ground/sea) F6 
+View_Previous_Force     SHF F6 
+Toggle_Force_Side       CTL F6 
+View_Next_Object_In_Force       F7 
+View_Previous_Object_In_Force   SHF F7 
+View_Nearest_Object_In_Force    CTL F7 
+Toggle_Object_Next      ALT F7 
+//Select Camera// 
+Chase_Camera    F9 
+Reset_Chase_Camera_Position     SHF F9 
+Toggle_Chace_Camera_Lock        ALT F9 
+Fly_By_Camera   F10 
+Drop_Camera     SHF F10 
+Auto_Action_Camera      F11 
+Cinematic_Camera        SHF F11 
+//Camera Zoom and Panning// 
+Zoom_Out        , 
+Zoom_In . 
+Pan_Left        ALT KBLEFT 
+Pan_Right       ALT KBRIGHT 
+Pan_Up  ALT KBUP 
+Pan_Down        ALT KBDOWN 
+// TSD Render
+TSD_Render_Options ALT d
+TSD_Render_Palette CTL d
+// Wide View
+Wide_View_Toggle \
+// TrackIR
+TrackIR_Center ;
+TrackIR_Enable '
+

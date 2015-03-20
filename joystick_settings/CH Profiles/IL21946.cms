@@ -1,0 +1,19 @@
+// CMS Script File
+//
+//     Game Title:
+//     Written By:
+//           Date:
+//
+script
+
+  IF ([JS3.A1 > JS3.A2]) then  // LEFT OR RIGHT TOE BRAKES
+    CMS.A1 = JS3.A1;
+  ELSE
+    CMS.A1 = JS3.A2;
+  endif
+
+  CMS.A2 = JS1.A1;
+  CMS.A4 = JS1.A2;
+  CMS.A3 = JS3.A3;
+
+endScript

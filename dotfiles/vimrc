@@ -1,0 +1,110 @@
+" .vimrc for Taylor Shin. Optimized for cygwin.
+set nocompatible
+"source $VIMRUNTIME/mswin.vim
+"behave mswin
+
+set title
+set autoindent
+set bs=indent,eol,start
+set hi=100
+set viminfo='20,\"50
+set ruler
+"set expandtab
+"set softtabstop=4
+set tabstop=4
+set shiftwidth=4
+set incsearch
+set mouse=a
+set showmatch
+set ignorecase
+set autowrite
+set wildmode=list:longest,full
+set showmode
+set showcmd
+
+"set enc=cp949
+"set fenc=cp949
+"set fencs=cp949,iso-8859-1,utf-8,cp932,euc-jp,shift-jis,big5,ucs-2le,latin1
+
+" The codes below are available only when the home directory is intact
+if exists("$HOME")
+    let s:home_dir = $HOME
+    let s:temp = strpart(s:home_dir,strlen(s:home_dir)-1,1)
+    " The $HOME directory usually contains / or \\. Therefore, we have to 
+    " get rid of these undesired charactors.
+    if s:temp == '/' || s:temp == "\\"
+        let s:home_dir = strpart(s:home_dir,0,strlen(s:home_dir)-1)
+    endif
+        
+    " Setting Path
+    if has("win32")
+        let s:dir_tmp = "C:\TxTemp"
+        let s:dir_backup = "C:\TxTemp"
+    else
+        let s:dir_tmp = s:home_dir."/.TxTemp"
+        let s:dir_backup = s:home_dir."/.TxTemp"
+    endif
+
+    " Setting up Temprorary and Backup dir
+    if isdirectory(s:dir_tmp)
+        set swf
+        let &dir = s:dir_tmp
+    else
+        set noswf
+        set dir=.
+    endif
+    
+    if isdirectory(s:dir_backup)
+        set bk
+        let &bdir = s:dir_backup
+        set backupext=.bak
+    else
+        set nobk
+    endif
+endif " if exists($Home)
+
+" Remembering last editing site
+au BufReadPost *
+\ if line("'\"") > 0 && line("'\"") <= line("$") |
+\   exe "norm g`\"" |
+\ endif
+
+syntax on
+
+map <F1> K
+map <C-1> :make<CR>
+map <F5>  :WManager<CR>
+"map <F6>  ^ww
+"map <F7>  :only<CR>
+
+
+filetype on
+filetype indent on
+filetype plugin on
+
+"set guifont=Fixedsys_Excelsior_2.00:h11:cHANGEUL
+
+noremap <C-L>   :nohls<CR><C-L>
+
+" Setting the clipboard to unnamed when using gvim
+if has("gui_running") || has("xterm_clipboard")
+    set cb=unnamed
+endif
+
+" Using magic
+set magic
+
+" Allign curser to the start of line when moving 
+"set sol
+
+" Adding to auto parsing function some new brakets
+set mps+=<:>
+
+" Setting swap file writing period (Unit : msec)
+set ut=5000
+set uc=100
+
+" Turning off expandtab when editing Makfile
+au FileType make setlocal noexpandtab
+
+

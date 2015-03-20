@@ -1,0 +1,246 @@
+// CMC Command File
+//
+//     Game Title: Falcon 4.0
+//     Written By: Michael Sexton
+//           Date: 2004-01-27
+//
+
+// Inside Views
+//
+HUD_View_Only									1
+2-D_Cockpit_View								2
+Virtual_Cockpit_View							3
+Padlock_View									4
+Extended_FOV_View								5
+Toggle_Situational_Awareness_Bar				SHF 3
+Padlock_Previous_Object							KP-
+Padlock_Next_Object								KP+
+Glance_Forward									KPENT
+Glance_Backward									KP3
+
+// Outside View Commands
+//
+Satellite_View									`
+Action_View										SHF `
+Tracking_View									6
+Enemy_View										SHF 6
+Incoming_View									7
+Weapon_View										SHF 7
+Weapon's_Target_View							ALT 7
+Friendly_View									8
+Friendly_Ground_Unit_View						SHF 8
+Chase_View										9
+Fly-By_View										SHF 9
+Orbit_View										0
+
+// View Controls
+//
+Move_View_Up									KP8
+Move_View_Down									KP2
+Move_View_Right									KP6
+Move_View_Left									KP4
+Zoom_In											KP1
+Zoom_Out										KP7
+Look_Closer_Toggle								l
+Night_Vision_Goggles							n
+
+// Throttle Controls
+//
+Increase_Throttle								=
+Decrease_Throttle								-
+Full_AfterBurner								SHF =
+Throttle_to_Idle								SHF -
+Throttle_Up_10%									ALT =
+Throttle_Down_10%								ALT -
+
+// HOTAS Controls
+//
+HOTAS-Pinky_Switch              CTL v
+HOTAS-TMS_Up                    HOLD CTL KBUP
+HOTAS-TMS_Down                  HOLD CTL KBDOWN
+HOTAS-TMS_Right                 HOLD CTL KBRIGHT
+HOTAS-TMS_Left                  HOLD CTL KBLEFT
+HOTAS-DMS_Up                    HOLD CTL ALT KBUP
+HOTAS-DMS_Down                  HOLD CTL ALT KBDOWN
+HOTAS-DMS_Right                 HOLD CTL ALT KBRIGHT
+HOTAS-DMS_Left                  HOLD CTL ALT KBLEFT
+
+// Fire Control Computer Controls
+//
+Fire_Gun										/
+Pickle/Release_Weapon							SPC
+Cycle_ATA_Weapon_Hardpoints						ENT
+Cycle_ATG_Weapon_Hardpoints						BKSPC
+Cycle_Through_Missle_Hardpoints					SHF /
+Dogfight_Mode									d
+Medium_Range_Missle_Mode						m
+Cancel_Missle_Mode								c
+Cycle_Fire_Control_Computer_Submodes			'
+
+// Bombing Controls
+//
+Increase_Ripple_Count							SHF '
+Decrease_Ripple_Count							SHF ;
+Increase_Ripple_Interval						CTL '
+Decrease_Ripple_Interval						CTL ;
+Drop_Bombs_in_pairs								ALT '
+Drop_Bombs_singly								ALT ;
+Increase_CBU_Altitude							CTL .
+Decrease_CBU_Altitude							ALT ,
+
+// Fire Control Radar Controls
+//
+Lock_Previous_Target							KBDEL
+Lock_Target_on_Nose								KBEND
+Lock_Next_Target								KBPGDN
+Designate_Target								KP0
+Radar_Return_to_Search							KP.
+Cycle_ATA_Radar_Modes							F1
+Cycle_ATG_Radar-Modes							F2
+Cycle_Radar_Submodes/Azimuth_Scans				F8
+Change_Radar_Bar_Scans							SHF F8
+ACM_BoreSight_Submode							CTL F5
+ACM_30x20_Submode								CTL F6
+ACM_Vertical_Submode							CTL F8
+Ground_Mapping_FOV								F9
+Freeze_Ground_Mapping_Radar_Picture				F10
+Toggle_Ground_Mapping_Radar_Snowplow			SHF KBUP
+Sensor_Of_Interest_FOV							v
+Maverick_FOV									SHF v
+Uncage_Seeker_Head								u
+Master_Arm_On									SHF m
+Master_Arm_Safe									CTL m
+Master_Arm_Sim									ALT m
+Master_Arm_Cycle              HOLD SHF CTL ALT m
+
+// Basic Radar Commands
+//
+Decrease_Radar_Range							F3
+Increase_Radar_Range							F4
+Decrease_Radar_Gain								SHF F3
+Increase_Radar_Gain								SHF F4
+Tilt_Radar_Antenna_Down							F5
+Center_Radar_Antenna							F6
+Tilt_Radar_Antenna_Up							F7
+Radar_Standby									CTL r
+Move_Radar_Cursors_Up							KBUP
+Move_Radar_Cursors_Down							KBDOWN
+Move_Radar_Cursors_Left							KBLEFT
+Move_Radar_Cursors_Right						KBRIGHT
+Reset_Radar_Cursors								SHF KBDOWN
+
+// Electronic Warfare System (EWS)
+//
+EWS_PGM_Inc               SHF x
+EWS_PGM_Dec               SHF z
+EWS_Run_PGM               z
+EWS_Run_PGM_2             x
+ECM												j
+
+// Aircraft Controls
+//
+Rudder_Left										,
+Rudder_Right									.
+EJECT											CTL e
+Chaff/Flare_Auto_Toggle							ALT z
+AutoPilot										a
+Landing_Gear									g
+Hook                      CTL k
+Flares											z
+Chaff											x
+Refueling_Door            SHF r
+Toggle_Speed_Brakes								b
+Open_Speed_Brakes								SHF b
+Close_Speed_Brakes								CTL b
+Wheel_Brakes									k
+Jettison_Selected_Weapons						ALT j
+Jettison_All_Weapons							CTL j
+Toggle_ACMI										f
+Toggle_Aircraft_Lights							HOLD SHF ALT l
+Toggle_Cockpit_Lights               HOLD SHF CTL l
+Toggle_Landing_Lights               HOLD CTL ALT l
+Manual_Pitch_Override							o
+Nose_Wheel_Steering             SHF /
+Trim_Reset                      HOLD SHF KBUP
+
+// Navigational Controls
+//
+Cycle_Navigation_Modes							\
+Next_Steerpoint									s
+Previous_Steerpoint								SHF s
+Decrease_Horizontal_Situation_Display_Range		F11
+Increase_Horizontal_Situation_Display_Range		F12
+
+// MFD Commands
+//
+Cycle_Bottom_Left_MFD							[
+Cycle_Upper_Left_MFD							SHF [
+Cycle_Bottom_Right_MFD							]
+Cycle_Upper_Right_MFD							SHF ]
+Cycle_Stores_Managment_System_Pages				;
+
+// HUD and Cockpit Controls
+//
+Declutter_HUD									h
+HUD_Scales_Switch								CTL h
+Change_HUD_Color								ALT h
+Instrument_Mode_Selector_Switch					i
+Kneeboard_Page									ALT k
+Master_Caution_Light							CTL c
+
+// Integrated Control Panel (ICP) Commands
+//
+ICP_Enter_Button								CTL ENT
+ICP_Fault_Acknowledge							CTL KP9
+ICP_TACAN/ILS									CTL KP7
+ICP_DataLink									CTL KP6
+ICP_Cruise_Mode									CTL KP5
+ICP_Steerpoint									CTL KP4
+ICP_Mark										CTL KP1
+ICP_COM1_Button									KP/
+ICP_COM2_Button									KP*
+ICP_Altitude_Low(ALOW)							CTL KP8
+Decrease_ALOW									ATL ,
+Increase_ALOW									ALT .
+Previous_ICP_Button								CTL KP-
+Next_ICP_Button									CTL KP+
+
+// Improved Data Modem (IDM) Control
+IDM_Comms_Left									CTL o
+IDM_Comms_Right									CTL p
+
+// Threat Warning Systems
+//
+Priority_Button									KBINS
+Search_Button									SHF KBINS
+Low_Button										KBHOME
+UnKnown_Button									SHF KBHOME
+Target_Separate_Button							KBPGUP
+Naval_Button									SHF KBPGUP
+
+// Radio Commands
+//
+AWACS_Radio_Command								q
+Wingman_Radio_Command							w
+Element_Radio_Command							e
+Flight_Radio_Command							r
+Tower_Radio_Command								t
+Tanker_Radio_Command							y
+Radio_Wilco										SHF y
+Radio_Unable									SHF u
+Change_Radio_Channel							ALT y
+Chat_in_Multiplayer								SHF t
+
+// Game Commands
+//
+Exit_Sim										ESC
+Pause											p
+Freeze_Mode										SHF p
+Accelerate_Time									TAB
+Maximum_Accelerate_Time							CAPS
+Sound_Toggle									CTL s
+Smoke_Toggle									ALT s
+Toggle_Labels									SHF l
+Toggle_Far_Labels								CTL l
+Take_Screen_Shot								PRTSC
+

@@ -1,0 +1,30 @@
+// CMS Script File
+//
+//     Game Title: DCS A-10 C
+//     Written By: Taylor Shin
+//           Date: Mar. 11, 2010
+//
+script
+
+/////////////////////////////////////////////////////////////////////
+//Toebrake Script, the farther you push the pedal the more times per second the brakes go on/off.  Feels like progressive braking.
+/////////////////////////////////////////////////////////////////////
+
+                   B11         = ( [ JS3.A1 >= 250 ] )                                                OR ( [ JS3.A2 >= 250 ] );
+TIMER ( INTERVAL, D1, 1, 1 ) = ( [ JS3.A1 >= 200 ] AND [ JS3.A1 < 250 ] AND NOT [ JS3.A2 >= 250 ] ) OR ( [ JS3.A2 >= 200 ] AND [ JS3.A2 < 250 ] AND NOT [ JS3.A1 >= 250 ] );
+TIMER ( INTERVAL, D2, 1, 2 ) = ( [ JS3.A1 >= 150 ] AND [ JS3.A1 < 200 ] AND NOT [ JS3.A2 >= 200 ] ) OR ( [ JS3.A2 >= 150 ] AND [ JS3.A2 < 200 ] AND NOT [ JS3.A1 >= 200 ] );
+TIMER ( INTERVAL, D3, 1, 3 ) = ( [ JS3.A1 >= 100 ] AND [ JS3.A1 < 150 ] AND NOT [ JS3.A2 >= 150 ] ) OR ( [ JS3.A2 >= 100 ] AND [ JS3.A2 < 150 ] AND NOT [ JS3.A1 >= 150 ] );
+TIMER ( INTERVAL, D4, 1, 4 ) = ( [ JS3.A1 >=  50 ] AND [ JS3.A1 < 100 ] AND NOT [ JS3.A2 >= 100 ] ) OR ( [ JS3.A2 >=  50 ] AND [ JS3.A2 < 100 ] AND NOT [ JS3.A1 >= 100 ] );
+
+              CMS.B11         = ( B11 OR D1 OR D2 OR D3 OR D4 );
+
+/////////////////////////////////////////////////////////////////////
+//                          Mini Joystick
+/////////////////////////////////////////////////////////////////////
+
+CMS.B1 = [JS2.A1 > 200];
+CMS.B2 = [JS2.A1 < 50];
+CMS.B3 = [JS2.A2 > 200];
+CMS.B4 = [JS2.A2 < 50];
+
+endScript

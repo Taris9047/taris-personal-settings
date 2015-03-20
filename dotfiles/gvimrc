@@ -1,0 +1,21 @@
+"gvim setting file for cygwin.
+"source $VIMRUNTIME/mswin.vim
+"behave mswin
+
+" Setting up font
+if has("gui_running")
+    if has("win32")
+        set guifont=Fixedsys\ Excelsior\ 2.00\ 11
+    elseif has("unix")
+        "set guifont=Fixedsys\ Excelsior\ 3.01\ 12
+        set guifont=나눔고딕_코딩\ 12
+    endif
+endif
+
+" Setting up line space
+set linespace=1
+
+"set guifont=Fixedsys\ Excelsior\ 2.00\ 11
+"set guifont=LucidaTypewriter
+"colorscheme darkblue
+colorscheme darkblue

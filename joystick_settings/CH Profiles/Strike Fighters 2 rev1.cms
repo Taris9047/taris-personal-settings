@@ -1,0 +1,148 @@
+// CMS Script File
+//
+//     Game Title: Strike Fighters 2
+//     Written By: Taylor Shin
+//           Date: May. 25, 2012
+//
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//    This profile is free: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+////////////////////////////////////////////////////////////////////////////
+
+script
+
+////////////////////////////////////////////////////////////////////////////
+// Set Mode
+////////////////////////////////////////////////////////////////////////////
+
+%DEFINE M1 ( NOT JS1.B4 AND NOT JS2.B4 )
+%DEFINE M2 ( JS1.B4 AND NOT JS2.B4 )
+%DEFINE M3 ( NOT JS1.B4 AND JS2.B4 )
+%DEFINE M4 ( JS1.B4 AND JS2.B4 )
+
+IF (M2) THEN
+	CURRENTMODE = MODE2;
+ENDIF
+IF (M3) THEN
+	CURRENTMODE = MODE3;
+ENDIF
+IF (M4) THEN
+	CURRENTMODE = MODE4;
+ENDIF
+IF (M1) THEN
+	CURRENTMODE = MODE1;
+ENDIF
+
+/////////////////////////////////////////////////////////
+// Toggle Wheelbrakes (Push any toe brakes to toggle)
+// Uses CMS.B11
+/////////////////////////////////////////////////////////
+CMS.B11 = [JS3.A1 >= 175] or [JS3.A2 >= 175];
+
+/////////////////////////////////////////////////////////
+// Mini Joystick, uses CMS.B1~4
+/////////////////////////////////////////////////////////
+CMS.B1 = [JS2.A1 > 200]; // Right
+CMS.B2 = [JS2.A1 < 50];  // Left
+CMS.B3 = [JS2.A2 > 200]; // Down
+CMS.B4 = [JS2.A2 < 50];  // Up
+
+// Note on DELAY
+// The actual hold time depends on the character rate.
+// The DELAY function does a multiplication to the
+// character rate. So, if a character rate is 100,
+// DELAY( 20 ) means 2000 ms, or 2 seconds.
+
+/////////////////////////////////////////////////////////
+//  Auto Chaff, uses CMS.B50
+//  Fixed it to prevent permanent keystroke. lasts 40
+//  chaff shots
+/////////////////////////////////////////////////////////
+TIMER(PERIOD, D4, 70) = (JS1.B13 AND M1);
+SEQUENCE
+  WHILE(D4);
+    CMS.B50 = TRUE;
+      DELAY(1);
+    CMS.B50 = FALSE;
+      DELAY(7);
+ENDSEQUENCE
+
+//////////////////////////////////////////////////////////
+//  Auto Flare, uses CMS.B51
+//  Fixed it to prevent permanent keystroke. lasts 40
+//  flare shots
+//////////////////////////////////////////////////////////
+TIMER(PERIOD, D5, 70) = (JS1.B13 AND M1);
+SEQUENCE
+  WHILE(D5);
+    CMS.B51 = TRUE;
+      DELAY(1);
+    CMS.B51 = FALSE;
+      DELAY(7);
+ENDSEQUENCE
+
+//////////////////////////////////////////////////////////
+//  Eject to Long click. Uses CMS.B16
+//////////////////////////////////////////////////////////
+TIMER( ONDELAY, D100, 32 ) = (JS2.B1 AND M1);
+SEQUENCE
+  WHILE(D100);
+    CMS.B16 = TRUE;
+      DELAY(1);
+    CMS.B16 = FALSE;
+ENDSEQUENCE
+
+//////////////////////////////////////////////////////////
+//  Quit to Long click. Uses CMS.B16
+//////////////////////////////////////////////////////////
+TIMER( ONDELAY, D100, 32 ) = (JS2.B1 AND M2);
+SEQUENCE
+  WHILE(D100);
+    CMS.B33 = TRUE;
+      DELAY(1);
+    CMS.B33 = FALSE;
+ENDSEQUENCE
+
+
+//////////////////////////////////////////////////////////
+//  A few optional keystrokes, uses CMS.B14~15
+//////////////////////////////////////////////////////////
+// Go to view padlock (POV UP, under mode 2)
+//SEQUENCE
+//  WAIT(JS1.B25 AND M2);
+//  CMS.B14 = TRUE;
+//  DELAY(1);
+//  CMS.B14 = FALSE;
+//ENDSEQUENCE
+// Reset TIR (POV Down, under mode 2)
+//SEQUENCE
+//  WAIT(JS1.B29 AND M2);
+//  CMS.B15 = TRUE;
+//  DELAY(1);
+//  CMS.B15 = FALSE;
+//ENDSEQUENCE
+
+//////////////////////////////////////////////////////////
+//  ECM Toggle (Scripted to ensure Mode 2)
+//////////////////////////////////////////////////////////
+SEQUENCE
+  WAIT(JS1.B13 AND M2);
+  CMS.B17 = TRUE;
+  DELAY(1);
+  CMS.B17 = FALSE;
+ENDSEQUENCE
+endScript
+

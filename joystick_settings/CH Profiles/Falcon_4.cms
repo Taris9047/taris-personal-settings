@@ -1,0 +1,47 @@
+// CMS Script File
+//
+//     Game Title: Falcon 4.0
+//     Written By: Taylor Shin
+//           Date: Mar. 30, 2011
+//
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//    This profile is free: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+////////////////////////////////////////////////////////////////////////////
+
+script
+
+/////////////////////////////////////////////////////////////////////
+//Toebrake Script, the farther you push the pedal the more times per second the brakes go on/off.  Feels like progressive braking.
+/////////////////////////////////////////////////////////////////////
+
+B11 = ( [ JS3.A1 >= 250 ] ) OR ( [ JS3.A2 >= 250 ] );
+TIMER ( INTERVAL, D1, 1, 1 ) = ( [ JS3.A1 >= 200 ] AND [ JS3.A1 < 250 ] AND NOT [ JS3.A2 >= 250 ] ) OR ( [ JS3.A2 >= 200 ] AND [ JS3.A2 < 250 ] AND NOT [ JS3.A1 >= 250 ] );
+TIMER ( INTERVAL, D2, 1, 2 ) = ( [ JS3.A1 >= 150 ] AND [ JS3.A1 < 200 ] AND NOT [ JS3.A2 >= 200 ] ) OR ( [ JS3.A2 >= 150 ] AND [ JS3.A2 < 200 ] AND NOT [ JS3.A1 >= 200 ] );
+TIMER ( INTERVAL, D3, 1, 3 ) = ( [ JS3.A1 >= 100 ] AND [ JS3.A1 < 150 ] AND NOT [ JS3.A2 >= 150 ] ) OR ( [ JS3.A2 >= 100 ] AND [ JS3.A2 < 150 ] AND NOT [ JS3.A1 >= 150 ] );
+TIMER ( INTERVAL, D4, 1, 4 ) = ( [ JS3.A1 >=  50 ] AND [ JS3.A1 < 100 ] AND NOT [ JS3.A2 >= 100 ] ) OR ( [ JS3.A2 >=  50 ] AND [ JS3.A2 < 100 ] AND NOT [ JS3.A1 >= 100 ] );
+CMS.B11 = ( B11 OR D1 OR D2 OR D3 OR D4 );
+
+/////////////////////////////////////////////////////////////////////
+//           Mini Joystick for Sensor Slewing
+/////////////////////////////////////////////////////////////////////
+
+CMS.B1 = [JS2.A1 > 200];
+CMS.B2 = [JS2.A1 < 50];
+CMS.B3 = [JS2.A2 > 200];
+CMS.B4 = [JS2.A2 < 50];
+
+endScript

@@ -1,0 +1,50 @@
+# Aliases Added for my convenience
+# My settings
+alias ls='ls -pFhG'
+alias ll='ls -la'
+alias l='ls -CF'
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias grep='grep --color'
+alias df='df -h'
+alias ps='ps -W'
+
+# vlsilinux connection
+SERVER=$RANDOM
+let " SERVER %= 4 "
+let " SERVER = $SERVER + 1 "
+alias blade='ssh -Y k4shin@blade$SERVER.vlsi.uwaterloo.ca'
+alias vlsilinux='ssh -Y k4shin@vlsilinux$SERVER.uwaterloo.ca'
+
+# enabling color for mac
+CLICOLOR="YES";    export CLICOLOR
+
+# Setting up build environment for Snow Leopard
+#export MACOSX_DEPLOYMENT_TARGET=10.6 
+#export CFLAGS='-O3 -arch x86_64' 
+#export LDFLAGS='-arch x86_64' 
+#export CXXFLAGS='-O3 -arch x86_64' 
+#export FFLAGS="-arch x86_64 -ff2c"
+#export FFLAGS="-ff2c"
+
+# LaTeX settings
+export MANPATH="/usr/local/texlive/2012/texmf/doc/man"
+export INFOPATH="/usr/local/texlive/2012/texmf/doc/info"
+export PATH="/usr/local/texlive/2012/bin/universal-darwin:${PATH}"
+
+# Setting PATH for Emacs.app
+PATH="~/settings/bin:${PATH}"
+export PATH
+
+# Setting PATH for MySQL
+PATH="/usr/local/mysql/bin:${PATH}"
+export PATH
+
+# /usr/local/bin and /usr/local/sbin
+export PATH="/usr/local/bin:/usr/local/sbin:${PATH}"
+
+# Python installation
+export PATH="/usr/local/python/bin:/usr/local/python/sbin:${PATH}"
+export PATH="/usr/local/share/python:${PATH}"
+

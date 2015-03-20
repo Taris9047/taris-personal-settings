@@ -1,0 +1,335 @@
+// Command File
+// Game: DCS Warthog
+// Date: Mar. 11, 2011
+// Written By: Taylor Shin
+//
+//
+// HOTAS
+//
+Weapon-release HOLD RALT SPC
+Gun-trigger HOLD SPC
+Gun-trigger(first-stage) p
+//
+DMS-Up KBHOME
+DMS-Down KBEND
+DMS-Left KBDEL
+DMS-Right KBPGDN
+//
+TMS-Up HOLD LCTL KBUP
+TMS-Down HOLD LCTL KBDOWN
+TMS-Left HOLD LCTL KBLEFT
+TMS-Right HOLD LCTL KBRIGHT
+//
+CMS-forward 7
+CMS-aft 8
+CMS-left 9
+CMS-right 0
+CMS-press -
+//
+HOTAS-Coolie-switch-up u
+HOTAS-Coolie-switch-down j
+HOTAS-Coolie-switch-left h
+HOTAS-Coolie-switch-right k
+//
+HOTAS-Boat-switch-aft HOLD RALT KBLEFT
+HOTAS-Boat-switch-center HOLD RALT KBDOWN
+HOTAS-Boat-switch-forward HOLD RALT KBRIGHT
+//
+HOTAS-China-hat-aft c
+HOTAS-China-hat-forward v
+//
+HOTAS-Left-throttle-button q
+//
+HOTAS-Master-Mode-Control-Button m
+//
+HOTAS-Nosewheel-steering-button KBINS
+//
+HOTAS-Speed-brake-switch-aft HOLD LCTL b
+HOTAS-Speed-brake-switch-forward HOLD LSHF b
+//
+HOTAS-Pinky-switch-aft HOLD LCTL p
+HOTAS-Pinky-switch-forward HOLD LALT p
+HOTAS-Pinky-switch-center HOLD LSHF p
+//
+HOTAS-Slew-control-up ;
+HOTAS-Slew-control-down .
+HOTAS-Slew-control-left ,
+HOTAS-Slew-control-right /
+//
+HOTAS-MIC-switch-up HOLD LSHF KP+
+HOTAS-MIC-switch-down HOLD LALT KP-
+HOTAS-MIC-switch-aft HOLD LSHF KP-
+HOTAS-MIC-switch-forward HOLD LALT KP+
+//
+Trim-Nose-Down HOLD RCTL ;
+Trim-Nose-Up HOLD RCTL .
+Trim-Left-Wing-Down HOLD RCTL ,
+Trim-Right-Wing-Down HOLD RCTL /
+Yaw-Trim-Left HOLD RCTL z
+Yaw-Trim-Right HOLD RCTL x
+Reset-Trimmers HOLD LCTL t
+//
+Emergency-Disconnect-Lever HOLD LALT e
+//
+// THROTTLE/S
+//
+Throttle-Common-Up KP+
+Throttle-Common-Down KP-
+Throttle-Left-Up HOLD RALT KP+
+Throttle-Left-Down HOLD RALT KP-
+Throttle-Right-Up HOLD RSHF KP+
+Throttle-Right-Down HOLD RSHF KP-
+Throttle-Left-Up-Step HOLD RALT KBPGUP
+Throttle-Left-Down-Step HOLD RALT KBPGDN
+Throttle-Right-Up-Step HOLD RSHF KBPGUP
+Throttle-Right-Down-Step HOLD RSHF KBPGDN
+//
+// SYSTEMS
+//
+Toggle-Landing-Gear-Up/Down g
+Toggle-Landing-Gear-Up HOLD LCTL g
+Toggle-Landing-Gear-Down HOLD LSHF g
+Toggle-Arrestor-Hook HOLD LALT g
+Emeregency-gear HOLD RALT g
+Toggle-Flaps-Up/Down f
+Flaps-Down f
+Flaps-Up HOLD LSHF f
+Wheel-Brake-On/Off w
+Wheel-Brake-Left-On/Off HOLD LSHF w
+Wheel-Brake-Right-On/Off HOLD LALT w
+Emergency-Wheel-Brake HOLD RWIN w
+Reload-Cockpit-REM-Debug HOLD LCTL r
+Engines-Start HOLD RWIN KBHOME
+Engines-Stop HOLD RWIN KBEND
+Left-Engine-Start HOLD RALT KBHOME
+Left-Engine-Stop HOLD RALT KBEND
+Right-Engine-Start HOLD RCTL KBHOME
+Right-Engine-Stop HOLD RCTL KBEND
+Begin-Refuel r
+Toggle-Refueling-Boom HOLD LCTL r
+Jettison-Fuel-Tanks HOLD LALT r
+Canopy-Open/Close HOLD LCTL c
+Eject HOLD LCTL e
+Cockpit-Illumination l
+Toggle-Gear-Light-Near/Far/Off HOLD RALT l
+Toggle-Navigation-lights HOLD RCTL l
+Toggle-Smoke HOLD LSHF t
+Reset-Current-Audible-Warning HOLD RSHF n
+Jettison-Weapons HOLD LCTL w
+Start/Stop/Reset-Flight-Clock HOLD RWIN c
+HUD-Color HOLD RCTL h
+//
+// AUTO PILOT
+//
+LAAP-Engage/Disengage a
+LAAP-Path-Hold 2
+LAAP-Altitude/Heading-Hold 3
+LAAP-Altitude/Bank-Hold 4
+//
+// ENGINE CONTROL PANEL
+//
+Lamps-test HOLD LSHF l
+//
+// NIGHT VISION
+//
+Toggle-goggles HOLD RSHF h
+//
+// FAC
+//
+Binocular-view-toggle HOLD LWIN b
+Binocular-laser-illumination-toggle HOLD LALT l
+Binocular-view-IR-mode HOLD LWIN z
+//
+// CHEATS
+//
+Explosion HOLD CTL LSHF x
+Levitation HOLD LALT h
+Active-Pause HOLD LWIN LSHF PAUSE
+//
+// MULTIPLAYER
+//
+Score-Window \
+Multiplayer-Chat-Mode-All TAB
+Multiplayer-Chat-Mode-All HOLD RCTL m
+Multiplayer-Chat-Mode-Allies HOLD RCTL TAB
+Multiplayer-Chat-Mode-Allies HOLD RALT m
+Get-New-Plane-Respawn HOLD RSHF RCTL TAB
+//
+// GAMEPLAY
+//
+Toggle-Console '
+End-Mission ESC
+Pause PAUSE
+Time-Accelerate HOLD LCTL z
+Time-Decelerate HOLD LALT z
+Time-Normal HOLD LSHF z
+Info-Bar-Toggle HOLD LCTL y
+Screenshot PRTSC
+Playback-Track-Cancel HOLD LSHF TAB
+Info-Bar-View-Toggle HOLD LSHF y
+One-Frame-Mode HOLD RSHF PAUSE
+Frame-Rate-Counter-Service-Info HOLD RCTL PAUSE
+Coordinates-Units-Change HOLD LALT y
+Clickable-Mouse-Cockpit-Mode-On/Off-LALT c
+Show-Controls-Indicator HOLD RCTL ENT
+//
+// SENSORS
+//
+Change-RWR/SPO-Mode HOLD RSHF r
+RWR/SPO-Sound-Signals-Volume-Down HOLD RALT ,
+RWR/SPO-Sound-Signals-Volume-Up HOLD RALT .
+//
+// COMMUNICATIONS
+//
+Dispatch-Wingmen-Complete-Mission-And-RTB HOLD LWIN e
+Dispatch-wingmen-Complete-Mission-And-Rejoin HOLD LWIN r
+Toggle-Formation HOLD LWIN t
+Join-Up-Formation HOLD LWIN y
+Attack-My-Target HOLD LWIN q
+Cover-Me HOLD LWIN w
+Ask-AWACS-Home-Airbase HOLD LWIN u
+Ask-AWACS-Available-Tanker HOLD LWIN i
+Attack-Ground-Targets HOLD LWIN g
+Attack-Air-Defenses HOLD LWIN d
+Communication-Menu \
+Switch-Dialog HOLD LSHF \
+//
+// VIEWS
+//
+Cockpit-panel-view-in KP0
+Cockpit-panel-view-toggle HOLD RCTL KP0
+//
+View-Left-Slow HOLD KP4
+View-Up-Left-Slow HOLD KP7
+View-Right-Slow HOLD KP6
+View-Up-Slow HOLD KP8
+View-Down-Slow HOLD KP2
+View-Up-Right-Slow HOLD KP9
+View-Down-Right-Slow HOLD KP3
+View-Down-Left-Slow HOLD KP1
+//
+View-Left HOLD RSHF KP4
+View-Right HOLD RSHF KP6
+View-Up HOLD RSHF KP8
+View-Down HOLD RSHF KP2
+View-Down-Right HOLD RSHF KP3
+View-Down-Left HOLD RSHF KP1
+View-Up-Right HOLD RSHF KP9
+View-Up-Left HOLD RSHF KP7
+View-Center HOLD KP5
+//
+// ZOOM VIEWS
+//
+Zoom-in-slow HOLD KP*
+Zoom-out-slow HOLD KP/
+Zoom-normal HOLD KPENT
+Zoom-external-in HOLD RCTL KP*
+Zoom-external-out HOLD RCTL KP/
+Zoom-external-normal HOLD RCTL KPENT
+//
+// CAMERA VIEWS
+//
+Camera-view-up HOLD RCTL KP8
+Camera-view-down HOLD RCTL KP2
+Camera-view-left HOLD RCTL KP4
+Camera-view-right HOLD RCTL KP6
+Camera-view-up-left HOLD RCTL KP7
+Camera-view-down-left HOLD RCTL KP1
+Camera-view-up-right HOLD RCTL KP9
+Camera-view-down-right HOLD RCTL KP3
+Camera-view-up-slow HOLD RALT KP8
+Camera-view-down-slow HOLD RALT KP2
+Camera-view-left-slow HOLD RALT KP4
+Camera-view-right-slow HOLD RALT KP6
+Camera-view-up-left-slow HOLD RALT KP7
+Camera-view-down-left-slow HOLD RALT KP1
+Camera-view-up-right-slow HOLD RALT KP9
+Camera-view-down-right-slow HOLD RALT KP3
+Center-camera-view HOLD RSHF KP5
+Return-camera HOLD RCTL KP5
+Return-camera-base HOLD RALT KP5
+//
+// SNAP VIEWS
+//
+Snap-View-0 HOLD LWIN KP0
+Snap-View-1 HOLD LWIN KP1
+Snap-View-2 HOLD LWIN KP2
+Snap-View-3 HOLD LWIN KP3
+Snap-View-4 HOLD LWIN KP4
+Snap-View-5 HOLD LWIN KP5
+Snap-View-6 HOLD LWIN KP6
+Snap-View-7 HOLD LWIN KP7
+Snap-View-8 HOLD LWIN KP8
+Snap-View-9 HOLD LWIN KP9
+Left-Mirror-On HOLD RWIN n
+Right-Mirror-On HOLD RWIN m
+Zoom-in HOLD RSHF KP*
+Zoom-out HOLD RSHF KP/
+//
+// COCKPIT CAMERA MOTION
+//
+Cockpit-Camera-Move-Up HOLD RCTL RSHF KP8
+Cockpit-Camera-Move-Down HOLD RCTL RSHF KP2
+Cockpit-Camera-Move-Left HOLD RCTL RSHF KP4
+Cockpit-Camera-Move-Right HOLD RCTL RSHF KP6
+Cockpit-Camera-Move-Forward HOLD RCTL RSHF KP*
+Cockpit-Camera-Move-Back HOLD RCTL RSHF KP/
+Cockpit-Camera-Move-Center HOLD RCTL RSHF KP5
+//
+// EXTENDED VIEWS
+//
+Cockpit-View F1
+Natural-head-movement-view HOLD LCTL F1
+Head-shift-movement-on/off HOLD LWIN F1
+HUD-only-view-switch HOLD LALT F1
+Aircraft-view F2
+View-own-aircraft HOLD LCTL F2
+Toggle-camera-position HOLD RALT F2
+Toggle-local-camera-control HOLD LALT F2
+Fly-By-view F3
+Fly-By-jump-view HOLD LCTL F3
+Arcade-View F4
+Look-back-view HOLD LSHF F4
+Chase-view HOLD LCTL F4
+Nearest-AC-view F5
+Ground-hostile-view HOLD LCTL F5
+Released-weapon-view F6
+Weapon-to-target-view HOLD LCTL F6
+Ground-unit-view F7
+Target-view F8
+Player-targets/All-targets-filter HOLD RALT F8
+Ship-view F9
+Landing-signal-officer-view HOLD LALT F9
+Theater-map-view F10
+Jump-to-theater-map-view-over-current-point HOLD LCTL F10
+Airport-free-camera F11
+Jump-to-free-camera HOLD LCTL F11
+Static-object-view F12 // Unmap this button in the game for Track IR
+Civil-traffic-view HOLD LCTL F12
+Trains/cars-toggle HOLD LSHF F12
+Objects-switching-direction-forward HOLD LCTL KBPGDN
+Objects-switching-direction-reverse HOLD LCTL KBPGUP
+Object-exclude HOLD LALT KBDEL
+Objects-all-excluded/include HOLD LALT KBINS
+//
+Camera-jiggle-toggle HOLD LSHF j
+Keep-terrain-camera-altitude HOLD LALT k
+View-friends-mode HOLD RCTL RSHF KBHOME
+View-enemies-mode HOLD RCTL RSHF KBEND
+View-all-mode HOLD RCTL KBDEL
+Toggle-tracking-fire-weapon HOLD RCTL KP+
+//
+// PADLOCK VIEWS
+//
+All-missiles-padlock HOLD RSHF KP.
+Threat-missile-padlock HOLD RALT KP.
+Lock-view-(cycle-padlock) HOLD KP.
+Unlock-view-(stop-padlock) HOLD NUMLOCK
+Lock-terrain-view HOLD RCTL KP.
+//
+// LABELS
+//
+All-Labels HOLD LSHF F10
+Aircraft-Labels HOLD LSHF F2
+Missile-Labels HOLD LSHF F6
+Vehicle-&-Ship-Labels HOLD LSHF F9

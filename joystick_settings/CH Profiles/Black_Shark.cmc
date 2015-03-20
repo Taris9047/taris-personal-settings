@@ -1,0 +1,589 @@
+// CMC Command File
+//
+//     Game Title: DCS Black Shark - Real Mode
+//     Written By: Ken 'Ghost' King
+//           Date: 10-22-2008
+//
+//
+//	Cheat
+//
+Auto-Execute-Full-Start-Procedure	KBHOME LWIN
+Auto-Execute-Full-Stop-Procedure	KBEND LWIN
+//
+//	General
+//
+End-Mission	ESC
+Pause		PAUSE
+Accelerate-Time	LCTL z
+Decelerate-Time	LALT z
+Normal-Time	LSHF z
+Score-Window	'
+Multiplayer-Chat-All	`
+Multiplayer-Chat-Allies	RCTL `
+Info-Bar-Toggle	LCTL y
+Get-New-Plane/Respawn	TAB RCTL RSHF
+Clickable-Mouse-Cockpit-Mode-On/Off	LALT c
+Screenshot	PRNSCRN
+Frame-Rate-Counter/Service-Info	RCTL PAUSE
+Info-Bar-Coordinate-Units-Toggle	LALT y
+Show-Pilot-Body	RSHF p
+Show-Controls-Indicator	RCTL ENT
+//
+//	Ins ABRIS AMMS
+//
+ABRIS-Power	RSHF 0
+ABRIS-Button-1	1
+ABRIS-Button-2	2
+ABRIS-Button-3	3
+ABRIS-Button-4	4
+ABRIS-Button-5	5
+ABRIS-Axis-Push	6
+ABRIS-Axis-DEC	7
+ABRIS-Axis-INC	8
+ABRIS-Brightness-DEC	9
+ABRIS-Brightness-INC	0
+//
+//	Ins ADF
+//
+ADF-Channel-Next	LCTL =
+ADF-Channel-Previous	LCTL -
+ADF-Mode-Change	LCTL LALT [
+ADF-Receiver-Mode-Change	LCTL LALT ]
+ADF-Volume-Up	LCTL LALT =
+ADF-Volume-Down	LCTL LALT -
+ADF-Self-Test	LCTL LALT t
+//
+//	Ins Autopilot
+//
+Autopilot-Bank-Hold	LSHF b
+Autopilot-Pitch-Hold	LSHF p
+Autopilot-Heading-Hold	LSHF h
+Autopilot-Altitude-Hold	LSHF a
+Autopilot-Director-Control	LCTL a
+Autopilot-BARO/RALT-Altitude-Hold-Mode	LCTL x
+Autopilot-Desired-Heading-Desired-Track	LALY x
+//
+//	Ins Auxiliary Control Panel
+//
+PP/HYD/EKRAN-Self-Test-SYS-Switch-Cover	LSHF LCTL LALT n
+PP/HYD/EKRAN-Self-Test-SYS-Switch	LSHF LCTL n
+LWS-L-140-Self-Test-Button	LCTL LALT n
+LWS-L-140-Power-Switch	LCTL n
+Illumination-control-Panel-Switch	RALT RSHF l
+CMD-UV-26-Power-Switch-Cover	LSHF LALT c
+CMD-UV-26-Power-Switch	LSHF LCTL c
+CMD-UV-26-BIT-Switch-Cover	LSHF LCTL LALT c
+CMD-UV-26-BIT-Switch	LCTL LALT c
+INU-Power-Switch	RCTL RALT l
+INU-Heater-Switch	RSHF RALT l
+Rocket-&-Gun-Pods-Ballistics-Data-Settings-Selector-Right	LALT b
+Rocket-&-Gun-Pods-Ballistics-Data-Settings-Selector-Left	LCTL b
+ALMAZ-Voice-Alert-System-Test-Button	RCTL RALT v
+Eject-System-Circuit-Test-Button	RSHF RCTL e
+Eject-System-Circuit-Check-Selector-Right	LSHF LALT b
+Eject-System-Circuit-Check-Selector-Left	LSHF LCTL b
+EGT-Right-Threshold-Governor-Button	RSHF RCTL g
+EGT-Left-Threshold-Governor-Button	RSHF RALT g
+Engine-Vibration-Monitor-System-Button	RSHF RCTL RALT v
+Lighting-Night-Vision-Cockpit-Brightness-Knob-Down	LSHF LCTL k
+Lighting-Night-Vision-Cockpit-Brightness-Knob-Up	LCTL LALT k
+Lighting-Cockpit-Panel-Brightness-Knob-Down	LSHF LCTL l
+Lighting-Cockpit-Panel-Brightness-Knob-Up	LCTL LALT l
+Lighting-HSI-&-ADI-Brightness-Knob-Down		LSHF LCTL j
+Lighting-HSI-&-ADI-Brightness-Knob-Up	LCTL LALT j
+Lighting-Auxiliary-Panel-Brightness-Knob-Down	LSHF LCTL RALT u
+Lighting-Auxiliary-Panel-Brightness-Knob-Up	LSHF LCTL LALT u
+//
+//	Ins Collective Stick
+//
+Lock-Target	ENT
+Shkval-Narrow-View-23x	=
+Shkval-Wide-View-7x	-
+TV-Target-Frame-Incr-Size	]
+TV-Target-Frame-Decr-Size	[
+Engage/Disengage-Route-Mode	r
+Engage-Descent-Mode	d
+Spot-Light-Left	RCTL ,
+Spot-Light-Right	RCTL /
+Spot-Light-Up	RCTL ;
+Spot-Light-Down	RCTL .
+Collective-Up	KP+
+Collective-Down	KP-
+Weapon-Selection-Inward-Stations	i
+Weapon-Selection-Outward-Stations	y
+Weapon-Selection-All-Stations	u
+Weapon-Selection-A-A-Mode	LCTL u
+Readjust-Free-Turbine-RPM-To-Nominal	RALT KP+
+Readjust-Free-Turbine-RPM-To-Low	RALT KP-
+Collective-Brake-Assign-Altitude-Lever	f
+//
+//	Ins Countermeasures Dispensers UV-26
+//
+UV-26-Start-Dispensing	KBINS
+UV-26-Stop-Dispensing	KBDEL
+UV-26-Number-of-Flare-Sequences	RSHF KBINS
+UV-26-Delay-Between-Sequences	RALT KBINS
+UV-26-Number-of-Flares-In-Sequence	RCTL KBINS
+UV-26-Reset-Current-Program	RCTL KBDEL
+UV-26-Change-Dispensing-Board-Left-Both-Right	RALT ]
+UV-26-Amount-Flares-Counter/Programming	RCTL ]
+//
+//	Ins Cyclic Stick
+//
+Uncage-SHKVAL-Designate-Target	O
+KU-31-Shkval-Slew-Up	;
+KU-31-Shkval-Slew-Down	.
+KU-31-Shkval-Slew-Left	,
+KU-31-Shkval-Slew-Right	/
+KU-31-Shkval-Center	RCTL i
+Gun-Fire	SPC
+Release-Weapons	RALT SPC
+Gun-Select	C
+Cyclic-Nose-Down	KBUP
+Cyclic-Nose-Up	KBDOWN
+Cyclic-Bank-Left	KBLEFT
+Cyclic-Bank-Right	KBRIGHT
+Trimmer	t
+Trimmer-Reset	LCTL t
+Hover-On/Off	LALT t
+Autopilot-Emergency-Off	LALT a
+Wheel-Brake	w
+Wheel-Brake-Parking	LSHF w
+Cockpit-Gauges-Illumination-(stick)	LSHF k
+//
+//	Ins Datalink Panel PRTs
+//
+PRTs-Target-1/Vehicle	LSHF 1
+PRTs-Target-2/SAM	LSHF 2
+PRTs-Target-3/Other	LSHF 3
+PRTs-Reference-Point	LSHF 4
+PRTs-To-Wingman-1	LCTL 1
+PRTs-To-Wingman-2	LCTL 2
+PRTs-To-Wingman-3	LCTL 3
+PRTs-To-Wingman-4	LCTL 4
+PRTs-To-All	LCTL 5
+PRTs-Erase-Entering-Data	LSHF t
+PRTs-Ingress-To-Target	LSHF y
+PRTs-Send/Memory	LSHF u
+PRTs-Void-Button	LSHF i
+Self-ID	LCTL i
+Datalink-Mode	LCTL m
+//
+//	Ins Engines Start-Up Control Panel and Levers
+//
+Start-up-Engine	KBHOME
+Interrupt-Start-Up-Sequence	RALT KBHOME
+Stop-APU-Button	KBEND
+Engine-Selector	e
+Engine-Startup/Crank/False-Start-Selector	LALT e
+Throttle-Up-(Idle-Medium-Auto-Full)	KBPGUP
+Throttle-Down-(Idle-Medium-Auto-Full)	KBPGDN
+Left-Throttle-Up-(Idle-Medium-Auto-Full)	RALT KBPGUP
+Left-Throttle-Down-(Idle-Medium-Auto-Full)	RALT KBPGDN
+Right-Throttle-Up-(Idle-Medium-Auto-Full)	RSHF KBPGUP
+Right-Throttle-Down-(Idle-Medium-Auto-Full)	RSHF KBPGDN
+Cut-Off-Valve-Left-Engine	RCTL KBPGUP
+Cut-Off-Valve-Right-Engine	RCTL KBPGDN
+Rotor-Brake	LSHF r
+//
+//	Ins Forward Panel and Gauges
+//
+Gear-Lever	g
+Emergency-Gear	LALT g
+Emergency-Gear-Cover	LCTL g
+Mech-clock.-Left-Lever-Down	RCTL RSHF RALT c
+Mech-clock.-Left-Lever-Up	RSHF m
+Mech-clock.-Left-LeverTurning-Right	LALT .
+Mech-clock.-Left-Lever-Turning-Left	LALT ,
+Mech-clock.-Right-Lever-Down	RSHF RALT c
+Mech-clock.-Right-Lever-Rotate-Left	RCTL RSHF ,
+Mech-clock.-Right-Lever-Rotate-Right	RCTL RSHF .
+Master-Caution-Push-Light	m
+Lamps-Test	LSHF l
+Rotor-RPM-Warning-Push-Light	b
+LWS/CMD-Operation-Mode	LCTL l
+HSI-Commanded-Course-Rotary-Right	LCTL LALT .
+HSI-Commanded-Course-Rotary-Left	LCTL LALT ,
+HSI-Commanded-Heading-Rotary-Right	LCTL LSHF .
+HSI-Commanded-Heading-Rotary-Left	LCTL LSHF ,
+HSI-Test	LCTL LALT h
+HSI-Desired-Track-Angle-Desired-Heading-Auto-Manual	LCTL h
+ADI-Zero-Pitch-Trim-Right	LSHF LALT .
+ADI-Zero-Pitch-Trim-Left	LSHF LALT ,
+ADI-Test-Button	LSHF LALT a
+ADI-Test-Button-Cover	LCTL LSHF LALT a
+SAI-Standby-Attitude-Indicator-Cage/Control-Test-Handle-Up	RSHF a
+SAI-Standby-Attitude-Indicator-Cage/Control-Test-Handle-Right	RSHF RCTL a
+SAI-Standby-Attitude-Indicator-Cage/Control-Test-Handle-Left	RSHF RALT a
+Radar-Altimeter-Dangerous-RALT-Set-Rotary-Right	LSHF .
+Radar-Altimeter-Dangerous-RALT-Set-Rotary-Left	LSHF ,
+Radar-Altimeter-Test-Button	LSHF LALT r
+Altimeter-QFE-Knob-Pressure-Increase	RSHF =
+Altimeter-QFE-Knob-Pressure-Decrease	RSHF -
+G-meter-Reset	LSHF -
+Laser-Range-Finder-Designator-Mode-Switch-Cover	LSHF LALT o
+Laser-Range-Finder-Designator-Mode-Switch	LSHF o
+Laser-Designator-Reset-Button	LCTL LALT o
+Exhaust-Gas-Temperature-Running-Engines-Indicator-Test-Button	LCTL p
+Exhaust-Gas-Temperature-Stopped-Engines-Indicator-Test-Button	LALT p
+Fuel-Quantity-Indicator-Self-Test-Button	LSHF LCTL LALT p
+//
+//	Ins HUD Controls
+//
+Raise/Lower-Color-Filter-On-HUD	RSHF h
+HUD-Modes-Reticle/Night/Day	RSHF 8
+HUD-Brightness-Up	RCTL RSHF h
+HUD-Brightness-Down	RSHF RALT h
+HUD-Test	RCTL RSHF RALT h
+//
+//	Ins Landing Lights & Voice Warning Panel
+//
+Light-Landing-Search-On/Retraction/Off	RSHF l
+Lights-Landing-Search-Change-Main/Reserved	RCTL l
+ADF-Beacon-Select	LALT =
+Voice-Message-Emergency-Mode	LCTL v
+Voice-Message-Cease	LSHF LALT v
+Voice-Message-Repeat	LALT v
+//
+//	Ins NAV Panel Controls PVI
+//
+PVI-Change-Master-Mode-(to-right)	RALT b
+PVI-Change-Master-Mode-(to-left)	RALT v
+PVI-Set-Fixtaking-Method	RCTL v
+PVI-Datalink-Power	RCTL b
+PVI-Pushbutton-1	RALT 1
+PVI-Pushbutton-2	RALT 2
+PVI-Pushbutton-3	RALT 3
+PVI-Pushbutton-4	RALT 3
+PVI-Pushbutton-5	RALT 5
+PVI-Pushbutton-6	RALT 6
+PVI-Pushbutton-7	RALT 7
+PVI-Pushbutton-8	RALT 8
+PVI-Pushbutton-9	RALT 9
+PVI-Pushbutton-0	RALT 0
+PVI-Waypoint-Mode	RALT q
+PVI-In-flight-INU-Realignment	RALT w
+PVI-Navpos-Correction-Mode	RALT e
+PVI-Precise-INU-Alignment	RALT r
+PVI-Airfields-Mode	RALT t
+PVI-Normal-INU-Alignment	RALT y
+PVI-Targets-Mode	RALT u
+PVI-Enter	RALT i
+PVI-Cancel	RALT o
+PVI-Initial-NAV-Position	RALT p
+PVI-Self-Coordinates	RALT a
+PVI-Course/Time/Range	RALT s
+PVI-Wind-Heading/Speed	RALT d
+PVI-True-Heading/Time/Range-to-Final-STP	RALT f
+PVI-Bearing/Range-to-Target	RALT g
+PVI-Lighting-Up	RSHF RCTL p
+PVI-Lighting-Down	RSHF RALT p
+//
+//	Ins Overhead Panel
+//
+Lights-Navigation-10%/30%/100%/Off	RALT l
+Lights-Navigation-Code-Mode	LALT l
+Windshield-Wiper-Switch	LCTL LALT w
+L-140-Laser-Warning-System-Reset-Button	l
+Pitot-Static-Port-and-AoA-Sensors-Heat-Switch	LSHF LALT s
+Pitot-Ram-Air-and-Clock-Heat-Switch	LSHF LCTL s
+Pitot-System-Heat-Test	RSHF RCTL s
+Rotor-de-icing-System-Switch	LSHF LCTL LALT s
+Engines-de-icing/Dust-Protection-Systems-Switch	LALT i
+//
+//	Ins Radio R-800 VHF-2
+//
+R-800-Rotary-1-Up	LCTL LSHF 1
+R-800-Rotary-1-Down	LCTL LALT 1
+R-800-Rotary-2-Up	LCTL LSHF 2
+R-800-Rotary-2-Down	LCTL LALT 2
+R-800-Rotary-3-Up	LCTL LSHF 3
+R-800-Rotary-3-Down	LCTL LALT 3
+R-800-Rotary-4-Up	LCTL LSHF 4
+R-800-Rotary-4-Down	LCTL LALT 4
+R-800-Squelch	LCTL LALT r
+R-800-AM-FM-Mode-switch	LSHF LCTL m
+Data-Transfer-Rate-Switch	LCTL LALT 5
+ADF-Switch	LCTL LALT a
+Emergency-Receiver	LCTL LALT e
+Test-Button	LCTL LSHF t
+Channel-Selector-Next	RCTL RALT m
+Channel-Selector-Previous	RCTL RALT n
+R-828-Squelch	RCTL RALT r
+Tuner-Button	RCTL RSHF t
+Volume-Up	LCTL LSHF ]
+Volume-Down	LCTL LSHF [
+//
+//	Ins Rudder
+//
+Rudder-Left	z
+Rudder-Right	x
+//
+//	Ins Targeting Display Control Panel PUR
+//	
+HUD-Scales-Reject-On/Off 	RCTL s
+IT-23-brightness-Down 	RCTL RALT [
+IT-23-brightness-Up 	RCTL RALT ]
+IT-23-contrast-Down 	RSHF RCTL [
+IT-23-contrast-Up 	RSHF RCTL ]
+Helmet-device-brightness-Down 	RSHF RCTL RALT [
+Helmet-device-brightness-Up 	RSHF RCTL RALT ]
+Laser-code-selector-left 	RSHF RCTL RALT l
+Laser-code-selector-right 	RSHF RCTL RALT o
+IT-23-Black-White-indication-switch 	RSHF RCTL b
+Button-Targeting-mode-reset 	BKSPC
+Helmet-mounted-system-On/Off 	h
+Laser-standby-On/Off-switch 	RSHF o
+Automatic-tracking/gun-sight 	p
+K-041-Targeting-system-power-switch 	LSHF d
+Button-Automatic-turn-on-target-mode 	q
+Button-Ground-moving-target 	n
+Button-Airborne-target 	v
+Button-Head-on-airborne-target-aspect 	LALT s
+Weapon-system-mode-selector-(to-right)	LALT f
+Weapon-system-mode-selector-(to-left) 	LCTL f
+Training-mode-switch 	LSHF RCTL l
+//
+//	Ins Wall panel
+//	
+Electrical-power-ground-power-DC 	LCTL LSHF q
+Electrical-power-ground-power-DC cover 	LCTL LSHF LALT q
+Electrical-power-battery-2 	LCTL LSHF w
+Electrical-power-battery-2-cover 	LCTL LSHF LALT w
+Electrical-power-battery-1 	LCTL LSHF e
+Electrical-power-battery-1-cover 	LCTL LSHF LALT e
+Electrical-power-ground-power-AC 	LCTL LSHF r
+Electrical-power-generator-left 	LCTL LSHF y
+Electrical-power-generator-right 	LCTL LSHF u
+Electrical-power-inverter-AUTO/OFF/MAN	LCTL LSHF l
+Radio-equipment-AVSK-(SPU-9)-intercom 	LCTL LALT z
+Radio-equipment-VHF-2-(R-800) 	LCTL LALT p
+Radio-equipment-VHF-1-(R-828) 	RCTL RALT p
+Radio-equipment-datalink TLK 	LCTL LSHF o
+Radio-equipment-datalink UHF TLK 	LCTL LSHF p
+Fuel-pumps-tank-forward 	LCTL LSHF a
+Fuel-pumps-tank-rear 	LCTL LSHF d
+Fuel-pumps-external-tanks-inner 	LCTL LSHF f
+Fuel-pumps-external-tanks-outer 	LCTL LSHF g
+Fuel-meter-power 	LCTL LSHF h
+Shutoff-valve-left-engine-fuel-cover 	RCTL RSHF RALT j
+Shutoff-valve-left-engine-fuel 	RCTL RSHF j
+Shutoff-valve-right-engine-fuel-cover 	RCTL RSHF RALT k
+Shutoff-valve-right-engine-fuel 	RCTL RSHF k
+Shutoff-valve-APU-fuel-cover 	RCTL RSHF RALT l
+Shutoff-valve-APU-fuel 	RCTL RSHF l
+Fuel-bypass-valve-cover 	RCTL RSHF RALT ;
+Fuel-bypass-valve 	RCTL RSHF ;
+Ejecting-system-power-cover 	RCTL RSHF RALT e
+Ejecting-system-power-1 	RSHF RALT e
+Ejecting-system-power-2 	RSHF RALT r
+Ejecting-system-power-3 	RSHF RALT t
+Weapons-control-system-cover 	LCTL LSHF LALT d
+Weapons-control-system 	LSHF LALT d
+Main-hydraulics-cover 	LCTL LSHF LALT h
+Main-hydraulics 	LSHF LALT h
+IFF-power-cover 	LCTL LSHF LALT l
+IFF-power 	LSHF LALT l
+Targeting-Navigation-system-power 	LSHF n
+Shkval-auto-scan-rate-dial-up 	LCTL LSHF m
+Shkval-auto-scan-rate-dial-down 	LCTL LALT m
+Shkval-windshield-wiper 	LSHF RCTL m
+Fire-extinguisher-left-engine 	LSHF f
+Fire-extinguisher-right-engine 	RSHF f
+Fire-extinguisher-APU 	LSHF LALT f
+Fire-extinguisher-oil-cooling-fan 	LSHF LCTL LALT f
+Fire-extinguishers-WORK-OFF-TEST-cover 	LSHF LCTL LALT z
+Fire-extinguishers-WORK-OFF-TEST 	LSHF LCTL z
+Fire-signaling 	RSHF RALT z
+Fire-extinguisher-First-(Auto)/Second(Manual)-selector-cover 	RSHF RCTL RALT z
+Fire-extinguisher-First-(Auto)/Second-(Manual)-selector 	RSHF RCTL z
+EEG-Electronic-Engine-Governor-left-engine-cover 	KBHOME RCTL RALT
+EEG-Electronic-Engine-Governor-left-engine 	KBHOME RCTL
+EEG-Electronic-Engine-Governor-right-engine-cover 	KBEND RCTL RALT
+EEG-Electronic-Engine-Governor-right-engine 	KBEND RCTL
+EEG-power-turbine-channel-1-test/channel-2-test-three-switch-contactor-cover	KBEND LSHF LCTL
+EEG-power-turbine-channel-1-test/channel-2-test-three-switch-contactor 	KBEND LCTL LALT
+EEG-gas-generator-test-Operate-switch-cover 	KBEND RSHF RCTL
+EEG-gas-generator-test-Operate-switch 	KBEND RSHF RALT
+Gyro/Mag/Manual-heading 	LSHF LALT g
+SAI-Standby-Attitude-Indicator-power-switch 	RSHF n
+SAI-Standby-Attitude-Indicator-self-test-button 	RSHF LSHF n
+Lighting-cockpit-panel-switch 	RCTL k
+Lighting-night-vision-cockpit-switch 	RSHF k
+Lighting-cockpit-interior-lamp-switch 	k
+Lighting-HSI-and-ADI-switch 	RSHF RALT k
+Lighting-auxiliary-panel-switch 	RCTL RALT k
+Lights-rotor-tip 	RALT j
+Light-anti-collision 	RSHF j
+Lights-formation-10%/30%/100%/Off 	RCTL j
+Signal-flares-power 	RCTL 0
+Signal-flares-red-flare 	LALT 1
+Signal-flares-green-flare 	LALT 2
+Signal-flares-white-flare 	LALT 3
+Signal-flares-yellow-flare 	LALT 4
+Magnetic-variation-knob-right 	RSHF RALT m
+Magnetic-variation-knob-left 	RSHF RCTL m
+//
+//	Ins Weapons Status and Control Panel PUI-800
+//	
+Master-arm-on/off 	LALT w
+External-stores-jettison 	LALT r
+Expedite-emergency-ATGM-launch 	RCTL w
+Weapon-system-control-switch-Manual/Auto	a
+Weapon-mode-switch 	s
+Cannon-round-selector-switch 	LCTL c
+Cannon-rate-of-fire-setting 	LSHF c
+Jettison-arm-mode-explosive/unexplosive	LSHF LALT w
+//
+//	Labels
+//	
+All-Labels 	LSHF F10
+Aircraft-Labels 	LSHF F2
+Missile-Labels 	LSHF F6
+Vehicle-&-Ship-Labels	LSHF F9
+//
+//	Radio Communications
+//	
+Communication-menu 	\
+Flight-Complete-mission-and-RTB 	LWIN e
+Flight-Complete-mission-and-rejoin	RWIN r
+Toggle-formation 	LWIN t
+Join-up-formation 	LWIN y
+Attack-my-target 	LWIN q
+Cover-me 	LWIN w
+Flight-Attack-ground-targets 	LWIN g
+Flight-Attack-air-defenses 	LWIN d
+//
+//	Systems
+//	
+Cockpit-door-open/close 	RCTL c
+Eject 	LCTL e LCTL e LCTL e
+SPU-9-Radio-communicator-selector	LCTL LALT /
+//
+//	View
+//	
+View-Left-slow 	KP4
+View-Right-slow 	KP6
+View-Up-slow 	KP8
+View-Down-slow 	KP2
+View-Up-Right-slow 	KP9
+View-Down-Right-slow 	KP3
+View-Down-Left-slow 	KP1
+View-Up-Left-slow 	KP7
+Center-View 	KP5
+Zoom-in-slow 	KP*
+Zoom-out slow 	KP/
+Zoom-normal 	KPENT
+Zoom-external-in 	RCTL KP*
+Zoom-external-out 	RCTL KP/
+Zoom-external-normal 	RCTL KPENT
+F11-camera-moving-forward 	LALT KP*
+F11-camera-moving-backward 	LALT KP/
+Objects-switching-direction-forward	LCTL KBPGDN
+Objects-switching-direction-reverse 	LCTL KBPGUP
+Object-exclude 	LALT KBDEL
+Objects-all-excluded-include 	LALT KBINS
+Cockpit-view 	F1
+Natural-head-movement-view 	LCTL F1
+HUD-only-view-switch 	LALT F1
+Aircraft-view 	F2
+View-own-aircraft 	LCTL F2
+Toggle-camera-position 	RALT F2
+Toggle-local-camera-control 	LALT F2
+Fly-By-view 	F3
+Fly-By-jump-view 	LCTL F3
+Look-back-view 	F4
+Chase-view 	LCTL F4
+Arcade-Chase-view 	LSHF F4
+Air-hostile-view 	F5
+Ground-hostile-view 	LCTL F5
+Released-weapon-view 	F6
+Weapon-to-target-view 	LCTL F6
+Ground-unit-view 	F7
+Target-view 	F8
+Player-targets/All-targets-filter 	RALT F8
+Ship-view 	F9
+Landing-signal-officer-view 	LALT F9
+Theater-map-view 	F10
+Jump-to-theater-map-view-over-current-point	LCTL F10
+Airport-free-camera 	F11
+Jump to-free-camera 	LCTL F11
+Static-object-view 	F12
+Civil-traffic-view 	LCTL F12
+Trains/cars-toggle 	LSHF F12
+//
+//	View Cockpit
+//	
+Cockpit-panel-view-in 	KP0
+Cockpit-panel-view-toggle 	RCTL KP0
+Save-Cockpit-Angles 	RALT KP0
+View-up 	RSHF KP8
+View-down 	RSHF KP2
+View-left 	RSHF KP4
+View-right 	RSHF KP6
+View-up-right 	RSHF KP9
+View-down-right 	RSHF KP3
+View-down-left 	RSHF KP1
+View-up-left 	RSHF KP7
+Fast-cockpit-keyboard 	LSHF ]
+Slow-cockpit-keyboard 	LCTL ]
+Normal-cockpit-keyboard-speed	LALT ]
+Fast-cockpit-mouse 	LSHF [
+Slow-cockpit-mouse 	LCTL [
+Normal-cockpit-mouse-speed 	LALT [
+Camera-view-up 	RCTL KP8
+Camera-view-down 	RCTL KP2
+Camera-view-left 	RCTL KP4
+Camera-view-right 	RCTL KP6
+Camera-view-up-left 	RCTL KP7
+Camera-view-down-left 	RCTL KP1
+Camera-view-up-right 	RCTL KP9
+Camera-view-down-right 	RCTL KP3
+Camera-view-up-slow 	RALT KP8
+Camera-view-down-slow 	RALT KP2
+Camera-view-left-slow 	RALT KP4
+Camera-view-right-slow 	RALT KP6
+Camera-view-up-left-slow 	RALT KP7
+Camera-view-down-left-slow 	RALT KP1
+Camera-view-up-right-slow 	RALT KP9
+Camera-view-down-right-slow 	RALT KP3
+Center-camera-view 	RSHF KP5
+Return-camera 	RCTL KP5
+Return-camera-base 	RALT KP5
+Snap-View-0 	LWIN KP0
+Snap-View-1 	LWIN KP1
+Snap-View-2 	LWIN KP2
+Snap-View-3 	LWIN KP3
+Snap-View-4 	LWIN KP4
+Snap-View-5 	LWIN KP5
+Snap-View-6 	LWIN KP6
+Snap-View-7 	LWIN KP7
+Snap-View-8 	LWIN KP8
+Snap-View-9 	LWIN KP9
+Head-shift-movement-on/off 	LWIN F1
+Zoom-out 	RSHF KP/
+Zoom-in 	RSHF KP*
+Cockpit-Camera-Move-Up 	RCTL RSHF KP8
+Cockpit-Camera-Move-Down 	RCTL RSHF KP2
+Cockpit-Camera-Move-Left 	RCTL RSHF KP4
+Cockpit-Camera-Move-Right 	RCTL RSHF KP6
+Cockpit-Camera-Move-Forward 	RCTL RSHF KP*
+Cockpit-Camera-Move-Back 	RCTL RSHF KP/
+Cockpit-Camera-Move-Center 	RCTL RSHF KP5
+//
+//	View Extended
+//	
+Toggle-tracking-fire-weapon 	RCTL KP+
+View-friends-mode 	RCTL RSHF RALT f
+View-enemies-mode 	RCTL RSHF RALT d
+View-all-mode 	RCTL RSHF RALT a
+//
+//	View Padlock
+//	
+Lock-view-(cycle-padlock) 	KP.
+Unlock-view-(stop-padlock) 	NUMLOCK
+All-missiles-padlock 	RSHF KP.
+Threat-missile-padlock 	RALT KP.
+Lock-terrain-view 	RCTL KP.
+
+

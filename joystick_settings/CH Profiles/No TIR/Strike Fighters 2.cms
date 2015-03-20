@@ -1,0 +1,48 @@
+// CMS Script File
+//
+//     Game Title: Strike Fighters 2
+//     Written By: Taylor Shin
+//           Date: Feb. 25, 2011
+//
+script
+
+/////////////////////////////////////////////////////////
+// Toggle Wheelbrakes (Push any toe brakes to toggle)
+/////////////////////////////////////////////////////////
+CMS.B11 = [JS3.A1 >= 175] or [JS3.A2 >= 175];
+
+/////////////////////////////////////////////////////////
+// Mini Joystick
+/////////////////////////////////////////////////////////
+CMS.B1 = [JS2.A1 > 200]; // Right
+CMS.B2 = [JS2.A1 < 50];  // Left
+CMS.B3 = [JS2.A2 > 200]; // Down
+CMS.B4 = [JS2.A2 < 50];  // Up
+
+/////////////////////////////////////////////////////////
+//  Auto Chaff
+/////////////////////////////////////////////////////////
+TOGGLE( D4 ) = (JS2.B11 and JS1.B4);
+
+SEQUENCE
+ WHILE( D4 ) ;
+    CMS.B50 = TRUE ;
+      DELAY( 1 ) ;
+    CMS.B50 = FALSE;
+      DELAY( 20 ) ;
+ENDSEQUENCE
+
+//////////////////////////////////////////////////////////
+//  Auto Flare
+//////////////////////////////////////////////////////////
+TOGGLE( D5 ) = (JS2.B11 and JS1.B4);
+
+SEQUENCE
+  WHILE( D5 ) ;
+    CMS.B51 = TRUE ;
+      DELAY( 1 ) ;
+    CMS.B51 = FALSE;
+      DELAY( 27 ) ;
+ENDSEQUENCE
+
+endScript

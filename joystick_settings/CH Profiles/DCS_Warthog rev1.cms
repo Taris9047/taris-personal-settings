@@ -1,0 +1,60 @@
+// CMS Script File
+//
+//     Game Title: DCS A-10C
+//     Written By: Taylor Shin
+//           Date: Mar. 11, 2011
+//
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//    This profile is free: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+////////////////////////////////////////////////////////////////////////////
+
+script
+////////////////////////////////////////////////////////////////////////////
+// Set Mode
+////////////////////////////////////////////////////////////////////////////
+%DEFINE M1 ( NOT JS1.B4 AND NOT JS2.B4 )
+%DEFINE M2 ( JS1.B4 AND NOT JS2.B4 )
+%DEFINE M3 ( NOT JS1.B4 AND JS2.B4 )
+%DEFINE M4 ( JS1.B4 AND JS2.B4 )
+
+IF (M2) THEN
+	CURRENTMODE = MODE2;
+ENDIF
+IF (M3) THEN
+	CURRENTMODE = MODE3;
+ENDIF
+IF (M4) THEN
+	CURRENTMODE = MODE4;
+ENDIF
+IF (M1) THEN
+	CURRENTMODE = MODE1;
+ENDIF
+
+/////////////////////////////////////////////////////////////////////
+//           Mini Joystick for Sensor Slewing
+/////////////////////////////////////////////////////////////////////
+%DEFINE CUR_UP ([JS2.A2 < 50])
+%DEFINE CUR_DOWN ([JS2.A2 > 200])
+%DEFINE CUR_LEFT ([JS2.A1 < 50])
+%DEFINE CUR_RIGHT ([JS2.A1 > 200])
+
+CMS.B1 = CUR_RIGHT;
+CMS.B2 = CUR_LEFT;
+CMS.B3 = CUR_DOWN;
+CMS.B4 = CUR_UP;
+
+endScript
