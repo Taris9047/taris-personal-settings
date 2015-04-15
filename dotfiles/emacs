@@ -17,7 +17,7 @@
 (if window-system
     (tool-bar-mode -1)
 )
-(add-to-list 'load-path "~/.emacs.d/")
+(add-to-list 'load-path "~/.emacs.d/lisp")
 
 (setq completion-ignored-extensions (remove ".pdf" completion-ignored-extensions))
 (setq completion-ignored-extensions (remove ".dvi" completion-ignored-extensions))
@@ -60,10 +60,8 @@
 (require 'ascope)
 
 ;; Setup Tabstop
-'(setq default-tab-width t)
-(setq default-tab-width 4)
+;; Spaces instead of tabs!!
 (setq-default indent-tabs-mode nil)
-'(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120 124 128)))
 
 ;; PHP mode
 ;;(load "php-mode")
@@ -79,19 +77,14 @@
 ;; Python mode
 (autoload 'python-mode "python-mode" "Python Mode." t)
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-(add-to-list 'interpreter-mode-alist '("/Library/Frameworks/Python.framework/Versions/Current/bin/python" . python-mode))
+(add-to-list 'interpreter-mode-alist '("python" . python-mode))
+(defun py-next-block ()
+  "go to the next block.  Cf. `forward-sexp' for lisp-mode"
+  (interactive)
+  (py-mark-block nil 't)
+  (back-to-indentation))
 (add-hook 'python-mode-hook
-  (lambda ()
-    (set (make-variable-buffer-local 'beginning-of-defun-function)
-      'py-beginning-of-def-or-class)
-    (setq outline-regexp "def\\|class ")))
-(defun my-pystuff ()
-  (setq tab-width 4
-		py-indent-offset 4
-		indent-tabs-mode t
-		py-smart-indentation nil))
-(add-hook 'python-mode-hook 'my-pystuff)
-
+  '(lambda () (eldoc-mode 1)) t)
 
 ;; Spellchecker
 (setq-default ispell-program-name "aspell")
