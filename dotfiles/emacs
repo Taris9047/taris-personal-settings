@@ -98,7 +98,7 @@
 ;;(setq bell-volume 0)
 ;;(setq sound-alist nil)
 (if (or (eq window-system 'w32) (eq window-system 'win32))
-	(set-message-beep 'silent)) ;; Windows Only
+  (set-message-beep 'silent)) ;; Windows Only
 
 ;; Lua Mode
 ;; Requires lua-mode.el
@@ -108,12 +108,12 @@
 (add-hook 'lua-mode-hook 'hs-minor-mode)
 
 ;; Color Theme mode
-(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
+(add-to-list 'load-path "~/.emacs.d/lisp/color-theme-6.6.0")
 (require 'color-theme)
 (eval-after-load "color-theme"
   '(progn
-	 (color-theme-initialize)
-	 (color-theme-word-perfect)))
+   (color-theme-initialize)
+   (color-theme-word-perfect)))
 
 ;; Copy and Paste with X Window environment
 ; Makes the region act quite like the text "highlight" in many apps.
@@ -129,9 +129,9 @@
 (require 'highlight-parentheses)
 
 ;; Matlab mode
-(autoload 'matlab-mode "~/.emacs.d/matlab.el" "Enter Matlab mode." t)
+(autoload 'matlab-mode "~/.emacs.d/lisp/matlab.el" "Enter Matlab mode." t)
 (setq auto-mode-alist (cons '("\\.m\\'" . matlab-mode) auto-mode-alist))
-(autoload 'matlab-shell "~/.emacs.d/matlab.el" "Interactive Matlab mode." t)
+(autoload 'matlab-shell "~/.emacs.d/lisp/matlab.el" "Interactive Matlab mode." t)
 
 ;; SVN mode
 (load "psvn.el" nil t t)
@@ -175,19 +175,19 @@
       c-basic-offset 4)
 
 ;; Haskell
-(add-to-list 'load-path "~/.emacs.d/haskell-mode/")
+(add-to-list 'load-path "~/.emacs.d/lisp/haskell-mode/")
 (require 'haskell-mode-autoloads)
-(add-to-list 'Info-default-directory-list "~/.emacs.d/haskell-mode/")
+(add-to-list 'Info-default-directory-list "~/.emacs.d/lisp/haskell-mode/")
 
 
 ;; Korean Font Setting
 ;;(set-fontset-font "fontset-default" '(#x1100 . #xffdc)  '("malgun gothic" . "unicode-bmp")) ;; 유니코드 한글영역
 ;;(set-fontset-font "fontset-default" 'kana '("ms mincho" . "unicode-bmp"))
 ;;(set-fontset-font "fontset-default" 'han '("ms mincho" . "unicode-bmp"))
-										;(set-fontset-font "fontset-default" 'cjk-misc '("ms mincho" . "unicode-bmp"))
+                    ;(set-fontset-font "fontset-default" 'cjk-misc '("ms mincho" . "unicode-bmp"))
 ;;(set-fontset-font "fontset-default" '(#xe0bc . #xf66e)  '("new gulim" . "unicode-bmp")) ;; 유니코드 사용자 영역
 
 ;; Setting up Font
 (if (or (eq window-system 'w32) (eq window-system 'win32) (eq system-type 'gnu/linux))
-	(set-face-attribute 'default nil :font "Bitstream Vera Sans Mono-10")
+  (set-face-attribute 'default nil :font "Bitstream Vera Sans Mono-10")
   (set-face-attribute 'default nil :font "Bitstream Vera Sans Mono-12"))
