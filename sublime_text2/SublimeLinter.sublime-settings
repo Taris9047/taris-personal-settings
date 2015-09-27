@@ -1,0 +1,14 @@
+{
+    "user": {
+        "linters": {
+            "pep8": {
+                "@disable": false,
+                "args": [],
+                "excludes": [],
+                "ignore": "",
+                "max-line-length": null,
+                "select": ""
+            }
+        }
+    }
+}
