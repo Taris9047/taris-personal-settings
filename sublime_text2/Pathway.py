@@ -9,6 +9,7 @@ if plf.system().lower() == 'windows':
     os.environ['PATH'] += delim + 'C:\\WinPython64\\tools\\Julia\\bin'
     os.environ['PATH'] += delim + 'C:\\MinGW\\bin' + \
         delim + 'C:\\MinGW\\msys\\1.0\\bin'
+    os.environ['PATH'] += delim + "C:\\Program Files\\Git\\bin"
 else:
     delim = ':'
     os.environ['PATH'] = \
