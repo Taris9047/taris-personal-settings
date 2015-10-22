@@ -7,7 +7,7 @@ import subprocess as sbp
 
 # converter options
 ffmpeg_options = \
-    '-c:v libx264 -preset slower -crf 20 -c:a libfdk_aac -b:a 128k'
+    '-c:v libx264 -preset slower -crf 20 -c:a aac -strict -2 -b:a 128k'
 
 # Source file list
 __supported_formats = \
@@ -34,6 +34,8 @@ __supported_formats = \
 source_list = {}
 for _sf in __supported_formats:
     source_list.update({_sf: []})
+    source_list.update({_sf.upper(): []})
+print(source_list)
 
 # getch implementation.
 try:
@@ -120,8 +122,9 @@ def main(argv=[]):
     sl_k_l = list(source_list.keys())
     for file in os.listdir(current_file_dir):
         for slkl in sl_k_l:
-            if file.endswith('.' + slkl) or file.endswith('.' + slkl.upper()):
+            if file.endswith('.' + slkl):
                 source_list[slkl].append(os.path.abspath(file))
+                print("Found a source file: {}".format(file))
                 is_empty_input = False
 
     if is_empty_input:
