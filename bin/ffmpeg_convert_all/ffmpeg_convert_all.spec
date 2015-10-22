@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['ffmpeg_convert_all.py'],
-             pathex=['D:\\Video\\Captures'],
+             pathex=['C:\\Users\\Taris\\Documents\\GitHub\\taris-personal-settings\\bin\\ffmpeg_convert_all'],
              binaries=None,
              datas=None,
              hiddenimports=[],

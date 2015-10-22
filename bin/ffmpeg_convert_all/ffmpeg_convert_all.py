@@ -5,14 +5,35 @@ import sys
 import platform as plf
 import subprocess as sbp
 
+# converter options
+ffmpeg_options = \
+    '-c:v libx264 -preset slower -crf 20 -c:a libfdk_aac -b:a 128k'
+
 # Source file list
-source_list = \
-    {
-        "avi": [],
-        "mkv": [],
-        "mpeg": [],
-        "wmv": [],
-    }
+__supported_formats = \
+    [
+        'avi',
+        'mkv',
+        'mpeg',
+        'mpg',
+        'm2ts',
+        '3gp',
+        'wmv',
+        'wma',
+        'mov',
+        '264',
+        'h264',
+        'bik',
+        'ts',
+        'vob',
+        'mjpeg',
+        'mv4',
+    ]
+
+# Preparing input file data dictionary.
+source_list = {}
+for _sf in __supported_formats:
+    source_list.update({_sf: []})
 
 # getch implementation.
 try:
@@ -67,11 +88,10 @@ def which(program):
     return None
 
 
-"""
-Behold!! the main function!!
-
-"""
-def main():
+####################################
+# Behold!! the main function!!     #
+####################################
+def main(argv=[]):
     # Setting up ffmpeg executable
     # Tailered with my system setting.
     # One needs to fix it according to one's system.
@@ -89,10 +109,6 @@ def main():
     if not ffmpeg_cmd:
         raise ValueError("ffmpeg command cannot be found!!")
 
-    # converter options
-    ffmpeg_options = \
-        '-c:v libx264 -preset slow -crf 20 -c:a libvo_aacenc -b:a 128k'
-
     # Setting up current dir
     current_file_dir = os.path.dirname(
         os.path.realpath(__file__))
@@ -104,7 +120,7 @@ def main():
     sl_k_l = list(source_list.keys())
     for file in os.listdir(current_file_dir):
         for slkl in sl_k_l:
-            if file.endswith('.' + slkl):
+            if file.endswith('.' + slkl) or file.endswith('.' + slkl.upper()):
                 source_list[slkl].append(os.path.abspath(file))
                 is_empty_input = False
 
