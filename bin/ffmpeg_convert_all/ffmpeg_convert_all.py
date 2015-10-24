@@ -132,8 +132,8 @@ def main(argv=[]):
     for file in os.listdir(current_file_dir):
         for slkl in sl_k_l:
             if file.endswith('.' + slkl):
-                source_list[slkl].append(os.path.abspath(file))
-                print(u"Found a source file: {}".format(file))
+                source_list[slkl].append(os.path.abspath(file).encode('utf-8'))
+                print(u"Found a source file: {}".format(file.encode('utf-8')))
                 is_empty_input = False
 
     if is_empty_input:
@@ -148,20 +148,20 @@ def main(argv=[]):
                 new_name = \
                     os.path.join(
                         current_file_dir,
-                        os.path.splitext(source_file)[0] + u".mp4")
+                        os.path.splitext(source_file)[0].decode('utf-8') + u".mp4")
 
                 print(
                     u"\n*** Converting ***\n>>> \
                         {} to\n>>>> {}\n"
-                    .format(source_file.encode('utf-8'), new_name.encode('utf-8')))
+                    .format(source_file, new_name.encode('utf-8')))
 
                 conv_cmd = \
                     ffmpeg_cmd + " " + \
-                    u'-i "{}" '.format(source_file) + \
+                    u'-i "{}" '.format(source_file.decode('utf-8')) + \
                     ffmpeg_options + " " + \
                     u'"{}"'.format(new_name)
 
-                if not os.path.exists(new_name):
+                if not os.path.exists(new_name.encode('utf-8')):
                     p = sbp.Popen(
                         conv_cmd,
                         stdout=sbp.PIPE,
