@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
 import os
@@ -7,7 +8,7 @@ import subprocess as sbp
 
 # converter options
 ffmpeg_options = \
-    '-c:v libx264 -preset slower -crf 20 -c:a aac -strict -2 -b:a 128k'
+    '-c:v libx264 -preset slower -crf 20 -c:a libfdk_aac -b:a 128k'
 
 # Source file list
 __supported_formats = \
@@ -29,13 +30,18 @@ __supported_formats = \
         'mjpeg',
         'mv4',
     ]
-
+    
 # Preparing input file data dictionary.
 source_list = {}
 for _sf in __supported_formats:
     source_list.update({_sf: []})
     source_list.update({_sf.upper(): []})
-print(source_list)
+
+# Printing out source file list
+for sl in source_list.keys():
+    if source_list.get(sl):
+        for item in source_list.get(sl):
+            print("Source file found at: {}".format(item))
 
 # getch implementation.
 try:
@@ -99,7 +105,10 @@ def main(argv=[]):
     # One needs to fix it according to one's system.
     ffmpeg_cmd = ''
     if plf.system().lower() == 'windows':
-        ffmpeg_cmd = which("ffmpeg.exe")
+        if os.path.exists(u'.\\ffmpeg.exe'):
+            ffmpeg_cmd = u".\\ffmpeg.exe"
+        else:
+            ffmpeg_cmd = which(u"ffmpeg.exe")
     else:
         # Unix systems usually hold executables at
         #
@@ -109,13 +118,13 @@ def main(argv=[]):
         ffmpeg_cmd = find_ffmpeg_posix()
 
     if not ffmpeg_cmd:
-        raise ValueError("ffmpeg command cannot be found!!")
+        raise ValueError(u"ffmpeg command cannot be found!!")
 
     # Setting up current dir
     current_file_dir = os.path.dirname(
         os.path.realpath(__file__))
 
-    print("Current directory: {}".format(current_file_dir))
+    print(u"Current directory: {}".format(current_file_dir.encode('utf-8')))
 
     # Grabbing file list for source_list extensions
     is_empty_input = True
@@ -124,33 +133,33 @@ def main(argv=[]):
         for slkl in sl_k_l:
             if file.endswith('.' + slkl):
                 source_list[slkl].append(os.path.abspath(file))
-                print("Found a source file: {}".format(file))
+                print(u"Found a source file: {}".format(file))
                 is_empty_input = False
 
     if is_empty_input:
-        print("No valid input video file given!!")
+        print(u"No valid input video file given!!")
         sys.exit(0)
 
     # Run the stuff
-    print("Using ffmpeg at... {}\n".format(ffmpeg_cmd))
+    print(u"Using ffmpeg at... {}\n".format(ffmpeg_cmd))
     for vk in sl_k_l:
         if source_list.get(vk):
             for source_file in source_list.get(vk):
                 new_name = \
                     os.path.join(
                         current_file_dir,
-                        os.path.splitext(source_file)[0] + ".mp4")
+                        os.path.splitext(source_file)[0] + u".mp4")
 
                 print(
-                    "\n*** Converting ***\n>>> \
+                    u"\n*** Converting ***\n>>> \
                         {} to\n>>>> {}\n"
-                    .format(source_file, new_name))
+                    .format(source_file.encode('utf-8'), new_name.encode('utf-8')))
 
                 conv_cmd = \
                     ffmpeg_cmd + " " + \
-                    '-i "{}" '.format(source_file) + \
+                    u'-i "{}" '.format(source_file) + \
                     ffmpeg_options + " " + \
-                    '"{}"'.format(new_name)
+                    u'"{}"'.format(new_name)
 
                 if not os.path.exists(new_name):
                     p = sbp.Popen(
@@ -164,19 +173,19 @@ def main(argv=[]):
                 if os.path.exists(new_name):
                     if plf.system().lower() == 'windows':
                         p = sbp.Popen(
-                            'del /F /S "{}"'.format(source_file),
+                            u'del /F /S "{}"'.format(source_file),
                             stdin=sbp.PIPE,
                             bufsize=1,
                             shell=True).communicate()[0]
                     else:
                         p = sbp.Popen(
-                            'rm -rfv "{}"'.format(source_file),
+                            u'rm -rfv "{}"'.format(source_file),
                             stdin=sbp.PIPE,
                             bufsize=1,
                             shell=True).communicate()[0]
 
-    print("Conversion Job Finished!!!!!")
-    print("Press Any (Not the 'Any' key but literally...) Key to Continue...")
+    print(u"Conversion Job Finished!!!!!")
+    print(u"Press Any (Not the 'Any' key but literally...) Key to Continue...")
     getch()
 
 
