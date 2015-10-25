@@ -14,6 +14,7 @@ ffmpeg_options = \
 __supported_formats = \
     [
         'avi',
+        'asf',
         'mkv',
         'mpeg',
         'mpg',
