@@ -8,7 +8,7 @@ import subprocess as sbp
 
 # converter options
 ffmpeg_options = \
-    '-c:v libx264 -preset slower -crf 20 -c:a libfdk_aac -b:a 128k'
+    '-c:v libx264 -preset slow -crf 20 -c:a libfdk_aac -b:a 128k'
 
 # Source file list
 __supported_formats = \
@@ -149,20 +149,20 @@ def main(argv=[]):
                 new_name = \
                     os.path.join(
                         current_file_dir,
-                        os.path.splitext(source_file)[0].decode('utf-8') + u".mp4")
+                        os.path.splitext(source_file)[0].decode('utf-8') + u".mp4").encode('utf-8')
 
                 print(
                     u"\n*** Converting ***\n>>> \
                         {} to\n>>>> {}\n"
-                    .format(source_file, new_name.encode('utf-8')))
+                    .format(source_file, new_name))
 
                 conv_cmd = \
                     ffmpeg_cmd + " " + \
                     u'-i "{}" '.format(source_file.decode('utf-8')) + \
                     ffmpeg_options + " " + \
-                    u'"{}"'.format(new_name)
+                    u'"{}"'.format(new_name.decode('utf-8'))
 
-                if not os.path.exists(new_name.encode('utf-8')):
+                if not os.path.exists(new_name.decode('utf-8')):
                     p = sbp.Popen(
                         conv_cmd,
                         stdout=sbp.PIPE,
@@ -174,13 +174,13 @@ def main(argv=[]):
                 if os.path.exists(new_name):
                     if plf.system().lower() == 'windows':
                         p = sbp.Popen(
-                            u'del /F /S "{}"'.format(source_file),
+                            u'del /F /S "{}"'.format(source_file.decode('utf-8')),
                             stdin=sbp.PIPE,
                             bufsize=1,
                             shell=True).communicate()[0]
                     else:
                         p = sbp.Popen(
-                            u'rm -rfv "{}"'.format(source_file),
+                            u'rm -rfv "{}"'.format(source_file.decode('utf-8')),
                             stdin=sbp.PIPE,
                             bufsize=1,
                             shell=True).communicate()[0]
