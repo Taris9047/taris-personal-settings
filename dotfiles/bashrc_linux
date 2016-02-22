@@ -101,6 +101,7 @@ fi
 # My settings
 alias ls='ls -p -F -h --color=tty --show-control-chars'
 alias ll='ls -la'
+alias l='ls -p -F -h --color=tty --show-control-chars'
 alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
