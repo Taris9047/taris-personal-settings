@@ -189,5 +189,5 @@
 
 ;; Setting up Font
 (if (or (eq window-system 'w32) (eq window-system 'win32) (eq system-type 'gnu/linux))
-  (set-face-attribute 'default nil :font "Bitstream Vera Sans Mono-10")
+  (set-face-attribute 'default nil :font "Bitstream Vera Sans Mono-11")
   (set-face-attribute 'default nil :font "Bitstream Vera Sans Mono-12"))
