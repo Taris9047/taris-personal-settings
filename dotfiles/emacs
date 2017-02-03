@@ -113,7 +113,7 @@
 (eval-after-load "color-theme"
   '(progn
    (color-theme-initialize)
-   (color-theme-word-perfect)))
+   (color-theme-dark-blue2)))
 
 ;; Copy and Paste with X Window environment
 ; Makes the region act quite like the text "highlight" in many apps.
@@ -191,3 +191,4 @@
 (if (or (eq window-system 'w32) (eq window-system 'win32) (eq system-type 'gnu/linux))
   (set-face-attribute 'default nil :font "Bitstream Vera Sans Mono-11")
   (set-face-attribute 'default nil :font "Bitstream Vera Sans Mono-12"))
+

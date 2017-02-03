@@ -8,7 +8,8 @@ if has("gui_running")
         set guifont=Fixedsys\ Excelsior\ 2.00\ 11
     elseif has("unix")
         "set guifont=Fixedsys\ Excelsior\ 3.01\ 12
-        set guifont=나눔고딕_코딩\ 12
+        "Set guifont=나눔고딕_코딩\ 12
+		set guifont=Bitstream\ Vera\ Sans\ Mono\ 11
     endif
 endif
 
