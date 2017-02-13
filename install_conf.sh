@@ -4,6 +4,31 @@ CURRENT_DIR=`pwd`
 echo "Target directory: ${USR_DIR}"
 echo "Source directory: ${CURRENT_DIR}"
 
+# OS Detection
+function lowercase()
+{
+    echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+}
+
+PLATFORM='none'
+function set_os_type ()
+{
+    UNAMESTR=`lowercase \`uname\``
+    if [[ "$UNAMESTR" == *"cygwin"* ]]; then
+        PLATFORM="cygwin"
+    elif [[ "$UNAMESTR" == *"linux"* ]]; then
+        PLATFORM="linux"
+    elif [[ "$UNAMESTR" == *"darwin"* ]]; then
+        PLATFORM="darwin"
+    fi
+
+    echo $PLATFORM
+}
+
+# Set OS Type
+set_os_type
+echo "Setting platform as: $PLATFORM"
+
 # Config Files
 CONF_LIST=("vimrc" "gvimrc" "emacs")
 DOT="."
@@ -26,8 +51,22 @@ do
     ln -sfv $CURRENT_DIR/dotfiles/$conf_dir $USR_DIR/$DOT$conf_dir
 done
 
+
 echo ""
 echo "**** Note ****"
-echo "Manual installation is recommended for .bashrc or .bash_profile depending on your OS."
+# Importing bash settings
+DOTFILESDIR="./dotfiles"
+LINUXBASHFILE="$DOTFILESDIR"/bashrc_linux
+DARWINBASHFILE="$DOTFILESDIR"/bash_profile_osx
+if [[ "$PLATFORM" == "linux" || "$PLATFORM" == "cygwin" ]]; then
+    cat "$LINUXBASHFILE" >> "$HOME/.bashrc"
+    echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
+elif [[ "$PLATFORM" == "darwin" ]]; then
+    cat "$DARWINBASHFILE" >> "$HOME/.bash_profile"
+    echo "Appending $HOME/.bash_profile with $DARWINBASHFILE"
+else
+    echo "Manual installation is recommended for .bashrc or .bash_profile depending on your OS."
+fi
+
 echo ""
 echo "Have a nice day!"

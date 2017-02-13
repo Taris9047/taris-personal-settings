@@ -11,11 +11,11 @@ alias df='df -h'
 alias ps='ps -W'
 
 # vlsilinux connection
-SERVER=$RANDOM
-let " SERVER %= 4 "
-let " SERVER = $SERVER + 1 "
-alias blade='ssh -Y k4shin@blade$SERVER.vlsi.uwaterloo.ca'
-alias vlsilinux='ssh -Y k4shin@vlsilinux$SERVER.uwaterloo.ca'
+#SERVER=$RANDOM
+#let " SERVER %= 4 "
+#let " SERVER = $SERVER + 1 "
+#alias blade='ssh -Y k4shin@blade$SERVER.vlsi.uwaterloo.ca'
+#alias vlsilinux='ssh -Y k4shin@vlsilinux$SERVER.uwaterloo.ca'
 
 # enabling color for mac
 CLICOLOR="YES";    export CLICOLOR
@@ -29,9 +29,9 @@ CLICOLOR="YES";    export CLICOLOR
 #export FFLAGS="-ff2c"
 
 # LaTeX settings
-export MANPATH="/usr/local/texlive/2012/texmf/doc/man"
-export INFOPATH="/usr/local/texlive/2012/texmf/doc/info"
-export PATH="/usr/local/texlive/2012/bin/universal-darwin:${PATH}"
+#export MANPATH="/usr/local/texlive/2012/texmf/doc/man"
+#export INFOPATH="/usr/local/texlive/2012/texmf/doc/info"
+#export PATH="/usr/local/texlive/2012/bin/universal-darwin:${PATH}"
 
 # Setting PATH for Emacs.app
 PATH="~/settings/bin:${PATH}"
