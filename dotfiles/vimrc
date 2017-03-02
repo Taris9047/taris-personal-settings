@@ -23,6 +23,8 @@ set autowrite
 set wildmode=list:longest,full
 set showmode
 set showcmd
+set number
+set cursorline
 
 "set enc=cp949
 "set fenc=cp949
@@ -71,7 +73,7 @@ au BufReadPost *
 \   exe "norm g`\"" |
 \ endif
 
-syntax on
+syntax enable
 
 map <F1> K
 map <C-1> :make<CR>
@@ -109,4 +111,22 @@ set uc=100
 " Turning off expandtab when editing Makfile
 au FileType make setlocal noexpandtab
 
+" visual autocomplete for command menu
+set wildmenu
+
+" For some faster macro
+set lazyredraw
+
+" Show matching parenthesis
+set showmatch
+
+" Folding
+set foldenable
+set foldlevelstart=10
+set foldnestmax=10
+set foldmethod=indent
+
+" Colorscheme
+set termguicolors
+colorscheme monrovia
 
