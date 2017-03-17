@@ -30,7 +30,7 @@ set_os_type
 echo "Setting platform as: $PLATFORM"
 
 # Config Files
-CONF_LIST=("vim" "vimrc" "gvimrc" "emacs" "gitignore" "gitconfig")
+CONF_LIST=("vim" "vimrc" "gvimrc" "emacs" "gitignore" "gitconfig" "gdbinit")
 DOT="."
 echo ""
 for conf_file in ${CONF_LIST[*]}
