@@ -21,9 +21,13 @@ echo "Let's work!!"
 
 TARGET_ENC_PHRASE=""
 if [ "$TARGET_FORMAT" == "mp3" ]; then
-	TARGET_ENC_PHRASE="-acodec libmp3lame -q:a 2"
+	TARGET_ENC_PHRASE="-acodec libmp3lame -b:a 192k -af dynaudnorm"
 elif [ "$TARGET_FORMAT" == "m4a" ]; then
-	TARGET_ENC_PHRASE="-c:a libfdk_aac -b:a 192k"
+	TARGET_ENC_PHRASE="-c:a libfdk_aac -b:a 192k -af dynaudnorm"
+elif [ "$TARGET_FORMAT" == "aac" ]; then
+    TARGET_ENC_PHRASE="-acodec aac -b:a 192k -af dynaudnorm"
+elif [ "$TARGET_FORMAT" == "ogg" ]; then
+    TARGET_ENC_PHRASE="-acodec libvorbis -q:a 2 -af dynaudnorm"
 fi
 
 for f in ./*.*[^$TARGET_FORMAT]; 
@@ -31,12 +35,6 @@ do
 	$FFMPEG -i "$f" $TARGET_ENC_PHRASE "${f%.*}.$TARGET_FORMAT"
 done
 
-MP3GAIN=$(command -v mp3gain.exe)
-
-if [ $TARGET_FORMAT == "mp3" ]; then
-	echo "Normalizing..."
-	$MP3GAIN /e /r /s r *.mp3
-fi
 
 
 
