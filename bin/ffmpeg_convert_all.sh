@@ -33,7 +33,7 @@ elif [ "$TARGET_FORMAT" == "aac" ]; then
 elif [ "$TARGET_FORMAT" == "ogg" ]; then
     TARGET_ENC_PHRASE="$MAIN_OPTS -acodec libvorbis -q:a 2 -af dynaudnorm"
 elif [ "$TARGET_FORMAT" == "norm" ]; then
-	TARGET_ENC_PHRASE="$MAIN_OPTS -af dynaudnorm"
+	TARGET_ENC_PHRASE="$MAIN_OPTS -af dynaudnorm -f null"
 fi
 
 if [ $TARGET_FORMAT == "norm" ]; then
@@ -46,15 +46,15 @@ for f in $TARGETS;
 do
     TARGET_OUTF="${f%.*}.$TARGET_FORMAT"
     if [ $TARGET_FORMAT == "norm" ]; then
-	    TARGET_OUTF="${f%.*}.norm.$TARGET_FORMAT"
+	    TARGET_OUTF=/dev/null
     fi
 
 	$FFMPEG -i "$f" $TARGET_ENC_PHRASE "$TARGET_OUTF"
 
-    if [ $TARGET_FORMAT == "norm" ]; then
-        rm -rf "$f";
-        mv "$TARGET_OUTF" "$f";
-    fi
+#    if [ $TARGET_FORMAT == "norm" ]; then
+#        rm -rf "$f";
+#        mv "$TARGET_OUTF" "$f";
+#    fi
 done
 
 
