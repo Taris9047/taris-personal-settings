@@ -21,7 +21,7 @@ echo "Setting up target format as $TARGET_FORMAT"
 
 echo "Let's work!!"
 
-MAIN_OPTS="-y"
+MAIN_OPTS="-y -map 0:a"
 
 TARGET_ENC_PHRASE=""
 if [ "$TARGET_FORMAT" == "mp3" ]; then
