@@ -26,7 +26,7 @@ elif [ "$TARGET_FORMAT" == "m4a" ]; then
 	TARGET_ENC_PHRASE="-c:a libfdk_aac -b:a 192k"
 fi
 
-for f in $PWD/*.[^$TARGET_FORMAT]; 
+for f in ./*.*[^$TARGET_FORMAT]; 
 do
 	$FFMPEG -i "$f" $TARGET_ENC_PHRASE "${f%.*}.$TARGET_FORMAT"
 done
