@@ -31,9 +31,11 @@ do
 	$FFMPEG -i "$f" $TARGET_ENC_PHRASE "${f%.*}.$TARGET_FORMAT"
 done
 
+MP3GAIN=$(command -v mp3gain.exe)
+
 if [ $TARGET_FORMAT == "mp3" ]; then
 	echo "Normalizing..."
-	"mp3gain /e /r /s r *.mp3"
+	$MP3GAIN /e /r /s r *.mp3
 fi
 
 
