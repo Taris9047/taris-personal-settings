@@ -1,5 +1,7 @@
 #!/bin/sh
 
+shopt -s extglob
+
 FFMPEG=$(command -v ffmpeg)
 
 if [ $FFMPEG == "" ]; then
@@ -37,7 +39,7 @@ fi
 if [ $TARGET_FORMAT == "norm" ]; then
     TARGETS=./*.*
 else
-    TARGETS=./*.*[^$TARGET_FORMAT]
+    TARGETS=./*.!($TARGET_FORMAT)
 fi
 
 for f in $TARGETS;
