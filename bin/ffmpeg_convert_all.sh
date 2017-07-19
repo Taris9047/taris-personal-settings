@@ -42,17 +42,16 @@ fi
 
 for f in $TARGETS;
 do
+    TARGET_OUTF="${f%.*}.$TARGET_FORMAT"
     if [ $TARGET_FORMAT == "norm" ]; then
-	    TARGET_OUTF=${f%.*}.norm.$TARGET_FORMAT"
-    else
-	    TARGET_OUTF="${f%.*}.$TARGET_FORMAT"
+	    TARGET_OUTF="${f%.*}.norm.$TARGET_FORMAT"
     fi
 
 	$FFMPEG -i "$f" $TARGET_ENC_PHRASE "$TARGET_OUTF"
 
     if [ $TARGET_FORMAT == "norm" ]; then
-        rm -rf "$f"
-        mv "$TARGET_OUTF" "$f"
+        rm -rf "$f";
+        mv "$TARGET_OUTF" "$f";
     fi
 done
 
