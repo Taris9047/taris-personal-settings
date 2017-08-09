@@ -1,4 +1,14 @@
 " .vimrc for Taylor Shin. Optimized for cygwin.
+
+" Detects OS
+if !exists("g:os")
+    if has("win64") || has("win32") || has("win16")
+        let g:os = "Windows"
+    else
+        let g:os = substitute(system('uname'), '\n', '', '')
+    endif
+endif
+
 set nocompatible
 "source $VIMRUNTIME/mswin.vim
 "behave mswin
@@ -41,7 +51,7 @@ if exists("$HOME")
     endif
         
     " Setting Path
-    if has("win32")
+    if g:os == "Windows"
         let s:dir_tmp = "C:\TxTemp"
         let s:dir_backup = "C:\TxTemp"
     else
@@ -127,6 +137,27 @@ set foldnestmax=10
 set foldmethod=indent
 
 " Colorscheme
-set termguicolors
-colorscheme monrovia
+if g:os == "Darwin"
+   	set term=builtin_ansi
+	syntax on
+else
+	set termguicolors
+	colorscheme monrovia
+endif
+
+" Setting up font
+if has("gui_running")
+    if g:os == "Darwin"
+        colorscheme monrovia
+        set guifont=Fira\ Mono:h12
+    elseif g:os == "Linux"
+        set guifont=Fira\ Mono\ 10
+    elseif g:os == "Windows"
+        set guifont=Fira_Mono:h12:cANSI
+    endif
+endif
+
+" Setting up line space
+set linespace=1
+
 
