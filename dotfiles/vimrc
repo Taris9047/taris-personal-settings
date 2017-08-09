@@ -149,9 +149,9 @@ endif
 if has("gui_running")
     if g:os == "Darwin"
         colorscheme monrovia
-        set guifont=Fira\ Mono:h12
+        set guifont=Fira\ Mono:h14
     elseif g:os == "Linux"
-        set guifont=Fira\ Mono\ 10
+        set guifont=Fira\ Mono\ 12
     elseif g:os == "Windows"
         set guifont=Fira_Mono:h12:cANSI
     endif
