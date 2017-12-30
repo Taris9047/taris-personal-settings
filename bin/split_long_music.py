@@ -1,16 +1,24 @@
 #!/usr/bin/env python
+
+# https://gist.github.com/Ashwinning/a9677b5b3afa426667d979b36c019b04
+
+import os
 import sys
 import subprocess
 
 inputfile = sys.argv[1]
 codec = '-acodec'
 
+# Check up extension.
+inputfile_name, output_extension = os.path.splitext(inputfile)
+print('File extension detected: %s'%output_extension)
+
 #ffmpeg did not like having '?' in the file name, add any other problematic symbol here.
-escape_list = ['?']
+escape_list = ['?', '#', ':', '*', '/', '\'']
 
 def RemoveSymbols(text):
     for symbol in escape_list:
-        text = text.replace(symbol, '')
+        text = text.replace(symbol, '_')
     return text
 
 tracklist = []
@@ -24,16 +32,20 @@ class ExtractTracks:
     def __init__(self):
         with open(sys.argv[2], "r") as values:
             for value in values:
+                start_time_found = False
                 name = ""
                 timestamp = ""
                 #split all by spaces.
-                keyVal = value.split(' ')
+                keyVal = value.replace('(', ' ').replace(')', ' ').split(' ')
                 #find timestamp
                 for word in keyVal:
                     if ':' in word:
-                        timestamp = word
+                        if start_time_found == False:
+                            timestamp = word
+                            start_time_found = True
                     else:
                         name += word + ' '
+                print timestamp, name
                 tracklist.append(Track(timestamp, name))
 
 #Initialize
@@ -41,7 +53,7 @@ ExtractTracks()
 
 
 def GenerateSplitCommand(start, end, filename):
-    return ['ffmpeg', '-i', inputfile, '-ss', start, '-to', end, '-c', 'copy', filename+'.mp3', '-v', 'error']
+    return ['ffmpeg', '-i', inputfile, '-ss', start, '-to', end, '-c', 'copy', filename+output_extension, '-v', 'error']
 
 def GetVideoEnd():
     ffprobeCommand = [
