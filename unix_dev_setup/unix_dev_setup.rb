@@ -36,6 +36,7 @@ ubuntu_pkgs = [
   "libbz2-dev",
   "libicu-dev",
   "autotools-dev",
+  "ruby-dev",
 ]
 
 # Other dev tools
