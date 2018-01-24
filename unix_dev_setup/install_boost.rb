@@ -10,9 +10,9 @@ class InstBoost
 
   @@source_url = "https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.bz2"
 
-  @@Prefix
-  @@Src_dir
-  @@Build_dir
+  @@Prefix = nil
+  @@Src_dir = nil
+  @@Build_dir = nil
 
   def initialize(prefix, src_dir, build_dir)
     @@Prefix = prefix
@@ -28,7 +28,7 @@ class InstBoost
     src_tarball_fname, src_tarball_bname = fp.name
     major, minor, patch = fp.version
 
-    src_extracted_folder = File.join(@@Build_dir+src_tarball_bname)
+    src_extracted_folder = File.join(@@Build_dir,src_tarball_bname)
     if File.exists?(src_extracted_folder)
       puts "Previous Boost installation exists"
     else
