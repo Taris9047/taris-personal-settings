@@ -56,6 +56,11 @@ ubuntu_some_more_tools = [
   "curl",
 ]
 
+# Ruby gems
+ubuntu_ruby_gems = [
+  "rsense",
+]
+
 # Working directory
 work_dir = "./build"
 source_dir = "./src"
@@ -74,6 +79,11 @@ system ( 'sudo apt-get -y update && sudo apt-get -y upgrade' )
 cmd_ary = ["sudo apt-get -y install"] + ubuntu_pkgs + ubuntu_some_more_tools
 cmd = cmd_ary.join(" ")
 ret = system( cmd )
+
+# Installing some gems
+puts "Installing some gems"
+cmd = ["sudo", "gem", "install"]+ubuntu_ruby_gems
+system( cmd.join(" ") )
 
 # Check work working directory
 if Dir.exist?(work_dir) == false
