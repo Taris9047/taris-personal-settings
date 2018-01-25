@@ -125,7 +125,8 @@ if op_mode.include?'python'
   end
 
   puts "Removing 'python' to preserve system native python..."
-  system( Array.new("sudo", "rm -rfv", File.join(File.realpath(def_prefix), "bin/python", "bin/ipython").join(" ") ))
+  system(
+    Array.new("sudo", "rm -rfv", File.join(File.realpath(def_prefix), "bin/python"),File.join(File.realpath(def_prefix), "bin/ipython").join(" ")) )
 end
 
 if op_mode == 'boost'
@@ -150,5 +151,6 @@ if op_mode == 'all'
   inst_boost.install
 
   puts "Removing 'python' to preserve system native python..."
-  system( Array.new("sudo", "rm -rfv", File.join(File.realpath(def_prefix), "bin/python", "bin/ipython").join(" ") ))
+  system(
+    Array.new("sudo", "rm -rfv", File.join(File.realpath(def_prefix), "bin/python"),File.join(File.realpath(def_prefix), "bin/ipython").join(" ")) )
 end
