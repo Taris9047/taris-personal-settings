@@ -1,19 +1,22 @@
 #!/usr/bin/env ruby
 
 require 'etc'
+require './download.rb'
+require './fname_parser.rb'
 
 class InstGCC
   @@gcc_source_url = "http://mirrors.concertpass.com/gcc/releases/gcc-7.2.0/gcc-7.2.0.tar.xz"
 
-  @@gcc_conf_options = "--enable-languages=c,c++,fortran,objc,obj-c++ \
-  --prefix=/usr/local \
-  --enable-shared \
-  --enable-linker-build-id \
-  --enable-threads=posix \
-  --enable-plugin \
-  --with-system-zlib \
-  --disable-multilib \
-  --build=x86_64-linux-gnu"
+  @@gcc_conf_options = [
+    "--enable-languages=c,c++,fortran,objc,obj-c++",
+    "--enable-shared" ,
+    "--enable-linker-build-id" ,
+    "--enable-threads=posix" ,
+    "--enable-plugin" ,
+    "--with-system-zlib" ,
+    "--disable-multilib" ,
+    "--build=x86_64-linux-gnu",
+  ]
 
   @@Processors = nil
 
@@ -27,24 +30,18 @@ class InstGCC
     end
   end
 
-  def install_gcc (prefix, os_type='Ubuntu', build_dir='./build', source_dir='./src')
+  def install_gcc (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src')
     puts ""
     puts "Working on GCC!!"
     puts ""
 
-    fbasename = File.basename @@gcc_source_url
-    source_file = source_dir+"/"+fbasename
-    sf_basename = File.basename(fbasename, '.tar.xz') # Gotta impelement better method to neglect the extensions later
+    dl = Download.new(@@gcc_source_url, source_dir)
+    source_file = dl.GetPath()
+    fp = FNParser.new(source_file)
+    src_tarball_fname, src_tarball_bname = fp.name
 
-    if File.exists?(source_file) == false
-      puts "Downloading source..."
-      system( "wget "+@@gcc_source_url+" -P "+source_dir+"/" )
-    else
-      puts fbasename+" found in "+source_file+" !!"
-    end
-
-    extracted_src_dir = build_dir+"/"+sf_basename
-    bld_dir = build_dir+"/"+sf_basename+"-build"
+    extracted_src_dir = File.join(build_dir, src_tarball_bname)
+    bld_dir = extracted_src_dir+"-build"
 
     if Dir.exists?(extracted_src_dir) == true
       puts "Extracted folder has been found!!"
@@ -54,7 +51,7 @@ class InstGCC
     end
 
     # Downloading prerequisites
-    system( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites")
+    system( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
 
     # Let's build!!
     if Dir.exists?(bld_dir) == false
@@ -65,8 +62,9 @@ class InstGCC
     end
     system( "mkdir "+bld_dir )
 
+    opts = Array.new(["--prefix="+prefix]+@@gcc_conf_options)
     cmd = "cd "+File.realpath(bld_dir)+" && "+
-    File.realpath(extracted_src_dir)+"/configure "+@@gcc_conf_options+
+    File.realpath(extracted_src_dir)+"/configure "+opts.join(" ")+
     "&& make -j"+@@Processors.to_s+" bootstrap "+
     "&& make -j"+@@Processors.to_s+" "+
     "&& sudo make install"
@@ -75,4 +73,77 @@ class InstGCC
 
   end
 
-end
+end # class InstGCC
+
+
+class InstGCCCuda
+  @@gcc_source_url = "https://ftp.gnu.org/gnu/gcc/gcc-5.4.0/gcc-5.4.0.tar.bz2"
+
+  @@gcc_conf_options = [
+    "--program-suffix=5",
+    "--enable-languages=c,c++,fortran,objc,obj-c++",
+    "--enable-shared" ,
+    "--enable-linker-build-id" ,
+    "--enable-threads=posix" ,
+    "--enable-plugin" ,
+    "--with-system-zlib" ,
+    "--disable-multilib" ,
+    "--build=x86_64-linux-gnu",
+  ]
+
+  @@Processors = nil
+
+  def initialize
+    # Setting up processors
+    procs = Etc.nprocessors
+    if procs > 2
+      @@Processors = procs-1
+    else
+      @@Processors = procs
+    end
+  end
+
+  def install_gcc (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src')
+    puts ""
+    puts "Working on GCC for Cuda!!"
+    puts ""
+
+    dl = Download.new(@@gcc_source_url, source_dir)
+    source_file = dl.GetPath()
+    fp = FNParser.new(source_file)
+    src_tarball_fname, src_tarball_bname = fp.name
+
+    extracted_src_dir = File.join(build_dir, src_tarball_bname)
+    bld_dir = extracted_src_dir+"-build"
+
+    if Dir.exists?(extracted_src_dir) == true
+      puts "Extracted folder has been found!!"
+    else
+      puts "Extracting..."
+      system( "tar xf "+source_file+" -C "+build_dir)
+    end
+
+    # Downloading prerequisites
+    system( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
+
+    # Let's build!!
+    if Dir.exists?(bld_dir) == false
+      puts "Build dir missing.. making one.."
+    else
+      puts "Build dir exists, cleaning up before work!!"
+      system( "rm -rf "+bld_dir )
+    end
+    system( "mkdir "+bld_dir )
+
+    opts = Array.new(["--prefix="+prefix]+@@gcc_conf_options)
+    cmd = "cd "+File.realpath(bld_dir)+" && "+
+    File.realpath(extracted_src_dir)+"/configure "+opts.join(" ")+
+    "&& make -j"+@@Processors.to_s+" bootstrap "+
+    "&& make -j"+@@Processors.to_s+" "+
+    "&& sudo make install"
+
+    system( cmd )
+
+  end
+
+end # class InstGCCCuda

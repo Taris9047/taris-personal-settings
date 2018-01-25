@@ -78,7 +78,7 @@ puts "Installing Prerequisites!!"
 system ( 'sudo apt-get -y update && sudo apt-get -y upgrade' )
 cmd_ary = ["sudo apt-get -y install"] + ubuntu_pkgs + ubuntu_some_more_tools
 cmd = cmd_ary.join(" ")
-ret = system( cmd )
+system( cmd )
 
 # Installing some gems
 puts "Installing some gems"
@@ -96,8 +96,12 @@ if Dir.exist?(source_dir) == false
 end
 
 # Let's install gcc first
-if op_mode.include?'gcc'
+if op_mode == 'gcc'
   inst_gcc = InstGCC.new
+  inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
+end
+if op_mode == 'cudacc'
+  inst_gcc = InstGCCCuda.new
   inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 end
 
@@ -120,13 +124,16 @@ if op_mode.include?'python'
   system( Array.new("sudo", "rm -rfv", File.join(File.realpath(def_prefix), "bin/python", "bin/ipython").join(" ") ))
 end
 
-if op_mode.include?'boost'
+if op_mode == 'boost'
   inst_boost = InstBoost.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
   inst_boost.install
 end
 
-if op_mode.include?'all'
+if op_mode == 'all'
   inst_gcc = InstGCC.new
+  inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
+
+  inst_gcc = InstGCCCuda.new
   inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 
   inst_python2 = InstPython2.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
