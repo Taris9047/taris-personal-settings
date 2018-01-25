@@ -5,10 +5,10 @@ require './download.rb'
 require './fname_parser.rb'
 
 class InstGCC
-  @@gcc_source_url = "http://mirrors.concertpass.com/gcc/releases/gcc-7.2.0/gcc-7.2.0.tar.xz"
+  @@gcc_source_url = "http://mirrors.concertpass.com/gcc/releases/gcc-7.3.0/gcc-7.3.0.tar.xz"
 
   @@gcc_conf_options = [
-    "--enable-languages=c,c++,fortran,objc,obj-c++",
+    "--enable-languages=c,c++,fortran,objc,obj-c++,go",
     "--enable-shared" ,
     "--enable-linker-build-id" ,
     "--enable-threads=posix" ,
@@ -19,6 +19,13 @@ class InstGCC
   ]
 
   @@Processors = nil
+
+  @@CompilerSettings = [
+    "CC=\"gcc\"",
+    "CXX=\"g++\"",
+    "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+    "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+  ]
 
   def initialize
     # Setting up processors
@@ -63,13 +70,19 @@ class InstGCC
     system( "mkdir "+bld_dir )
 
     opts = Array.new(["--prefix="+prefix]+@@gcc_conf_options)
-    cmd = "cd "+File.realpath(bld_dir)+" && "+
-    File.realpath(extracted_src_dir)+"/configure "+opts.join(" ")+
-    "&& make -j"+@@Processors.to_s+" bootstrap "+
-    "&& make -j"+@@Processors.to_s+" "+
-    "&& sudo make install"
+    cmd = [
+      "cd",
+      File.realpath(bld_dir),
+      "&&",
+      @@CompilerSettings.join(" "),
+      File.realpath(extracted_src_dir)+"/configure",
+      opts.join(" "),
+      "&& make -j",@@Processors.to_s,"bootstrap",
+      "&& make -j",@@Processors.to_s,
+      "&& sudo make install"
+    ]
 
-    system( cmd )
+    system( cmd.join(" ") )
 
   end
 
@@ -81,7 +94,7 @@ class InstGCCCuda
 
   @@gcc_conf_options = [
     "--program-suffix=5",
-    "--enable-languages=c,c++,fortran,objc,obj-c++",
+    "--enable-languages=c,c++,fortran,objc,obj-c++,go",
     "--enable-shared" ,
     "--enable-linker-build-id" ,
     "--enable-threads=posix" ,
@@ -92,6 +105,13 @@ class InstGCCCuda
   ]
 
   @@Processors = nil
+
+  @@CompilerSettings = [
+    "CC=\"gcc -std=gnu89\"",
+    "CXX=\"g++\"",
+    "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+    "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+  ]
 
   def initialize
     # Setting up processors
@@ -133,16 +153,22 @@ class InstGCCCuda
       puts "Build dir exists, cleaning up before work!!"
       system( "rm -rf "+bld_dir )
     end
-    system( "mkdir "+bld_dir )
+    system( "mkdir -f "+bld_dir )
 
     opts = Array.new(["--prefix="+prefix]+@@gcc_conf_options)
-    cmd = "cd "+File.realpath(bld_dir)+" && "+
-    File.realpath(extracted_src_dir)+"/configure "+opts.join(" ")+
-    "&& make -j"+@@Processors.to_s+" bootstrap "+
-    "&& make -j"+@@Processors.to_s+" "+
-    "&& sudo make install"
+    cmd = [
+      "cd",
+      File.realpath(bld_dir),
+      "&&",
+      @@CompilerSettings.join(" "),
+      File.realpath(extracted_src_dir)+"/configure",
+      opts.join(" "),
+      "&& make -j",@@Processors.to_s,"bootstrap",
+      "&& make -j",@@Processors.to_s,
+      "&& sudo make install"
+    ]
 
-    system( cmd )
+    system( cmd.join(" ") )
 
   end
 

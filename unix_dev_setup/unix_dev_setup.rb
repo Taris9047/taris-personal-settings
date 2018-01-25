@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+# Note that installing old gcc (gcccuda) is disabled due to libc 2.26 issue.
+# In fact, we need to apply patch to adopt old gcc source codes to
+# follow up the newest changes in libc 2.26
+
 require "./install_gcc.rb"
 require "./install_python.rb"
 require "./install_boost.rb"
@@ -101,8 +105,8 @@ if op_mode == 'gcc'
   inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 end
 if op_mode == 'cudacc'
-  inst_gcc = InstGCCCuda.new
-  inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
+  # inst_gcc = InstGCCCuda.new
+  # inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 end
 
 # Then Python stuffs
@@ -133,8 +137,8 @@ if op_mode == 'all'
   inst_gcc = InstGCC.new
   inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 
-  inst_gcc = InstGCCCuda.new
-  inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
+  # inst_gcc = InstGCCCuda.new
+  # inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 
   inst_python2 = InstPython2.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
   inst_python2.install

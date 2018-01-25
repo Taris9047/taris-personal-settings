@@ -35,6 +35,13 @@ class InstPython2
 
   @@Processors = nil
 
+  @@CompilerSettings = [
+    "CC=\"gcc\"",
+    "CXX=\"g++\"",
+    "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+    "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+  ]
+
   def initialize(prefix, build_dir, src_dir)
     @@Prefix = prefix
     @@Build_dir = build_dir
@@ -81,6 +88,7 @@ class InstPython2
     # Ok let's roll!!
     cmds = [
       "cd", src_build_folder, "&&",
+      @@CompilerSettings.join(" "),
       src_extract_folder+"/configure",
       conf_opts.join(" "), "&&",
       "make -j", @@Processors.to_s, "&&",
@@ -148,6 +156,13 @@ class InstPython3
 
   @@Processors = nil
 
+  @@CompilerSettings = [
+    "CC=\"gcc\"",
+    "CXX=\"g++\"",
+    "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+    "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+  ]
+
   def initialize(prefix, build_dir, src_dir)
     @@Prefix = prefix
     @@Build_dir = build_dir
@@ -194,6 +209,7 @@ class InstPython3
     # Ok let's roll!!
     cmds = [
       "cd", src_build_folder, "&&",
+      @@CompilerSettings.join(" "),
       src_extract_folder+"/configure",
       conf_opts.join(" "), "&&",
       "make -j", @@Processors.to_s, "&&",
