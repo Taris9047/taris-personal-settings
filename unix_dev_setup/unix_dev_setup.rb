@@ -7,6 +7,8 @@
 require "./install_gcc.rb"
 require "./install_python.rb"
 require "./install_boost.rb"
+require "./install_lua.rb"
+require "./install_ruby.rb"
 
 # Default parameters
 def_prefix = "/usr/local"
@@ -100,17 +102,17 @@ if Dir.exist?(source_dir) == false
 end
 
 # Let's install gcc first
-if op_mode == 'gcc'
+if op_mode.downcase == 'gcc'
   inst_gcc = InstGCC.new
   inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 end
-if op_mode == 'cudacc'
+if op_mode.downcase == 'cudacc'
   # inst_gcc = InstGCCCuda.new
   # inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 end
 
 # Then Python stuffs
-if op_mode.include?'python'
+if op_mode.downcase.include?'python'
   if op_mode.include?'2'
     inst_python2 = InstPython2.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
     inst_python2.install
@@ -129,17 +131,24 @@ if op_mode.include?'python'
     Array.new("sudo", "rm -rfv", File.join(File.realpath(def_prefix), "bin/python"),File.join(File.realpath(def_prefix), "bin/ipython")).join(" ") )
 end
 
-if op_mode == 'boost'
+if op_mode.downcase == 'boost'
   inst_boost = InstBoost.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
   inst_boost.install
 end
 
-if op_mode == 'all'
+if op_mode.downcase == 'lua'
+  inst_lua = InstLua.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+  inst_lua.install
+end
+
+if op_mode.downcase == 'ruby'
+  inst_lua = InstRuby.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+  inst_lua.install
+end
+
+if op_mode.downcase == 'all'
   inst_gcc = InstGCC.new
   inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
-
-  # inst_gcc = InstGCCCuda.new
-  # inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 
   inst_python2 = InstPython2.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
   inst_python2.install
