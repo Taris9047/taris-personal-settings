@@ -1,0 +1,100 @@
+#!/usr/bin/env ruby
+
+# this will handle Ruby
+
+require './download.rb'
+require './fname_parser.rb'
+require 'etc'
+
+class InstRuby
+  @@source_url = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.0.tar.gz"
+
+  @@Prefix = nil
+  @@Build_dir = nil
+  @@Src_dir = nil
+
+  # Python2 modules to install
+  @@ruby_gems = [
+    "rsense", "rails", "bundler"
+  ]
+
+  # Python2 build options
+  @@ruby_conf_opts = [
+    "--enable-shared"
+  ]
+
+  @@Processors = nil
+
+  @@CompilerSettings = [
+    "CC=\"gcc\"",
+    "CXX=\"g++\"",
+    "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+    "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+  ]
+
+  def initialize(prefix, build_dir, src_dir)
+    @@Prefix = prefix
+    @@Build_dir = build_dir
+    @@Src_dir = src_dir
+
+    # Setting up processors
+    procs = Etc.nprocessors
+    if procs > 2
+      @@Processors = procs-1
+    else
+      @@Processors = procs
+    end
+  end
+
+  def install
+    dl = Download.new(@@source_url, @@Src_dir)
+    # src_tarball_path = dl.GetPath
+
+    fp = FNParser.new(@@source_url)
+    src_tarball_fname, src_tarball_bname = fp.name
+    major, minor, patch = fp.version
+
+    # puts src_tarball_fname, src_tarball_bname, major, minor, patch
+    src_extract_folder = File.join(File.realpath(@@Build_dir), src_tarball_bname)
+    src_build_folder = File.join(File.realpath(@@Build_dir), src_tarball_bname+'-build')
+
+    if Dir.exists?(src_extract_folder)
+      puts "Source file folder exists in "+src_extract_folder
+    else
+      puts "Extracting"
+      system( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
+    end
+
+    if Dir.exists?(src_build_folder)
+      puts "Build folder found!! Removing it for 'pure' experience!!"
+      system( "rm -rfv "+src_build_folder )
+    else
+      puts "Ok, let's make a build folder"
+    end
+    system( "mkdir "+src_build_folder )
+
+    conf_opts = ["--prefix="+@@Prefix]+@@ruby_conf_opts
+
+    # Ok let's roll!!
+    cmds = [
+      "cd", src_build_folder, "&&",
+      @@CompilerSettings.join(" "),
+      src_extract_folder+"/configure",
+      conf_opts.join(" "), "&&",
+      "make -j", @@Processors.to_s, "&&",
+      "sudo make install"
+    ]
+
+    system( cmds.join(" ") )
+
+    inst_module_cmds = [
+      "sudo -H",
+      File.join(@@Prefix,"/bin/gem"),
+      "install",
+      @@ruby_gems.join(" ")
+    ]
+
+    system( inst_module_cmds.join(" ") )
+
+  end
+end # class InstRuby
