@@ -126,9 +126,14 @@ if op_mode.downcase.include?'python'
     inst_python3.install
   end
 
-  puts "Removing 'python' to preserve system native python..."
-  system(
-    Array.new("sudo", "rm -rfv", File.join(File.realpath(def_prefix), "bin/python"),File.join(File.realpath(def_prefix), "bin/ipython")).join(" ") )
+    puts "Removing 'python' to preserve system native python..."
+  del_python_cmd = [
+    "sudo",
+    "rm -rfv",
+    File.join(File.realpath(def_prefix), "bin/python"),
+    File.join(File.realpath(def_prefix), "bin/ipython")
+  ]
+  system( del_python_cmd.join(" ") )
 end
 
 if op_mode.downcase == 'boost'
@@ -160,6 +165,11 @@ if op_mode.downcase == 'all'
   inst_boost.install
 
   puts "Removing 'python' to preserve system native python..."
-  system(
-    Array.new("sudo", "rm -rfv", File.join(File.realpath(def_prefix), "bin/python"),File.join(File.realpath(def_prefix), "bin/ipython")).join(" ") )
+  del_python_cmd = [
+    "sudo",
+    "rm -rfv",
+    File.join(File.realpath(def_prefix), "bin/python"),
+    File.join(File.realpath(def_prefix), "bin/ipython")
+  ]
+  system( del_python_cmd.join(" ") )
 end

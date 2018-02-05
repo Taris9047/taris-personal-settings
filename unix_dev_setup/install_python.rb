@@ -104,7 +104,7 @@ class InstPython2
     end
 
     inst_pip_cmds = [
-      "sudo",
+      "sudo -H",
       File.join(@@Prefix, "bin/python"+major.to_s+"."+minor.to_s),
       File.realpath(File.join(@@Src_dir, 'get-pip.py')),
       "&&",
@@ -151,6 +151,7 @@ class InstPython3
     "--enable-unicode=ucs4",
     "--with-threads",
     "--with-valgrind",
+    "--with-ensurepip=yes",
     "--enable-optimizations",
   ]
 
@@ -225,7 +226,7 @@ class InstPython3
     end
 
     inst_pip_cmds = [
-      "sudo",
+      "sudo -H",
       File.join(@@Prefix, "bin/python"+major.to_s+"."+minor.to_s),
       File.realpath(File.join(@@Src_dir, 'get-pip.py')),
       "&&",
