@@ -155,8 +155,8 @@ if op_mode.downcase == 'all'
   inst_gcc = InstGCC.new
   inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 
-  inst_python2 = InstPython2.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
-  inst_python2.install
+  # inst_python2 = InstPython2.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+  # inst_python2.install
 
   inst_python3 = InstPython3.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
   inst_python3.install
