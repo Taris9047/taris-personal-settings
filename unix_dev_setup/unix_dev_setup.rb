@@ -5,6 +5,7 @@
 # follow up the newest changes in libc 2.26
 
 require "./install_gcc.rb"
+require "./install_gcc8.rb"
 require "./install_python.rb"
 require "./install_boost.rb"
 require "./install_lua.rb"
@@ -104,6 +105,10 @@ end
 # Let's install gcc first
 if op_mode.downcase == 'gcc'
   inst_gcc = InstGCC.new
+  inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
+end
+if op_mode.downcase == 'gcc8'
+  inst_gcc = InstGCC8.new
   inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 end
 if op_mode.downcase == 'cudacc'
