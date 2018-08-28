@@ -9,7 +9,7 @@ require 'etc'
 $get_pip_url = "https://bootstrap.pypa.io/get-pip.py"
 
 class InstPython2
-  @@source_url = "https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tar.xz"
+  @@source_url = "https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz"
 
   @@Prefix = nil
   @@Build_dir = nil
@@ -129,7 +129,7 @@ end # class InstPython2
 
 
 class InstPython3
-  @@source_url = "https://www.python.org/ftp/python/3.6.4/Python-3.6.4.tar.xz"
+  @@source_url = "https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz"
 
   @@Prefix = nil
   @@Build_dir = nil

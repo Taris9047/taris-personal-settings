@@ -5,7 +5,7 @@ require './download.rb'
 require './fname_parser.rb'
 
 class InstGCC
-  @@gcc_source_url = "http://mirrors.concertpass.com/gcc/releases/gcc-7.3.0/gcc-7.3.0.tar.xz"
+  @@gcc_source_url = "https://ftp.gnu.org/gnu/gcc/gcc-8.2.0/gcc-8.2.0.tar.xz"
 
   @@gcc_conf_options = [
     "--enable-languages=c,c++,fortran,objc,obj-c++,go",

@@ -8,7 +8,7 @@ require './fname_parser.rb'
 
 class InstBoost
 
-  @@source_url = "https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.bz2"
+  @@source_url = "https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.bz2"
 
   @@Prefix = nil
   @@Src_dir = nil

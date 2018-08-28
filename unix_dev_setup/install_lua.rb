@@ -7,7 +7,7 @@ require './fname_parser.rb'
 require 'etc'
 
 class InstLua
-  @@source_url = "https://www.lua.org/ftp/lua-5.3.4.tar.gz"
+  @@source_url = "https://www.lua.org/ftp/lua-5.3.5.tar.gz"
 
   @@Prefix = nil
   @@Build_dir = nil

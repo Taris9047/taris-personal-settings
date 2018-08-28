@@ -7,7 +7,7 @@ require './fname_parser.rb'
 require 'etc'
 
 class InstRuby
-  @@source_url = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.0.tar.gz"
+  @@source_url = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.1.tar.gz"
 
   @@Prefix = nil
   @@Build_dir = nil
