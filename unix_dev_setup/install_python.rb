@@ -8,8 +8,12 @@ require 'etc'
 
 $get_pip_url = "https://bootstrap.pypa.io/get-pip.py"
 
+$python2_url = "https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz"
+$python3_url = "https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz"
+
+
 class InstPython2
-  @@source_url = "https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz"
+  @@source_url = $python2_url
 
   @@Prefix = nil
   @@Build_dir = nil
@@ -129,7 +133,7 @@ end # class InstPython2
 
 
 class InstPython3
-  @@source_url = "https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz"
+  @@source_url = $python3_url
 
   @@Prefix = nil
   @@Build_dir = nil
@@ -141,7 +145,7 @@ class InstPython3
     "cx_freeze", "pylint", "pyparsing", "pyopengl", "pyqt5",
     "numpy", "scipy", "matplotlib", "pandas", "ipython", "ipywidgets",
     "jedi", "qtconsole", "sympy", "cytoolz",
-    "spyder", "pyinstaller",
+    "spyder", "pyinstaller", "proio", "jupyter",
   ]
 
   # Python2 build options
