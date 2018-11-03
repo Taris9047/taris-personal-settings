@@ -42,8 +42,8 @@ class InstPython2
   @@CompilerSettings = [
     "CC=\"gcc\"",
     "CXX=\"g++\"",
-    "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
-    "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+    "CFLAGS=\"-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe\"",
+    "CXXFLAGS=\"-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe\"",
   ]
 
   def initialize(prefix, build_dir, src_dir)
