@@ -10,6 +10,7 @@ require "./install_python.rb"
 require "./install_boost.rb"
 require "./install_lua.rb"
 require "./install_ruby.rb"
+require "./install_clang.rb"
 
 # Default parameters
 def_prefix = "/usr/local"
@@ -43,6 +44,14 @@ ubuntu_pkgs = [
   "libbz2-dev",
   "libicu-dev",
   "autotools-dev",
+  "python3-dev",
+  "libncurses5-dev",
+  "libxml2-dev",
+  "libedit-dev",
+  "swig",
+  "doxygen",
+  "graphviz",
+  "xz-utils",
   "ruby-dev",
 ]
 
@@ -116,6 +125,11 @@ if op_mode.downcase == 'cudacc'
   # inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
 end
 
+if op_mode.downcase == 'clang'
+  inst_clang = InstClang.new
+  inst_clang.install_clang(def_prefix, def_system, work_dir, source_dir)
+end
+
 # Then Python stuffs
 if op_mode.downcase.include?'python'
   if op_mode.include?'2'
@@ -159,6 +173,8 @@ end
 if op_mode.downcase == 'all'
   inst_gcc = InstGCC.new
   inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
+  inst_clang = InstClang.new
+  inst_clang.install_clang(def_prefix, def_system, work_dir, source_dir)
 
   # inst_python2 = InstPython2.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
   # inst_python2.install
