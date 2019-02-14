@@ -88,7 +88,7 @@ if op_mode == 'clean'
 end
 
 puts "Unix development environment setup for me..."
-puts "Current only works on Ubuntu"
+puts "Currently... only works on Ubuntu"
 puts ""
 puts "Installing Prerequisites!!"
 system ( 'sudo apt-get -y update && sudo apt-get -y upgrade' )
