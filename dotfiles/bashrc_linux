@@ -7,7 +7,7 @@ alias mv='mv -i'
 alias cp='cp -i'
 alias grep='grep --color'
 alias df='df -h'
-alias ps='ps -W'
+alias rsync='rsync --progress'
 
 #SERVER=$RANDOM
 #let " SERVER %= 5 "
