@@ -26,6 +26,9 @@ else
     DISTRONAME="$(uname -s) $(uname -r)"
 fi
 
+# The homebrew path!!
+export HOMEBREW=$HOME/.local
+
 if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Linux"* ]]; then
     #
     # All the craps for OLD Linux!!
@@ -47,9 +50,6 @@ if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Lin
     if [ "$PS1" ]; then
       PS1="[\u@\h:\l \W]\\$ "
     fi
-
-    # The homebrew path!!
-    export HOMEBREW=$HOME/.local
 
     # PKG_CONFIG_PATH
     export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib64/pkgconfig:/usr/lib/pkgconfig
