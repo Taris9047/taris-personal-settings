@@ -116,8 +116,10 @@ if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Lin
         export LDFLAGS=$RPATH
     fi
 
-    if [ -e "$HOMEBREW/Qt5/bin/qmake" ]; then
-        export QT5HOME=$HOMEBREW/Qt5
+    # Qt5 --> Note that binary installation doesn't just put liniux amd64 version 
+    # into the directory.
+    if [ -e "$HOMEBREW/Qt5/5.12.1/gcc_64/bin/qmake" ]; then
+        export QT5HOME=$HOMEBREW/Qt5/5.12.1/gcc_64
         export QT5BIN=$QT5HOME/bin
         export QT5MAKE=$QT5BIN/qmake
         RPATH="$RPATH -Wl,-rpath $QT5HOME/lib64 -Wl,-rpath $QT5HOME/lib"
@@ -202,6 +204,3 @@ if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Lin
     }
 
 fi
-
-
-
