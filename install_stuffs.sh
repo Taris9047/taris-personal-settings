@@ -24,13 +24,13 @@ else
   BREWHOME=$1
 fi
 PKG_CONFIG_PATH=$BREWHOME/lib/pkgconfig:$PKG_CONFIG_PATH
-LD_LIBRARY_PATH=$BREWHOME/lib:$BREWHOME/lib64
+#LD_LIBRARY_PATH=$BREWHOME/lib:$BREWHOME/lib64
 #
 # Tarball Download URLs
 #
 # Programs
-URL_GCC="http://mirrors.concertpass.com/gcc/releases/gcc-8.2.0/gcc-8.2.0.tar.xz"
-URL_GCC_CUDA="http://mirrors-usa.go-parts.com/gcc/releases/gcc-5.3.0/gcc-5.3.0.tar.bz2"
+URL_GCC="http://mirrors.concertpass.com/gcc/releases/gcc-8.3.0/gcc-8.3.0.tar.xz"
+URL_GCC_CUDA="http://mirrors.concertpass.com/gcc/releases/gcc-7.4.0/gcc-7.4.0.tar.xz"
 URL_GDB="https://ftp.gnu.org/gnu/gdb/gdb-8.0.tar.xz"
 URL_GIT="https://github.com/git/git/archive/v2.15.0.tar.gz"
 URL_SQLITE3="https://www.sqlite.org/src/tarball/sqlite.tar.gz"
@@ -77,7 +77,7 @@ URL_GSTREAMER_PLUGINS_BASE_10="http://gstreamer.freedesktop.org/src/gst-plugins-
 URL_QT_WEBKIT="http://download.kde.org/stable/qtwebkit-2.3/2.3.4/src/qtwebkit-2.3.4.tar.gz"
 URL_QT_WEBKIT_PATCH="http://www.linuxfromscratch.org/patches/blfs/7.8/qtwebkit-2.3.4-gcc5-1.patch"
 URL_PHONON="http://download.kde.org/stable/phonon/4.8.3/src/phonon-4.8.3.tar.xz"
-URL_QT4="http://download.qt.io/official_releases/qt/4.8/4.8.7/qt-everywhere-opensource-src-4.8.7.tar.gz"
+URL_QT4="https://download.qt.io/archive/qt/4.8/4.8.7/qt-everywhere-opensource-src-4.8.7.tar.gz"
 URL_QT5="http://download.qt.io/archive/qt/5.7/5.7.0/single/qt-everywhere-opensource-src-5.7.0.tar.xz"
 URL_QT5_WEBKIT="http://www.linuxfromscratch.org/patches/blfs/svn/qt-5.7.0-qtwebengine_glibc224-1.patch"
 URL_LIBARCHIVE="http://www.libarchive.org/downloads/libarchive-3.2.1.tar.gz"
@@ -105,13 +105,26 @@ PYTHON3="$BREWHOME/Python3/bin/python3"
 PIP3="$BREWHOME/Python3/bin/pip3"
 PY2_VER=""
 PY3_VER=""
-QT4QMAKE="$BREWHOME/Qt/bin/qmake"
-QT4PATH="$BREWHOME/Qt"
-GCC="$BREWHOME/bin/gcc"
-GXX="$BREWHOME/bin/g++"
-GFORTRAN=$(command -v gfortran)
+QT4PATH="$BREWHOME/Qt4"
+QT4QMAKE="$QT4PATH/bin/qmake LDFLAGS=$RPATH"
+if [ -e "$BREWHOME/bin/gcc" ]; then
+    GCC="$BREWHOME/bin/gcc"
+else
+    GCC=cc
+fi
+if [ -e "$BREWHOME/bin/g++" ]; then
+    GXX="$BREWHOME/bin/g++"
+else
+    GXX=c++
+fi
+if [ -e "$BREWHOME/bin/gfortran" ]; then
+    GFORTRAN="$BREWHOME/bin/gfortran"
+else
+    GFORTRAN=$(command -v gfortran)
+fi
 GCC_OPTS="-O3 -march=native -fomit-frame-pointer -pipe"
 GXX_OPTS=$GCC_OPTS
+RPATH="-Wl,-rpath $BREWHOME/lib -Wl,-rpath $BREWHOME/lib64"
 GIT="$BREWHOME/bin/git"
 CMAKE="$BREWHOME/bin/cmake"
 # Default compiler is gcc
@@ -303,15 +316,15 @@ function inst_gcc {
     --enable-bootstrap \
     --enable-shared \
     --enable-threads=posix \
-    --enable-checking=release \
-    --with-system-zlib \
     --enable-__cxa_atexit \
     --disable-libunwind-exceptions \
+    --with-system-zlib \
     --enable-gnu-unique-object \
     --enable-languages=c,c++,objc,obj-c++,fortran \
-    --disable-dssi \
+    --with-arch_32=x86-64 \
+    --disable-libmpx \
     --disable-multilib \
-    --build=x86_64-pc-linux-gnu \
+    --build=x86_64-redhat-linux \
   && make -j $PROCESSES bootstrap \
   && make install
   mkdir -pv $BREWHOME/share/gdb/auto-load/usr/lib && \
@@ -345,7 +358,7 @@ function inst_gcc_cuda {
   CURR_VER=$(get_version $FILENAME)
   BLD_DIRNAME=$DIRNAME-build
   DIST_NAME=$(get_distrib_name)
- 
+
   GCC_CUDA_DIR=$BREWHOME/gcc_cuda
   if [ ! -f $CELLAR/$FILENAME ]; then
     echo "Downloading $PROG_NAME $CURR_VER..."
@@ -1290,29 +1303,7 @@ function inst_qt4 {
     rm -rf $CELLAR/$BLD_DIRNAME
   fi
   mkdir $CELLAR/$BLD_DIRNAME
-#    cd $CELLAR/$BLD_DIRNAME && \
-#    rm -rf ./* && \
-#    CC=$GCC CXX=$GXX \
-#    PKG_CONFIG_PATH=$PKG_CONFIG_PATH \
-#    CFLAGS="$CFLAGS" \
-#    CXXFLAGS="$CXXFLAGS -std=gnu++98" \
-#    $CELLAR/$DIRNAME/configure -v \
-#        -prefix $QT4PATH \
-#        -confirm-license \
-#        -opensource \
-#        -release \
-#        -nomake demos \
-#        -nomake examples \
-#        -nomake docs \
-#        -optimized-qmake \
-#        -no-webkit \
-#        -no-nis \
-#        -no-phonon \
-#        -no-phonon-backend \
-#        -system-sqlite \
-#    && make -j $PROCESSES \
-#    && make install && \
-#    rm -rfv $QT4PATH/tests
+
   cd $CELLAR/$BLD_DIRNAME && \
   rm -rf ./* && \
   CC=$GCC CXX=$GXX \
@@ -1320,6 +1311,7 @@ function inst_qt4 {
   PKG_CONFIG_PATH=$PKG_CONFIG_PATH \
   CFLAGS="$CFLAGS" \
   CXXFLAGS="$CXXFLAGS -std=gnu++98" \
+  LDFLAGS=$RPATH \
   $CELLAR/$DIRNAME/configure -v \
     -prefix $QT4PATH \
     -confirm-license \
@@ -1332,6 +1324,8 @@ function inst_qt4 {
     -no-webkit \
     -no-nis \
     -system-sqlite \
+    -R $BREWHOME/lib \
+    -R $BREWHOME/lib64 \
   && make -j $PROCESSES \
   && make install && \
   rm -rfv $QT4PATH/tests
@@ -1341,7 +1335,7 @@ function inst_qt4 {
       -e 's/(QMAKE_PRL_LIBS =).*/\1/' \
       -i $file
   done
-  QT4QMAKE="$QT4PATH/bin/qmake"
+  QT4QMAKE="$QT4PATH/bin/qmake LDFLAGS=$RPATH"
   inst_phonon
   inst_qtwebkit
   if [[ $COMPILER == "llvm" ]] ; then
@@ -1349,6 +1343,9 @@ function inst_qt4 {
   fi
 }
 # Qt5.7.0
+#
+# Kinda deprecated since Qt5 provides pretty hefty installer.
+#
 function inst_qt5 {
   if cmd_exists $QT5PATH/bin/qmake ; then
     echo "$IQT4PATH/bin/qmake found!!"
@@ -1409,7 +1406,7 @@ function inst_qt5 {
       -e 's/(QMAKE_PRL_LIBS =).*/\1/' \
       -i $file
   done
-  QT4QMAKE=$QT4PATH/bin/qmake
+  QT4QMAKE="$QT4PATH/bin/qmake LDFLAGS=$RPATH"
   inst_phonon
   inst_qtwebkit
   if [[ $COMPILER == "llvm" ]] ; then
@@ -1585,6 +1582,7 @@ function inst_python3 {
   CC=$GCC CXX=$GXX \
   CFLAGS="-O3 $GCC_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
   CXXFLAGS="-O3 $GXX_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
+  LDFLAGS=$RPATH \
   $CELLAR/$DIRNAME/configure \
     --prefix=$INST_DIR \
     --enable-shared \
@@ -1592,7 +1590,6 @@ function inst_python3 {
     --with-system-ffi \
     --enable-ipv6 \
     --enable-optimizations \
-    LDFLAGS=-Wl,-rpath=$INST_DIR/lib \
     && make -j $PROCESSES \
     && make install
   ln -svf $INST_DIR $INST_DIR/../Python3
@@ -1636,6 +1633,7 @@ function inst_python2 {
   CC=$GCC CXX=$GXX \
   CFLAGS="$GCC_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
   CXXFLAGS="$GXX_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
+  LDFLAGS=$RPATH \
   $CELLAR/$DIRNAME/configure \
   --prefix=$INST_DIR \
   --enable-shared \
@@ -1644,7 +1642,6 @@ function inst_python2 {
   --enable-ipv6 \
   --enable-unicode=ucs4 \
   --enable-optimizations \
-  LDFLAGS=-Wl,-rpath=$INST_DIR/lib \
   && make -j $PROCESSES \
   && make install
   ln -svf $INST_DIR $INST_DIR/../Python2
@@ -1770,7 +1767,7 @@ function inst_cmake {
   fi
   mkdir $CELLAR/$BLD_DIRNAME
   cd $CELLAR/$BLD_DIRNAME && \
-  LDFLAGS="-L$BREWHOME/lib -L$QT4PATH/lib" \
+  LDFLAGS="$RPATH -L$QT4PATH/lib" \
   CC="$GCC" CXX="$GXX" \
   CFLAGS="$GCC_OPTS" CXXFLAGS="$GXX_OPTS" \
   $CELLAR/$DIRNAME/bootstrap \
@@ -1957,7 +1954,7 @@ function inst_lxterminal {
   cd $CELLAR/$BLD_DIRNAME && \
   CC=$GCC CXX=$GXX \
   CFLAGS="$GCC_OPTS" CXXFLAGS="$GXX_OPTS" \
-  LDFLAGS="-L$BREWHOME/lib" \
+  LDFLAGS=$RPATH \
   vte_CFLAGS="-I$BREWHOME/include/vte-0.0 -lvte" \
   vte_LIBS="-L$BREWHOME/lib" \
   $CELLAR/$DIRNAME/configure \
@@ -2183,15 +2180,15 @@ function inst_pyqt4 () {
   cd $CELLAR/$BLD_DIRNAME && \
   rm -rf ./* && \
   CC=$GCC CXX=$GXX \
-  CFLAGS="$GCC_OPTS -L$(dirname $(command -v $PYTHON))/../lib -I$(dirname $(command -v $PYTHON))/../include" \
-  CXXFLAGS="$GXX_OPTS -L$(dirname $(command -v $PYTHON))/../lib -I$(dirname $(command -v $PYTHON))/../include" \
+  CFLAGS="$GCC_OPTS $RPATH -L$(dirname $(command -v $PYTHON))/../lib -I$(dirname $(command -v $PYTHON))/../include" \
+  CXXFLAGS="$GXX_OPTS $RPATH -L$(dirname $(command -v $PYTHON))/../lib -I$(dirname $(command -v $PYTHON))/../include" \
   $PYTHON $CELLAR/$DIRNAME/configure-ng.py \
   --qmake $QT4QMAKE \
   --confirm-license \
   --sip $(dirname $(command -v $PYTHON))/sip \
   --designer-plugindir $QT4PATH/plugins/designer \
   --verbose \
-  && make -j$PROCESSES \
+  && make CC="$GCC -std=c90" CXX="$GXX -std=c++98" -j$PROCESSES \
   && make install
 }
 # autoconf
@@ -2285,12 +2282,12 @@ function inst_valgrind {
   DIRNAME="${FILENAME%.*.*}"
   CURR_VER=$(get_version $FILENAME)
   BLD_DIRNAME=$DIRNAME-build
- 
+
   if [ -f cmd_exists $BREWHOME/bin/valgrind ]; then
     echo "$TITLE $CURR_VER has been detected!!"
     return 0
   fi
- 
+
   if [ ! -f $CELLAR/$FILENAME ]; then
     echo "Downloading $Title $CURR_VER..."
     wget "$URL" -O $CELLAR/$FILENAME
@@ -2306,7 +2303,7 @@ function inst_valgrind {
     rm -rf $CELLAR/$BLD_DIRNAME
   fi
   mkdir $CELLAR/$BLD_DIRNAME
- 
+
   # Now install it!
   cd $CELLAR/$BLD_DIRNAME && \
   CC="$GCC" CXX="$GXX" \
@@ -2324,12 +2321,12 @@ function inst_valkyrie {
   DIRNAME="${FILENAME%.*.*}"
   CURR_VER=$(get_version $FILENAME)
   BLD_DIRNAME=$DIRNAME-build
- 
+
   if [ -f cmd_exists $BREWHOME/bin/valkyrie ]; then
     echo "$TITLE $CURR_VER has been detected!!"
     return 0
   fi
- 
+
   if [ ! -f $CELLAR/$FILENAME ]; then
     echo "Downloading $Title $CURR_VER..."
     wget "$URL" -O $CELLAR/$FILENAME
@@ -2345,7 +2342,7 @@ function inst_valkyrie {
     rm -rf $CELLAR/$BLD_DIRNAME
   fi
   mkdir $CELLAR/$BLD_DIRNAME
- 
+
   # Now install it!
   cd $CELLAR/$BLD_DIRNAME && \
   CC="$GCC" CXX="$GXX" \
@@ -2445,7 +2442,7 @@ function inst_HDF5 {
   cd $CELLAR/$BLD_DIRNAME && \
   CC=$GCC CXX=$GXX \
   CFLAGS="$GCC_OPTS" CXXFLAGS="$GXX_OPTS" \
-  LDFLAGS="-L$BREWHOME/lib" \
+  LDFLAGS=$RPATH \
   $CELLAR/$DIRNAME/configure \
     --prefix=$BREWHOME \
     --enable-fortran \
@@ -2515,7 +2512,7 @@ function inst_emacs {
   cd $CELLAR/$BLD_DIRNAME && \
   CC=$GCC CXX=$GXX \
   CFLAGS="$GCC_OPTS" CXXFLAGS="$GXX_OPTS" \
-  LDFLAGS="-L$BREWHOME/lib" \
+  LDFLAGS=$RPATH \
   $CELLAR/$DIRNAME/configure \
     --prefix=$BREWHOME \
     --localstatedir=$BREWHOME/var \
@@ -2542,7 +2539,7 @@ function inst_vim {
   cd $CELLAR/$DIRNAME && \
   CC=$GCC CXX=$GXX \
   CFLAGS="$GCC_OPTS" CXXFLAGS="$GXX_OPTS" \
-  LDFLAGS="-L$BREWHOME/lib" \
+  LDFLAGS=$RPATH \
   $CELLAR/$DIRNAME/configure \
     --prefix=$BREWHOME \
     --with-features=huge \
@@ -2676,7 +2673,7 @@ function inst_zeromq {
   DIRNAME="${FILENAME%.*.*}"
   CURR_VER=$(get_version $FILENAME)
   BLD_DIRNAME=$DIRNAME-build
- 
+
   if [ ! -f $CELLAR/$FILENAME ]; then
     echo "Downloading ZeroMQ $CURR_VER..."
     wget "$URL" -O $CELLAR/$FILENAME
@@ -2786,6 +2783,7 @@ EOF
 )
 # The main function
 function main {
+  export LDFLAGS=$RPATH
   show_status
   check_dir
   echo ""
@@ -2819,7 +2817,7 @@ function main {
       set_compiler $COMPILER
       inst_gcc
       exit
-     
+
     elif [ "$opt" = "gcc_cuda" ] ; then
       check_dir
       set_compiler $COMPILER
@@ -2900,7 +2898,7 @@ function main {
       inst_lua
       exit_message
       exit
-     
+
     elif [ "$opt" = "Perl" ]; then
       set_compiler $COMPILER
       inst_perl
@@ -2911,7 +2909,7 @@ function main {
       inst_gnuplot
       exit_message
       exit
-     
+
     elif [ "$opt" = "ROOT6" ] ; then
       set_compiler $COMPILER
       inst_ROOT6
@@ -2972,7 +2970,7 @@ function main {
       set_compiler $COMPILER
       inst_zenity
       exit
-     
+
     elif [ "$opt" = "ZeroMQ" ] ; then
       set_compiler $COMPILER
       inst_zeromq
