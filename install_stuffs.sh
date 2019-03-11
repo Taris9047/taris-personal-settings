@@ -12,17 +12,23 @@ set -e
 ##########################################################
 if [ "$#" -ne 1 ] ; then
   echo "No homebrew directory has been given!!"
-  echo ""
-  echo "usage:"
-  echo "    install_stuff <some_homebrew_dir>"
-  echo ""
-  echo ""
-  exit
+  echo "Checking up \$HOMEBREW"
+  if [ -d "$HOMEBREW" ]; then
+  	BREWHOME=$HOMEBREW
+  	echo "Looks like $HOMEBREW is a valid directory!! Using eet!!! 0.o!"
+  else
+	echo ""
+	echo "usage:"
+	echo "    install_stuff <some_homebrew_dir>"
+	echo ""
+	echo ""
+	exit
+  fi
 else
   echo "Using $1 as homebrew directory!!"
-  CELLAR=$1/cellar
-  BREWHOME=$1
+  BREWHOME=$(realpath $1)
 fi
+CELLAR=$BREWHOME/cellar
 PKG_CONFIG_PATH=$BREWHOME/lib/pkgconfig:$PKG_CONFIG_PATH
 #LD_LIBRARY_PATH=$BREWHOME/lib:$BREWHOME/lib64
 #
@@ -95,14 +101,16 @@ URL_GTKSOURCEVIEW="http://ftp.gnome.org/pub/gnome/sources/gtksourceview/2.10/gtk
 URL_MPICH="http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz"
 URL_ZEROMQ="https://github.com/zeromq/libzmq/releases/download/v4.2.1/zeromq-4.2.1.tar.gz"
 # Python Modules
-PY_MODULES="pip pexpect pyinstaller sphinx cython autopep8 xlrd xlsxwriter cx_freeze pylint pyopengl pyparsing"
-SCI_PY_MODULES="numpy scipy matplotlib pandas pyopengl pyparsing ipython ipywidgets jedi qtconsole sympy cytoolz spyder"
+PY_MODULES="pip pexpect pyinstaller sphinx cython autopep8 xlrd xlsxwriter cx_freeze pylint pyopengl pyparsing pillow"
+SCI_PY_MODULES="numpy scipy matplotlib pandas pyopengl pyparsing ipython ipywidgets jedi qtconsole sympy cytoolz spyder h5py"
 # Some defuault parameters and paths
 PROCESSES=$(grep -c ^processor /proc/cpuinfo)
-PYTHON2="$BREWHOME/Python2/bin/python2"
-PIP2="$BREWHOME/Python2/bin/pip2"
-PYTHON3="$BREWHOME/Python3/bin/python3"
-PIP3="$BREWHOME/Python3/bin/pip3"
+PY3HOME="$BREWHOME/Python3"
+PY2HOME="$BREWHOME/Python2"
+PYTHON2="$PY2HOME/bin/python2"
+PIP2="$PY2HOME/bin/pip2"
+PYTHON3="$PY3HOME/bin/python3"
+PIP3="$PY3HOME/bin/pip3"
 PY2_VER=""
 PY3_VER=""
 QT4PATH="$BREWHOME/Qt4"
@@ -1579,10 +1587,9 @@ function inst_python3 {
   fi
   mkdir $CELLAR/$BLD_DIRNAME
   cd $CELLAR/$BLD_DIRNAME && \
-  CC=$GCC CXX=$GXX \
-  CFLAGS="-O3 $GCC_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
-  CXXFLAGS="-O3 $GXX_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
-  LDFLAGS=$RPATH \
+  CC=$GCC \
+  CFLAGS="$GCC_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
+  LDFLAGS="$RPATH -Wl,-rpath,$INST_DIR/lib" \
   $CELLAR/$DIRNAME/configure \
     --prefix=$INST_DIR \
     --enable-shared \
@@ -1593,10 +1600,7 @@ function inst_python3 {
     && make -j $PROCESSES \
     && make install
   ln -svf $INST_DIR $INST_DIR/../Python3
-  ln -svf $INST_DIR/bin/python3 $BREWHOME/bin/python
   PYTHON3=$INST_DIR/bin/python3
-  # pip3
-  ln -svf $INST_DIR/bin/pip3 $BREWHOME/bin/pip
   PIP3=$INST_DIR/bin/pip3
 }
 # Python2
@@ -1633,7 +1637,7 @@ function inst_python2 {
   CC=$GCC CXX=$GXX \
   CFLAGS="$GCC_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
   CXXFLAGS="$GXX_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
-  LDFLAGS=$RPATH \
+  LDFLAGS="$RPATH -Wl-rpath,$INST_DIR/lib" \
   $CELLAR/$DIRNAME/configure \
   --prefix=$INST_DIR \
   --enable-shared \
@@ -1641,7 +1645,6 @@ function inst_python2 {
   --with-system-ffi \
   --enable-ipv6 \
   --enable-unicode=ucs4 \
-  --enable-optimizations \
   && make -j $PROCESSES \
   && make install
   ln -svf $INST_DIR $INST_DIR/../Python2

@@ -79,7 +79,7 @@ if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Lin
     fi
 
     # Some envs
-    RPATH="-Wl,-rpath $HOMEBREW/lib64 -Wl,-rpath $HOMEBREW/lib"
+    RPATH="-Wl,-rpath,$HOMEBREW/lib64 -Wl,-rpath,$HOMEBREW/lib"
 
     if [ -e "$HOMEBREW/bin/gcc" ]; then
         export CC=$HOMEBREW/bin/gcc
@@ -112,7 +112,7 @@ if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Lin
         export QT4HOME=$HOMEBREW/Qt4
         export QT4BIN=$QT4HOME/bin
         export QT4MAKE=$QT4BIN/qmake
-        RPATH="$RPATH -Wl,-rpath $QT4HOME/lib64 -Wl,-rpath $QT4HOME/lib"
+        RPATH="$RPATH -Wl,-rpath $QT4HOME/lib64"
         export LDFLAGS=$RPATH
     fi
 
@@ -122,7 +122,7 @@ if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Lin
         export QT5HOME=$HOMEBREW/Qt5/5.12.1/gcc_64
         export QT5BIN=$QT5HOME/bin
         export QT5MAKE=$QT5BIN/qmake
-        RPATH="$RPATH -Wl,-rpath $QT5HOME/lib64 -Wl,-rpath $QT5HOME/lib"
+        RPATH="$RPATH -Wl,-rpath $QT5HOME/lib"
         export LDFLAGS=$RPATH
     fi
 
@@ -204,3 +204,6 @@ if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Lin
     }
 
 fi
+
+
+
