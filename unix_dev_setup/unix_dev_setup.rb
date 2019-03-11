@@ -53,6 +53,7 @@ ubuntu_pkgs = [
   "graphviz",
   "xz-utils",
   "ruby-dev",
+  "git-lfs",
 ]
 
 # Other dev tools
