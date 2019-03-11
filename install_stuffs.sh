@@ -60,7 +60,7 @@ URL_EMACS="http://gnu.mirror.constant.com/emacs/emacs-25.3.tar.xz"
 URL_AUTOCONF="ftp://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.xz"
 URL_AUTOMAKE="http://ftp.gnu.org/gnu/automake/automake-1.15.tar.xz"
 URL_M4="ftp://mirrors.kernel.org/gnu/m4/m4-1.4.17.tar.xz"
-URL_GNUPLOT="https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.2.0/gnuplot-5.2.0.tar.gz?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fgnuplot%2Ffiles%2Fgnuplot%2F&ts=1510601844&use_mirror=iweb"
+URL_GNUPLOT="https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.2.6/gnuplot-5.2.6.tar.gz?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fgnuplot%2Ffiles%2Flatest%2Fdownload&ts=1552334195"
 URL_LUA="http://www.lua.org/ftp/lua-5.3.3.tar.gz"
 URL_LUA_PATCH="http://www.linuxfromscratch.org/patches/blfs/7.10/lua-5.3.3-shared_library-1.patch"
 URL_UNRAR="http://www.rarlab.com/rar/unrarsrc-5.4.5.tar.gz"
@@ -114,7 +114,7 @@ PIP3="$PY3HOME/bin/pip3"
 PY2_VER=""
 PY3_VER=""
 QT4PATH="$BREWHOME/Qt4"
-QT4QMAKE="$QT4PATH/bin/qmake LDFLAGS=$RPATH"
+QT4QMAKE="$QT4PATH/bin/qmake"
 if [ -e "$BREWHOME/bin/gcc" ]; then
     GCC="$BREWHOME/bin/gcc"
 else
@@ -1589,14 +1589,13 @@ function inst_python3 {
   cd $CELLAR/$BLD_DIRNAME && \
   CC=$GCC \
   CFLAGS="$GCC_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
-  LDFLAGS="$RPATH -Wl,-rpath,$INST_DIR/lib" \
+  LDFLAGS="$RPATH -Wl,-rpath=$INST_DIR/lib" \
   $CELLAR/$DIRNAME/configure \
     --prefix=$INST_DIR \
     --enable-shared \
     --with-system-expat \
     --with-system-ffi \
     --enable-ipv6 \
-    --enable-optimizations \
     && make -j $PROCESSES \
     && make install
   ln -svf $INST_DIR $INST_DIR/../Python3
@@ -1634,10 +1633,9 @@ function inst_python2 {
   fi
   mkdir $CELLAR/$BLD_DIRNAME
   cd $CELLAR/$BLD_DIRNAME && \
-  CC=$GCC CXX=$GXX \
+  CC=$GCC \
   CFLAGS="$GCC_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
-  CXXFLAGS="$GXX_OPTS -L$BREWHOME/lib -L$BREWHOME/lib64 -I$BREWHOME/include" \
-  LDFLAGS="$RPATH -Wl-rpath,$INST_DIR/lib" \
+  LDFLAGS="$RPATH -Wl,-rpath=$INST_DIR/lib" \
   $CELLAR/$DIRNAME/configure \
   --prefix=$INST_DIR \
   --enable-shared \
@@ -2180,17 +2178,22 @@ function inst_pyqt4 () {
     rm -rf $CELLAR/$BLD_DIRNAME
   fi
   mkdir $CELLAR/$BLD_DIRNAME
+  echo CC=$GCC CXX=$GXX \
+  CFLAGS="$GCC_OPTS -Wl,-rpath=$(dirname $(command -v $PYTHON))/../lib -I$(dirname $(command -v $PYTHON))/../include" \
+  CXXFLAGS="$GXX_OPTS -Wl,-rpath=$(dirname $(command -v $PYTHON))/../lib -I$(dirname $(command -v $PYTHON))/../include" \
+  $PYTHON $CELLAR/$DIRNAME/configure.py \
+  --qmake=$QT4QMAKE \
+  --confirm-license \
+  --sip=$(dirname $(command -v $PYTHON))/sip
   cd $CELLAR/$BLD_DIRNAME && \
   rm -rf ./* && \
   CC=$GCC CXX=$GXX \
-  CFLAGS="$GCC_OPTS $RPATH -L$(dirname $(command -v $PYTHON))/../lib -I$(dirname $(command -v $PYTHON))/../include" \
-  CXXFLAGS="$GXX_OPTS $RPATH -L$(dirname $(command -v $PYTHON))/../lib -I$(dirname $(command -v $PYTHON))/../include" \
-  $PYTHON $CELLAR/$DIRNAME/configure-ng.py \
-  --qmake $QT4QMAKE \
+  CFLAGS="$GCC_OPTS -L$(dirname $(command -v $PYTHON))/../lib -I$(dirname $(command -v $PYTHON))/../include" \
+  CXXFLAGS="$GXX_OPTS -L$(dirname $(command -v $PYTHON))/../lib -I$(dirname $(command -v $PYTHON))/../include" \
+  $PYTHON $CELLAR/$DIRNAME/configure.py \
+  --qmake=$QT4QMAKE \
   --confirm-license \
-  --sip $(dirname $(command -v $PYTHON))/sip \
-  --designer-plugindir $QT4PATH/plugins/designer \
-  --verbose \
+  --sip=$(dirname $(command -v $PYTHON))/sip \
   && make CC="$GCC -std=c90" CXX="$GXX -std=c++98" -j$PROCESSES \
   && make install
 }
@@ -2394,7 +2397,7 @@ function inst_m4 {
 }
 # Python2Modules
 function inst_python2_addons {
-  rm -rf $BREWHOME/Python2*
+  # rm -rf $BREWHOME/Python2
   set_compiler
   inst_python2
   $PIP2 install -U $PY_MODULES
@@ -2406,7 +2409,7 @@ function inst_python2_addons {
 }
 # Python3Modules
 function inst_python3_addons {
-  rm -rf $BREWHOME/Python3*
+  # rm -rf $BREWHOME/Python3
   set_compiler
   inst_python3
   $PIP3 install -U $PY_MODULES
