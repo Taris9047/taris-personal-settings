@@ -14,9 +14,11 @@ else
 fi
 
 # The packages to install
-PKGS="go bison p7zip lua pypy pypy3 ffmpeg python3 ngspice youtube-dl zeromq emacs flex gnuplot subversion mercurial nano autoconf automake cmake doxygen wget ruby ntfs-3g"
+PKGS="go ghostscript gawk bison p7zip unzip lua pypy pypy3 ffmpeg python3 ngspice youtube-dl zeromq emacs flex gnuplot subversion mercurial nano autoconf automake cmake doxygen wget ruby ntfs-3g"
+CASK_PKGS="cakebrew"
 
 # Now, let's install all those craps!!
 brew install $PKGS
+brew cask install $CASK_PKGS
 brew upgrade
 
