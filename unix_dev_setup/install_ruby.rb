@@ -7,7 +7,7 @@ require './fname_parser.rb'
 require 'etc'
 
 class InstRuby
-  @@source_url = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.1.tar.gz"
+  @@source_url = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.1.tar.gz"
 
   @@Prefix = nil
   @@Build_dir = nil
@@ -32,10 +32,11 @@ class InstRuby
     "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
   ]
 
-  def initialize(prefix, build_dir, src_dir)
+  def initialize(prefix, build_dir, src_dir, need_sudo=false)
     @@Prefix = prefix
     @@Build_dir = build_dir
     @@Src_dir = src_dir
+    @@need_sudo = need_sudo
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -75,6 +76,14 @@ class InstRuby
 
     conf_opts = ["--prefix="+@@Prefix]+@@ruby_conf_opts
 
+    if @@need_sudo
+      inst_cmd = "sudo make install"
+      mod_sudo = "sudo -H"
+    else
+      inst_cmd = "make install"
+      mod_sudo = ""
+    end
+
     # Ok let's roll!!
     cmds = [
       "cd", src_build_folder, "&&",
@@ -82,13 +91,13 @@ class InstRuby
       src_extract_folder+"/configure",
       conf_opts.join(" "), "&&",
       "make -j", @@Processors.to_s, "&&",
-      "sudo make install"
+      inst_cmd
     ]
 
     system( cmds.join(" ") )
 
     inst_module_cmds = [
-      "sudo -H",
+      mod_sudo,
       File.join(@@Prefix,"/bin/gem"),
       "install",
       @@ruby_gems.join(" ")

@@ -7,7 +7,7 @@ require './fname_parser.rb'
 require 'etc'
 
 class InstLua
-  @@source_url = "https://www.lua.org/ftp/lua-5.3.5.tar.gz"
+  @@source_url = "https://www.lua.org/ftp/lua-5.4.0.tar.gz"
 
   @@Prefix = nil
   @@Build_dir = nil
@@ -22,10 +22,11 @@ class InstLua
     "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
   ]
 
-  def initialize(prefix, build_dir, src_dir)
+  def initialize(prefix, build_dir, src_dir, need_sudo=false)
     @@Prefix = prefix
     @@Build_dir = build_dir
     @@Src_dir = src_dir
+    @@need_sudo = need_sudo
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -54,13 +55,19 @@ class InstLua
       system( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
     end
 
+    if @@need_sudo
+      inst_cmd = "sudo make install"
+    else
+      inst_cmd = "make install"
+    end
+
     # Ok let's roll!!
     cmds = [
       "cd", src_extract_folder, "&&",
       @@CompilerSettings.join(" "),
       "make linux",
       "&&",
-      "sudo make install"
+      inst_cmd
     ]
 
     system( cmds.join(" ") )

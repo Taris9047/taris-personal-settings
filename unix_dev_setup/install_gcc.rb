@@ -5,7 +5,7 @@ require './download.rb'
 require './fname_parser.rb'
 
 class InstGCC
-  @@gcc_source_url = "https://ftp.gnu.org/gnu/gcc/gcc-8.2.0/gcc-8.2.0.tar.xz"
+  @@gcc_source_url = "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz"
 
   @@gcc_conf_options = [
     "--enable-languages=c,c++,fortran,objc,obj-c++,go",
@@ -37,7 +37,7 @@ class InstGCC
     end
   end
 
-  def install_gcc (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src')
+  def install_gcc (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src', need_sudo=false)
     puts ""
     puts "Working on GCC!!"
     puts ""
@@ -69,6 +69,12 @@ class InstGCC
     end
     system( "mkdir "+bld_dir )
 
+    if need_sudo
+      inst_cmd = "&& sudo make install"
+    else
+      inst_cmd = "&& make install"
+    end
+
     opts = Array.new(["--prefix="+prefix]+@@gcc_conf_options)
     cmd = [
       "cd",
@@ -79,7 +85,7 @@ class InstGCC
       opts.join(" "),
       "&& make -j",@@Processors.to_s,"bootstrap",
       "&& make -j",@@Processors.to_s,
-      "&& sudo make install"
+      inst_cmd
     ]
 
     system( cmd.join(" ") )
@@ -123,7 +129,7 @@ class InstGCCCuda
     end
   end
 
-  def install_gcc (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src')
+  def install_gcc (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src', need_sudo=false)
     puts ""
     puts "Working on GCC for Cuda!!"
     puts ""
@@ -155,6 +161,12 @@ class InstGCCCuda
     end
     system( "mkdir -f "+bld_dir )
 
+    if need_sudo
+      inst_cmd = "&& sudo make install"
+    else
+      inst_cmd = "&& make install"
+    end
+
     opts = Array.new(["--prefix="+prefix]+@@gcc_conf_options)
     cmd = [
       "cd",
@@ -165,7 +177,7 @@ class InstGCCCuda
       opts.join(" "),
       "&& make -j",@@Processors.to_s,"bootstrap",
       "&& make -j",@@Processors.to_s,
-      "&& sudo make install"
+      inst_cmd
     ]
 
     system( cmd.join(" ") )

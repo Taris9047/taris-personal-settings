@@ -13,7 +13,8 @@ require "./install_ruby.rb"
 require "./install_clang.rb"
 
 # Default parameters
-def_prefix = "/usr/local"
+home_dir = ENV["HOME"]
+def_prefix = File.join(home_dir, "/.local")
 def_system = "Ubuntu"
 
 # Operatnion mode
@@ -53,13 +54,12 @@ ubuntu_pkgs = [
   "graphviz",
   "xz-utils",
   "ruby-dev",
-  "git-lfs",
+  "git-lfs"
 ]
 
 # Other dev tools
 ubuntu_some_more_tools = [
   "valgrind",
-  "valkyrie",
   "cmake",
   "cmake-gui",
   "autoconf",
@@ -81,6 +81,7 @@ ubuntu_ruby_gems = [
 # Working directory
 work_dir = "./build"
 source_dir = "./src"
+prefix_dir = def_prefix
 
 if op_mode == 'clean'
   system( 'rm -rvf '+work_dir+' '+source_dir )
@@ -112,37 +113,41 @@ if Dir.exist?(source_dir) == false
   system( "mkdir "+source_dir )
 end
 
+# Checking if the destination directory is writable or not.
+need_sudo = !File.writable?(prefix_dir)
+
+
 # Let's install gcc first
 if op_mode.downcase == 'gcc'
   inst_gcc = InstGCC.new
-  inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
+  inst_gcc.install_gcc(prefix_dir, def_system, work_dir, source_dir, need_sudo)
 end
 if op_mode.downcase == 'gcc8'
   inst_gcc = InstGCC8.new
-  inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
+  inst_gcc.install_gcc(prefix_dir, def_system, work_dir, source_dir, need_sudo)
 end
 if op_mode.downcase == 'cudacc'
   # inst_gcc = InstGCCCuda.new
-  # inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
+  # inst_gcc.install_gcc(prefix_dir, def_system, work_dir, source_dir, need_sudo)
 end
 
 if op_mode.downcase == 'clang'
   inst_clang = InstClang.new
-  inst_clang.install_clang(def_prefix, def_system, work_dir, source_dir)
+  inst_clang.install_clang(prefix_dir, def_system, work_dir, source_dir, need_sudo)
 end
 
 # Then Python stuffs
 if op_mode.downcase.include?'python'
   if op_mode.include?'2'
-    inst_python2 = InstPython2.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+    inst_python2 = InstPython2.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
     inst_python2.install
   elsif op_mode.include?'3'
-    inst_python3 = InstPython3.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+    inst_python3 = InstPython3.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
     inst_python3.install
   else
-    inst_python2 = InstPython2.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+    inst_python2 = InstPython2.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
     inst_python2.install
-    inst_python3 = InstPython3.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+    inst_python3 = InstPython3.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
     inst_python3.install
   end
 
@@ -150,48 +155,48 @@ if op_mode.downcase.include?'python'
   del_python_cmd = [
     "sudo",
     "rm -rfv",
-    File.join(File.realpath(def_prefix), "bin/python"),
-    File.join(File.realpath(def_prefix), "bin/ipython")
+    File.join(File.realpath(prefix_dir), "bin/python"),
+    File.join(File.realpath(prefix_dir), "bin/ipython")
   ]
   system( del_python_cmd.join(" ") )
 end
 
 if op_mode.downcase == 'boost'
-  inst_boost = InstBoost.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+  inst_boost = InstBoost.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
   inst_boost.install
 end
 
 if op_mode.downcase == 'lua'
-  inst_lua = InstLua.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+  inst_lua = InstLua.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
   inst_lua.install
 end
 
 if op_mode.downcase == 'ruby'
-  inst_lua = InstRuby.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+  inst_lua = InstRuby.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
   inst_lua.install
 end
 
 if op_mode.downcase == 'all'
   inst_gcc = InstGCC.new
-  inst_gcc.install_gcc(def_prefix, def_system, work_dir, source_dir)
+  inst_gcc.install_gcc(prefix_dir, def_system, work_dir, source_dir, need_sudo)
   inst_clang = InstClang.new
-  inst_clang.install_clang(def_prefix, def_system, work_dir, source_dir)
+  inst_clang.install_clang(prefix_dir, def_system, work_dir, source_dir, need_sudo)
 
-  # inst_python2 = InstPython2.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+  # inst_python2 = InstPython2.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
   # inst_python2.install
 
-  inst_python3 = InstPython3.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+  inst_python3 = InstPython3.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
   inst_python3.install
 
-  inst_boost = InstBoost.new(def_prefix, File.realpath(work_dir), File.realpath(source_dir))
+  inst_boost = InstBoost.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
   inst_boost.install
 
   puts "Removing 'python' to preserve system native python..."
   del_python_cmd = [
     "sudo",
     "rm -rfv",
-    File.join(File.realpath(def_prefix), "bin/python"),
-    File.join(File.realpath(def_prefix), "bin/ipython")
+    File.join(File.realpath(prefix_dir), "bin/python"),
+    File.join(File.realpath(prefix_dir), "bin/ipython")
   ]
   system( del_python_cmd.join(" ") )
 end

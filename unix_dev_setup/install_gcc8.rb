@@ -38,7 +38,7 @@ class InstGCC8
     end
   end
 
-  def install_gcc (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src')
+  def install_gcc (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src', need_sudo)
     puts ""
     puts "Working on GCC!!"
     puts ""
@@ -70,6 +70,12 @@ class InstGCC8
     end
     system( "mkdir "+bld_dir )
 
+    if need_sudo
+      inst_cmd = "&& sudo make install"
+    else
+      inst_cmd = "&& make install"
+    end
+
     opts = Array.new(["--prefix="+prefix]+@@gcc_conf_options)
     cmd = [
       "cd",
@@ -80,7 +86,7 @@ class InstGCC8
       opts.join(" "),
       "&& make -j",@@Processors.to_s,"bootstrap",
       "&& make -j",@@Processors.to_s,
-      "&& sudo make install"
+      inst_cmd
     ]
 
     system( cmd.join(" ") )
@@ -124,7 +130,7 @@ class InstGCCCuda
     end
   end
 
-  def install_gcc (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src')
+  def install_gcc (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src', need_sudo)
     puts ""
     puts "Working on GCC for Cuda!!"
     puts ""
@@ -156,6 +162,12 @@ class InstGCCCuda
     end
     system( "mkdir -f "+bld_dir )
 
+    if need_sudo
+      inst_cmd = "&& sudo make install"
+    else
+      inst_cmd = "&& make install"
+    end
+      
     opts = Array.new(["--prefix="+prefix]+@@gcc_conf_options)
     cmd = [
       "cd",
@@ -166,7 +178,7 @@ class InstGCCCuda
       opts.join(" "),
       "&& make -j",@@Processors.to_s,"bootstrap",
       "&& make -j",@@Processors.to_s,
-      "&& sudo make install"
+      inst_cmd
     ]
 
     system( cmd.join(" ") )

@@ -9,7 +9,7 @@ require 'etc'
 $get_pip_url = "https://bootstrap.pypa.io/get-pip.py"
 
 $python2_url = "https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz"
-$python3_url = "https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz"
+$python3_url = "https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz"
 
 
 class InstPython2
@@ -46,10 +46,11 @@ class InstPython2
     "CXXFLAGS=\"-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe\"",
   ]
 
-  def initialize(prefix, build_dir, src_dir)
+  def initialize(prefix, build_dir, src_dir, need_sudo=false)
     @@Prefix = prefix
     @@Build_dir = build_dir
     @@Src_dir = src_dir
+    @@need_sudo = need_sudo
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -90,13 +91,20 @@ class InstPython2
     conf_opts = ["--prefix="+@@Prefix]+@@py2_conf_opts
 
     # Ok let's roll!!
+    if @@need_sudo
+      inst_cmd = "sudo make install"
+      pip_inst_sudo = "sudo -H"
+    else
+      inst_cmd = "make install"
+      pip_inst_sudo = ""
+    end
     cmds = [
       "cd", src_build_folder, "&&",
       @@CompilerSettings.join(" "),
       src_extract_folder+"/configure",
       conf_opts.join(" "), "&&",
       "make -j", @@Processors.to_s, "&&",
-      "sudo make install"
+      inst_cmd
     ]
 
     system( cmds.join(" ") )
@@ -108,11 +116,11 @@ class InstPython2
     end
 
     inst_pip_cmds = [
-      "sudo -H",
+      pip_inst_sudo,
       File.join(@@Prefix, "bin/python"+major.to_s+"."+minor.to_s),
       File.realpath(File.join(@@Src_dir, 'get-pip.py')),
       "&&",
-      "sudo",
+      pip_inst_sudo,
       "mv -fv",
       File.join(@@Prefix,"/bin/pip"),
       File.join(@@Prefix,"/bin/pip"+major.to_s)
@@ -120,7 +128,7 @@ class InstPython2
     system( inst_pip_cmds.join(" ") )
 
     inst_module_cmds = [
-      "sudo -H",
+      pip_inst_sudo,
       File.join(@@Prefix,"/bin/pip"+major.to_s),
       "install -U",
       @@py2_modules.join(" ")
@@ -142,9 +150,9 @@ class InstPython3
   # Python3 modules to install
   @@py3_modules = [
     "pexpect", "sphinx", "cython", "autopep8", "xlrd", "xlsxwriter",
-    "cx_freeze", "pylint", "pyparsing", "pyopengl", "pyqt5",
+    "pylint", "pyparsing", "pyopengl", "pyqt5==5.12", "pyqtwebengine==5.12",
     "numpy", "scipy", "matplotlib", "pandas", "ipython", "ipywidgets",
-    "jedi", "qtconsole", "sympy", "cytoolz",
+    "jedi==0.17.1","parso==0.7.0", "qtconsole", "sympy", "cytoolz",
     "spyder", "pyinstaller", "proio", "jupyter",
   ]
 
@@ -168,10 +176,11 @@ class InstPython3
     "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
   ]
 
-  def initialize(prefix, build_dir, src_dir)
+  def initialize(prefix, build_dir, src_dir, need_sudo=false)
     @@Prefix = prefix
     @@Build_dir = build_dir
     @@Src_dir = src_dir
+    @@need_sudo = need_sudo
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -211,6 +220,13 @@ class InstPython3
 
     conf_opts = ["--prefix="+@@Prefix]+@@py3_conf_opts
 
+    if @@need_sudo
+      inst_cmd = "sudo make install"
+      pip_inst_sudo = "sudo -H"
+    else
+      inst_cmd = "make install"
+      pip_inst_sudo = ""
+    end
     # Ok let's roll!!
     cmds = [
       "cd", src_build_folder, "&&",
@@ -218,7 +234,7 @@ class InstPython3
       src_extract_folder+"/configure",
       conf_opts.join(" "), "&&",
       "make -j", @@Processors.to_s, "&&",
-      "sudo make install"
+      inst_cmd
     ]
 
     system( cmds.join(" ") )
@@ -230,11 +246,11 @@ class InstPython3
     end
 
     inst_pip_cmds = [
-      "sudo -H",
+      pip_inst_sudo,
       File.join(@@Prefix, "bin/python"+major.to_s+"."+minor.to_s),
       File.realpath(File.join(@@Src_dir, 'get-pip.py')),
       "&&",
-      "sudo",
+      pip_inst_sudo,
       "mv -fv",
       File.join(@@Prefix,"/bin/pip"),
       File.join(@@Prefix,"/bin/pip"+major.to_s)
@@ -242,7 +258,7 @@ class InstPython3
     system( inst_pip_cmds.join(" ") )
 
     inst_module_cmds = [
-      "sudo -H",
+      pip_inst_sudo,
       File.join(@@Prefix,"/bin/pip"+major.to_s),
       "install -U",
       @@py3_modules.join(" ")

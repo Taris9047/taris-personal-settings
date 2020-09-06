@@ -24,7 +24,7 @@ class InstClang
   	end
   end
 
-  def install_clang (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src')
+  def install_clang (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src', need_sudo=false)
     puts ""
     puts "Working on Clang!!"
     puts ""
@@ -49,6 +49,11 @@ class InstClang
     end
     system( "mkdir -p "+bld_dir )
 
+    if need_sudo
+      inst_cmd = "sudo make install"
+    else
+      inst_cmd = "make install"
+    end
     cmd = [
     	"cd",
     	File.realpath(bld_dir),
@@ -62,7 +67,7 @@ class InstClang
     	"&&",
     	"make -j", @@Processors,
     	"&&",
-    	"make install"
+    	inst_cmd
     ]
 
     system ( cmd.join(" ") )

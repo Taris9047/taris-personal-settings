@@ -8,16 +8,17 @@ require './fname_parser.rb'
 
 class InstBoost
 
-  @@source_url = "https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.bz2"
+  @@source_url = "https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.bz2"
 
   @@Prefix = nil
   @@Src_dir = nil
   @@Build_dir = nil
 
-  def initialize(prefix, src_dir, build_dir)
+  def initialize(prefix, src_dir, build_dir, need_sudo)
     @@Prefix = prefix
     @@Src_dir = src_dir
     @@Build_dir = build_dir
+    @@need_sudo = need_sudo
   end
 
   def install
@@ -36,12 +37,17 @@ class InstBoost
     end
 
     # Boost is kinda simple. just build within the directory!
+    if @@need_sudo
+      inst_cmd = "sudo ./b2 install"
+    else
+      inst_cmd = "./b2 install"
+    end
     cmds = [
       "cd",
       src_extracted_folder, "&&",
       "./bootstrap.sh", "--prefix="+@@Prefix, "&&",
       "./b2", "&&",
-      "sudo ./b2 install"
+      inst_cmd
     ]
 
     system( cmds.join(" ") )
