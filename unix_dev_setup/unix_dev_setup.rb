@@ -11,6 +11,7 @@ require "./install_boost.rb"
 require "./install_lua.rb"
 require "./install_ruby.rb"
 require "./install_clang.rb"
+require "./install_node.rb"
 
 # Default parameters
 home_dir = ENV["HOME"]
@@ -78,10 +79,10 @@ ubuntu_ruby_gems = [
   "rsense",
 ]
 
-# Working directory
-work_dir = "./build"
-source_dir = "./src"
-prefix_dir = def_prefix
+# Working directories
+work_dir = File.realpath("./build")
+source_dir = File.realpath("./src")
+prefix_dir = File.realpath(def_prefix)
 
 if op_mode == 'clean'
   system( 'rm -rvf '+work_dir+' '+source_dir )
@@ -139,15 +140,15 @@ end
 # Then Python stuffs
 if op_mode.downcase.include?'python'
   if op_mode.include?'2'
-    inst_python2 = InstPython2.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
+    inst_python2 = InstPython2.new(prefix_dir, work_dir, source_dir, need_sudo)
     inst_python2.install
   elsif op_mode.include?'3'
-    inst_python3 = InstPython3.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
+    inst_python3 = InstPython3.new(prefix_dir, work_dir, source_dir, need_sudo)
     inst_python3.install
   else
-    inst_python2 = InstPython2.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
+    inst_python2 = InstPython2.new(prefix_dir, work_dir, source_dir, need_sudo)
     inst_python2.install
-    inst_python3 = InstPython3.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
+    inst_python3 = InstPython3.new(prefix_dir, work_dir, source_dir, need_sudo)
     inst_python3.install
   end
 
@@ -155,25 +156,30 @@ if op_mode.downcase.include?'python'
   del_python_cmd = [
     "sudo",
     "rm -rfv",
-    File.join(File.realpath(prefix_dir), "bin/python"),
-    File.join(File.realpath(prefix_dir), "bin/ipython")
+    File.join(prefix_dir, "bin/python"),
+    File.join(prefix_dir, "bin/ipython")
   ]
   system( del_python_cmd.join(" ") )
 end
 
 if op_mode.downcase == 'boost'
-  inst_boost = InstBoost.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
+  inst_boost = InstBoost.new(prefix_dir, work_dir, source_dir, need_sudo)
   inst_boost.install
 end
 
 if op_mode.downcase == 'lua'
-  inst_lua = InstLua.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
+  inst_lua = InstLua.new(prefix_dir, work_dir, source_dir, need_sudo)
   inst_lua.install
 end
 
 if op_mode.downcase == 'ruby'
-  inst_lua = InstRuby.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
+  inst_lua = InstRuby.new(prefix_dir, work_dir, source_dir, need_sudo)
   inst_lua.install
+end
+
+if op_mode.downcase == 'node'
+  inst_node = InstNode.new(prefix_dir, work_dir, source_dir, need_sudo)
+  inst_node.install
 end
 
 if op_mode.downcase == 'all'
@@ -185,18 +191,21 @@ if op_mode.downcase == 'all'
   # inst_python2 = InstPython2.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
   # inst_python2.install
 
-  inst_python3 = InstPython3.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
+  inst_python3 = InstPython3.new(prefix_dir, work_dir, source_dir, need_sudo)
   inst_python3.install
 
-  inst_boost = InstBoost.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
+  inst_boost = InstBoost.new(prefix_dir, work_dir, source_dir, need_sudo)
   inst_boost.install
 
   puts "Removing 'python' to preserve system native python..."
   del_python_cmd = [
     "sudo",
     "rm -rfv",
-    File.join(File.realpath(prefix_dir), "bin/python"),
-    File.join(File.realpath(prefix_dir), "bin/ipython")
+    File.join(prefix_dir, "bin/python"),
+    File.join(prefix_dir, "bin/ipython")
   ]
   system( del_python_cmd.join(" ") )
+
+  inst_node = InstNode.new(prefix_dir, work_dir, source_dir, need_sudo)
+  inst_node.install
 end
