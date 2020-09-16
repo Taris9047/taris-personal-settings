@@ -83,23 +83,30 @@ ubuntu_ruby_gems = [
 # Working directories
 require 'fileutils'
 
-work_dir_path = File.dirname("./build")
+work_dir_path = "./build"
+puts work_dir_path
 unless File.directory?(work_dir_path)
+	puts work_dir_path+" not found, making one..."
 	FileUtils.mkdir_p(work_dir_path)
 end
 work_dir = File.realpath(work_dir_path)
 
-source_dir_path = File.dirname("./src")
+source_dir_path = "./src"
 unless File.directory?(source_dir_path)
+	puts source_dir_path+" not found, making one..."
 	FileUtils.mkdir_p(source_dir_path)
 end
 source_dir = File.realpath(source_dir_path)
 
-prefix_dir_path = File.dirname(def_prefix)
+prefix_dir_path = def_prefix
 unless File.directory?(prefix_dir_path)
+	puts prefix_dir_path+" not found, making one..."
 	FileUtils.mkdir_p(prefix_dir_path)
 end
 prefix_dir = File.realpath(prefix_dir_path)
+puts "Prefix confirmed! Everything will be installed at..."
+puts prefix_dir
+puts ""
 
 if op_mode == 'clean'
   system( 'rm -rvf '+work_dir+' '+source_dir )
@@ -120,16 +127,6 @@ system( cmd )
 puts "Installing some gems"
 cmd = ["sudo", "gem", "install"]+ubuntu_ruby_gems
 system( cmd.join(" ") )
-
-# # Check work working directory
-# if Dir.exist?(work_dir) == false
-#   puts "Generating build directory at "+work_dir
-#   system( "mkdir "+work_dir )
-# end
-# if Dir.exist?(source_dir) == false
-#   puts "Generating source directory at "+source_dir
-#   system( "mkdir "+source_dir )
-# end
 
 # Checking if the destination directory is writable or not.
 need_sudo = !File.writable?(prefix_dir)
