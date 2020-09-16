@@ -15,8 +15,8 @@ require "./install_node.rb"
 
 # Default parameters
 home_dir = ENV["HOME"]
-# def_prefix = File.join(home_dir, "/.local")
-def_prefix = File.join("/usr/local")
+def_prefix = File.join(home_dir, "/.local")
+# def_prefix = File.join("/usr/local")
 def_system = "Ubuntu"
 
 # Operatnion mode
