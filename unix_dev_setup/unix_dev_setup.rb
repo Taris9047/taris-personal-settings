@@ -15,7 +15,8 @@ require "./install_node.rb"
 
 # Default parameters
 home_dir = ENV["HOME"]
-def_prefix = File.join(home_dir, "/.local")
+# def_prefix = File.join(home_dir, "/.local")
+def_prefix = File.join("/usr/local")
 def_system = "Ubuntu"
 
 # Operatnion mode
@@ -80,9 +81,25 @@ ubuntu_ruby_gems = [
 ]
 
 # Working directories
-work_dir = File.realpath("./build")
-source_dir = File.realpath("./src")
-prefix_dir = File.realpath(def_prefix)
+require 'fileutils'
+
+work_dir_path = File.dirname("./build")
+unless File.directory?(work_dir_path)
+	FileUtils.mkdir_p(work_dir_path)
+end
+work_dir = File.realpath(work_dir_path)
+
+source_dir_path = File.dirname("./src")
+unless File.directory?(source_dir_path)
+	FileUtils.mkdir_p(source_dir_path)
+end
+source_dir = File.realpath(source_dir_path)
+
+prefix_dir_path = File.dirname(def_prefix)
+unless File.directory?(prefix_dir_path)
+	FileUtils.mkdir_p(prefix_dir_path)
+end
+prefix_dir = File.realpath(prefix_dir_path)
 
 if op_mode == 'clean'
   system( 'rm -rvf '+work_dir+' '+source_dir )
@@ -104,15 +121,15 @@ puts "Installing some gems"
 cmd = ["sudo", "gem", "install"]+ubuntu_ruby_gems
 system( cmd.join(" ") )
 
-# Check work working directory
-if Dir.exist?(work_dir) == false
-  puts "Generating build directory at "+work_dir
-  system( "mkdir "+work_dir )
-end
-if Dir.exist?(source_dir) == false
-  puts "Generating source directory at "+source_dir
-  system( "mkdir "+source_dir )
-end
+# # Check work working directory
+# if Dir.exist?(work_dir) == false
+#   puts "Generating build directory at "+work_dir
+#   system( "mkdir "+work_dir )
+# end
+# if Dir.exist?(source_dir) == false
+#   puts "Generating source directory at "+source_dir
+#   system( "mkdir "+source_dir )
+# end
 
 # Checking if the destination directory is writable or not.
 need_sudo = !File.writable?(prefix_dir)
