@@ -167,9 +167,13 @@ if op_mode.downcase.include?'python'
     inst_python3.install
   end
 
-    puts "Removing 'python' to preserve system native python..."
+  puts "Removing 'python' to preserve system native python..."
+  sudo_cmd = ''
+  if need_sudo
+    sudo_cmd = "sudo"
+  end  
   del_python_cmd = [
-    "sudo",
+    sudo_cmd,
     "rm -rfv",
     File.join(prefix_dir, "bin/python"),
     File.join(prefix_dir, "bin/ipython")
