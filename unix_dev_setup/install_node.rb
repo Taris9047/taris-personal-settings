@@ -4,6 +4,7 @@
 
 require './download.rb'
 require './fname_parser.rb'
+require './get_compiler.rb'
 require 'etc'
 
 class InstNode
@@ -29,6 +30,11 @@ class InstNode
     @@need_sudo = need_sudo
 
     @@PythonCmd = "python3"
+
+    # Setting up compilers
+    compiler_path = File.join(prefix,'bin')
+    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
+    @@CompilerSettings = gc.get_settings
 
     # Setting up processors
     procs = Etc.nprocessors

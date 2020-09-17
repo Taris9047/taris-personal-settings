@@ -4,6 +4,7 @@
 
 require './download.rb'
 require './fname_parser.rb'
+require './get_compiler.rb'
 require 'etc'
 
 $get_pip_url = "https://bootstrap.pypa.io/get-pip.py"
@@ -20,12 +21,7 @@ class InstPython2
   @@Src_dir = nil
 
   # Python2 modules to install
-  @@py2_modules = [
-    "pexpect", "sphinx", "xlrd", "xlsxwriter",
-    "cx_freeze", "pylint", "pyparsing", "pyopengl",
-    "numpy", "scipy", "matplotlib", "pandas",
-    "jedi", "qtconsole", "sympy", "cytoolz",
-  ]
+  @@py2_modules = []
 
   # Python2 build options
   @@py2_conf_opts = [
@@ -34,7 +30,6 @@ class InstPython2
     "--enable-unicode=ucs4",
     "--with-threads",
     "--with-valgrind",
-    "--enable-optimizations",
   ]
 
   @@Processors = nil
@@ -51,6 +46,11 @@ class InstPython2
     @@Build_dir = build_dir
     @@Src_dir = src_dir
     @@need_sudo = need_sudo
+
+    # Setting up compilers
+    compiler_path = File.join(prefix,'bin')
+    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
+    @@CompilerSettings = gc.get_settings
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -164,6 +164,8 @@ class InstPython3
     "--with-threads",
     "--with-valgrind",
     "--with-ensurepip=yes",
+    "--with-system-ffi",
+    "--with-system-expat",
     "--enable-optimizations",
   ]
 
@@ -181,6 +183,11 @@ class InstPython3
     @@Build_dir = build_dir
     @@Src_dir = src_dir
     @@need_sudo = need_sudo
+
+    # Setting up compilers
+    compiler_path = File.join(prefix,'bin')
+    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
+    @@CompilerSettings = gc.get_settings
 
     # Setting up processors
     procs = Etc.nprocessors

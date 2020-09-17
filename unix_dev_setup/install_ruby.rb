@@ -4,6 +4,7 @@
 
 require './download.rb'
 require './fname_parser.rb'
+require './get_compiler.rb'
 require 'etc'
 
 class InstRuby
@@ -37,6 +38,11 @@ class InstRuby
     @@Build_dir = build_dir
     @@Src_dir = src_dir
     @@need_sudo = need_sudo
+
+    # Setting up compilers
+    compiler_path = File.join(prefix,'bin')
+    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
+    @@CompilerSettings = gc.get_settings
 
     # Setting up processors
     procs = Etc.nprocessors

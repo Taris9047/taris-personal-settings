@@ -3,6 +3,7 @@
 require 'etc'
 require './download.rb'
 require './fname_parser.rb'
+require './get_compiler.rb'
 
 class InstClang
   @@llvm_repo_url = "http://llvm.org/svn/llvm-project/llvm/trunk"
@@ -22,6 +23,18 @@ class InstClang
   	else
   		@@Processors = procs
   	end
+  end
+  
+  def find_python3 (given_path='/usr/local')
+    bin_path = File.join(given_path, 'bin')
+    py3_exe = File.join(bin_path, 'python3')
+
+    # Python3 default fallback
+    unless File.file?(py3_exe)
+      py3_exe = File.realpath("/usr/bin/python3")
+    end
+    
+    return py3_exe
   end
 
   def install_clang (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src', need_sudo=false)
@@ -54,15 +67,35 @@ class InstClang
     else
       inst_cmd = "make install"
     end
+    
+    # setup correct python path
+    py3_path = find_python3(prefix)
+    py3_exe_option = [ 
+      "-DPYTHON_EXECUTABLE:FILEPATH=\"",
+      py3_path,
+      "\"" ].join('')
+      
+    # Setting up compilers
+    compiler_path = File.join(prefix,'bin')
+    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
+    comp_settings = gc.get_cmake_settings
+    
+    # Setting up install prefix
+    inst_prefix_opt = [ 
+      "-DCMAKE_INSTALL_PREFIX:PATH=",
+      File.realpath(prefix)].join('')
+    
     cmd = [
     	"cd",
     	File.realpath(bld_dir),
     	"&&",
     	"cmake",
+    	inst_prefix_opt,
     	"-DCMAKE_BUILD_TYPE=Release",
     	"-DLLVM_BUILD_DOCS=OFF",
     	"-DLIBCXX_CXX_ABI=libstdc++",
-    	"-DPYTHON_EXECUTABLE:FILEPATH=\"/usr/local/bin/python3\"",
+    	py3_exe_option,
+    	comp_settings.join(' '),
     	File.realpath(source_dir+"/llvm"),
     	"&&",
     	"make -j", @@Processors,

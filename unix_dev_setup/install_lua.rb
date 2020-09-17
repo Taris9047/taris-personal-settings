@@ -4,6 +4,7 @@
 
 require './download.rb'
 require './fname_parser.rb'
+require './get_compiler.rb'
 require 'etc'
 
 class InstLua
@@ -27,6 +28,11 @@ class InstLua
     @@Build_dir = build_dir
     @@Src_dir = src_dir
     @@need_sudo = need_sudo
+
+    # Setting up compilers
+    compiler_path = File.join(prefix,'bin')
+    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
+    @@CompilerSettings = gc.get_settings
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -56,16 +62,15 @@ class InstLua
     end
 
     if @@need_sudo
-      inst_cmd = "sudo make install"
+      inst_cmd = "sudo make INSTALL_TOP=\""+@@Prefix+"\" install"
     else
-      inst_cmd = "make install"
+      inst_cmd = "make INSTALL_TOP=\""+@@Prefix+"\" install"
     end
 
     # Ok let's roll!!
     cmds = [
       "cd", src_extract_folder, "&&",
-      @@CompilerSettings.join(" "),
-      "make linux",
+      "make "+@@CompilerSettings.join(" ")+" linux",
       "&&",
       inst_cmd
     ]

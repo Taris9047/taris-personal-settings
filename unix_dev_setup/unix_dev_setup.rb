@@ -46,6 +46,7 @@ ubuntu_pkgs = [
   "tk-dev",
   "libbz2-dev",
   "libicu-dev",
+  "libffi-dev",
   "autotools-dev",
   "python3-dev",
   "libncurses5-dev",
@@ -199,14 +200,12 @@ end
 if op_mode.downcase == 'all'
   inst_gcc = InstGCC.new
   inst_gcc.install_gcc(prefix_dir, def_system, work_dir, source_dir, need_sudo)
-  inst_clang = InstClang.new
-  inst_clang.install_clang(prefix_dir, def_system, work_dir, source_dir, need_sudo)
-
-  # inst_python2 = InstPython2.new(prefix_dir, File.realpath(work_dir), File.realpath(source_dir), need_sudo)
-  # inst_python2.install
 
   inst_python3 = InstPython3.new(prefix_dir, work_dir, source_dir, need_sudo)
   inst_python3.install
+
+  inst_clang = InstClang.new
+  inst_clang.install_clang(prefix_dir, def_system, work_dir, source_dir, need_sudo)
 
   inst_boost = InstBoost.new(prefix_dir, work_dir, source_dir, need_sudo)
   inst_boost.install
