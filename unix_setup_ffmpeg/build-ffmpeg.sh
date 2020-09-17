@@ -6,17 +6,17 @@ VERSION=1.14
 CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
-CC="gcc"
-CXX="g++"
+CC="clang"
+CXX="clang++"
 LDFLAGS="-L${WORKSPACE}/lib -lm"
-CFLAGS="-I${WORKSPACE}/include -march=native -pipe -fomit-frame-pointer -fPIE"
+CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIE"
 CXXFLAGS="$CFLAGS"
 COMPILER_SET="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\""
 ADDITIONAL_CONFIGURE_OPTIONS=""
 
 INSTALL_FOLDER="$HOME/.local/bin"
 if [[ "$OSTYPE" == "darwin"* ]]; then
-INSTALL_FOLDER="$HOME/.local/bin"
+	INSTALL_FOLDER="$HOME/.local/bin"
 fi
 
 
