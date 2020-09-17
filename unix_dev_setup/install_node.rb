@@ -8,7 +8,7 @@ require './get_compiler.rb'
 require 'etc'
 
 class InstNode
-  @@source_url = "https://nodejs.org/dist/v14.9.0/node-v14.9.0.tar.gz"
+  @@source_url = "https://nodejs.org/dist/v14.11.0/node-v14.11.0.tar.gz"
 
   @@Prefix = nil
   @@Build_dir = nil
@@ -21,6 +21,7 @@ class InstNode
     "CXX=\"g++\"",
     "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
     "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+    "LDFLAGS=\"-Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib\"",
   ]
 
   def initialize(prefix, build_dir, src_dir, need_sudo=false)
@@ -68,37 +69,28 @@ class InstNode
       system( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
     end
 
-    # if Dir.exists?(src_build_folder)
-    #   puts "Build folder found!! Removing it for 'pure' experience!!"
-    #   system( "rm -rfv "+src_build_folder )
-    # else
-    #   puts "Ok, let's make a build folder"
-    # end
-    # system( "mkdir "+src_build_folder )
-
+    compiler_path = File.join(@@Prefix,'bin')
+    gc = GetCompiler.new(compiler_path)
+    env = gc.get_env_settings
     conf_opts = ["--prefix="+@@Prefix]+@@node_conf_opts
 
     if @@need_sudo
       inst_cmd = "sudo make install"
-      mod_sudo = "sudo -H"
     else
       inst_cmd = "make install"
-      mod_sudo = ""
     end
 
-    # Ok let's roll!!
+    # Ok let's rock!
     cmds = [
       "cd", src_extract_folder, "&&",
-      @@CompilerSettings.join(" "),
-      @@PythonCmd,
-      src_extract_folder+"/configure.py",
+      File.join(src_extract_folder,"configure"),
       conf_opts.join(" "), "&&",
       "make -j", @@Processors.to_s, "&&",
       inst_cmd
     ]
-
-    system( cmds.join(" ") )
+    puts cmds.join(' ')
+    system( env, cmds.join(" ") )
 
   end # install
 
-end # class InstRuby
+end # class InstNode

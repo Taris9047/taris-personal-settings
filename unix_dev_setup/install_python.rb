@@ -39,6 +39,7 @@ class InstPython2
     "CXX=\"g++\"",
     "CFLAGS=\"-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe\"",
     "CXXFLAGS=\"-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe\"",
+    "LDFLAGS=\"-Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib\"",
   ]
 
   def initialize(prefix, build_dir, src_dir, need_sudo=false)
@@ -51,6 +52,7 @@ class InstPython2
     compiler_path = File.join(prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
     @@CompilerSettings = gc.get_settings
+    @@env = gc.get_env_settings
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -100,14 +102,13 @@ class InstPython2
     end
     cmds = [
       "cd", src_build_folder, "&&",
-      @@CompilerSettings.join(" "),
-      src_extract_folder+"/configure",
+      File.join(src_extract_folder,"configure"),
       conf_opts.join(" "), "&&",
       "make -j", @@Processors.to_s, "&&",
       inst_cmd
     ]
 
-    system( cmds.join(" ") )
+    system( @@env, cmds.join(" ") )
 
     if File.exists?(File.join(@@Src_dir, 'get-pip.py'))
       puts "Found get-pip.py"
@@ -174,8 +175,9 @@ class InstPython3
   @@CompilerSettings = [
     "CC=\"gcc\"",
     "CXX=\"g++\"",
-    "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
-    "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+    "CFLAGS=\"-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe\"",
+    "CXXFLAGS=\"-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe\"",
+    "LDFLAGS=\"-Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib\"",
   ]
 
   def initialize(prefix, build_dir, src_dir, need_sudo=false)
@@ -188,6 +190,7 @@ class InstPython3
     compiler_path = File.join(prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
     @@CompilerSettings = gc.get_settings
+    @@env = gc.get_env_settings
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -237,14 +240,13 @@ class InstPython3
     # Ok let's roll!!
     cmds = [
       "cd", src_build_folder, "&&",
-      @@CompilerSettings.join(" "),
-      src_extract_folder+"/configure",
+      File.join(src_extract_folder,"configure"),
       conf_opts.join(" "), "&&",
       "make -j", @@Processors.to_s, "&&",
       inst_cmd
     ]
 
-    system( cmds.join(" ") )
+    system( @@env, cmds.join(" ") )
 
     if File.exists?(File.join(@@Src_dir, 'get-pip.py'))
       puts "Found get-pip.py"

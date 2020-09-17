@@ -26,13 +26,6 @@ class InstRuby
 
   @@Processors = nil
 
-  @@CompilerSettings = [
-    "CC=\"gcc\"",
-    "CXX=\"g++\"",
-    "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
-    "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
-  ]
-
   def initialize(prefix, build_dir, src_dir, need_sudo=false)
     @@Prefix = prefix
     @@Build_dir = build_dir
@@ -42,7 +35,7 @@ class InstRuby
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
-    @@CompilerSettings = gc.get_settings
+    @@env = gc.get_env_settings
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -93,14 +86,13 @@ class InstRuby
     # Ok let's roll!!
     cmds = [
       "cd", src_build_folder, "&&",
-      @@CompilerSettings.join(" "),
       src_extract_folder+"/configure",
       conf_opts.join(" "), "&&",
       "make -j", @@Processors.to_s, "&&",
       inst_cmd
     ]
 
-    system( cmds.join(" ") )
+    system( @@env, cmds.join(" ") )
 
     inst_module_cmds = [
       mod_sudo,

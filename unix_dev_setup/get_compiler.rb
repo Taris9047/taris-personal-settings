@@ -8,7 +8,7 @@ class GetCompiler
   @@CC_PATH = @@fallback_compiler_path
   @@CXX_PATH = @@fallback_compiler_path
   @@CFLAGS = "-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe"
-  @@RPATH = "-Wl,-rpath=$HOMEBREW/lib64 -Wl,-rpath=$HOMEBREW/lib"
+  @@RPATH = "-Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib"
   @@CXXFLAGS = @@CFLAGS
   @@CC = File.join(@@CC_PATH, 'gcc')
   @@CXX = File.join(@@CXX_PATH, 'g++')
@@ -22,7 +22,7 @@ class GetCompiler
     if env_path == ''
       r_path = File.dirname(cc_path)
     end
-    @@RPATH = "-Wl,-rpath="+File.join(r_path, "lib")+" "+"-Wl,-rpath="+File.join(r_path, "lib64")
+    @@RPATH = @@RPATH.gsub('{env_path}', r_path)
     
     if clang
       c_compiler = 'clang'
@@ -34,28 +34,19 @@ class GetCompiler
       cxx_compiler = cxx_compiler + '-' + suffix
     end
     
-    @@compiler_path = @@fallback_compiler_path
     if File.directory?(cc_path)
-      @@cc_path = File.realpath(cc_path)
+      @@CC = File.realpath(File.join(cc_path, c_compiler))
     end
     if File.directory?(cxx_path)
-      @@cxx_path = File.realpath(cxx_path)
+      @@CXX = File.realpath(File.join(cxx_path, cxx_compiler))
     end
-    @@CC_PATH = @@cc_path
-    @@CXX_PATH = @@cxx_path
-    
-    cc_path = File.join(@@CC_PATH, c_compiler)
-    cxx_path = File.join(@@CXX_PATH, cxx_compiler)
-    if File.file?(cc_path)
-      @@CC = cc_path
+
+    unless File.file?(@@CC)
+      raise "C Compiler not found!!"
+      exit(-1)
     end
-    if File.file?(cxx_path)
-      @@CXX = cxx_path
-    end
-    
-    # doing sanity check!
-    unless File.file?(@@CC) and File.file?(@@CXX)
-      raise ">>>> Can't find suitable compilers!!"
+    unless File.file?(@@CXX)
+      raise "CXX Compiler not found!!"
       exit(-1)
     end
     
@@ -69,11 +60,21 @@ class GetCompiler
   def get_settings
     cc_env = "CC=\""+@@CC+"\""
     cxx_env = "CXX=\""+@@CXX+"\""
-    cflags_env = "CFLAGS=\""+@@CFLAGS+"\""
-    cxxflags_env = "CXXFLAGS\""+@@CXXFLAGS+"\""
-    ldflags_env = "LDFLAGS=\""+@@RPATH+"\""
+    cflags_env = ["CFLAGS=\"", @@CFLAGS, "\""].join('')
+    cxxflags_env = ["CXXFLAGS=\"", @@CXXFLAGS, "\""].join('')
+    ldflags_env = ["LDFLAGS=\"", @@RPATH, "\""].join('')
     
     return [cc_env, cxx_env, cflags_env, cxxflags_env, ldflags_env]
+  end
+  
+  def get_env_settings
+    return {
+      'CC' => @@CC,
+      'CXX' => @@CXX,
+      'CFLAGS' => @@CFLAGS,
+      'CXXFLAGS' => @@CXXFLAGS,
+      'LDFLAGS' => @@RPATH,
+    }
   end
   
   def get_cmake_settings
@@ -81,8 +82,11 @@ class GetCompiler
     cxx_env = "-DCMAKE_CXX_COMPILER=\""+@@CXX+"\""
     cflags_env = "-DCMAKE_C_FLAGS=\""+@@CFLAGS+" "+@@RPATH+"\""
     cxxflags_env = "-DCMAKE_CXX_FLAGS=\""+@@CXXFLAGS+" "+@@RPATH+"\""
+    ld_exe_env = "-DCMAKE_EXE_LINKER_FLAGS_INIT=\""+@@RPATH+"\""
+    ld_shared_env = "-DCMAKE_SHARED_LINKER_FLAGS_INIT=\""+@@RPATH+"\""
+    ld_module_env = "-DCMAKE_MODULE_LINKER_FLAGS_INIT=\""+@@RPATH+"\""
     
-    return  [cc_env, cxx_env, cflags_env, cxxflags_env]
+    return  [cc_env, cxx_env, cflags_env, cxxflags_env, ld_exe_env, ld_shared_env, ld_module_env]
   end
   
 end

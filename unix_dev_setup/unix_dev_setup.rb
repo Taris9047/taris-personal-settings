@@ -5,13 +5,13 @@
 # follow up the newest changes in libc 2.26
 
 require "./install_gcc.rb"
-require "./install_gcc8.rb"
 require "./install_python.rb"
 require "./install_boost.rb"
 require "./install_lua.rb"
 require "./install_ruby.rb"
 require "./install_clang.rb"
 require "./install_node.rb"
+require "./inst_prereq.rb"
 
 # Default parameters
 home_dir = ENV["HOME"]
@@ -19,70 +19,57 @@ def_prefix = File.join(home_dir, "/.local")
 # def_prefix = File.join("/usr/local")
 def_system = "Ubuntu"
 
+list_of_progs = [
+    'gcc',
+    'cudacc',
+    'python2',
+    'python3',
+    'boost',
+    'lua',
+    'ruby',
+    'node'
+    ]
+
 # Operatnion mode
 op_mode = nil
 if ARGV.empty?
-  op_mode = 'all'
+  op_mode_list = list_of_progs
 else
-  op_mode = ARGV[0]
+  op_mode_list = ARGV
 end
 
-# Prerequisites
-ubuntu_pkgs = [
-  "build-essential",
-  "flex",
-  "bison",
-  "zlib1g",
-  "zlib1g-dev",
-  "openssl",
-  "libssl-dev",
-  "libsqlite3-dev",
-  "libncursesw5-dev",
-  "libreadline-dev",
-  "libssl-dev",
-  "libgdbm-dev",
-  "libc6-dev",
-  "libsqlite3-dev",
-  "tk-dev",
-  "libbz2-dev",
-  "libicu-dev",
-  "libffi-dev",
-  "autotools-dev",
-  "python3-dev",
-  "libncurses5-dev",
-  "libxml2-dev",
-  "libedit-dev",
-  "swig",
-  "doxygen",
-  "graphviz",
-  "xz-utils",
-  "ruby-dev",
-  "git-lfs"
-]
+op_mode_list.each_with_index do |op_mode, i|
+  op_mode_list[i] = op_mode_list[i].downcase
+end
 
-# Other dev tools
-ubuntu_some_more_tools = [
-  "valgrind",
-  "cmake",
-  "cmake-gui",
-  "autoconf",
-  "automake",
-  "vim",
-  "emacs",
-  "ttf-bitstream-vera",
-  "subversion",
-  "git",
-  "wget",
-  "curl",
-]
+# Doing some re-organization
+# Gcc
+if op_mode_list.include?('gcc')
+  op_mode_list.delete('gcc')
+  op_mode_list.insert(0, 'gcc')
+end
 
-# Ruby gems
-ubuntu_ruby_gems = [
-  "rsense",
-]
+# In case of CudaCC
+if op_mode_list.include?('cudacc') and op_mode_list.include?('gcc')
+  op_mode_list.delete('cudacc')
+  op_mode_list.insert(op_mode_list.index('gcc')+1, 'cudacc')
+end
+
+# In case of Clang -- which is not in the list at this moment...
+if op_mode_list.include?('clang') and op_mode_list.include?('python3')
+  op_mode_list.delete('clang')
+  op_mode_list.insert(op_mode_list.index('python3')+1, 'clang')
+end
+
+
+
 
 # Working directories
 require 'fileutils'
+
+puts "Unix development environment setup for me..."
+puts "Currently... only works on Ubuntu"
+puts ""
 
 work_dir_path = "./build"
 puts work_dir_path
@@ -109,120 +96,87 @@ puts "Prefix confirmed! Everything will be installed at..."
 puts prefix_dir
 puts ""
 
-if op_mode == 'clean'
+# Checking if the destination directory is writable or not.
+need_sudo = !File.writable?(prefix_dir)
+
+# Some edge cases... cleaning and installing prereq
+if op_mode_list.include?('clean')
   system( 'rm -rvf '+work_dir+' '+source_dir )
   puts "Cleaned up everything!!"
   exit(0)
 end
 
-puts "Unix development environment setup for me..."
-puts "Currently... only works on Ubuntu"
-puts ""
-puts "Installing Prerequisites!!"
-system ( 'sudo apt-get -y update && sudo apt-get -y upgrade' )
-cmd_ary = ["sudo apt-get -y install"] + ubuntu_pkgs + ubuntu_some_more_tools
-cmd = cmd_ary.join(" ")
-system( cmd )
-
-# Installing some gems
-puts "Installing some gems"
-cmd = ["sudo", "gem", "install"]+ubuntu_ruby_gems
-system( cmd.join(" ") )
-
-# Checking if the destination directory is writable or not.
-need_sudo = !File.writable?(prefix_dir)
-
-
-# Let's install gcc first
-if op_mode.downcase == 'gcc'
-  inst_gcc = InstGCC.new
-  inst_gcc.install_gcc(prefix_dir, def_system, work_dir, source_dir, need_sudo)
-end
-if op_mode.downcase == 'gcc8'
-  inst_gcc = InstGCC8.new
-  inst_gcc.install_gcc(prefix_dir, def_system, work_dir, source_dir, need_sudo)
-end
-if op_mode.downcase == 'cudacc'
-  # inst_gcc = InstGCCCuda.new
-  # inst_gcc.install_gcc(prefix_dir, def_system, work_dir, source_dir, need_sudo)
+if op_mode_list.include?('prereq')
+  inst_prereq
+  exit(0)
 end
 
-if op_mode.downcase == 'clang'
-  inst_clang = InstClang.new
-  inst_clang.install_clang(prefix_dir, def_system, work_dir, source_dir, need_sudo)
-end
-
-# Then Python stuffs
-if op_mode.downcase.include?'python'
-  if op_mode.include?'2'
-    inst_python2 = InstPython2.new(prefix_dir, work_dir, source_dir, need_sudo)
-    inst_python2.install
-  elsif op_mode.include?'3'
-    inst_python3 = InstPython3.new(prefix_dir, work_dir, source_dir, need_sudo)
-    inst_python3.install
-  else
-    inst_python2 = InstPython2.new(prefix_dir, work_dir, source_dir, need_sudo)
-    inst_python2.install
-    inst_python3 = InstPython3.new(prefix_dir, work_dir, source_dir, need_sudo)
-    inst_python3.install
+# The main installation loop
+for op_mode in op_mode_list do
+  if op_mode == 'gcc'
+    inst_gcc = InstGCC.new(prefix_dir, def_system, work_dir, source_dir, need_sudo)
+    inst_gcc.install
+  end
+  if op_mode == 'cudacc'
+    inst_gcc = InstGCCCuda.new(prefix_dir, def_system, work_dir, source_dir, need_sudo)
+    inst_gcc.install
   end
 
-  puts "Removing 'python' to preserve system native python..."
-  sudo_cmd = ''
-  if need_sudo
-    sudo_cmd = "sudo"
-  end  
-  del_python_cmd = [
-    sudo_cmd,
-    "rm -rfv",
-    File.join(prefix_dir, "bin/python"),
-    File.join(prefix_dir, "bin/ipython")
-  ]
-  system( del_python_cmd.join(" ") )
+  if op_mode == 'clang'
+    puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
+    sleep(2)
+    inst_clang = InstClang.new
+    inst_clang.install_clang(prefix_dir, def_system, work_dir, source_dir, need_sudo)
+  end
+
+  # Then Python stuffs
+  if op_mode.include?'python'
+    if op_mode.include?'2'
+      inst_python2 = InstPython2.new(prefix_dir, work_dir, source_dir, need_sudo)
+      inst_python2.install
+    elsif op_mode.include?'3'
+      inst_python3 = InstPython3.new(prefix_dir, work_dir, source_dir, need_sudo)
+      inst_python3.install
+    else
+      inst_python2 = InstPython2.new(prefix_dir, work_dir, source_dir, need_sudo)
+      inst_python2.install
+      inst_python3 = InstPython3.new(prefix_dir, work_dir, source_dir, need_sudo)
+      inst_python3.install
+    end
+
+    puts "Removing 'python' to preserve system native python..."
+    sudo_cmd = ''
+    if need_sudo
+      sudo_cmd = "sudo"
+    end  
+    del_python_cmd = [
+        sudo_cmd,
+        "rm -rfv",
+        File.join(prefix_dir, "bin/python"),
+        File.join(prefix_dir, "bin/ipython")
+    ]
+    system( del_python_cmd.join(" ") )
+  end
+
+  if op_mode == 'boost'
+    inst_boost = InstBoost.new(prefix_dir, work_dir, source_dir, need_sudo)
+    inst_boost.install
+  end
+
+  if op_mode == 'lua'
+    inst_lua = InstLua.new(prefix_dir, work_dir, source_dir, need_sudo)
+    inst_lua.install
+  end
+
+  if op_mode == 'ruby'
+    inst_lua = InstRuby.new(prefix_dir, work_dir, source_dir, need_sudo)
+    inst_lua.install
+  end
+
+  if op_mode == 'node'
+    inst_node = InstNode.new(prefix_dir, work_dir, source_dir, need_sudo)
+    inst_node.install
+  end
+
 end
 
-if op_mode.downcase == 'boost'
-  inst_boost = InstBoost.new(prefix_dir, work_dir, source_dir, need_sudo)
-  inst_boost.install
-end
-
-if op_mode.downcase == 'lua'
-  inst_lua = InstLua.new(prefix_dir, work_dir, source_dir, need_sudo)
-  inst_lua.install
-end
-
-if op_mode.downcase == 'ruby'
-  inst_lua = InstRuby.new(prefix_dir, work_dir, source_dir, need_sudo)
-  inst_lua.install
-end
-
-if op_mode.downcase == 'node'
-  inst_node = InstNode.new(prefix_dir, work_dir, source_dir, need_sudo)
-  inst_node.install
-end
-
-if op_mode.downcase == 'all'
-  inst_gcc = InstGCC.new
-  inst_gcc.install_gcc(prefix_dir, def_system, work_dir, source_dir, need_sudo)
-
-  inst_python3 = InstPython3.new(prefix_dir, work_dir, source_dir, need_sudo)
-  inst_python3.install
-
-  inst_clang = InstClang.new
-  inst_clang.install_clang(prefix_dir, def_system, work_dir, source_dir, need_sudo)
-
-  inst_boost = InstBoost.new(prefix_dir, work_dir, source_dir, need_sudo)
-  inst_boost.install
-
-  puts "Removing 'python' to preserve system native python..."
-  del_python_cmd = [
-    "sudo",
-    "rm -rfv",
-    File.join(prefix_dir, "bin/python"),
-    File.join(prefix_dir, "bin/ipython")
-  ]
-  system( del_python_cmd.join(" ") )
-
-  inst_node = InstNode.new(prefix_dir, work_dir, source_dir, need_sudo)
-  inst_node.install
-end

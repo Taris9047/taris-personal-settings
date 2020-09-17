@@ -5,6 +5,7 @@
 
 require './download.rb'
 require './fname_parser.rb'
+require './get_compiler.rb'
 
 class InstBoost
 
@@ -13,12 +14,23 @@ class InstBoost
   @@Prefix = nil
   @@Src_dir = nil
   @@Build_dir = nil
+  
+  @@b2_opts = [
+    "address-model=64",
+    "architecture=x86",
+    "--build-dir=build",
+    ]
 
   def initialize(prefix, src_dir, build_dir, need_sudo)
     @@Prefix = prefix
     @@Src_dir = src_dir
     @@Build_dir = build_dir
     @@need_sudo = need_sudo
+  
+    # Setting up compilers
+    compiler_path = File.join(prefix,'bin')
+    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
+    @@env = gc.get_env_settings
   end
 
   def install
@@ -42,15 +54,19 @@ class InstBoost
     else
       inst_cmd = "./b2 install"
     end
+    
+    @@b2_opts << "--prefix={prefix}".gsub('{prefix}', @@Prefix)
+    @@b2_opts << "stage"
+    
     cmds = [
       "cd",
       src_extracted_folder, "&&",
       "./bootstrap.sh", "--prefix="+@@Prefix, "&&",
-      "./b2", "&&",
+      "./b2", @@b2_opts.join(" "), "&&",
       inst_cmd
     ]
 
-    system( cmds.join(" ") )
+    system( @@env, cmds.join(" ") )
 
   end # install
 
