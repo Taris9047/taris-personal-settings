@@ -25,6 +25,7 @@ class InstGCC
     "CXX=\"g++\"",
     "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
     "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
+    "LDFLAGS=\"-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64\"",
   ]
 
   def initialize
@@ -80,7 +81,7 @@ class InstGCC
       "cd",
       File.realpath(bld_dir),
       "&&",
-      @@CompilerSettings.join(" "),
+      @@CompilerSettings.join(" ").gsub('{prefix}', prefix),
       File.realpath(extracted_src_dir)+"/configure",
       opts.join(" "),
       "&& make -j",@@Processors.to_s,"bootstrap",
@@ -117,7 +118,7 @@ class InstGCCCuda
     "CXX=\"g++\"",
     "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
     "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
-    "LDFLAGS=\"-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
+    "LDFLAGS=\"-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64\"",
   ]
 
   def initialize
@@ -173,7 +174,7 @@ class InstGCCCuda
       "cd",
       File.realpath(bld_dir),
       "&&",
-      @@CompilerSettings.join(" ").dsub('{prefix}', prefix),
+      @@CompilerSettings.join(" ").gsub('{prefix}', prefix),
       File.realpath(extracted_src_dir)+"/configure",
       opts.join(" "),
       "&& make -j",@@Processors.to_s,"bootstrap",
