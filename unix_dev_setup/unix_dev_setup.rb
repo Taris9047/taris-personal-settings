@@ -4,14 +4,7 @@
 # In fact, we need to apply patch to adopt old gcc source codes to
 # follow up the newest changes in libc 2.26
 
-require "./install_gcc.rb"
-require "./install_python.rb"
-require "./install_boost.rb"
-require "./install_lua.rb"
-require "./install_ruby.rb"
-require "./install_clang.rb"
-require "./install_node.rb"
-require "./inst_prereq.rb"
+
 
 # Default parameters
 home_dir = ENV["HOME"]
@@ -32,7 +25,7 @@ list_of_progs = [
 
 # Operatnion mode
 op_mode = nil
-if ARGV.empty?
+if ARGV.empty? or ARGV[0].downcase == 'all'
   op_mode_list = list_of_progs
 else
   op_mode_list = ARGV
@@ -41,6 +34,20 @@ end
 op_mode_list.each_with_index do |op_mode, i|
   op_mode_list[i] = op_mode_list[i].downcase
 end
+
+# Some edge cases... cleaning and installing prereq
+if op_mode_list.include?('clean')
+  system( 'rm -rvf '+work_dir+' '+source_dir )
+  puts "Cleaned up everything!!"
+  exit(0)
+end
+
+if op_mode_list.include?('prereq')
+  require "./inst_prereq.rb"
+  inst_prereq
+  exit(0)
+end
+
 
 # Doing some re-organization
 # Gcc
@@ -60,9 +67,6 @@ if op_mode_list.include?('clang') and op_mode_list.include?('python3')
   op_mode_list.delete('clang')
   op_mode_list.insert(op_mode_list.index('python3')+1, 'clang')
 end
-
-
-
 
 # Working directories
 require 'fileutils'
@@ -99,30 +103,23 @@ puts ""
 # Checking if the destination directory is writable or not.
 need_sudo = !File.writable?(prefix_dir)
 
-# Some edge cases... cleaning and installing prereq
-if op_mode_list.include?('clean')
-  system( 'rm -rvf '+work_dir+' '+source_dir )
-  puts "Cleaned up everything!!"
-  exit(0)
-end
 
-if op_mode_list.include?('prereq')
-  inst_prereq
-  exit(0)
-end
 
 # The main installation loop
 for op_mode in op_mode_list do
   if op_mode == 'gcc'
+    require "./install_gcc.rb"
     inst_gcc = InstGCC.new(prefix_dir, def_system, work_dir, source_dir, need_sudo)
     inst_gcc.install
   end
   if op_mode == 'cudacc'
+    require "./install_gcc.rb"
     inst_gcc = InstGCCCuda.new(prefix_dir, def_system, work_dir, source_dir, need_sudo)
     inst_gcc.install
   end
 
   if op_mode == 'clang'
+    require "./install_clang.rb"
     puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
     sleep(2)
     inst_clang = InstClang.new
@@ -131,6 +128,7 @@ for op_mode in op_mode_list do
 
   # Then Python stuffs
   if op_mode.include?'python'
+    require "./install_python.rb"
     if op_mode.include?'2'
       inst_python2 = InstPython2.new(prefix_dir, work_dir, source_dir, need_sudo)
       inst_python2.install
@@ -159,21 +157,25 @@ for op_mode in op_mode_list do
   end
 
   if op_mode == 'boost'
+    require "./install_boost.rb"
     inst_boost = InstBoost.new(prefix_dir, work_dir, source_dir, need_sudo)
     inst_boost.install
   end
 
   if op_mode == 'lua'
+    require "./install_lua.rb"
     inst_lua = InstLua.new(prefix_dir, work_dir, source_dir, need_sudo)
     inst_lua.install
   end
 
   if op_mode == 'ruby'
+    require "./install_ruby.rb"
     inst_lua = InstRuby.new(prefix_dir, work_dir, source_dir, need_sudo)
     inst_lua.install
   end
 
   if op_mode == 'node'
+    require "./install_node.rb"
     inst_node = InstNode.new(prefix_dir, work_dir, source_dir, need_sudo)
     inst_node.install
   end

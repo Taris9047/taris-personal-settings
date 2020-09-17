@@ -16,14 +16,6 @@ class InstNode
 
   @@Processors = nil
 
-  @@CompilerSettings = [
-    "CC=\"gcc\"",
-    "CXX=\"g++\"",
-    "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
-    "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
-    "LDFLAGS=\"-Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib\"",
-  ]
-
   def initialize(prefix, build_dir, src_dir, need_sudo=false)
     @@Prefix = prefix
     @@Build_dir = build_dir
@@ -35,7 +27,7 @@ class InstNode
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
-    @@CompilerSettings = gc.get_settings
+    @@env = gc.get_env_settings
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -64,14 +56,12 @@ class InstNode
 
     if Dir.exists?(src_extract_folder)
       puts "Source file folder exists in "+src_extract_folder
-    else
-      puts "Extracting"
-      system( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
+      puts "Deleting it"
+      system( ['rm -rf', src_extract_folder].join(' ') )
     end
+    puts "Extracting"
+    system( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
 
-    compiler_path = File.join(@@Prefix,'bin')
-    gc = GetCompiler.new(compiler_path)
-    env = gc.get_env_settings
     conf_opts = ["--prefix="+@@Prefix]+@@node_conf_opts
 
     if @@need_sudo
@@ -79,6 +69,10 @@ class InstNode
     else
       inst_cmd = "make install"
     end
+    
+    # A bit of last minute changes
+    @@env['CFLAGS'] = @@env['CFLAGS'] + " -fPIE"
+    @@env['CXXFLAGS'] = @@env['CXXFLAGS'] + " -fPIE"
 
     # Ok let's rock!
     cmds = [
@@ -89,7 +83,7 @@ class InstNode
       inst_cmd
     ]
     puts cmds.join(' ')
-    system( env, cmds.join(" ") )
+    system( @@env, cmds.join(" ") )
 
   end # install
 
