@@ -71,8 +71,12 @@ class InstNode
     end
     
     # A bit of last minute changes
-    @@env['CFLAGS'] = @@env['CFLAGS'] + " -fPIE"
-    @@env['CXXFLAGS'] = @@env['CXXFLAGS'] + " -fPIE"
+    @@env['CC'] = 'gcc-old'
+    @@env['CXX'] = 'g++-old'
+    #@@env['CFLAGS'] = @@env['CFLAGS'] + " -fPIE"
+    #@@env['CFLAGS'] = @@env['CFLAGS'] + " -fno-pie"
+    #@@env['CXXFLAGS'] = @@env['CXXFLAGS'] + " -fPIE"
+    #@@env['CXXFLAGS'] = @@env['CXXFLAGS'] + " -fPIE"
 
     # Ok let's rock!
     cmds = [

@@ -15,6 +15,7 @@ def_system = "Ubuntu"
 list_of_progs = [
     'gcc',
     'cudacc',
+    'gccold',
     'python2',
     'python3',
     'boost',
@@ -59,6 +60,12 @@ end
 if op_mode_list.include?('cudacc') and op_mode_list.include?('gcc')
   op_mode_list.delete('cudacc')
   op_mode_list.insert(op_mode_list.index('gcc')+1, 'cudacc')
+end
+
+# In case of node
+if op_mode_list.include?('node') and op_mode_list.include?('gccold')
+  op_mode_list.delete('node')
+  op_mode_list.insert(op_mode_list.index('gccold')+1, 'node')
 end
 
 # In case of Clang -- which is not in the list at this moment...
@@ -116,6 +123,12 @@ for op_mode in op_mode_list do
     inst_gcc = InstGCCCuda.new(prefix_dir, def_system, work_dir, source_dir, need_sudo)
     inst_gcc.install
   end
+  if op_mode == 'gccold'
+    require "./install_gcc.rb"
+    inst_gcc = InstGCCOld.new(prefix_dir, def_system, work_dir, source_dir, need_sudo)
+    inst_gcc.install
+  end
+
 
   if op_mode == 'clang'
     require "./install_clang.rb"
