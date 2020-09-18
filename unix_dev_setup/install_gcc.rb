@@ -106,7 +106,7 @@ end # class InstGCC
 
 
 class InstGCCCuda
-  @@gcc_source_url = "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.bz2"
+  @@gcc_source_url = "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz"
 
   @@gcc_conf_options = [
     "--program-suffix=5",

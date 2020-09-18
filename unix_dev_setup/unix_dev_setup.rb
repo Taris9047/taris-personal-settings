@@ -47,7 +47,7 @@ if op_mode_list.include?('prereq')
   inst_prereq
   exit(0)
 end
-
+puts op_mode_list
 
 # Doing some re-organization
 # Gcc
