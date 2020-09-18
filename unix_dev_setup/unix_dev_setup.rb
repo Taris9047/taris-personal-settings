@@ -36,19 +36,6 @@ op_mode_list.each_with_index do |op_mode, i|
   op_mode_list[i] = op_mode_list[i].downcase
 end
 
-# Some edge cases... cleaning and installing prereq
-if op_mode_list.include?('clean')
-  system( 'rm -rvf '+work_dir+' '+source_dir )
-  puts "Cleaned up everything!!"
-  exit(0)
-end
-
-if op_mode_list.include?('prereq')
-  require "./install_prereq.rb"
-  inst_prereq
-  exit(0)
-end
-
 # Doing some re-organization
 # Gcc
 if op_mode_list.include?('gcc')
@@ -105,6 +92,19 @@ prefix_dir = File.realpath(prefix_dir_path)
 puts "Prefix confirmed! Everything will be installed at..."
 puts prefix_dir
 puts ""
+
+# Some edge cases... cleaning and installing prereq
+if op_mode_list.include?('clean')
+  system( 'rm -rvf '+work_dir+' '+source_dir )
+  puts "Cleaned up everything!!"
+  exit(0)
+end
+
+if op_mode_list.include?('prereq')
+  require "./install_prereq.rb"
+  inst_prereq
+  exit(0)
+end
 
 # Checking if the destination directory is writable or not.
 need_sudo = !File.writable?(prefix_dir)

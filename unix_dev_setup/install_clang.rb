@@ -79,7 +79,11 @@ class InstClang
     compiler_path = File.join(prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
     comp_settings = gc.get_cmake_settings
-    
+   
+    # Some last minute changes.
+    comp_settings[0] = '-DCMAKE_C_COMPILER=gcc-old'
+    comp_settings[1] = '-DCMAKE_CXX_COMPILER=g++-old'
+
     # Setting up install prefix
     inst_prefix_opt = [ 
       "-DCMAKE_INSTALL_PREFIX:PATH=",
