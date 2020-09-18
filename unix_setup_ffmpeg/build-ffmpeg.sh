@@ -6,8 +6,8 @@ VERSION=1.14
 CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
-CC="clang"
-CXX="clang++"
+CC="gcc"
+CXX="g++"
 LDFLAGS="-L${WORKSPACE}/lib -lm"
 CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIE"
 CXXFLAGS="$CFLAGS"

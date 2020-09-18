@@ -43,7 +43,7 @@ if op_mode_list.include?('clean')
 end
 
 if op_mode_list.include?('prereq')
-  require "./inst_prereq.rb"
+  require "./install_prereq.rb"
   inst_prereq
   exit(0)
 end
