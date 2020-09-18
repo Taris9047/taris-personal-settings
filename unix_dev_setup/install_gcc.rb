@@ -76,7 +76,7 @@ class InstGCC
       puts "Build dir exists, cleaning up before work!!"
       system( "rm -rf "+bld_dir )
     end
-    system( "mkdir "+bld_dir )
+    system( "mkdir -p "+bld_dir )
 
     if @@need_sudo
       inst_cmd = "&& sudo make install"
@@ -171,13 +171,13 @@ class InstGCCCuda
     system( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
 
     # Let's build!!
-    if Dir.exists?(bld_dir) == false
+    unless Dir.exists?(bld_dir)
       puts "Build dir missing.. making one.."
     else
       puts "Build dir exists, cleaning up before work!!"
       system( "rm -rf "+bld_dir )
     end
-    system( "mkdir -f "+bld_dir )
+    system( "mkdir -p "+bld_dir )
 
     if @@need_sudo
       inst_cmd = "&& sudo make install"
