@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Prerequisites
-ubuntu_pkgs = [
+$ubuntu_pkgs = [
   "build-essential",
   "flex",
   "bison",
@@ -34,7 +34,7 @@ ubuntu_pkgs = [
 ]
 
 # Other dev tools
-ubuntu_some_more_tools = [
+$ubuntu_some_more_tools = [
   "valgrind",
   "cmake",
   "cmake-gui",
@@ -50,7 +50,7 @@ ubuntu_some_more_tools = [
 ]
 
 # Ruby gems
-ubuntu_ruby_gems = [
+$ubuntu_ruby_gems = [
   "rsense",
 ]
 
@@ -58,13 +58,13 @@ ubuntu_ruby_gems = [
 def inst_prereq
   puts "Installing Prerequisites!!"
   system ( 'sudo apt-get -y update && sudo apt-get -y upgrade' )
-  cmd_ary = ["sudo apt-get -y install"] + ubuntu_pkgs + ubuntu_some_more_tools
+  cmd_ary = ["sudo apt-get -y install"] + $ubuntu_pkgs + $ubuntu_some_more_tools
   cmd = cmd_ary.join(" ")
   system( cmd )
 
   # Installing some gems
   puts "Installing some gems"
-  cmd = ["sudo", "gem", "install"]+ubuntu_ruby_gems
+  cmd = ["sudo", "gem", "install"] + $ubuntu_ruby_gems
   system( cmd.join(" ") )
 end
 
