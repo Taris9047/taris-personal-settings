@@ -109,7 +109,7 @@ class InstGCCCuda
   @@gcc_source_url = "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz"
 
   @@gcc_conf_options = [
-    "--program-suffix=5",
+    "--program-suffix=-cuda",
     "--enable-languages=c,c++,fortran,objc,obj-c++",
     "--enable-shared" ,
     "--enable-linker-build-id" ,
