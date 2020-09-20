@@ -5,6 +5,7 @@
 require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
+require 'open3'
 require 'etc'
 
 $get_pip_url = "https://bootstrap.pypa.io/get-pip.py"
@@ -126,7 +127,7 @@ class InstPython2
       File.join(@@Prefix,"/bin/pip"),
       File.join(@@Prefix,"/bin/pip"+major.to_s)
     ]
-    system( inst_pip_cmds.join(" ") )
+    Open3.capture3( inst_pip_cmds.join(" ") )
 
     inst_module_cmds = [
       pip_inst_sudo,
@@ -135,7 +136,7 @@ class InstPython2
       @@py2_modules.join(" ")
     ]
 
-    system( inst_module_cmds.join(" ") )
+    Open3.capture3( inst_module_cmds.join(" ") )
 
   end
 end # class InstPython2
@@ -217,16 +218,16 @@ class InstPython3
       puts "Source file folder exists in "+src_extract_folder
     else
       puts "Extracting"
-      system( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
+      Open3.capture3( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
     end
 
     if Dir.exists?(src_build_folder)
       puts "Build folder found!! Removing it for 'pure' experience!!"
-      system( "rm -rfv "+src_build_folder )
+      Open3.capture3( "rm -rfv "+src_build_folder )
     else
       puts "Ok, let's make a build folder"
     end
-    system( "mkdir "+src_build_folder )
+    Open3.capture3( "mkdir "+src_build_folder )
 
     conf_opts = ["--prefix="+@@Prefix]+@@py3_conf_opts
 
@@ -246,7 +247,7 @@ class InstPython3
       inst_cmd
     ]
 
-    system( @@env, cmds.join(" ") )
+    Open3.capture3( @@env, cmds.join(" ") )
 
     if File.exists?(File.join(@@Src_dir, 'get-pip.py'))
       puts "Found get-pip.py"
@@ -264,7 +265,7 @@ class InstPython3
       File.join(@@Prefix,"/bin/pip"),
       File.join(@@Prefix,"/bin/pip"+major.to_s)
     ]
-    system( inst_pip_cmds.join(" ") )
+    Open3.capture3( inst_pip_cmds.join(" ") )
 
     inst_module_cmds = [
       pip_inst_sudo,
@@ -273,7 +274,7 @@ class InstPython3
       @@py3_modules.join(" ")
     ]
 
-    system( inst_module_cmds.join(" ") )
+    Open3.capture3( inst_module_cmds.join(" ") )
 
   end
 end # class InstPython3

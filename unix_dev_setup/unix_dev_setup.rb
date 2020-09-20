@@ -4,8 +4,6 @@
 # In fact, we need to apply patch to adopt old gcc source codes to
 # follow up the newest changes in libc 2.26
 
-
-
 # Default parameters
 home_dir = ENV["HOME"]
 def_prefix = File.join(home_dir, "/.local")

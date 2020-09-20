@@ -3,6 +3,7 @@
 require 'etc'
 require './download.rb'
 require './fname_parser.rb'
+require 'open3'
 
 class InstGCC
   @@gcc_source_url = "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz"
@@ -63,20 +64,20 @@ class InstGCC
       puts "Extracted folder has been found!!"
     else
       puts "Extracting..."
-      system( "tar xf "+source_file+" -C "+@@build_dir)
+      Open3.capture3( "tar xf "+source_file+" -C "+@@build_dir)
     end
 
     # Downloading prerequisites
-    system( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
+    Open3.capture3( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
 
     # Let's build!!
     if Dir.exists?(bld_dir) == false
       puts "Build dir missing.. making one.."
     else
       puts "Build dir exists, cleaning up before work!!"
-      system( "rm -rf "+bld_dir )
+      Open3.capture3( "rm -rf "+bld_dir )
     end
-    system( "mkdir -p "+bld_dir )
+    Open3.capture3( "mkdir -p "+bld_dir )
 
     if @@need_sudo
       inst_cmd = "&& sudo make install"
@@ -98,7 +99,7 @@ class InstGCC
       inst_cmd
     ]
 
-    system( @@env, cmd.join(" ") )
+    Open3.capture3( @@env, cmd.join(" ") )
 
   end
 
@@ -164,7 +165,7 @@ class InstGCCCuda
       puts "Extracted folder has been found!!"
     else
       puts "Extracting..."
-      system( "tar xf "+source_file+" -C "+@@build_dir)
+      Open3.capture3( "tar xf "+source_file+" -C "+@@build_dir)
     end
 
     # Downloading prerequisites
@@ -175,9 +176,9 @@ class InstGCCCuda
       puts "Build dir missing.. making one.."
     else
       puts "Build dir exists, cleaning up before work!!"
-      system( "rm -rf "+bld_dir )
+      Open3.capture3( "rm -rf "+bld_dir )
     end
-    system( "mkdir -p "+bld_dir )
+    Open3.capture3( "mkdir -p "+bld_dir )
 
     if @@need_sudo
       inst_cmd = "&& sudo make install"
@@ -199,7 +200,7 @@ class InstGCCCuda
       inst_cmd
     ]
 
-    system( @@env, cmd.join(" ") )
+    Open3.capture3( @@env, cmd.join(" ") )
 
   end
 
@@ -266,20 +267,20 @@ class InstGCCOld
       puts "Extracted folder has been found!!"
     else
       puts "Extracting..."
-      system( "tar xf "+source_file+" -C "+@@build_dir)
+      Open3.capture3( "tar xf "+source_file+" -C "+@@build_dir)
     end
 
     # Downloading prerequisites
-    system( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
+    Open3.capture3( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
 
     # Let's build!!
     if Dir.exists?(bld_dir) == false
       puts "Build dir missing.. making one.."
     else
       puts "Build dir exists, cleaning up before work!!"
-      system( "rm -rf "+bld_dir )
+      Open3.capture3( "rm -rf "+bld_dir )
     end
-    system( "mkdir -p "+bld_dir )
+    Open3.capture3( "mkdir -p "+bld_dir )
 
     if @@need_sudo
       inst_cmd = "&& sudo make install"
@@ -301,7 +302,7 @@ class InstGCCOld
       inst_cmd
     ]
 
-    system( @@env, cmd.join(" ") )
+    Open3.capture3( @@env, cmd.join(" ") )
 
   end
 

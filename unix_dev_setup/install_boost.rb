@@ -6,6 +6,7 @@
 require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
+require 'open3'
 
 class InstBoost
 
@@ -45,7 +46,7 @@ class InstBoost
     if File.exists?(src_extracted_folder)
       puts "Previous Boost installation exists"
     else
-      system( ["tar xvf", File.realpath(src_tarball_path), "-C", File.realpath(@@Build_dir)].join(" ") )
+      Open3.capture3( ["tar xvf", File.realpath(src_tarball_path), "-C", File.realpath(@@Build_dir)].join(" ") )
     end
 
     # Boost is kinda simple. just build within the directory!
@@ -66,7 +67,7 @@ class InstBoost
       inst_cmd
     ]
 
-    system( @@env, cmds.join(" ") )
+    Open3.capture3( @@env, cmds.join(" ") )
 
   end # install
 

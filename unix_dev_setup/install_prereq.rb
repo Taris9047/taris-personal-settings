@@ -30,7 +30,7 @@ $ubuntu_pkgs = [
   "graphviz",
   "xz-utils",
   "ruby-dev",
-  "git-lfs"
+  "git-lfs",
 ]
 
 # Other dev tools
@@ -52,6 +52,7 @@ $ubuntu_some_more_tools = [
 # Ruby gems
 $ubuntu_ruby_gems = [
   "rsense",
+  "open3"
 ]
 
 # Install prereqs!

@@ -4,6 +4,7 @@ require 'etc'
 require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
+require 'open3'
 
 class InstClang
   @@llvm_repo_url = "http://llvm.org/svn/llvm-project/llvm/trunk"
@@ -42,15 +43,15 @@ class InstClang
     puts "Working on Clang!!"
     puts ""
 
-    system( "svn co "+@@llvm_repo_url+" "+source_dir+"/llvm" )
-    system( "svn co "+@@clang_repo_url+" "+source_dir+"/llvm/tools/clang" )
-    system( "svn co "+@@clang_tools_url+" "+source_dir+"/llvm/tools/clang/tools/extra" )
-    system( "svn co "+@@clang_lld_linker+" "+source_dir+"/llvm/tools/lld" )
-    system( "svn co "+@@clang_polly_loop+" "+source_dir+"/llvm/tools/polly" )
-    system( "svn co "+@@openmp_url+" "+source_dir+"/llvm/projects/openmp" )
-    system( "svn co "+@@compilerRT_url+" "+source_dir+"/llvm/projects/compiler-rt" )
-    system( "svn co "+@@libcxx_url+" "+source_dir+"/llvm/projects/libcxx" )
-    system( "svn co "+@@libcxxabi_url+" "+source_dir+"/llvm/projects/libcxxabi" )
+    Open3.popen3( "svn co "+@@llvm_repo_url+" "+source_dir+"/llvm" )
+    Open3.popen3( "svn co "+@@clang_repo_url+" "+source_dir+"/llvm/tools/clang" )
+    Open3.popen3( "svn co "+@@clang_tools_url+" "+source_dir+"/llvm/tools/clang/tools/extra" )
+    Open3.popen3( "svn co "+@@clang_lld_linker+" "+source_dir+"/llvm/tools/lld" )
+    Open3.popen3( "svn co "+@@clang_polly_loop+" "+source_dir+"/llvm/tools/polly" )
+    Open3.popen3( "svn co "+@@openmp_url+" "+source_dir+"/llvm/projects/openmp" )
+    Open3.popen3( "svn co "+@@compilerRT_url+" "+source_dir+"/llvm/projects/compiler-rt" )
+    Open3.popen3( "svn co "+@@libcxx_url+" "+source_dir+"/llvm/projects/libcxx" )
+    Open3.popen3( "svn co "+@@libcxxabi_url+" "+source_dir+"/llvm/projects/libcxxabi" )
 
     # Let's build!!
     bld_dir = build_dir+"/clang"
@@ -58,9 +59,9 @@ class InstClang
       puts "Build dir missing.. making one.."
     else
       puts "Build dir exists, cleaning up before work!!"
-      system( "rm -rf "+bld_dir )
+      Open3.popen3( "rm -rf "+bld_dir )
     end
-    system( "mkdir -p "+bld_dir )
+    Open3.popen3( "mkdir -p "+bld_dir )
 
     if need_sudo
       inst_cmd = "sudo make install"
@@ -107,7 +108,7 @@ class InstClang
     	inst_cmd
     ]
 
-    system ( cmd.join(" ") )
+    Open3.popen3( cmd.join(" ") )
 
   end
 

@@ -6,6 +6,7 @@ require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
 require 'etc'
+require 'open3'
 
 class InstNode
   @@source_url = "https://nodejs.org/dist/v14.11.0/node-v14.11.0.tar.gz"
@@ -57,10 +58,10 @@ class InstNode
     if Dir.exists?(src_extract_folder)
       puts "Source file folder exists in "+src_extract_folder
       puts "Deleting it"
-      system( ['rm -rf', src_extract_folder].join(' ') )
+      Open3.capture3( ['rm -rf', src_extract_folder].join(' ') )
     end
     puts "Extracting"
-    system( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
+    Open3.capture3( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
 
     conf_opts = ["--prefix="+@@Prefix]+@@node_conf_opts
 
@@ -87,7 +88,7 @@ class InstNode
       inst_cmd
     ]
     puts cmds.join(' ')
-    system( @@env, cmds.join(" ") )
+    Open3.capture3( @@env, cmds.join(" ") )
 
   end # install
 

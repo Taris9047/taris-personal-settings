@@ -5,6 +5,7 @@
 require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
+require 'open3'
 require 'etc'
 
 class InstRuby
@@ -16,7 +17,7 @@ class InstRuby
 
   # Python2 modules to install
   @@ruby_gems = [
-    "rsense", "rails", "bundler"
+    "rsense", "rails", "bundler", "open3"
   ]
 
   # Python2 build options
@@ -62,16 +63,16 @@ class InstRuby
       puts "Source file folder exists in "+src_extract_folder
     else
       puts "Extracting"
-      system( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
+      Open3.capture3( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
     end
 
     if Dir.exists?(src_build_folder)
       puts "Build folder found!! Removing it for 'pure' experience!!"
-      system( "rm -rfv "+src_build_folder )
+      Open3.capture3( "rm -rfv "+src_build_folder ) {}
     else
       puts "Ok, let's make a build folder"
     end
-    system( "mkdir "+src_build_folder )
+    Open3.capture3( "mkdir -p "+src_build_folder ) {}
 
     conf_opts = ["--prefix="+@@Prefix]+@@ruby_conf_opts
 
@@ -92,7 +93,8 @@ class InstRuby
       inst_cmd
     ]
 
-    system( @@env, cmds.join(" ") )
+    Open3.capture3( @@env, cmds.join(" ") )
+    # system( @@env, cmds.join(" ") )
 
     inst_module_cmds = [
       mod_sudo,
@@ -101,7 +103,7 @@ class InstRuby
       @@ruby_gems.join(" ")
     ]
 
-    system( inst_module_cmds.join(" ") )
+    Open3.capture3( inst_module_cmds.join(" ") )
 
   end
 end # class InstRuby

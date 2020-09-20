@@ -6,6 +6,7 @@ require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
 require 'etc'
+require 'open3'
 
 class InstLua
   @@source_url = "https://www.lua.org/ftp/lua-5.4.0.tar.gz"
@@ -58,7 +59,7 @@ class InstLua
       puts "Source file folder exists in "+src_extract_folder
     else
       puts "Extracting"
-      system( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
+      Open3.capture3( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
     end
 
     if @@need_sudo
@@ -75,7 +76,7 @@ class InstLua
       inst_cmd
     ]
 
-    system( cmds.join(" ") )
+    Open3.capture3( cmds.join(" ") )
 
   end
 end # class InstLua
