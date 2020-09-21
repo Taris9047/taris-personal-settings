@@ -4,11 +4,12 @@ require 'etc'
 require './download.rb'
 require './fname_parser.rb'
 require 'open3'
+require './install_stuff.rb'
 
-class InstGCC
-  @@gcc_source_url = "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz"
+class InstGCC < InstallStuff
+  @@source_url = "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz"
 
-  @@gcc_conf_options = [
+  @@conf_options = [
     "--enable-languages=c,c++,fortran,objc,obj-c++",
     "--enable-shared" ,
     "--enable-linker-build-id" ,
@@ -19,8 +20,6 @@ class InstGCC
     "--build=x86_64-linux-gnu",
   ]
 
-  @@Processors = nil
-  
   @@env = {
     "CC" => "gcc",
     "CXX" => "g++",
@@ -29,8 +28,10 @@ class InstGCC
     "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
   }
 
-  def initialize (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src', need_sudo=false)
-    
+  def initialize (
+      prefix='/usr/local', os_type='Ubuntu',
+      work_dirs=['./build', './src', './pkginfo'], need_sudo=false)
+
     # Setting up processors
     procs = Etc.nprocessors
     if procs > 2
@@ -38,13 +39,15 @@ class InstGCC
     else
       @@Processors = procs
     end
-  
+
     @@prefix=prefix
     @@os_type=os_type
-    @@build_dir=build_dir
-    @@source_dir=source_dir
+    @@build_dir=work_dirs[0]
+    @@source_dir=work_dirs[1]
+    @@pkginfo_dir=work_dirs[2]
+    @@pkginfo_file=File.join(@@pkginfo_dir, 'gcc.info')
     @@need_sudo=need_sudo
-  
+
   end
 
   def install
@@ -52,7 +55,12 @@ class InstGCC
     puts "Working on GCC!!"
     puts ""
 
-    dl = Download.new(@@gcc_source_url, @@source_dir)
+    if File.file?(@@pkginfo_file)
+      puts "Oh, it seems gcc was already installed!! Skipping!!"
+      return 0
+    end
+
+    dl = Download.new(@@source_url, @@source_dir)
     source_file = dl.GetPath()
     fp = FNParser.new(source_file)
     src_tarball_fname, src_tarball_bname = fp.name
@@ -87,7 +95,7 @@ class InstGCC
 
     @@env['LDFLAGS'] = @@env['LDFLAGS'].gsub('{prefix}', @@prefix)
 
-    opts = Array.new(["--prefix="+@@prefix]+@@gcc_conf_options)
+    opts = Array.new(["--prefix="+@@prefix]+@@conf_options)
     cmd = [
       "cd",
       File.realpath(bld_dir),
@@ -101,15 +109,17 @@ class InstGCC
 
     Open3.capture3( @@env, cmd.join(" ") )
 
+    WriteInfo
+
   end
 
 end # class InstGCC
 
 
-class InstGCCCuda
-  @@gcc_source_url = "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz"
+class InstGCCCuda < InstGCC
+  @@source_url = "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz"
 
-  @@gcc_conf_options = [
+  @@conf_options = [
     "--program-suffix=-cuda",
     "--enable-languages=c,c++,fortran,objc,obj-c++",
     "--enable-shared" ,
@@ -139,7 +149,7 @@ class InstGCCCuda
     else
       @@Processors = procs
     end
-    
+
     @@prefix=prefix
     @@os_type=os_type
     @@build_dir=build_dir
@@ -153,7 +163,7 @@ class InstGCCCuda
     puts "Working on GCC for Cuda!!"
     puts ""
 
-    dl = Download.new(@@gcc_source_url, @@source_dir)
+    dl = Download.new(@@source_url, @@source_dir)
     source_file = dl.GetPath()
     fp = FNParser.new(source_file)
     src_tarball_fname, src_tarball_bname = fp.name
@@ -188,7 +198,7 @@ class InstGCCCuda
 
     @@env['LDFLAGS'] = @@env['LDFLAGS'].gsub('{prefix}', @@prefix)
 
-    opts = Array.new(["--prefix="+@@prefix]+@@gcc_conf_options)
+    opts = Array.new(["--prefix="+@@prefix]+@@conf_options)
     cmd = [
       "cd",
       File.realpath(bld_dir),
@@ -207,10 +217,10 @@ class InstGCCCuda
 end # class InstGCCCuda
 
 
-class InstGCCOld
-  @@gcc_source_url = "https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz"
+class InstGCCOld < InstGCC
+  @@source_url = "https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz"
 
-  @@gcc_conf_options = [
+  @@conf_options = [
     "--program-suffix=-old",
     "--enable-languages=c,c++,fortran,objc,obj-c++",
     "--enable-shared" ,
@@ -223,7 +233,7 @@ class InstGCCOld
   ]
 
   @@Processors = nil
-  
+
   @@env = {
     "CC" => "gcc",
     "CXX" => "g++",
@@ -233,7 +243,7 @@ class InstGCCOld
   }
 
   def initialize (prefix='/usr/local', os_type='Ubuntu', build_dir='./build', source_dir='./src', need_sudo=false)
-    
+
     # Setting up processors
     procs = Etc.nprocessors
     if procs > 2
@@ -241,13 +251,13 @@ class InstGCCOld
     else
       @@Processors = procs
     end
-  
+
     @@prefix=prefix
     @@os_type=os_type
     @@build_dir=build_dir
     @@source_dir=source_dir
     @@need_sudo=need_sudo
-  
+
   end
 
   def install
@@ -255,7 +265,7 @@ class InstGCCOld
     puts "Working on GCC!!"
     puts ""
 
-    dl = Download.new(@@gcc_source_url, @@source_dir)
+    dl = Download.new(@@source_url, @@source_dir)
     source_file = dl.GetPath()
     fp = FNParser.new(source_file)
     src_tarball_fname, src_tarball_bname = fp.name
@@ -290,7 +300,7 @@ class InstGCCOld
 
     @@env['LDFLAGS'] = @@env['LDFLAGS'].gsub('{prefix}', @@prefix)
 
-    opts = Array.new(["--prefix="+@@prefix]+@@gcc_conf_options)
+    opts = Array.new(["--prefix="+@@prefix]+@@conf_options)
     cmd = [
       "cd",
       File.realpath(bld_dir),
@@ -307,4 +317,3 @@ class InstGCCOld
   end
 
 end # class InstGCCOld
-

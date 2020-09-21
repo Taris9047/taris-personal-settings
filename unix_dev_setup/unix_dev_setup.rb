@@ -81,6 +81,15 @@ unless File.directory?(source_dir_path)
 end
 source_dir = File.realpath(source_dir_path)
 
+pkginfo_dir_path = "./pkginfo"
+unless File.directory?(source_dir_path)
+	puts pkginfo_dir_path+" not found, making one..."
+	FileUtils.mkdir_p(pkginfo_dir_path)
+end
+pkginfo_dir = File.realpath(pkginfo_dir_path)
+
+work_dirs = [work_dir, source_dir, pkginfo_dir]
+
 prefix_dir_path = def_prefix
 unless File.directory?(prefix_dir_path)
 	puts prefix_dir_path+" not found, making one..."
@@ -93,7 +102,7 @@ puts ""
 
 # Some edge cases... cleaning and installing prereq
 if op_mode_list.include?('clean')
-  system( 'rm -rvf '+work_dir+' '+source_dir )
+  system( 'rm -rvf '+work_dirs.join(' ') )
   puts "Cleaned up everything!!"
   exit(0)
 end
@@ -107,13 +116,11 @@ end
 # Checking if the destination directory is writable or not.
 need_sudo = !File.writable?(prefix_dir)
 
-
-
 # The main installation loop
 for op_mode in op_mode_list do
   if op_mode == 'gcc'
     require "./install_gcc.rb"
-    inst_gcc = InstGCC.new(prefix_dir, def_system, work_dir, source_dir, need_sudo)
+    inst_gcc = InstGCC.new(prefix_dir, def_system, work_dirs, need_sudo)
     inst_gcc.install
   end
   if op_mode == 'cudacc'
@@ -156,7 +163,7 @@ for op_mode in op_mode_list do
     sudo_cmd = ''
     if need_sudo
       sudo_cmd = "sudo"
-    end  
+    end
     del_python_cmd = [
         sudo_cmd,
         "rm -rfv",
@@ -191,4 +198,3 @@ for op_mode in op_mode_list do
   end
 
 end
-
