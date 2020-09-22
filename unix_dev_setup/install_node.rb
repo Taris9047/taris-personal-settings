@@ -5,90 +5,90 @@
 require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
-require 'etc'
-require 'open3'
+require './install_stuff.rb'
 
-class InstNode
-  @@source_url = "https://nodejs.org/dist/v14.11.0/node-v14.11.0.tar.gz"
+$node_src_url = "https://nodejs.org/dist/v14.11.0/node-v14.11.0.tar.gz"
 
-  @@Prefix = nil
-  @@Build_dir = nil
-  @@Src_dir = nil
+class InstNode < InstallStuff
 
-  @@Processors = nil
+  def initialize(prefix, work_dirs, need_sudo=false)
+    super('node', prefix, work_dirs)
 
-  def initialize(prefix, build_dir, src_dir, need_sudo=false)
-    @@Prefix = prefix
-    @@Build_dir = build_dir
-    @@Src_dir = src_dir
-    @@need_sudo = need_sudo
-
-    @@PythonCmd = "python3"
+    @source_url = $node_src_url
+    @need_sudo = need_sudo
+    @PythonCmd = "python3"
 
     # Setting up compilers
-    compiler_path = File.join(prefix,'bin')
+    compiler_path = File.join(prefix, 'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
-    @@env = gc.get_env_settings
+    @env = gc.get_env_settings
 
-    # Setting up processors
-    procs = Etc.nprocessors
-    if procs > 2
-      @@Processors = procs-1
-    else
-      @@Processors = procs
-    end
   end
 
-  @@node_conf_opts = [
+  @conf_options = [
     "--shared-zlib"
   ]
 
   def install
-    dl = Download.new(@@source_url, @@Src_dir)
+
+    if self.CheckInfo
+      return 0
+    end
+
+    unless File.file?(File.join(@pkginfo_dir, 'gccold.info'))
+      puts "Looks like we need to install gccold!!"
+      require './install_gcc.rb'
+      inst_gcc = InstGCCOld.new(prefix_dir, "Linux", work_dirs, need_sudo)
+      inst_gcc.install
+    end
+
+    dl = Download.new(@source_url, @src_dir)
     # src_tarball_path = dl.GetPath
 
-    fp = FNParser.new(@@source_url)
+    fp = FNParser.new(@source_url)
     src_tarball_fname, src_tarball_bname = fp.name
     major, minor, patch = fp.version
 
     # puts src_tarball_fname, src_tarball_bname, major, minor, patch
-    src_extract_folder = File.join(@@Build_dir, src_tarball_bname)
-    # src_build_folder = File.join(@@Build_dir, src_tarball_bname+'-build')
+    src_extract_folder = File.join(@build_dir, src_tarball_bname)
+    # src_build_folder = File.join(@build_dir, src_tarball_bname+'-build')
 
     if Dir.exists?(src_extract_folder)
       puts "Source file folder exists in "+src_extract_folder
       puts "Deleting it"
-      Open3.capture3( ['rm -rf', src_extract_folder].join(' ') )
+      self.Run( ['rm -rf', src_extract_folder].join(' ') )
     end
     puts "Extracting"
-    Open3.capture3( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
+    self.Run( "tar xf "+File.realpath(File.join(@src_dir, src_tarball_fname))+" -C "+@build_dir )
 
-    conf_opts = ["--prefix="+@@Prefix]+@@node_conf_opts
+    opts = ["--prefix="+@prefix]+@conf_options
 
-    if @@need_sudo
+    if @need_sudo
       inst_cmd = "sudo make install"
     else
       inst_cmd = "make install"
     end
-    
+
     # A bit of last minute changes
-    @@env['CC'] = 'gcc-old'
-    @@env['CXX'] = 'g++-old'
-    #@@env['CFLAGS'] = @@env['CFLAGS'] + " -fPIE"
-    #@@env['CFLAGS'] = @@env['CFLAGS'] + " -fno-pie"
-    #@@env['CXXFLAGS'] = @@env['CXXFLAGS'] + " -fPIE"
-    #@@env['CXXFLAGS'] = @@env['CXXFLAGS'] + " -fPIE"
+    @env['CC'] = 'gcc-old'
+    @env['CXX'] = 'g++-old'
+    #@env['CFLAGS'] = @env['CFLAGS'] + " -fPIE"
+    #@env['CFLAGS'] = @env['CFLAGS'] + " -fno-pie"
+    #@env['CXXFLAGS'] = @env['CXXFLAGS'] + " -fPIE"
+    #@env['CXXFLAGS'] = @env['CXXFLAGS'] + " -fPIE"
 
     # Ok let's rock!
     cmds = [
       "cd", src_extract_folder, "&&",
       File.join(src_extract_folder,"configure"),
-      conf_opts.join(" "), "&&",
-      "make -j", @@Processors.to_s, "&&",
+      opts.join(" "), "&&",
+      "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
     puts cmds.join(' ')
-    Open3.capture3( @@env, cmds.join(" ") )
+    self.Run( @env, cmds.join(" ") )
+
+    self.WriteInfo
 
   end # install
 

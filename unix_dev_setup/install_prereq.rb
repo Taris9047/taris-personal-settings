@@ -31,6 +31,7 @@ $ubuntu_pkgs = [
   "xz-utils",
   "ruby-dev",
   "git-lfs",
+  "tree",
 ]
 
 # Other dev tools
@@ -52,7 +53,7 @@ $ubuntu_some_more_tools = [
 # Ruby gems
 $ubuntu_ruby_gems = [
   "rsense",
-  "open3"
+  "open3",
 ]
 
 # Install prereqs!
@@ -68,5 +69,3 @@ def inst_prereq
   cmd = ["sudo", "gem", "install"] + $ubuntu_ruby_gems
   system( cmd.join(" ") )
 end
-
-

@@ -5,78 +5,68 @@
 require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
-require 'etc'
-require 'open3'
+require './install_stuff.rb'
 
-class InstLua
-  @@source_url = "https://www.lua.org/ftp/lua-5.4.0.tar.gz"
+$lua_src_url = "https://www.lua.org/ftp/lua-5.4.0.tar.gz"
 
-  @@Prefix = nil
-  @@Build_dir = nil
-  @@Src_dir = nil
 
-  @@Processors = nil
+class InstLua < InstallStuff
 
-  @@CompilerSettings = [
-    "CC=\"gcc\"",
-    "CXX=\"g++\"",
-    "CFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
-    "CXXFLAGS=\"-O3 -march=native -fomit-frame-pointer -pipe\"",
-  ]
+  def initialize(prefix, work_dirs, need_sudo=false)
+    super('lua', prefix, work_dirs)
+    @need_sudo = need_sudo
 
-  def initialize(prefix, build_dir, src_dir, need_sudo=false)
-    @@Prefix = prefix
-    @@Build_dir = build_dir
-    @@Src_dir = src_dir
-    @@need_sudo = need_sudo
+    @source_url = $lua_src_url
 
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
-    @@CompilerSettings = gc.get_settings
-
-    # Setting up processors
-    procs = Etc.nprocessors
-    if procs > 2
-      @@Processors = procs-1
-    else
-      @@Processors = procs
-    end
+    @CompilerSettings = gc.get_settings
+    @env = gc.get_env_settings
+    @conf_options = []
   end
 
   def install
-    dl = Download.new(@@source_url, @@Src_dir)
+
+    if self.CheckInfo
+      return 0
+    end
+
+    dl = Download.new(@source_url, @src_dir)
     # src_tarball_path = dl.GetPath
 
-    fp = FNParser.new(@@source_url)
+    fp = FNParser.new(@source_url)
     src_tarball_fname, src_tarball_bname = fp.name
     major, minor, patch = fp.version
 
     # puts src_tarball_fname, src_tarball_bname, major, minor, patch
-    src_extract_folder = File.join(File.realpath(@@Build_dir), src_tarball_bname)
+    src_extract_folder = File.join(File.realpath(@build_dir), src_tarball_bname)
 
     if Dir.exists?(src_extract_folder)
       puts "Source file folder exists in "+src_extract_folder
     else
       puts "Extracting"
-      Open3.capture3( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
+      self.Run(
+        "tar xf "+File.realpath(File.join(@src_dir, src_tarball_fname))+" -C "+@build_dir )
     end
 
-    if @@need_sudo
-      inst_cmd = "sudo make INSTALL_TOP=\""+@@Prefix+"\" install"
+    if @need_sudo
+      inst_cmd = "sudo make INSTALL_TOP=\""+@prefix+"\" install"
     else
-      inst_cmd = "make INSTALL_TOP=\""+@@Prefix+"\" install"
+      inst_cmd = "make INSTALL_TOP=\""+@prefix+"\" install"
     end
 
     # Ok let's roll!!
     cmds = [
       "cd", src_extract_folder, "&&",
-      "make "+@@CompilerSettings.join(" ")+" linux",
+      "make "+@CompilerSettings.join(" ")+" linux",
       "&&",
       inst_cmd
     ]
 
-    Open3.capture3( cmds.join(" ") )
+    self.Run( cmds.join(" ") )
 
+    self.WriteInfo
   end
+
 end # class InstLua

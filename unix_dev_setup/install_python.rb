@@ -5,276 +5,251 @@
 require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
-require 'open3'
-require 'etc'
+require './install_stuff.rb'
 
 $get_pip_url = "https://bootstrap.pypa.io/get-pip.py"
 
 $python2_url = "https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz"
+$py2_modules = ['numpy', 'scipy', 'matplotlib', 'mercurial']
+$py2_conf_options = [
+  "--enable-shared",
+  "--enable-ipv6",
+  "--enable-unicode=ucs4",
+  "--with-threads",
+  "--with-valgrind",
+]
+
 $python3_url = "https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz"
+$py3_modules = [
+  "pexpect", "sphinx", "cython", "autopep8", "xlrd", "xlsxwriter",
+  "pylint", "pyparsing", "pyopengl", "pyqt5==5.12", "pyqtwebengine==5.12",
+  "numpy", "scipy", "matplotlib", "pandas", "ipython", "ipywidgets",
+  "jedi==0.17.1","parso==0.7.0", "qtconsole", "sympy", "cytoolz",
+  "spyder", "pyinstaller", "proio", "jupyter",
+]
+$py3_conf_options = [
+  "--enable-shared",
+  "--enable-ipv6",
+  "--enable-unicode=ucs4",
+  "--with-threads",
+  "--with-valgrind",
+  "--with-ensurepip=yes",
+  "--with-system-ffi",
+  "--with-system-expat",
+  "--enable-optimizations",
+]
 
 
-class InstPython2
-  @@source_url = $python2_url
+class InstPython2 < InstallStuff
 
-  @@Prefix = nil
-  @@Build_dir = nil
-  @@Src_dir = nil
+  def initialize(prefix, work_dirs, need_sudo=false)
+    super('python2', prefix, work_dirs)
+    @source_url = $python2_url
 
-  # Python2 modules to install
-  @@py2_modules = []
+    # Python2 modules to install
+    @py2_modules = $py2_modules
 
-  # Python2 build options
-  @@py2_conf_opts = [
-    "--enable-shared",
-    "--enable-ipv6",
-    "--enable-unicode=ucs4",
-    "--with-threads",
-    "--with-valgrind",
-  ]
+    # Python2 build options
+    @conf_options = $py2_conf_options
 
-  @@Processors = nil
-
-  @@CompilerSettings = [
-    "CC=\"gcc\"",
-    "CXX=\"g++\"",
-    "CFLAGS=\"-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe\"",
-    "CXXFLAGS=\"-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe\"",
-    "LDFLAGS=\"-Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib\"",
-  ]
-
-  def initialize(prefix, build_dir, src_dir, need_sudo=false)
-    @@Prefix = prefix
-    @@Build_dir = build_dir
-    @@Src_dir = src_dir
-    @@need_sudo = need_sudo
+    @need_sudo = need_sudo
 
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
-    @@CompilerSettings = gc.get_settings
-    @@env = gc.get_env_settings
+    @CompilerSettings = gc.get_settings
+    @env = gc.get_env_settings
 
-    # Setting up processors
-    procs = Etc.nprocessors
-    if procs > 2
-      @@Processors = procs-1
-    else
-      @@Processors = procs
-    end
   end
 
   def install
-    dl = Download.new(@@source_url, @@Src_dir)
+
+    if self.CheckInfo
+      return 0
+    end
+
+    dl = Download.new(@source_url, @src_dir)
     # src_tarball_path = dl.GetPath
 
-    fp = FNParser.new(@@source_url)
+    fp = FNParser.new(@source_url)
     src_tarball_fname, src_tarball_bname = fp.name
     major, minor, patch = fp.version
 
     # puts src_tarball_fname, src_tarball_bname, major, minor, patch
-    src_extract_folder = File.join(File.realpath(@@Build_dir), src_tarball_bname)
-    src_build_folder = File.join(File.realpath(@@Build_dir), src_tarball_bname+'-build')
+    src_extract_folder = File.join(File.realpath(@build_dir), src_tarball_bname)
+    src_build_folder = File.join(File.realpath(@build_dir), src_tarball_bname+'-build')
 
     if Dir.exists?(src_extract_folder)
       puts "Source file folder exists in "+src_extract_folder
     else
       puts "Extracting"
-      system( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
+      self.Run( "tar xf "+File.realpath(File.join(@src_dir, src_tarball_fname))+" -C "+@build_dir )
     end
 
     if Dir.exists?(src_build_folder)
       puts "Build folder found!! Removing it for 'pure' experience!!"
-      system( "rm -rfv "+src_build_folder )
+      self.Run( "rm -rfv "+src_build_folder )
     else
       puts "Ok, let's make a build folder"
     end
-    system( "mkdir "+src_build_folder )
+    self.Run( "mkdir -p "+src_build_folder )
 
-    conf_opts = ["--prefix="+@@Prefix]+@@py2_conf_opts
+    opts = ["--prefix="+@prefix]+@conf_options
 
     # Ok let's roll!!
-    if @@need_sudo
+    if @need_sudo
       inst_cmd = "sudo make install"
       pip_inst_sudo = "sudo -H"
     else
       inst_cmd = "make install"
       pip_inst_sudo = ""
     end
+
+    puts "Compiling..."
     cmds = [
       "cd", src_build_folder, "&&",
       File.join(src_extract_folder,"configure"),
-      conf_opts.join(" "), "&&",
-      "make -j", @@Processors.to_s, "&&",
+      opts.join(" "), "&&",
+      "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
+    self.Run( @env, cmds.join(" ") )
 
-    system( @@env, cmds.join(" ") )
-
-    if File.exists?(File.join(@@Src_dir, 'get-pip.py'))
+    if File.exists?(File.join(@src_dir, 'get-pip.py'))
       puts "Found get-pip.py"
     else
-      dl_pip = Download.new($get_pip_url, @@Src_dir)
+      dl_pip = Download.new($get_pip_url, @src_dir)
     end
 
+    puts "Installing modules for python2"
     inst_pip_cmds = [
       pip_inst_sudo,
-      File.join(@@Prefix, "bin/python"+major.to_s+"."+minor.to_s),
-      File.realpath(File.join(@@Src_dir, 'get-pip.py')),
+      File.join(@prefix, "bin/python"+major.to_s+"."+minor.to_s),
+      File.realpath(File.join(@src_dir, 'get-pip.py')),
       "&&",
       pip_inst_sudo,
       "mv -fv",
-      File.join(@@Prefix,"/bin/pip"),
-      File.join(@@Prefix,"/bin/pip"+major.to_s)
+      File.join(@prefix,"bin/pip"),
+      File.join(@prefix,"bin/pip"+major.to_s)
     ]
-    Open3.capture3( inst_pip_cmds.join(" ") )
+    self.Run( inst_pip_cmds.join(" ") )
 
     inst_module_cmds = [
       pip_inst_sudo,
-      File.join(@@Prefix,"/bin/pip"+major.to_s),
+      File.join(@prefix,"bin/pip"+major.to_s),
       "install -U",
-      @@py2_modules.join(" ")
+      @py2_modules.join(" ")
     ]
+    self.Run( inst_module_cmds.join(" ") )
 
-    Open3.capture3( inst_module_cmds.join(" ") )
+    self.WriteInfo
 
   end
 end # class InstPython2
 
 
-class InstPython3
-  @@source_url = $python3_url
+class InstPython3 < InstallStuff
 
-  @@Prefix = nil
-  @@Build_dir = nil
-  @@Src_dir = nil
+  def initialize(prefix, work_dirs, need_sudo=false)
+    super('python3', prefix, work_dirs)
+    @source_url = $python3_url
 
-  # Python3 modules to install
-  @@py3_modules = [
-    "pexpect", "sphinx", "cython", "autopep8", "xlrd", "xlsxwriter",
-    "pylint", "pyparsing", "pyopengl", "pyqt5==5.12", "pyqtwebengine==5.12",
-    "numpy", "scipy", "matplotlib", "pandas", "ipython", "ipywidgets",
-    "jedi==0.17.1","parso==0.7.0", "qtconsole", "sympy", "cytoolz",
-    "spyder", "pyinstaller", "proio", "jupyter",
-  ]
+    # Python3 modules to install
+    @py3_modules = $py3_modules
 
-  # Python2 build options
-  @@py3_conf_opts = [
-    "--enable-shared",
-    "--enable-ipv6",
-    "--enable-unicode=ucs4",
-    "--with-threads",
-    "--with-valgrind",
-    "--with-ensurepip=yes",
-    "--with-system-ffi",
-    "--with-system-expat",
-    "--enable-optimizations",
-  ]
+    # Python2 build options
+    @conf_options = $py3_conf_options
 
-  @@Processors = nil
-
-  @@CompilerSettings = [
-    "CC=\"gcc\"",
-    "CXX=\"g++\"",
-    "CFLAGS=\"-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe\"",
-    "CXXFLAGS=\"-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe\"",
-    "LDFLAGS=\"-Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib\"",
-  ]
-
-  def initialize(prefix, build_dir, src_dir, need_sudo=false)
-    @@Prefix = prefix
-    @@Build_dir = build_dir
-    @@Src_dir = src_dir
-    @@need_sudo = need_sudo
+    @need_sudo = need_sudo
 
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
-    @@CompilerSettings = gc.get_settings
-    @@env = gc.get_env_settings
-
-    # Setting up processors
-    procs = Etc.nprocessors
-    if procs > 2
-      @@Processors = procs-1
-    else
-      @@Processors = procs
-    end
+    @CompilerSettings = gc.get_settings
+    @env = gc.get_env_settings
   end
 
   def install
-    dl = Download.new(@@source_url, @@Src_dir)
+
+    if self.CheckInfo
+      return 0
+    end
+
+    dl = Download.new(@source_url, @src_dir)
     src_tarball_path = dl.GetPath
 
-    fp = FNParser.new(@@source_url)
+    fp = FNParser.new(@source_url)
     src_tarball_fname, src_tarball_bname = fp.name
     major, minor, patch = fp.version
 
     # puts src_tarball_fname, src_tarball_bname, major, minor, patch
-    src_extract_folder = File.join(File.realpath(@@Build_dir), src_tarball_bname)
-    src_build_folder = File.join(File.realpath(@@Build_dir), src_tarball_bname+'-build')
+    src_extract_folder = File.join(File.realpath(@build_dir), src_tarball_bname)
+    src_build_folder = File.join(File.realpath(@build_dir), src_tarball_bname+'-build')
 
     if Dir.exists?(src_extract_folder)
       puts "Source file folder exists in "+src_extract_folder
     else
       puts "Extracting"
-      Open3.capture3( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
+      self.Run( "tar xf "+File.realpath(File.join(@src_dir, src_tarball_fname))+" -C "+@build_dir )
     end
 
     if Dir.exists?(src_build_folder)
       puts "Build folder found!! Removing it for 'pure' experience!!"
-      Open3.capture3( "rm -rfv "+src_build_folder )
+      self.Run( "rm -rfv "+src_build_folder )
     else
       puts "Ok, let's make a build folder"
     end
-    Open3.capture3( "mkdir "+src_build_folder )
+    self.Run( "mkdir -p "+src_build_folder )
 
-    conf_opts = ["--prefix="+@@Prefix]+@@py3_conf_opts
+    opts = ["--prefix="+@prefix]+@conf_options
 
-    if @@need_sudo
+    if @need_sudo
       inst_cmd = "sudo make install"
       pip_inst_sudo = "sudo -H"
     else
       inst_cmd = "make install"
       pip_inst_sudo = ""
     end
+
     # Ok let's roll!!
+    puts "Compiling..."
     cmds = [
       "cd", src_build_folder, "&&",
       File.join(src_extract_folder,"configure"),
-      conf_opts.join(" "), "&&",
-      "make -j", @@Processors.to_s, "&&",
+      opts.join(" "), "&&",
+      "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
+    self.Run( @env, cmds.join(" ") )
 
-    Open3.capture3( @@env, cmds.join(" ") )
-
-    if File.exists?(File.join(@@Src_dir, 'get-pip.py'))
+    if File.exists?(File.join(@src_dir, 'get-pip.py'))
       puts "Found get-pip.py"
     else
-      dl_pip = Download.new($get_pip_url, @@Src_dir)
+      dl_pip = Download.new($get_pip_url, @src_dir)
     end
 
+    puts "Installing modules for python3"
     inst_pip_cmds = [
       pip_inst_sudo,
-      File.join(@@Prefix, "bin/python"+major.to_s+"."+minor.to_s),
-      File.realpath(File.join(@@Src_dir, 'get-pip.py')),
+      File.join(@prefix, "bin/python"+major.to_s+"."+minor.to_s),
+      File.realpath(File.join(@src_dir, 'get-pip.py')),
       "&&",
       pip_inst_sudo,
       "mv -fv",
-      File.join(@@Prefix,"/bin/pip"),
-      File.join(@@Prefix,"/bin/pip"+major.to_s)
+      File.join(@prefix,"bin/pip"),
+      File.join(@prefix,"bin/pip"+major.to_s)
     ]
-    Open3.capture3( inst_pip_cmds.join(" ") )
+    self.Run( inst_pip_cmds.join(" ") )
 
     inst_module_cmds = [
       pip_inst_sudo,
-      File.join(@@Prefix,"/bin/pip"+major.to_s),
+      File.join(@prefix,"bin/pip"+major.to_s),
       "install -U",
-      @@py3_modules.join(" ")
+      @py3_modules.join(" ")
     ]
+    self.Run( inst_module_cmds.join(" ") )
 
-    Open3.capture3( inst_module_cmds.join(" ") )
+    self.WriteInfo
 
   end
 end # class InstPython3

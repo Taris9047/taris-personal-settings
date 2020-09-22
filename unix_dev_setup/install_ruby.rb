@@ -5,78 +5,73 @@
 require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
-require 'open3'
-require 'etc'
+require './install_stuff.rb'
 
-class InstRuby
-  @@source_url = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.1.tar.gz"
+$ruby_src_url = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.1.tar.gz"
 
-  @@Prefix = nil
-  @@Build_dir = nil
-  @@Src_dir = nil
+class InstRuby < InstallStuff
 
-  # Python2 modules to install
-  @@ruby_gems = [
-    "rsense", "rails", "bundler", "open3"
-  ]
+  def initialize(prefix, work_dirs, need_sudo=false)
+    super('ruby', prefix, work_dirs)
 
-  # Python2 build options
-  @@ruby_conf_opts = [
-    "--enable-shared"
-  ]
+    @source_url = $ruby_src_url
 
-  @@Processors = nil
+    # Python2 modules to install
+    @ruby_gems = [
+      "rsense", "rails", "bundler", "open3"
+    ]
 
-  def initialize(prefix, build_dir, src_dir, need_sudo=false)
-    @@Prefix = prefix
-    @@Build_dir = build_dir
-    @@Src_dir = src_dir
-    @@need_sudo = need_sudo
+    # Python2 build options
+    @conf_options = [
+      "--enable-shared"
+    ]
+    @need_sudo = need_sudo
 
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
-    @@env = gc.get_env_settings
+    @env = gc.get_env_settings
 
-    # Setting up processors
-    procs = Etc.nprocessors
-    if procs > 2
-      @@Processors = procs-1
-    else
-      @@Processors = procs
-    end
   end
 
   def install
-    dl = Download.new(@@source_url, @@Src_dir)
-    # src_tarball_path = dl.GetPath
+    puts ""
+    puts "Working on Ruby!!"
+    puts ""
 
-    fp = FNParser.new(@@source_url)
+    if self.CheckInfo
+      return 0
+    end
+
+    dl = Download.new(@source_url, @src_dir)
+    src_tarball_path = dl.GetPath
+
+    fp = FNParser.new(@source_url)
     src_tarball_fname, src_tarball_bname = fp.name
     major, minor, patch = fp.version
 
     # puts src_tarball_fname, src_tarball_bname, major, minor, patch
-    src_extract_folder = File.join(File.realpath(@@Build_dir), src_tarball_bname)
-    src_build_folder = File.join(File.realpath(@@Build_dir), src_tarball_bname+'-build')
+    src_extract_folder = File.join(File.realpath(@build_dir), src_tarball_bname)
+    src_build_folder = File.join(File.realpath(@build_dir), src_tarball_bname+'-build')
 
     if Dir.exists?(src_extract_folder)
       puts "Source file folder exists in "+src_extract_folder
     else
       puts "Extracting"
-      Open3.capture3( "tar xf "+File.realpath(File.join(@@Src_dir, src_tarball_fname))+" -C "+@@Build_dir )
+      self.Run( "tar xf "+File.realpath(File.join(@src_dir, src_tarball_fname))+" -C "+@build_dir )
     end
 
     if Dir.exists?(src_build_folder)
       puts "Build folder found!! Removing it for 'pure' experience!!"
-      Open3.capture3( "rm -rfv "+src_build_folder ) {}
+      self.Run( "rm -rfv "+src_build_folder )
     else
       puts "Ok, let's make a build folder"
     end
-    Open3.capture3( "mkdir -p "+src_build_folder ) {}
+    self.Run( "mkdir -p "+src_build_folder )
 
-    conf_opts = ["--prefix="+@@Prefix]+@@ruby_conf_opts
+    opts = ["--prefix="+@prefix]+@conf_options
 
-    if @@need_sudo
+    if @need_sudo
       inst_cmd = "sudo make install"
       mod_sudo = "sudo -H"
     else
@@ -88,22 +83,25 @@ class InstRuby
     cmds = [
       "cd", src_build_folder, "&&",
       src_extract_folder+"/configure",
-      conf_opts.join(" "), "&&",
-      "make -j", @@Processors.to_s, "&&",
+      opts.join(" "), "&&",
+      "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
 
-    Open3.capture3( @@env, cmds.join(" ") )
-    # system( @@env, cmds.join(" ") )
+    puts "Compiling..."
+    self.Run( @env, cmds.join(" ") )
 
     inst_module_cmds = [
       mod_sudo,
-      File.join(@@Prefix,"/bin/gem"),
+      File.join(@prefix,"bin/gem"),
       "install",
-      @@ruby_gems.join(" ")
+      @ruby_gems.join(" ")
     ]
 
-    Open3.capture3( inst_module_cmds.join(" ") )
+    puts "Installing additional gems..."
+    self.Run( inst_module_cmds.join(" ") )
 
+    self.WriteInfo
   end
+
 end # class InstRuby

@@ -8,7 +8,7 @@
 home_dir = ENV["HOME"]
 def_prefix = File.join(home_dir, "/.local")
 # def_prefix = File.join("/usr/local")
-def_system = "Ubuntu"
+def_system = "Linux"
 
 list_of_progs = [
     'gcc',
@@ -82,7 +82,7 @@ end
 source_dir = File.realpath(source_dir_path)
 
 pkginfo_dir_path = "./pkginfo"
-unless File.directory?(source_dir_path)
+unless File.directory?(pkginfo_dir_path)
 	puts pkginfo_dir_path+" not found, making one..."
 	FileUtils.mkdir_p(pkginfo_dir_path)
 end
@@ -125,12 +125,12 @@ for op_mode in op_mode_list do
   end
   if op_mode == 'cudacc'
     require "./install_gcc.rb"
-    inst_gcc = InstGCCCuda.new(prefix_dir, def_system, work_dir, source_dir, need_sudo)
+    inst_gcc = InstGCCCuda.new(prefix_dir, def_system, work_dirs, need_sudo)
     inst_gcc.install
   end
   if op_mode == 'gccold'
     require "./install_gcc.rb"
-    inst_gcc = InstGCCOld.new(prefix_dir, def_system, work_dir, source_dir, need_sudo)
+    inst_gcc = InstGCCOld.new(prefix_dir, def_system, work_dirs, need_sudo)
     inst_gcc.install
   end
 
@@ -140,22 +140,22 @@ for op_mode in op_mode_list do
     puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
     sleep(2)
     inst_clang = InstClang.new
-    inst_clang.install_clang(prefix_dir, def_system, work_dir, source_dir, need_sudo)
+    inst_clang.install_clang(prefix_dir, def_system, work_dirs, need_sudo)
   end
 
   # Then Python stuffs
   if op_mode.include?'python'
     require "./install_python.rb"
     if op_mode.include?'2'
-      inst_python2 = InstPython2.new(prefix_dir, work_dir, source_dir, need_sudo)
+      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo)
       inst_python2.install
     elsif op_mode.include?'3'
-      inst_python3 = InstPython3.new(prefix_dir, work_dir, source_dir, need_sudo)
+      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo)
       inst_python3.install
     else
-      inst_python2 = InstPython2.new(prefix_dir, work_dir, source_dir, need_sudo)
+      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo)
       inst_python2.install
-      inst_python3 = InstPython3.new(prefix_dir, work_dir, source_dir, need_sudo)
+      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo)
       inst_python3.install
     end
 
@@ -175,25 +175,25 @@ for op_mode in op_mode_list do
 
   if op_mode == 'boost'
     require "./install_boost.rb"
-    inst_boost = InstBoost.new(prefix_dir, work_dir, source_dir, need_sudo)
+    inst_boost = InstBoost.new(prefix_dir, work_dirs, need_sudo)
     inst_boost.install
   end
 
   if op_mode == 'lua'
     require "./install_lua.rb"
-    inst_lua = InstLua.new(prefix_dir, work_dir, source_dir, need_sudo)
+    inst_lua = InstLua.new(prefix_dir, work_dirs, need_sudo)
     inst_lua.install
   end
 
   if op_mode == 'ruby'
     require "./install_ruby.rb"
-    inst_lua = InstRuby.new(prefix_dir, work_dir, source_dir, need_sudo)
+    inst_lua = InstRuby.new(prefix_dir, work_dirs, need_sudo)
     inst_lua.install
   end
 
   if op_mode == 'node'
     require "./install_node.rb"
-    inst_node = InstNode.new(prefix_dir, work_dir, source_dir, need_sudo)
+    inst_node = InstNode.new(prefix_dir, work_dirs, need_sudo)
     inst_node.install
   end
 
