@@ -18,15 +18,6 @@ class Download
     elsif @source_ctl == 'git'
       git_clone
     end
-
-
-    # wget_cmd = command?'wget'
-    # if wget_cmd == nil
-    #   puts "Can't find wget!!"
-    #   exit(-1)
-    # else
-    #   wget_cmd = 'wget'
-    # end
   end
 
   def direct_download

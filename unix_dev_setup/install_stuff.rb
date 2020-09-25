@@ -40,20 +40,38 @@ class InstallStuff
   end
 
   def Run(*args)
-    if args.size > 1
+
+    if args[0].class == Hash
       env = args[0]
       cmds = args[1]
-      o,e,s = Open3.capture3( env, cmds )
-    else
+      opts = args[2...]
+    elsif args[0].class == Array
+      env = {}
+      cmds = args[0].join(' ')
+      opts = args[1...]
+    elsif args[0].class == String
+      env = {}
       cmds = args[0]
-      o,e,s = Open3.capture3( cmds )
+      opts = args[1...]
     end
+  
+    o, e, s = Open3.capture3( env, cmds )
+
+    log_file = File.join(@pkginfo_dir, @pkgname+'.log')
+    fp = File.open(log_file, 'w')
+    fp.puts(o)
+    fp.close
+    puts "Log file for #{@pkgname} has been saved at #{log_file}"
 
     unless s.success?
       puts "Execution ended up with an error!!"
       puts e
       # TODO: Implement some error handling stuff
       exit(-1)
+    end
+
+    if opts.include?('-v') or opts.include?('verbose')
+      puts o
     end
 
     return 0

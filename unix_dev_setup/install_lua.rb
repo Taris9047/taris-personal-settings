@@ -50,6 +50,7 @@ class InstLua < InstallStuff
         "tar xf "+File.realpath(File.join(@src_dir, src_tarball_fname))+" -C "+@build_dir )
     end
 
+    puts "Installing Lua!!"
     if @need_sudo
       inst_cmd = "sudo make INSTALL_TOP=\""+@prefix+"\" install"
     else
@@ -64,7 +65,7 @@ class InstLua < InstallStuff
       inst_cmd
     ]
 
-    self.Run( cmds.join(" ") )
+    self.Run( cmds.join(" "), '-v' )
 
     self.WriteInfo
   end
