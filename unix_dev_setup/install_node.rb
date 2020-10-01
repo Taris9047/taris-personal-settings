@@ -8,6 +8,9 @@ require './get_compiler.rb'
 require './install_stuff.rb'
 
 $node_src_url = "https://nodejs.org/dist/v14.11.0/node-v14.11.0.tar.gz"
+$conf_options = [
+  "--shared-zlib"
+]
 
 class InstNode < InstallStuff
 
@@ -17,17 +20,17 @@ class InstNode < InstallStuff
     @source_url = $node_src_url
     @need_sudo = need_sudo
     @PythonCmd = "python3"
+    @work_dirs = work_dirs
+    @need_sudo = need_sudo
 
     # Setting up compilers
     compiler_path = File.join(prefix, 'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
     @env = gc.get_env_settings
 
-  end
+    @conf_options = $conf_options
 
-  @conf_options = [
-    "--shared-zlib"
-  ]
+  end
 
   def install
 
@@ -38,20 +41,17 @@ class InstNode < InstallStuff
     unless File.file?(File.join(@pkginfo_dir, 'gccold.info'))
       puts "Looks like we need to install gccold!!"
       require './install_gcc.rb'
-      inst_gcc = InstGCCOld.new(prefix_dir, "Linux", work_dirs, need_sudo)
+      inst_gcc = InstGCCOld.new(@prefix, "Linux", @work_dirs, @need_sudo)
       inst_gcc.install
     end
 
     dl = Download.new(@source_url, @src_dir)
-    # src_tarball_path = dl.GetPath
 
     fp = FNParser.new(@source_url)
     src_tarball_fname, src_tarball_bname = fp.name
     major, minor, patch = fp.version
 
-    # puts src_tarball_fname, src_tarball_bname, major, minor, patch
     src_extract_folder = File.join(@build_dir, src_tarball_bname)
-    # src_build_folder = File.join(@build_dir, src_tarball_bname+'-build')
 
     if Dir.exists?(src_extract_folder)
       puts "Source file folder exists in "+src_extract_folder
@@ -85,7 +85,6 @@ class InstNode < InstallStuff
       "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
-    puts cmds.join(' ')
     self.Run( @env, cmds.join(" ") )
 
     self.WriteInfo

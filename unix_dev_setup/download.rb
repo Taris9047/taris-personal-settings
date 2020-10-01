@@ -5,41 +5,57 @@
 require 'open-uri'
 
 class Download
-  @URL = ''
-  @DEST = ''
 
-  def initialize(url, destination='./', source_ctl='')
+  def initialize(url='', destination='./', source_ctl='', mode='direct')
     @URL = url
-    @DEST = destination
+    @DEST = File.realpath(destination)
     @source_ctl = source_ctl.downcase
+    @dn_mode = mode.downcase
+
+    unless @URL
+      raise "No valid URL given!!"
+      exit(-1)
+    end
+
+    @outf_name = "#{@URL.split('/')[-1]}"
+    @outf_path = File.join(@DEST, @outf_name)
 
     if @source_ctl == ''
-      direct_download
+      if @dn_mode == 'direct'
+        direct_download
+      elsif @dn_mode == 'wget'
+        puts "Downloading with external wget"
+        wget_download
+      end
     elsif @source_ctl == 'git'
       git_clone
     end
   end
 
   def direct_download
-    puts "Downloading {URL}".gsub('{URL}', @URL)
+    # puts "Downloading #{@URL}"
     dn = URI.open(@URL)
-    IO.copy_stream(dn, File.join(@DEST, "#{dn.base_uri.to_s.split('/')[-1]}") )
+    IO.copy_stream( dn, @outf_path )
+  end
+
+  def wget_download
+    # puts "Downloading #{@URL}"
+    wget_cmd = [
+      "wget",
+      @URL,
+      "-O",
+      @outf_path,
+    ].join(' ')
+    system( wget_cmd )
   end
 
   def git_clone
-    puts "Cloning from {URL}".gsub('{URL}', @URL)
-    system('git clone {URL} {DEST}'.gsub('{URL}', @URL).gsub('{DEST}', @DEST))
+    puts "Cloning from #{@URL}"
+    system( "git clone #{@URL} #{@DEST}" )
   end
 
   def GetPath
-    bname = @URL.split('/')[-1]
-    ret_path = File.realpath(@DEST+"/"+bname)
-
-    ret_path
+    @outf_path
   end
-
-  # def command?(cmd)
-  #   Open3.popen3("which #{ cmd} > /dev/null 2>&1")
-  # end
 
 end

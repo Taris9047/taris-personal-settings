@@ -84,7 +84,7 @@ class InstallStuff
     env_str = @env.map{|k,v| "{k}={v}".gsub('{k}', k).gsub('{v}', v)}.join("\n")
 
     unless @conf_options == []
-      if @conf_options.join(' ').includes?('-DCMAKE_INSTALL_PREFIX')
+      if @conf_options.join(' ').include?('-DCMAKE_INSTALL_PREFIX')
         conf_options_str = @conf_options.join(' ')
       else
         conf_options_str = "--prefix="+@prefix+' '+@conf_options.join(' ')

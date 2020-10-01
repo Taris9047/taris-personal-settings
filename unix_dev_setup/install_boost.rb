@@ -17,14 +17,13 @@ $b2_opts = [
 
 class InstBoost < InstallStuff
 
-  @source_url = $boost_src_url
-
-  @b2_opts = $b2_opts
-
   def initialize(prefix, work_dirs, need_sudo)
     super('boost', prefix, work_dirs)
 
     @need_sudo = need_sudo
+
+    @source_url = $boost_src_url
+    @b2_opts = $b2_opts
 
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')
@@ -38,6 +37,7 @@ class InstBoost < InstallStuff
       return
     end
 
+    puts "Downloading the source from #{@source_url}"
     dl = Download.new(@source_url, @src_dir)
     src_tarball_path = dl.GetPath
 
@@ -49,7 +49,7 @@ class InstBoost < InstallStuff
     if File.exists?(src_extracted_folder)
       puts "Previous Boost installation exists"
     else
-      self.Run( ["tar xvf", File.realpath(src_tarball_path), "-C", File.realpath(@build_dir)].join(" ") )
+      self.Run( ["tar xvf", src_tarball_path, "-C", @build_dir].join(' ') )
     end
 
     # Boost is kinda simple. just build within the directory!
@@ -59,7 +59,7 @@ class InstBoost < InstallStuff
       inst_cmd = "./b2 install"
     end
 
-    @b2_opts << "--prefix={prefix}".gsub('{prefix}', @prefix)
+    @b2_opts << "--prefix=#{@prefix}"
     @b2_opts << "stage"
 
     cmds = [

@@ -49,6 +49,8 @@ class InstGCC < InstallStuff
     puts "Working on {pkgname}!!".gsub('{pkgname}', @pkgname)
     puts ""
 
+    @pkginfo_file=File.join(@pkginfo_dir, @pkgname+'.info')
+
     if self.CheckInfo
       return 0
     end
@@ -162,7 +164,6 @@ class InstGCCOld < InstGCC
     super(prefix, os_type, work_dirs, need_sudo)
 
     @pkgname = 'gccold'
-
     @source_url = $gcc_old_url
 
     @conf_options = [
