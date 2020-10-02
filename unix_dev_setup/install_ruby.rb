@@ -14,6 +14,7 @@ $gems_to_install = [
     "bundler",
     "open3",
     "json",
+    "hjson",
   ]
 
 class InstRuby < InstallStuff

@@ -58,6 +58,7 @@ $ubuntu_ruby_gems = [
   "rsense",
   "open3",
   "json",
+  "hjson",
 ]
 
 # Install prereqs!

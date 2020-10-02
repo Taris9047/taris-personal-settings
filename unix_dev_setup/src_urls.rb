@@ -3,12 +3,12 @@
 # URL database interfacing part...
 # --> JSON would be suffice, right?
 
-require 'json'
+require 'hjson'
 
 class SRC_URL
   def initialize(json_path='./')
     json_fp = File.read(File.join(json_path, 'urls.json'))
-    @URL_DB = JSON.parse(json_fp)
+    @URL_DB = Hjson.parse(json_fp)
   end
 
   def Get(pkg_name)
