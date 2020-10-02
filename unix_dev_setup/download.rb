@@ -17,10 +17,9 @@ class Download
       exit(-1)
     end
 
-    @outf_name = "#{@URL.split('/')[-1]}"
-    @outf_path = File.join(@DEST, @outf_name)
-
     if @source_ctl == ''
+      @outf_name = "#{@URL.split('/')[-1]}"
+      @outf_path = File.join(@DEST, @outf_name)
       if @dn_mode == 'direct'
         direct_download
       elsif @dn_mode == 'wget'
@@ -28,18 +27,18 @@ class Download
         wget_download
       end
     elsif @source_ctl == 'git'
+      @outf_name = @URL.split('/')[-1].split('.')[0..-2].join('.')
+      @outf_path = File.join(@DEST, @outf_name)
       git_clone
     end
   end
 
   def direct_download
-    # puts "Downloading #{@URL}"
     dn = URI.open(@URL)
     IO.copy_stream( dn, @outf_path )
   end
 
   def wget_download
-    # puts "Downloading #{@URL}"
     wget_cmd = [
       "wget",
       @URL,
@@ -50,8 +49,8 @@ class Download
   end
 
   def git_clone
-    puts "Cloning from #{@URL}"
-    system( "git clone #{@URL} #{@DEST}" )
+    puts "Cloning from #{@URL} into #{@DEST}"
+    system( "cd #{@DEST} && git clone #{@URL}" )
   end
 
   def GetPath

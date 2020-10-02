@@ -6,10 +6,8 @@ require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
 require './install_stuff.rb'
+require './src_urls.rb'
 
-$get_pip_url = "https://bootstrap.pypa.io/get-pip.py"
-
-$python2_url = "https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz"
 $py2_modules = ['numpy', 'scipy', 'matplotlib', 'mercurial']
 $py2_conf_options = [
   "--enable-shared",
@@ -19,7 +17,6 @@ $py2_conf_options = [
   "--with-valgrind",
 ]
 
-$python3_url = "https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz"
 $py3_modules = [
   "pexpect", "sphinx", "cython", "autopep8", "xlrd", "xlsxwriter",
   "pylint", "pyparsing", "pyopengl", "pyqt5==5.12", "pyqtwebengine==5.12",
@@ -44,7 +41,10 @@ class InstPython2 < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false)
     super('python2', prefix, work_dirs)
-    @source_url = $python2_url
+
+    URL = SRC_URL.new
+    @source_url = URL[@pkgname]
+    @get_pip_url = URL['get_pip']
 
     # Python2 modules to install
     @py2_modules = $py2_modules
@@ -118,7 +118,7 @@ class InstPython2 < InstallStuff
     if File.exists?(File.join(@src_dir, 'get-pip.py'))
       puts "Found get-pip.py"
     else
-      dl_pip = Download.new($get_pip_url, @src_dir)
+      dl_pip = Download.new(@get_pip_url, @src_dir)
     end
 
     puts "Installing modules for python2"
@@ -152,7 +152,10 @@ class InstPython3 < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false)
     super('python3', prefix, work_dirs)
-    @source_url = $python3_url
+
+    URL = SRC_URL.new
+    @source_url = URL[@pkgname]
+    @get_pip_url = URL['get_pip']
 
     # Python3 modules to install
     @py3_modules = $py3_modules
@@ -225,7 +228,7 @@ class InstPython3 < InstallStuff
     if File.exists?(File.join(@src_dir, 'get-pip.py'))
       puts "Found get-pip.py"
     else
-      dl_pip = Download.new($get_pip_url, @src_dir)
+      dl_pip = Download.new(@get_pip_url, @src_dir)
     end
 
     puts "Installing modules for python3"

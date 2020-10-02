@@ -6,8 +6,8 @@ require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
 require './install_stuff.rb'
+require './src_urls.rb'
 
-$node_src_url = "https://nodejs.org/dist/v14.11.0/node-v14.11.0.tar.gz"
 $conf_options = [
   "--shared-zlib"
 ]
@@ -17,7 +17,8 @@ class InstNode < InstallStuff
   def initialize(prefix, work_dirs, need_sudo=false)
     super('node', prefix, work_dirs)
 
-    @source_url = $node_src_url
+    URL = SRC_URL.new
+    @source_url = URL[@pkgname]
     @need_sudo = need_sudo
     @PythonCmd = "python3"
     @work_dirs = work_dirs

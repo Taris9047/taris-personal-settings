@@ -7,8 +7,8 @@ require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
 require './install_stuff.rb'
+require './src_urls.rb'
 
-$boost_src_url = "https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.bz2"
 $b2_opts = [
   "address-model=64",
   "architecture=x86",
@@ -22,7 +22,8 @@ class InstBoost < InstallStuff
 
     @need_sudo = need_sudo
 
-    @source_url = $boost_src_url
+    URL = SRC_URL.new
+    @source_url = URL[@pkgname]
     @b2_opts = $b2_opts
 
     # Setting up compilers

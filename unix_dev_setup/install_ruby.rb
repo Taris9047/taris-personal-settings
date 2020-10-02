@@ -6,20 +6,26 @@ require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
 require './install_stuff.rb'
+require './src_urls.rb'
 
-$ruby_src_url = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.1.tar.gz"
+$gems_to_install = [
+    "rsense",
+    "rails",
+    "bundler",
+    "open3",
+    "json",
+  ]
 
 class InstRuby < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false)
     super('ruby', prefix, work_dirs)
 
-    @source_url = $ruby_src_url
+    url = SRC_URL.new
+    @source_url = url[@pkgname]
 
     # Python2 modules to install
-    @ruby_gems = [
-      "rsense", "rails", "bundler", "open3"
-    ]
+    @ruby_gems = $gems_to_install
 
     # Python2 build options
     @conf_options = [

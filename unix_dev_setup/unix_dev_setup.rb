@@ -20,7 +20,7 @@ list_of_progs = [
     'lua',
     'ruby',
     'node'
-    ]
+  ]
 
 # Operatnion mode
 op_mode = nil
@@ -137,10 +137,10 @@ for op_mode in op_mode_list do
 
   if op_mode == 'clang'
     require "./install_clang.rb"
-    puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
+    # puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
     sleep(2)
-    inst_clang = InstClang.new
-    inst_clang.install_clang(prefix_dir, def_system, work_dirs, need_sudo)
+    inst_clang = InstClang.new(prefix_dir, def_system, work_dirs, need_sudo)
+    inst_clang.install_clang
   end
 
   # Then Python stuffs

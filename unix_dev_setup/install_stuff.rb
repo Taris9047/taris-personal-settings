@@ -54,14 +54,14 @@ class InstallStuff
       cmds = args[0]
       opts = args[1...]
     end
-  
+
     o, e, s = Open3.capture3( env, cmds )
 
     log_file = File.join(@pkginfo_dir, @pkgname+'.log')
-    fp = File.open(log_file, 'w')
+    fp = File.open(log_file, 'a')
     fp.puts(o)
     fp.close
-    puts "Log file for #{@pkgname} has been saved at #{log_file}"
+    # puts "Log file for #{@pkgname} has been saved at #{log_file}"
 
     unless s.success?
       puts "Execution ended up with an error!!"

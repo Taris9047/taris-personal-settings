@@ -4,11 +4,7 @@ require 'etc'
 require './download.rb'
 require './fname_parser.rb'
 require './install_stuff.rb'
-
-$gcc_url = "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz"
-$gcc_cuda_url = "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz"
-$gcc_old_url = "https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz"
-
+require './src_urls.rb'
 
 class InstGCC < InstallStuff
 
@@ -18,7 +14,8 @@ class InstGCC < InstallStuff
 
     super('gcc', prefix, work_dirs)
 
-    @source_url = $gcc_url
+    URL = SRC_URL.new
+    @source_url = URL['gcc']
 
     @conf_options = [
       "--enable-languages=c,c++,fortran,objc,obj-c++",
@@ -122,8 +119,9 @@ class InstGCCCuda < InstGCC
 
     super(prefix, os_type, work_dirs, need_sudo)
 
+    URL = SRC_URL.new
     @pkgname = 'cudacc'
-    @source_url = $gcc_cuda_url
+    @source_url = URL['cudacc']
 
     @conf_options = [
       "--program-suffix=-cuda",
@@ -163,8 +161,9 @@ class InstGCCOld < InstGCC
 
     super(prefix, os_type, work_dirs, need_sudo)
 
+    URL = SRC_URL.new
     @pkgname = 'gccold'
-    @source_url = $gcc_old_url
+    @source_url = URL[@pkgname]
 
     @conf_options = [
       "--program-suffix=-old",

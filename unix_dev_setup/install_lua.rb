@@ -6,9 +6,7 @@ require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
 require './install_stuff.rb'
-
-$lua_src_url = "https://www.lua.org/ftp/lua-5.4.0.tar.gz"
-
+require './src_urls.rb'
 
 class InstLua < InstallStuff
 
@@ -16,7 +14,8 @@ class InstLua < InstallStuff
     super('lua', prefix, work_dirs)
     @need_sudo = need_sudo
 
-    @source_url = $lua_src_url
+    URL = SRC_URL.new
+    @source_url = URL[@pkgname]
 
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')
@@ -65,7 +64,7 @@ class InstLua < InstallStuff
       inst_cmd
     ]
 
-    self.Run( cmds.join(" "), '-v' )
+    self.Run( cmds.join(" ") )
 
     self.WriteInfo
   end

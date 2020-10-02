@@ -32,6 +32,9 @@ $ubuntu_pkgs = [
   "ruby-dev",
   "git-lfs",
   "tree",
+  "libzmq3-dev",
+  "libtool-bin",
+  "dos2unix",
 ]
 
 # Other dev tools
@@ -54,6 +57,7 @@ $ubuntu_some_more_tools = [
 $ubuntu_ruby_gems = [
   "rsense",
   "open3",
+  "json",
 ]
 
 # Install prereqs!
