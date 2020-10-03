@@ -26,18 +26,6 @@ class InstClang < InstallStuff
 
   end
 
-  def find_python3 (given_path='/usr/local')
-    bin_path = File.join(given_path, 'bin')
-    py3_exe = File.join(bin_path, 'python3')
-
-    # Python3 default fallback
-    unless File.file?(py3_exe)
-      py3_exe = File.realpath("/usr/bin/python3")
-    end
-
-    return py3_exe
-  end
-
   def install_clang
     puts ""
     puts "Working on Clang!!"
@@ -74,14 +62,6 @@ class InstClang < InstallStuff
     else
       inst_cmd = "ninja install"
     end
-
-    # setup correct python path
-    # Python is not needed anymore... Ninja does all
-    #py3_path = find_python3(@prefix)
-    #py3_exe_option = [
-    #  "-DPYTHON_EXECUTABLE:FILEPATH=\"",
-    #  py3_path,
-    #  "\"" ].join('')
 
     # Setting up compilers
     compiler_path = File.join(@prefix, 'bin')
@@ -127,7 +107,7 @@ class InstClang < InstallStuff
 
     system( cmd.join(' ') )
 
-    @conf_options = [inst_prefix_opt,py3_exe_option]+cmake_opts+comp_settings
+    @conf_options = [inst_prefix_opt]+cmake_opts+comp_settings
 
     self.WriteInfo
 
