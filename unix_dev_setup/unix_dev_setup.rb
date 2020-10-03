@@ -19,7 +19,8 @@ list_of_progs = [
     'boost',
     'lua',
     'ruby',
-    'node'
+    'node',
+    'clang',
   ]
 
 # Operatnion mode
