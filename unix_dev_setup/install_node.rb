@@ -17,8 +17,7 @@ class InstNode < InstallStuff
   def initialize(prefix, work_dirs, need_sudo=false)
     super('node', prefix, work_dirs)
 
-    URL = SRC_URL.new
-    @source_url = URL[@pkgname]
+    @source_url = SRC_URL[@pkgname]
     @need_sudo = need_sudo
     @PythonCmd = "python3"
     @work_dirs = work_dirs

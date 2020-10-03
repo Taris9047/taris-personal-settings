@@ -22,8 +22,7 @@ class InstBoost < InstallStuff
 
     @need_sudo = need_sudo
 
-    URL = SRC_URL.new
-    @source_url = URL[@pkgname]
+    @source_url = SRC_URL[@pkgname]
     @b2_opts = $b2_opts
 
     # Setting up compilers

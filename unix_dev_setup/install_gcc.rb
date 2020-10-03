@@ -14,8 +14,7 @@ class InstGCC < InstallStuff
 
     super('gcc', prefix, work_dirs)
 
-    URL = SRC_URL.new
-    @source_url = URL['gcc']
+    @source_url = SRC_URL['gcc']
 
     @conf_options = [
       "--enable-languages=c,c++,fortran,objc,obj-c++",
@@ -119,9 +118,8 @@ class InstGCCCuda < InstGCC
 
     super(prefix, os_type, work_dirs, need_sudo)
 
-    URL = SRC_URL.new
     @pkgname = 'cudacc'
-    @source_url = URL['cudacc']
+    @source_url = SRC_URL['cudacc']
 
     @conf_options = [
       "--program-suffix=-cuda",
@@ -161,9 +159,8 @@ class InstGCCOld < InstGCC
 
     super(prefix, os_type, work_dirs, need_sudo)
 
-    URL = SRC_URL.new
     @pkgname = 'gccold'
-    @source_url = URL[@pkgname]
+    @source_url = SRC_URL[@pkgname]
 
     @conf_options = [
       "--program-suffix=-old",

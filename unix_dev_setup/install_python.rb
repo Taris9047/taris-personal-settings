@@ -42,9 +42,8 @@ class InstPython2 < InstallStuff
   def initialize(prefix, work_dirs, need_sudo=false)
     super('python2', prefix, work_dirs)
 
-    URL = SRC_URL.new
-    @source_url = URL[@pkgname]
-    @get_pip_url = URL['get_pip']
+    @source_url = SRC_URL[@pkgname]
+    @get_pip_url = SRC_URL['get_pip']
 
     # Python2 modules to install
     @py2_modules = $py2_modules
@@ -153,9 +152,8 @@ class InstPython3 < InstallStuff
   def initialize(prefix, work_dirs, need_sudo=false)
     super('python3', prefix, work_dirs)
 
-    URL = SRC_URL.new
-    @source_url = URL[@pkgname]
-    @get_pip_url = URL['get_pip']
+    @source_url = SRC_URL[@pkgname]
+    @get_pip_url = SRC_URL['get_pip']
 
     # Python3 modules to install
     @py3_modules = $py3_modules

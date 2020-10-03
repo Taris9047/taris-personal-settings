@@ -22,8 +22,7 @@ class InstRuby < InstallStuff
   def initialize(prefix, work_dirs, need_sudo=false)
     super('ruby', prefix, work_dirs)
 
-    url = SRC_URL.new
-    @source_url = url[@pkgname]
+    @source_url = SRC_URL[@pkgname]
 
     # Python2 modules to install
     @ruby_gems = $gems_to_install

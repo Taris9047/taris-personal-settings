@@ -14,8 +14,7 @@ class InstLua < InstallStuff
     super('lua', prefix, work_dirs)
     @need_sudo = need_sudo
 
-    URL = SRC_URL.new
-    @source_url = URL[@pkgname]
+    @source_url = SRC_URL[@pkgname]
 
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')

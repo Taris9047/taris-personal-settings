@@ -42,6 +42,7 @@ $ubuntu_some_more_tools = [
   "valgrind",
   "cmake",
   "cmake-gui",
+  "ninja-build",
   "autoconf",
   "automake",
   "vim",

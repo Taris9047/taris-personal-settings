@@ -9,6 +9,15 @@ require './get_compiler.rb'
 require './install_stuff.rb'
 require './src_urls.rb'
 
+
+$projects_to_enable = [
+  'clang',
+  'compiler-rt',
+  'clang-tools-extra',
+  'openmp',
+  'lld',
+]
+
 class InstClang < InstallStuff
 
   def initialize(prefix, def_system, work_dirs, need_sudo)
@@ -34,8 +43,7 @@ class InstClang < InstallStuff
     puts "Working on Clang!!"
     puts ""
 
-    url = SRC_URL.new()
-    @src_url = url['llvm']
+    @src_url = SRC_URL['llvm']
 
     if self.CheckInfo
       return 0
@@ -62,17 +70,18 @@ class InstClang < InstallStuff
     self.Run( "mkdir -p "+@build_dir )
 
     if @need_sudo
-      inst_cmd = "sudo make install"
+      inst_cmd = "sudo ninja install"
     else
-      inst_cmd = "make install"
+      inst_cmd = "ninja install"
     end
 
     # setup correct python path
-    py3_path = find_python3(@prefix)
-    py3_exe_option = [
-      "-DPYTHON_EXECUTABLE:FILEPATH=\"",
-      py3_path,
-      "\"" ].join('')
+    # Python is not needed anymore... Ninja does all
+    #py3_path = find_python3(@prefix)
+    #py3_exe_option = [
+    #  "-DPYTHON_EXECUTABLE:FILEPATH=\"",
+    #  py3_path,
+    #  "\"" ].join('')
 
     # Setting up compilers
     compiler_path = File.join(@prefix, 'bin')
@@ -88,9 +97,15 @@ class InstClang < InstallStuff
     inst_prefix_opt = [ "-DCMAKE_INSTALL_PREFIX:PATH=#{@prefix}" ]
 
     cmake_opts = [
+      "-Wno-dev",
+      "-G Ninja",
+      "-DLLVM_ENABLE_PROJECTS=\"#{$projects_to_enable.join(';')}\"",
+      "-DLLVM_ENABLE_FFI=ON",
+      "-DLLVM_BUILD_LLVM_DYLIB=ON",
+      "-DLLVM_LINK_LLVM_DYLIB=ON",
+      "-DLLVM_ENABLE_RTTI=ON",
+      "-DLLVM_TARGETS_TO_BUILD=\"host\"",
       "-DCMAKE_BUILD_TYPE=Release",
-      "-DLLVM_BUILD_DOCS=OFF",
-      "-DLIBCXX_CXX_ABI=libstdc++",
     ]
 
     cmd = [
@@ -99,16 +114,18 @@ class InstClang < InstallStuff
     	"&&",
     	"cmake",
     	inst_prefix_opt,
-    	py3_exe_option,
+        cmake_opts.join(' '),
     	comp_settings.join(' '),
     	File.join(@src_dir, "llvm"),
     	"&&",
-    	"make",
+    	"ninja",
     	"&&",
     	inst_cmd
     ]
 
-    self.Run( cmd.join(" ") )
+    # self.Run( cmd.join(" ") )
+
+    system( cmd.join(' ') )
 
     @conf_options = [inst_prefix_opt,py3_exe_option]+cmake_opts+comp_settings
 
