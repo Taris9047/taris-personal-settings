@@ -26,8 +26,58 @@ else
     DISTRONAME="$(uname -s) $(uname -r)"
 fi
 
+
+# Exa
+if [ -x "$(command -v exa)" ]; then
+	alias ls='exa -h'
+	alias ll='exa -la'
+	alias l='exa -h'
+fi
+
+
 # The homebrew path!!
 export HOMEBREW=$HOME/.local
+
+# Set path for my usage
+if [ -d $HOMEBREW ]; then
+    echo "HOMEBREW directory is $HOMEBREW"
+    export PATH=$HOMEBREW/bin:$HOMEBREW/opt/bin:/opt/bin/:$PATH
+fi
+
+# Setting for JRE
+JAVAHOME=/opt/java
+if [ -d $JAVAHOME ]; then
+    echo "Java (Possibly Oracle) found at $JAVAHOME"
+    export PATH=$JAVAHOME/bin:$PATH
+fi
+
+# Rust
+if [ -d $HOME/.cargo/bin ]; then
+	echo "Cargo directory detected at $HOME/.cargo/bin"
+	export PATH=$HOME/.cargo/bin:$PATH
+fi
+
+# X11 Forwarding set up for remote connections
+# Select different network interface if you connect it to wired network. Prolly eth0 instead of wlp2s0
+# export DISPLAY=`ip -4 address | grep -A1 wlp2s0 | grep inet | cut -d' ' -f6 | cut -d/ -f1`:0
+
+
+
+# Get Linux distro. info.
+ARCH=$(uname -m)
+KERNEL=$(uname -r)
+if [ -n "$(command -v lsb_release)" ]; then
+    DISTRONAME=$(lsb_release -s -d)
+elif [ -f "/etc/os-release" ]; then
+    DISTRONAME=$(grep PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME=//g' | tr -d '="')
+elif [ -f "/etc/debian_version" ]; then
+    DISTRONAME="Debian $(cat /etc/debian_version)"
+elif [ -f "/etc/redhat-release" ]; then
+    DISTRONAME=$(cat /etc/redhat-release)
+else
+    DISTRONAME="$(uname -s) $(uname -r)"
+fi
+
 
 if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Linux"* ]]; then
     #
