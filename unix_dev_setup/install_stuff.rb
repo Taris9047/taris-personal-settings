@@ -4,6 +4,7 @@
 
 require 'etc'
 require 'open3'
+require 'json'
 
 require './get_compiler.rb'
 

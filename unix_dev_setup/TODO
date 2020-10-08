@@ -1,0 +1,11 @@
+1. Implement other platforms... namely Fedora, OS X
+  --> Fedora would be pretty easy since the system's almost similar...
+  --> OS X, we may not need do do too much. They have homebrew!
+
+2. Improve package information with more delecate format. Current text format is kinda lacking.
+
+3. Think about implementing compiler options per package not a general option.
+
+4. Some automatic update checking system? Many open source projects implement rss feed to notify newer versions.
+
+5. Some web-based system using rails. (far fetched)
