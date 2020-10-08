@@ -60,6 +60,14 @@ class GetCompiler
       @CFLAGS = cflags
       @CXXFLAGS = cxxflags
     end
+
+    puts "So, we're going to use those settings..."
+    puts "C compiler: #{@CC}"
+    puts "C++ compiler: #{@CXX}"
+    puts "C flags: #{@CFLAGS}"
+    puts "CXX flags: #{@CXXFLAGS}"
+    puts "LL flags: #{@RPATH}"
+
   end
 
 

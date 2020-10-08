@@ -8,7 +8,7 @@
   "lua": "https://www.lua.org/ftp/lua-5.4.0.tar.gz",
 
   # Ruby
-  "ruby": "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.1.tar.gz",
+  "ruby": "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz",
 
   # Python stuffs
   "get_pip": "https://bootstrap.pypa.io/get-pip.py",
@@ -16,7 +16,7 @@
   "python3": "https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz",
 
   # Node.JS
-  "node": "https://nodejs.org/dist/v14.11.0/node-v14.11.0.tar.gz",
+  "node": "https://nodejs.org/dist/v14.13.1/node-v14.13.1.tar.gz",
 
   # Boost
   "boost": "https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.bz2",
