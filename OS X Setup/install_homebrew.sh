@@ -34,6 +34,9 @@ do
 				echo "Installing Latest Python3"
 				brew install $PKG
 			fi
+		elif [[ $PKG == "cmake" ]]; then
+			echo "installing cmake from cask"
+			brew cask install cmake
 		else
 			echo "Installing $PKG"
 			brew install $PKG
