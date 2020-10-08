@@ -57,13 +57,13 @@ echo "**** Note ****"
 # Importing bash settings
 DOTFILESDIR="./dotfiles"
 LINUXBASHFILE="$DOTFILESDIR"/bashrc_linux
-DARWINBASHFILE="$DOTFILESDIR"/bash_profile_osx
+DARWINBASHFILE="$DOTFILESDIR"/zshrc_osx
 if [[ "$PLATFORM" == "linux" || "$PLATFORM" == "cygwin" ]]; then
     cat "$LINUXBASHFILE" >> "$HOME/.bashrc"
     echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
 elif [[ "$PLATFORM" == "darwin" ]]; then
-    cat "$DARWINBASHFILE" >> "$HOME/.bash_profile"
-    echo "Appending $HOME/.bash_profile with $DARWINBASHFILE"
+    cat "$DARWINBASHFILE" >> "$HOME/.zshrc"
+    echo "Appending $HOME/.zshrc with $DARWINBASHFILE"
 else
     echo "Manual installation is recommended for .bashrc or .bash_profile depending on your OS."
 fi

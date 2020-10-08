@@ -1,6 +1,6 @@
 #!/bin/sh
 
-HOMEBREW=$(which brew)
+HOMEBREW=$(command -v brew)
 
 if [[ -z $HOMEBREW ]]; then
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
@@ -8,7 +8,7 @@ else
 	echo "Homebrew found at $HOMEBREW"
 fi
 
-PKGS=("wget" "python3" "gnuplot" "git" "nano" "gcc" "ngspice" "lua" "gdb" "gdbgui" "xz" "youtube-dl" "ffmpeg" "nano" "macvim" "p7zip" "bison" "flex" "doxygen" "mercurial" "node" "autoconf" "automake" "cmake" "cgdb" "emacs" "pypy3" "qt" "perl" "pcre2" "ruby" "scipy" "numpy" "openblas" "subversion" "sqlite" "speex" "unrar" "unzip" "go")
+PKGS=("wget" "python3" "gnuplot" "git" "nano" "gcc" "ngspice" "lua" "gdb" "gdbgui" "xz" "youtube-dl" "ffmpeg" "macvim" "p7zip" "bison" "flex" "doxygen" "mercurial" "node" "autoconf" "automake" "cmake" "cgdb" "emacs" "qt" "perl" "pcre2" "ruby" "scipy" "numpy" "openblas" "subversion" "sqlite" "speex" "unrar" "unzip" "go" "rust" "ghc" "zeromq")
 
 INSTALLED_PKGS=( $(brew list) )
 
