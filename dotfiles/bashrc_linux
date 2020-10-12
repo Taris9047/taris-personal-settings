@@ -29,9 +29,16 @@ fi
 
 # Exa
 if [ -x "$(command -v exa)" ]; then
-	alias ls='exa -h'
-	alias ll='exa -la'
-	alias l='exa -h'
+	echo "Exa found in the PATH! replacing ls"
+	alias ls='exa -hF'
+	alias ll='exa -lahF'
+	alias l='exa -hF'
+fi
+
+# Bat
+if [ -x "$(command -v bat)" ]; then
+	echo "Bat found in the PATH! replacing cat"
+	alias cat='bat'
 fi
 
 

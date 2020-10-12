@@ -40,6 +40,15 @@ do
     ln -sfv $CURRENT_DIR/dotfiles/$conf_file $USR_DIR/$DOT$conf_file
 done
 
+# NVIM
+echo "Installing NVIM config file"
+NVIM_CONF_HOME=$USR_DIR/.config/nvim
+if [ ! -d $NVIM_CONF_HOME ]; then
+	echo "NVIM config dir not found, making one."
+	mkdir -p $NVIM_CONF_HOME
+fi
+ln -sfv $CURRENT_DIR/dotfiles/init.vim.nvim $NVIM_CONF_HOME/init.vim
+
 # Config Directories
 # On Linux, this part is unnecessary. However, on OS X or Freebsd..
 # ln works differently for directories.
