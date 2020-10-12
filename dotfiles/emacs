@@ -69,7 +69,7 @@
 (eval-after-load "color-theme"
   '(progn
    (color-theme-initialize)
-   (color-theme-dark-blue2)))
+   (color-theme-blue-sea)))
 
 ;; PHP mode
 ;;(load "php-mode")

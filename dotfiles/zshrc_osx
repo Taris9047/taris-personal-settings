@@ -3,7 +3,6 @@
 # Setup user specific overrides for this in ~/.zshrc. See zshbuiltins(1)
 # and zshoptions(1) for more details.
 
-
 # Default prompt
 PS1="%n@%m %1~ %# "
 
@@ -28,7 +27,9 @@ if type nvim > /dev/null 2>&1; then
 fi
 
 # Rust Cargo - Just use brew cargo
-#PATH="$HOME/.cargo/bin:${PATH}"
+if [ -x "$HOME/.cargo" ]; then
+	PATH="$HOME/.cargo/bin:${PATH}"
+fi
 
 # exa alias
 if type exa > /dev/null 2>&1; then
