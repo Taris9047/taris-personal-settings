@@ -139,10 +139,10 @@ set foldmethod=indent
 " Colorscheme
 if g:os == "Darwin"
    	set termguicolors
-	colorscheme pulumi
+	colorscheme borland
 else
 	set termguicolors
-	colorscheme monrovia
+	colorscheme borland
 endif
 
 " Setting up font
