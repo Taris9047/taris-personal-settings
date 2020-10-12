@@ -142,7 +142,7 @@ if g:os == "Darwin"
 	colorscheme borland
 else
 	set termguicolors
-	colorscheme borland
+	colorscheme monrovia
 endif
 
 " Setting up font

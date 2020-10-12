@@ -10,6 +10,17 @@ alias cp='cp -i'
 alias grep='grep --color'
 alias df='df -h'
 alias rsync='rsync -azvh --info=progress2'
+alias sudo='sudo -H'
+
+# VNC stuff
+if [ -x "$(command -v vncserver)" ]; then
+	echo "** VNC server found! **"
+	echo " To start: vncstart"
+	echo " To end: vnckill"
+	echo ""
+	alias vncstart="vncserver -geometry 1200x800"
+	alias vnckill="vncserver -kill :1"
+fi
 
 # Get Linux distro. info.
 ARCH=$(uname -m)
@@ -25,22 +36,6 @@ elif [ -f "/etc/redhat-release" ]; then
 else
     DISTRONAME="$(uname -s) $(uname -r)"
 fi
-
-
-# Exa
-if [ -x "$(command -v exa)" ]; then
-	echo "Exa found in the PATH! replacing ls"
-	alias ls='exa -hF'
-	alias ll='exa -lahF'
-	alias l='exa -hF'
-fi
-
-# Bat
-if [ -x "$(command -v bat)" ]; then
-	echo "Bat found in the PATH! replacing cat"
-	alias cat='bat'
-fi
-
 
 # The homebrew path!!
 export HOMEBREW=$HOME/.local
@@ -64,28 +59,32 @@ if [ -d $HOME/.cargo/bin ]; then
 	export PATH=$HOME/.cargo/bin:$PATH
 fi
 
+# Exa
+if [ -x "$(command -v exa)" ]; then
+	echo "exa found! using it instead of ls"
+	alias ls='exa -hF'
+	alias ll='exa -lahF'
+	alias l='exa -hF'
+fi
+
+# Bat
+if [ -x "$(command -v bat)" ]; then
+	echo "Bat found! using it instead of cat"
+	alias cat='bat'
+fi
+
+# Neovim
+if [ -x "$(command -v nvim)" ]; then
+	echo "Neovim found! replacing vim!"
+	alias vim="nvim"
+	alias vi="nvim"
+fi
+
 # X11 Forwarding set up for remote connections
 # Select different network interface if you connect it to wired network. Prolly eth0 instead of wlp2s0
 # export DISPLAY=`ip -4 address | grep -A1 wlp2s0 | grep inet | cut -d' ' -f6 | cut -d/ -f1`:0
 
-
-
-# Get Linux distro. info.
-ARCH=$(uname -m)
-KERNEL=$(uname -r)
-if [ -n "$(command -v lsb_release)" ]; then
-    DISTRONAME=$(lsb_release -s -d)
-elif [ -f "/etc/os-release" ]; then
-    DISTRONAME=$(grep PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME=//g' | tr -d '="')
-elif [ -f "/etc/debian_version" ]; then
-    DISTRONAME="Debian $(cat /etc/debian_version)"
-elif [ -f "/etc/redhat-release" ]; then
-    DISTRONAME=$(cat /etc/redhat-release)
-else
-    DISTRONAME="$(uname -s) $(uname -r)"
-fi
-
-
+# ANL setting... not really useful for now.
 if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Linux"* ]]; then
     #
     # All the craps for OLD Linux!!
@@ -111,7 +110,8 @@ if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Lin
     export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib64/pkgconfig:/usr/lib/pkgconfig
 
     # Path extension for Homebrew!!
-    if [ -d $HOMEBREW ]; then
+    if [ -d "$HOMEBREW" ]; then
+        echo "$HOMEBREW found!! adding to path!!"
         export PATH=$HOMEBREW/bin:$HOMEBREW/opt/bin:/opt/bin/:$PATH
     fi
 
@@ -133,6 +133,12 @@ if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Lin
         export PATH=$SUBLHOME:$PATH
         alias subl="$SUBLHOME/sublime_text"
     fi
+
+	# Oracle JRE
+	if [ -d /opt/jre ]; then
+		export JAVAHOME=/opt/jre
+		export PATH=$JAVAHOME/bin:$PATH
+	fi
 
     # Some envs
     RPATH="-Wl,-rpath=$HOMEBREW/lib64 -Wl,-rpath=$HOMEBREW/lib"
