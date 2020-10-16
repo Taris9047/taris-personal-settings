@@ -30,7 +30,7 @@ set_os_type
 echo "Setting platform as: $PLATFORM"
 
 # Config Files
-CONF_LIST=("vim" "vimrc" "gvimrc" "emacs" "gitignore" "gitconfig" "gdbinit")
+CONF_LIST=("vim" "vimrc" "emacs" "gitignore" "gitconfig" "gdbinit")
 DOT="."
 echo ""
 for conf_file in ${CONF_LIST[*]}
@@ -39,6 +39,15 @@ do
     rm -rvf $USR_DIR/$DOT$conf_file
     ln -sfv $CURRENT_DIR/dotfiles/$conf_file $USR_DIR/$DOT$conf_file
 done
+
+# NVIM
+echo "Installing NVIM config file"
+NVIM_CONF_HOME=$USR_DIR/.config/nvim
+if [ ! -d $NVIM_CONF_HOME ]; then
+	echo "NVIM config dir not found, making one."
+	mkdir -p $NVIM_CONF_HOME
+fi
+ln -sfv $CURRENT_DIR/dotfiles/init.vim.nvim $NVIM_CONF_HOME/init.vim
 
 # Config Directories
 # On Linux, this part is unnecessary. However, on OS X or Freebsd..
@@ -55,15 +64,16 @@ done
 echo ""
 echo "**** Note ****"
 # Importing bash settings
-DOTFILESDIR="./dotfiles"
+DOTFILESDIR=$CURRENT_DIR"/dotfiles"
 LINUXBASHFILE="$DOTFILESDIR"/bashrc_linux
-DARWINBASHFILE="$DOTFILESDIR"/bash_profile_osx
+DARWINBASHFILE="$DOTFILESDIR"/zshrc_osx
 if [[ "$PLATFORM" == "linux" || "$PLATFORM" == "cygwin" ]]; then
-    cat "$LINUXBASHFILE" >> "$HOME/.bashrc"
+    echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
     echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
 elif [[ "$PLATFORM" == "darwin" ]]; then
-    cat "$DARWINBASHFILE" >> "$HOME/.bash_profile"
-    echo "Appending $HOME/.bash_profile with $DARWINBASHFILE"
+    touch "$HOME/.zshrc"
+    echo "source $DARWINBASHFILE" >> "$HOME/.zshrc"
+    echo "Appending $HOME/.zshrc with $DARWINBASHFILE"
 else
     echo "Manual installation is recommended for .bashrc or .bash_profile depending on your OS."
 fi

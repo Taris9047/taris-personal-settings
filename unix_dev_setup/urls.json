@@ -1,0 +1,36 @@
+{
+  # GCC
+  "gcc": "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz",
+  "cudacc": "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz",
+  "gccold": "https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz",
+
+  # Lua
+  "lua": "https://www.lua.org/ftp/lua-5.4.0.tar.gz",
+
+  # Ruby
+  "ruby": "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz",
+
+  # Python stuffs
+  "get_pip": "https://bootstrap.pypa.io/get-pip.py",
+  "python2": "https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz",
+  "python3": "https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz",
+
+  # Node.JS
+  "node": "https://nodejs.org/dist/v14.13.1/node-v14.13.1.tar.gz",
+
+  # Boost
+  "boost": "https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.bz2",
+
+  # LLVM-Clang
+  "llvm": "https://github.com/llvm/llvm-project.git",
+
+  # Rust
+  "rust": "https://static.rust-lang.org/dist/rustc-1.46.0-src.tar.gz",
+
+  # Julia
+  "julia": "https://github.com/JuliaLang/julia/releases/download/v1.5.2/julia-1.5.2-full.tar.gz",
+
+  # Haskell
+  "ghc": "https://downloads.haskell.org/~ghc/8.10.2/ghc-8.10.2-src.tar.xz",
+  "cabal-install": "http://hackage.haskell.org/package/cabal-install-3.2.0.0/cabal-install-3.2.0.0.tar.gz"
+}

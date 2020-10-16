@@ -1,15 +1,271 @@
 # My settings
-alias ls='ls -p -F -h --color=tty --show-control-chars'
+
+# Basic aliases
+alias ls='ls -p -F -h --color=auto --show-control-chars'
 alias ll='ls -la'
-alias l='ls -p -F -h --color=tty --show-control-chars'
+alias l='ls -p -F -h --color=auto --show-control-chars'
 alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 alias grep='grep --color'
 alias df='df -h'
-alias ps='ps -W'
+alias rsync='rsync -azvh --info=progress2'
+alias sudo='sudo -H'
 
-#SERVER=$RANDOM
-#let " SERVER %= 5 "
-#let " SERVER = $SERVER + 1 "
-#alias blade='ssh -Y k4shin@vlsilinux$SERVER.uwaterloo.ca'
+# VNC stuff
+if [ -x "$(command -v vncserver)" ]; then
+	echo "** VNC server found! **"
+	echo " To start: vncstart"
+	echo " To end: vnckill"
+	echo ""
+	alias vncstart="vncserver -geometry 1200x800"
+	alias vnckill="vncserver -kill :1"
+fi
+
+# Get Linux distro. info.
+ARCH=$(uname -m)
+KERNEL=$(uname -r)
+if [ -n "$(command -v lsb_release)" ]; then
+    DISTRONAME=$(lsb_release -s -d)
+elif [ -f "/etc/os-release" ]; then
+    DISTRONAME=$(grep PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME=//g' | tr -d '="')
+elif [ -f "/etc/debian_version" ]; then
+    DISTRONAME="Debian $(cat /etc/debian_version)"
+elif [ -f "/etc/redhat-release" ]; then
+    DISTRONAME=$(cat /etc/redhat-release)
+else
+    DISTRONAME="$(uname -s) $(uname -r)"
+fi
+
+# The homebrew path!!
+export HOMEBREW=$HOME/.local
+
+# Set path for my usage
+if [ -d $HOMEBREW ]; then
+    echo "HOMEBREW directory is $HOMEBREW"
+    export PATH=$HOMEBREW/bin:$HOMEBREW/opt/bin:/opt/bin/:$PATH
+fi
+
+# Setting for JRE
+JAVAHOME=/opt/java
+if [ -d $JAVAHOME ]; then
+    echo "Java (Possibly Oracle) found at $JAVAHOME"
+    export PATH=$JAVAHOME/bin:$PATH
+fi
+
+# Rust
+if [ -d $HOME/.cargo/bin ]; then
+	echo "Cargo directory detected at $HOME/.cargo/bin"
+	export PATH=$HOME/.cargo/bin:$PATH
+fi
+
+# Exa
+if [ -x "$(command -v exa)" ]; then
+	echo "exa found! using it instead of ls"
+	alias ls='exa -hF'
+	alias ll='exa -lahF'
+	alias l='exa -hF'
+fi
+
+# Bat
+if [ -x "$(command -v bat)" ]; then
+	echo "Bat found! using it instead of cat"
+	alias cat='bat'
+fi
+
+# Neovim
+if [ -x "$(command -v nvim)" ]; then
+	echo "Neovim found! replacing vim!"
+	alias vim="nvim"
+	alias vi="nvim"
+fi
+
+# X11 Forwarding set up for remote connections
+# Select different network interface if you connect it to wired network. Prolly eth0 instead of wlp2s0
+# export DISPLAY=`ip -4 address | grep -A1 wlp2s0 | grep inet | cut -d' ' -f6 | cut -d/ -f1`:0
+
+# ANL setting... not really useful for now.
+if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Linux"* ]]; then
+    #
+    # All the craps for OLD Linux!!
+    #
+    # Those settins are 'optimized' for 'install_stuffs.sh'
+    # In Ubuntu or any other newer distros, we can just use apt-get or apt!
+    #
+    # enable color support of ls and also add handy aliases
+    if [ -x /usr/bin/dircolors ]; then
+        test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+        alias dir='dir --color=auto'
+        alias vdir='vdir --color=auto'
+    #
+        alias grep='grep --color=auto'
+        alias fgrep='fgrep --color=auto'
+        alias egrep='egrep --color=auto'
+    fi
+    if [ "$PS1" ]; then
+      PS1="[\u@\h:\l \W]\\$ "
+    fi
+
+    # PKG_CONFIG_PATH
+    export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib64/pkgconfig:/usr/lib/pkgconfig
+
+    # Path extension for Homebrew!!
+    if [ -d "$HOMEBREW" ]; then
+        echo "$HOMEBREW found!! adding to path!!"
+        export PATH=$HOMEBREW/bin:$HOMEBREW/opt/bin:/opt/bin/:$PATH
+    fi
+
+    # Node.JS
+    if [ -d $HOMEBREW/opt/Node ]; then
+        export NODEJS_HOME=$HOMEBREW/opt/Node
+        export PATH=$NODEJS_HOME/bin:$PATH
+    fi
+
+    # Atom - Portable install
+    if [ -d $HOMEBREW/opt/Atom ]; then
+        export ATOM_HOME=$HOMEBREW/opt/Atom
+        export PATH=$ATOM_HOME:$PATH
+    fi
+
+    # Sublime Text
+    if [ -d $HOMEBREW/opt/sublime ]; then
+        export SUBLHOME=$HOMEBREW/opt/sublime
+        export PATH=$SUBLHOME:$PATH
+        alias subl="$SUBLHOME/sublime_text"
+    fi
+
+	# Oracle JRE
+	if [ -d /opt/jre ]; then
+		export JAVAHOME=/opt/jre
+		export PATH=$JAVAHOME/bin:$PATH
+	fi
+
+    # Some envs
+    RPATH="-Wl,-rpath=$HOMEBREW/lib64 -Wl,-rpath=$HOMEBREW/lib"
+
+    if [ -e "$HOMEBREW/bin/gcc" ]; then
+        export CC=$HOMEBREW/bin/gcc
+        export CFLAGS="-march=native -fomit-frame-pointer -O3 -pipe"
+        export LDFLAGS=$RPATH
+    fi
+    if [ -e "$HOMEBREW/bin/g++" ]; then
+        export CXX=$HOMEBREW/bin/g++
+        export CFLAGS="-march=native -fomit-frame-pointer -O3 -pipe"
+        export LDFLAGS=$RPATH
+    fi
+
+    # Python Stuffs
+    if [ -e "$HOMEBREW/Python3/bin/python3" ]; then
+        export PY3HOME="$HOMEBREW/Python3"
+        export PY3BIN="$PY3HOME/bin"
+        RPATH="$RPATH -Wl,-rpath $PY3HOME/lib"
+        export LDFLAGS=$RPATH
+    fi
+
+    if [ -e "$HOMEBREW/Python2/bin/python2" ]; then
+        export PY2HOME="$HOMEBREW/Python2"
+        export PY2BIN="$PY2HOME/bin"
+        RPATH="$RPATH -Wl,-rpath $PY2HOME/lib"
+        export LDFLAGS=$RPATH
+    fi
+
+    # QT Stuffs
+    if [ -e "$HOMEBREW/Qt4/bin/qmake" ]; then
+        export QT4HOME=$HOMEBREW/Qt4
+        export QT4BIN=$QT4HOME/bin
+        export QT4MAKE=$QT4BIN/qmake
+        RPATH="$RPATH -Wl,-rpath=$QT4HOME/lib64"
+        export LDFLAGS=$RPATH
+    fi
+
+    # Qt5 --> Note that binary installation doesn't just put liniux amd64 version 
+    # into the directory.
+    if [ -e "$HOMEBREW/Qt5/5.12.1/gcc_64/bin/qmake" ]; then
+        export QT5HOME=$HOMEBREW/Qt5/5.12.1/gcc_64
+        export QT5BIN=$QT5HOME/bin
+        export QT5MAKE=$QT5BIN/qmake
+        RPATH="$RPATH -Wl,-rpath=$QT5HOME/lib"
+        export LDFLAGS=$RPATH
+    fi
+
+    # Go
+    if [ -d $HOMEBREW/opt/go ]; then
+        export GO_HOME=$HOMEBREW/opt/go
+        export PATH=$GO_HOME/bin:$PATH
+    fi
+
+    # Texlive
+    if [ -d HOMEBREW/opt/texlive ]; then
+        export TEXLIVE_HOME=$HOMEBREW/opt/texlive
+        export PATH=$TEXLIVE_HOME/bin/x86_64-linux:$PATH
+    fi
+
+    # Silvaco Stuffs
+    if [ -d /opt/Silvaco ]; then
+        export SILVACO_HOME=/opt/Silvaco
+        export PATH=$PATH:$SILVACO_HOME/bin
+    fi
+
+    # Lastly, rpath
+    export RPATH
+
+    # Path selection stuffs
+    remove_path() {
+        # Referenced:
+        # https://stackoverflow.com/questions/756756/multiple-commands-in-an-alias-for-bash
+        for path in "$@"; do
+            PATH="$(echo "$PATH" |sed -e "s#\(^\|:\)$(echo "$path" |sed -e 's/[^^]/[&]/g' -e 's/\^/\\^/g')\(:\|/\{0,1\}$\)#\1\2#" -e 's#:\+#:#g' -e 's#^:\|:$##g')"
+        done
+    }
+    # The original system path (DO NOT CHANGE IT AT ANY CIRCUMSTANCES)
+    export SYS_PATH=$PATH
+
+    # The selector functions!!
+    select_python3() {
+        if [ -d $PY3HOME ]; then
+            $(remove_path $PY2BIN)
+            export PATH=$PY3BIN:$PATH
+            echo "Selecting Python3 installed at $PY3HOME"
+        else
+            echo "Python3 installation cannot be found in $HOMEBREW"
+        fi
+    }
+    select_python2() {
+        if [ -d $PY2HOME ]; then
+            $(remove_path $PY3BIN)
+            export PATH=$PY2BIN:$PATH
+            echo "Selecting Python2 installed at $PY2HOME"
+        else
+            echo "Python2 installation cannot be found in $HOMEBREW"
+        fi
+    }
+    select_qt4() {
+        if [ -d $QT4HOME ]; then
+            $(remove_path $QT5BIN)
+            export PATH=$QT4BIN:$PATH
+            echo "Selecting Qt4 installed at $QT4HOME"
+        else
+            echo "Qt4 cannot be found in $HOMEBREW"
+        fi
+    }
+    select_qt5() {
+        if [ -d $QT5BIN ]; then
+            $(remove_path $QT4BIN)
+            export PATH=$QT5BIN:$PATH
+            echo "Selecting Qt5 installed at $QT5HOME"
+        else
+            echo "Qt5 cannot be found in $HOMEBREW"
+        fi
+    }
+
+    # Restore path!!
+    restore_path() {
+        export PATH=$SYS_PATH
+        echo "PATH has been restored to original(?) state!!"
+        echo $PATH
+    }
+
+fi
+
+
+

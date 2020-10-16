@@ -138,8 +138,8 @@ set foldmethod=indent
 
 " Colorscheme
 if g:os == "Darwin"
-   	set term=builtin_ansi
-	syntax on
+   	set termguicolors
+	colorscheme borland
 else
 	set termguicolors
 	colorscheme monrovia

@@ -1,5 +1,5 @@
 [user]
-	name = Taylor Shin
+	name = Taris' stuffs
 	email = talezshin@gmail.com
 [core]
 	editor = vim
@@ -20,7 +20,7 @@
 [push]
 	default = matching
 [color]
-	ui = auto
+	ui = true
 [color "branch"]
 	current = yellow bold
 	local = green bold
@@ -204,3 +204,9 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[credential]
+	helper = store

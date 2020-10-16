@@ -1,0 +1,49 @@
+# System-wide profile for interactive zsh(1) shells.
+
+# Setup user specific overrides for this in ~/.zshrc. See zshbuiltins(1)
+# and zshoptions(1) for more details.
+
+# Default prompt
+PS1="%n@%m %1~ %# "
+
+# Aliases Added for my convenience
+# My settings
+alias ls='ls -pFhG'
+alias ll='ls -la'
+alias l='ls -CF'
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias grep='grep --color'
+alias df='df -h'
+alias ps='ps -W'
+
+# enabling color for mac
+CLICOLOR="YES";    export CLICOLOR
+
+# NVIM to VIM
+if type nvim > /dev/null 2>&1; then
+	alias vim='nvim'
+fi
+
+# Rust Cargo - Just use brew cargo
+if [ -x "$HOME/.cargo" ]; then
+	PATH="$HOME/.cargo/bin:${PATH}"
+fi
+
+# exa alias
+if type exa > /dev/null 2>&1; then
+	echo "exa found! will use it instead of ls"
+	alias ls='exa -hF'
+	alias ll='exa -ahlF'
+	alias la='exa -haF'
+	alias l='exa -hF'
+fi
+
+# bat alias
+if type bat > /dev/null 2>&1; then
+	echo "bat found!! will use it instead of cat"
+	alias cat='bat'
+fi
+
+
