@@ -41,4 +41,11 @@ if [ -x "$(command -v nvim)" ]; then
 	alias vi="nvim"
 fi
 
+# Macvim
+if [ -x "$(command -v mvim)" ]; then
+	echo "MacVim Found!! replacing some graphical vim commands!!"
+	alias gvim="mvim"
+	alias view="mvim"
+fi
+
 
