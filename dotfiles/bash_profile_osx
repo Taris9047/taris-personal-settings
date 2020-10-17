@@ -10,41 +10,35 @@ alias grep='grep --color'
 alias df='df -h'
 alias ps='ps -W'
 
-# vlsilinux connection
-#SERVER=$RANDOM
-#let " SERVER %= 4 "
-#let " SERVER = $SERVER + 1 "
-#alias blade='ssh -Y k4shin@blade$SERVER.vlsi.uwaterloo.ca'
-#alias vlsilinux='ssh -Y k4shin@vlsilinux$SERVER.uwaterloo.ca'
-
 # enabling color for mac
 CLICOLOR="YES";    export CLICOLOR
 
-# Setting up build environment for Snow Leopard
-#export MACOSX_DEPLOYMENT_TARGET=10.6 
-#export CFLAGS='-O3 -arch x86_64' 
-#export LDFLAGS='-arch x86_64' 
-#export CXXFLAGS='-O3 -arch x86_64' 
-#export FFLAGS="-arch x86_64 -ff2c"
-#export FFLAGS="-ff2c"
+# Setting for JRE
+JAVAHOME=/opt/java
+if [ -d $JAVAHOME ]; then
+    echo "Java (Possibly Oracle) found at $JAVAHOME"
+    export PATH=$JAVAHOME/bin:$PATH
+fi
 
-# LaTeX settings
-#export MANPATH="/usr/local/texlive/2012/texmf/doc/man"
-#export INFOPATH="/usr/local/texlive/2012/texmf/doc/info"
-#export PATH="/usr/local/texlive/2012/bin/universal-darwin:${PATH}"
+# Exa
+if [ -x "$(command -v exa)" ]; then
+	echo "exa found! using it instead of ls"
+	alias ls='exa -hF'
+	alias ll='exa -lahF'
+	alias l='exa -hF'
+fi
 
-# Setting PATH for Emacs.app
-PATH="~/settings/bin:${PATH}"
-export PATH
+# Bat
+if [ -x "$(command -v bat)" ]; then
+	echo "Bat found! using it instead of cat"
+	alias cat='bat'
+fi
 
-# Setting PATH for MySQL
-PATH="/usr/local/mysql/bin:${PATH}"
-export PATH
+# Neovim
+if [ -x "$(command -v nvim)" ]; then
+	echo "Neovim found! replacing vim!"
+	alias vim="nvim"
+	alias vi="nvim"
+fi
 
-# /usr/local/bin and /usr/local/sbin
-export PATH="/usr/local/bin:/usr/local/sbin:${PATH}"
-
-# Python installation
-export PATH="/usr/local/python/bin:/usr/local/python/sbin:${PATH}"
-export PATH="/usr/local/share/python:${PATH}"
 
