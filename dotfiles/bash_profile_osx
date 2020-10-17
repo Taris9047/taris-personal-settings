@@ -20,6 +20,13 @@ if [ -d $JAVAHOME ]; then
     export PATH=$JAVAHOME/bin:$PATH
 fi
 
+# Rust
+if [ -d $HOME/.cargo/bin ]; then
+	echo "Cargo directory detected at $HOME/.cargo/bin"
+	export PATH=$HOME/.cargo/bin:$PATH
+fi
+
+
 # Exa
 if [ -x "$(command -v exa)" ]; then
 	echo "exa found! using it instead of ls"
