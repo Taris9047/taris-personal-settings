@@ -80,6 +80,13 @@ if [ -x "$(command -v nvim)" ]; then
 	alias vi="nvim"
 fi
 
+# Rip
+if [ -x "$(command -v rip)" ]; then
+	echo "rip - rm-improved found! replacing rm!"
+	alias rm="rip"
+fi
+
+
 # X11 Forwarding set up for remote connections
 # Select different network interface if you connect it to wired network. Prolly eth0 instead of wlp2s0
 # export DISPLAY=`ip -4 address | grep -A1 wlp2s0 | grep inet | cut -d' ' -f6 | cut -d/ -f1`:0

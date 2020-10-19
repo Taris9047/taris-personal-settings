@@ -16,7 +16,7 @@
   "python3": "https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz",
 
   # Node.JS
-  "node": "https://nodejs.org/dist/v14.13.1/node-v14.13.1.tar.gz",
+  "node": "https://nodejs.org/dist/v14.14.0/node-v14.14.0.tar.gz",
 
   # Boost
   "boost": "https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.bz2",
