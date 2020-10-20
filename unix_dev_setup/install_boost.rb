@@ -74,7 +74,7 @@ class InstBoost < InstallStuff
 
     @conf_options = @b2_opts
 
-    self.WriteInfo
+    WriteInfo
 
   end # install
 

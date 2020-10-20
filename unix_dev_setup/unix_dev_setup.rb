@@ -21,6 +21,7 @@ list_of_progs = [
     'ruby',
     'node',
     'clang',
+    'rust'
   ]
 
 # Operatnion mode
@@ -196,6 +197,12 @@ for op_mode in op_mode_list do
     require "./install_node.rb"
     inst_node = InstNode.new(prefix_dir, work_dirs, need_sudo)
     inst_node.install
+  end
+
+  if op_mode == 'rust'
+    require "./install_rust.rb"
+    inst_rust = InstRust.new(prefix_dir, work_dirs, need_sudo)
+    inst_rust.install
   end
 
 end

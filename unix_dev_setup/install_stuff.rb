@@ -5,6 +5,7 @@
 require 'etc'
 require 'open3'
 require 'json'
+require './fname_parser.rb'
 
 require './get_compiler.rb'
 
@@ -30,7 +31,7 @@ class InstallStuff
     @prefix=File.realpath(prefix)
     @build_dir, @src_dir, @pkginfo_dir = work_dirs
     @pkginfo_file = File.join(
-      @pkginfo_dir, '{pkgname}.info'.gsub('{pkgname}', @pkgname) )
+      @pkginfo_dir, "#{@pkgname}.info" )
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -45,24 +46,33 @@ class InstallStuff
     if args[0].class == Hash
       env = args[0]
       cmds = args[1]
-      opts = args[2...]
+      opts = Array(args[2...])
     elsif args[0].class == Array
       env = {}
       cmds = args[0].join(' ')
-      opts = args[1...]
+      opts = Array(args[1...])
     elsif args[0].class == String
       env = {}
       cmds = args[0]
-      opts = args[1...]
+      opts = Array(args[1...])
     end
 
     o, e, s = Open3.capture3( env, cmds )
 
-    log_file = File.join(@pkginfo_dir, @pkgname+'.log')
-    fp = File.open(log_file, 'a')
+    log_file_name = @pkgname+'.log'
+    if opts.length() >= 1
+      log_file_name = opts[0]+'.log'
+    end
+
+    log_file = File.join(@pkginfo_dir, log_file_name)
+    unless File.file?(log_file)
+      fp = File.open(log_file, 'w')
+    else
+      fp = File.open(log_file, 'a')
+    end
     fp.puts(o)
     fp.close
-    # puts "Log file for #{@pkgname} has been saved at #{log_file}"
+    # puts "Log file for #{@pkgname} has been saved at #{log_file_name}"
 
     unless s.success?
       puts "Execution ended up with an error!!"
@@ -80,7 +90,7 @@ class InstallStuff
   end
 
   def WriteInfo
-    puts "Writing package info for {pkgname}...".gsub('{pkgname}', @pkgname)
+    puts "Writing package info for #{@pkgname}..."
     fp = File.open(@pkginfo_file, 'w')
     env_str = @env.map{|k,v| "{k}={v}".gsub('{k}', k).gsub('{v}', v)}.join("\n")
 
@@ -88,20 +98,22 @@ class InstallStuff
       if @conf_options.join(' ').include?('-DCMAKE_INSTALL_PREFIX')
         conf_options_str = @conf_options.join(' ')
       else
-        conf_options_str = "--prefix="+@prefix+' '+@conf_options.join(' ')
+        conf_options_str = "--prefix=#{@prefix} "+@conf_options.join(' ')
       end
     else
       conf_options_str = "N/A --> Probably the package was not based on automake or cmake."
     end
 
-    compile_info = [
-      "Package Name:", @pkgname, "\n",
-      "Source file URL:", @source_url, "\n",
-      "Configure options:", conf_options_str, "\n",
-      "Env Variables:",
-      env_str,
-    ]
-    fp.puts(compile_info.join("\n"))
+    fnp = FNParser.new(@source_url)
+    compile_info_json = {
+      "Package Name" => @pkgname,
+      "Source file URL" => @source_url,
+      "Version" => fnp.version(),
+      "Config options" => conf_options_str,
+      "Env Variables" => env_str,
+    }
+    fp.write(compile_info_json.to_json)
+    # fp.puts(compile_info.join("\n"))
     fp.close
   end
 
