@@ -81,10 +81,10 @@ if [ -x "$(command -v nvim)" ]; then
 fi
 
 # Rip
-if [ -x "$(command -v rip)" ]; then
-	echo "rip - rm-improved found! replacing rm!"
-	alias rm="rip"
-fi
+#if [ -x "$(command -v rip)" ]; then
+#	echo "rip - rm-improved found! replacing rm!"
+#	alias rm="rip"
+#fi
 
 
 # X11 Forwarding set up for remote connections
