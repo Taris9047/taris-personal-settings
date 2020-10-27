@@ -12,8 +12,8 @@
 
   # Python stuffs
   "get_pip": "https://bootstrap.pypa.io/get-pip.py",
-  "python2": "https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz",
-  "python3": "https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz",
+  "python2": "https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz",
+  "python3": "https://www.python.org/ftp/python/3.8.6/Python-3.8.6.tgz",
 
   # Node.JS
   "node": "https://nodejs.org/dist/v15.0.1/node-v15.0.1.tar.gz",

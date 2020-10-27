@@ -47,11 +47,19 @@ if [ -d $HOMEBREW ]; then
 fi
 
 # Setting for JRE
-JAVAHOME=/opt/java
-if [ -d $JAVAHOME ]; then
+JAVA_HOME=/opt/java
+if [ -d $JAVA_HOME ]; then
     echo "Java (Possibly Oracle) found at $JAVAHOME"
-    export PATH=$JAVAHOME/bin:$PATH
+    export PATH=$JAVA_HOME/bin:$PATH
+	export CLASSPATH=$JAVA_HOME/lib
 fi
+# Javafx
+JAVAFX_HOME=/opt/javafx
+if [ -d $JAVAFX_HOME ]; then
+	echo "JavaFX found!"
+	export JAVAFX_HOME=/opt/javafx/lib
+fi
+
 
 # Rust
 if [ -d $HOME/.cargo/bin ]; then
@@ -85,6 +93,26 @@ fi
 #	echo "rip - rm-improved found! replacing rm!"
 #	alias rm="rip"
 #fi
+
+# Rclone
+# If you're using Ubuntu, it's pretty easy. Other than that, just
+# install rclone and set it up for Google drive.
+#
+if [ -x "$(command -v rclone)" ]; then
+	GOOGLE_DRIVE=$HOME/.google-drive
+	if [ ! -d $GOOGLE_DRIVE ]; then
+		echo "Google drive mount point not found! making one.."
+		mkdir -p $GOOGLE_DRIVE
+	fi
+	
+	if mountpoint -q $GOOGLE_DRIVE; then
+		echo "Google drive already mounted.."
+	else
+		echo "Mounting google drive to $GOOGLE_DRIVE"
+		rclone mount google-drive: $GOOGLE_DRIVE &
+		sleep 2
+	fi
+fi
 
 
 # X11 Forwarding set up for remote connections

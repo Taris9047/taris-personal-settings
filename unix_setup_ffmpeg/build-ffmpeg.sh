@@ -2,21 +2,22 @@
 
 # https://github.com/markus-perl/ffmpeg-build-script
 
-VERSION=1.14
+VERSION=1.17
 CWD=$(pwd)
-PACKAGES="$CWD/packages"
-WORKSPACE="$CWD/workspace"
-CC="clang"
-CXX="clang++"
-LDFLAGS="-L${WORKSPACE}/lib -lm"
+PACKAGES=$CWD/packages
+WORKSPACE=$CWD/workspace
+CC=clang
+CXX=clang++
+LDFLAGS="-L${WORKSPACE}/lib -lm -lpthread"
 CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIE"
-CXXFLAGS="$CFLAGS"
-COMPILER_SET="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\""
-ADDITIONAL_CONFIGURE_OPTIONS=""
+CXXFLAGS=$CFLAGS
+COMPILER_SET="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\" "
+
+CONFIGURE_OPTIONS=()
 
 INSTALL_FOLDER="$HOME/.local/bin"
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	INSTALL_FOLDER="$HOME/.local/bin"
+	INSTALL_FOLDER="/usr/local/bin"
 fi
 
 
@@ -182,7 +183,7 @@ fi
 if build "yasm"; then
 	download "https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz" "yasm-1.3.0.tar.gz"
 	cd "$PACKAGES"/yasm-1.3.0 || exit
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
+    execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
 	execute make -j $MJOBS
 	execute make install
 	build_done "yasm"
@@ -203,6 +204,8 @@ if build "opencore"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
+	
+	CONFIGURE_OPTIONS+=("--enable-libopencore_amrnb" "--enable-libopencore_amrwb")
 	build_done "opencore"
 fi
 
@@ -219,6 +222,8 @@ if build "libvpx"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-unit-tests --disable-shared
 	execute make -j $MJOBS
 	execute make install
+	
+	CONFIGURE_OPTIONS+=("--enable-libvpx")
 	build_done "libvpx"
 fi
 
@@ -228,6 +233,8 @@ if build "lame"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
+	
+	CONFIGURE_OPTIONS+=("--enable-libmp3lame")
 	build_done "lame"
 fi
 
@@ -237,6 +244,8 @@ if build "opus"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
+	
+	CONFIGURE_OPTIONS+=("--enable-libopus")
 	build_done "opus"
 fi
 
@@ -249,8 +258,14 @@ if build "xvidcore"; then
 	execute make install
 
 	if [[ -f ${WORKSPACE}/lib/libxvidcore.4.dylib ]]; then
-	    execute rm "${WORKSPACE}/lib/libxvidcore.4.dylib"
+		execute rm "${WORKSPACE}/lib/libxvidcore.4.dylib"
 	fi
+
+	if [[ -f ${WORKSPACE}/lib/libxvidcore.so ]]; then
+		execute rm "${WORKSPACE}"/lib/libxvidcore.so*
+	fi
+
+	CONFIGURE_OPTIONS+=("--enable-libxvid")
 
 	build_done "xvidcore"
 fi
@@ -268,6 +283,8 @@ if build "x264"; then
     execute make -j $MJOBS
 	execute make install
 	execute make install-lib-static
+	
+	CONFIGURE_OPTIONS+=("--enable-libx264")
 	build_done "x264"
 fi
 
@@ -286,6 +303,8 @@ if build "libvorbis"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest
 	execute make -j $MJOBS
 	execute make install
+	
+	CONFIGURE_OPTIONS+=("--enable-libvorbis")
 	build_done "libvorbis"
 fi
 
@@ -298,6 +317,8 @@ if build "libtheora"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --with-vorbis-libraries="${WORKSPACE}"/lib --with-vorbis-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest --disable-vorbistest --disable-examples --disable-asm --disable-spec
 	execute make -j $MJOBS
 	execute make install
+	
+	CONFIGURE_OPTIONS+=("--enable-libtheora")
 	build_done "libtheora"
 fi
 
@@ -311,8 +332,8 @@ if build "pkg-config"; then
 fi
 
 #if build "cmake"; then
-#	download "https://github.com/Kitware/CMake/releases/download/v3.18.2/cmake-3.18.2.tar.gz" "cmake-3.18.2.tar.gz"
-#	cd "$PACKAGES"/cmake-3.18.2  || exit
+#	download "https://cmake.org/files/v3.15/cmake-3.15.4.tar.gz" "cmake-3.15.4.tar.gz"
+#	cd "$PACKAGES"/cmake-3.15.4  || exit
 #	rm Modules/FindJava.cmake
 #	perl -p -i -e "s/get_filename_component.JNIPATH/#get_filename_component(JNIPATH/g" Tests/CMakeLists.txt
 #	perl -p -i -e "s/get_filename_component.JNIPATH/#get_filename_component(JNIPATH/g" Tests/CMakeLists.txt
@@ -328,6 +349,8 @@ if build "vid_stab"; then
 	execute env "$COMPILER_SET" cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DUSE_OMP=OFF -DENABLE_SHARED:bool=off .
 	execute make
 	execute make install
+	
+	CONFIGURE_OPTIONS+=("--enable-libvidstab")
 	build_done "vid_stab"
 fi
 
@@ -340,6 +363,8 @@ if build "x265"; then
 	execute make install
 	sed "s/-lx265/-lx265 -lstdc++/g" "$WORKSPACE/lib/pkgconfig/x265.pc" > "$WORKSPACE/lib/pkgconfig/x265.pc.tmp"
 	mv "$WORKSPACE/lib/pkgconfig/x265.pc.tmp" "$WORKSPACE/lib/pkgconfig/x265.pc"
+	
+	CONFIGURE_OPTIONS+=("--enable-libx265")
 	build_done "x265"
 fi
 
@@ -349,11 +374,13 @@ if build "fdk_aac"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
+	
+	CONFIGURE_OPTIONS+=("--enable-libfdk-aac")
 	build_done "fdk_aac"
 fi
 
 if build "av1"; then
-	#download "https://aomedia.googlesource.com/aom/+archive/69a986c7d4c354dfbccec570ccbc44688612c083.tar.gz" "av1.tar.gz" "av1"
+	#download "https://aomedia.googlesource.com/aom/+archive/0f5cd05bb3d6209e2583ce682d1acd8e21ae24b8.tar.gz" "av1.tar.gz" "av1"
 	git clone https://aomedia.googlesource.com/aom "$PACKAGES"/av1
 	cd "$PACKAGES"/av1 || exit
 	mkdir -p "$PACKAGES"/aom_build
@@ -361,6 +388,8 @@ if build "av1"; then
 	execute env "$COMPILER_SET" cmake -DENABLE_TESTS=0 -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" "$PACKAGES"/av1
 	execute make -j $MJOBS
 	execute make install
+	
+	CONFIGURE_OPTIONS+=("--enable-libaom")
 	build_done "av1"
 fi
 
@@ -379,8 +408,39 @@ if build "openssl"; then
 	execute env "$COMPILER_SET" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
 	execute make -j $MJOBS
 	execute make install
+	
+	CONFIGURE_OPTIONS+=("--enable-openssl")
 	build_done "openssl"
 fi
+
+if build "srt"; then
+	download "https://github.com/Haivision/srt/archive/v1.4.1.tar.gz" "v1.4.1.tar.gz"
+	cd "$PACKAGES"/srt-1.4.1 || exit
+	export OPENSSL_ROOT_DIR="${WORKSPACE}"
+	export OPENSSL_LIB_DIR="${WORKSPACE}"/lib
+	export OPENSSL_INCLUDE_DIR="${WORKSPACE}"/include/
+	execute cmake "$PACKAGES"/srt-1.4.1 -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DENABLE_SHARED=OFF -DENABLE_STATIC=ON -DENABLE_APPS=OFF
+	execute make install
+
+	CONFIGURE_OPTIONS+=("--enable-libsrt")
+	build_done "srt"
+fi
+
+if command -v nvcc > /dev/null ; then
+	if build "nv-codec"; then
+		download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n10.0.26.0/nv-codec-headers-10.0.26.0.tar.gz" "nv-codec-headers-10.0.26.0.tar.gz"
+		cd "$PACKAGES"/nv-codec-headers-10.0.26.0 || exit
+		sed -i  "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-10.0.26.0/Makefile
+		execute make install
+		build_done "nv-codec"
+	fi
+	CFLAGS+=" -I/usr/local/cuda/include"
+	LDFLAGS+=" -L/usr/local/cuda/lib64"
+	CONFIGURE_OPTIONS+=("--enable-cuda-nvcc" "--enable-cuvid" "--enable-nvenc" "--enable-libnpp" "--enable-cuda-llvm")
+	# https://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/
+	CONFIGURE_OPTIONS+=("--nvccflags=-gencode arch=compute_52,code=sm_52")
+fi
+
 
 #CFLAGS="-I$WORKSPACE/include"
 #LDFLAGS="-L$WORKSPACE/lib"
@@ -434,48 +494,58 @@ sed -z "s/${NVCC_ORIG_TXT}/${NVCC_FIXED_TXT}/g" -i ./configure
 
 PATH="$WORKSPACE/bin:$PATH" \
 PKG_CONFIG_PATH="$WORKSPACE/lib/pkgconfig" \
-env "$COMPILER_SET" ./configure $ADDITIONAL_CONFIGURE_OPTIONS \
-    --prefix="${WORKSPACE}" \
-    --pkg-config-flags="--static" \
-    --extra-cflags="$CFLAGS" \
-    --extra-ldflags="$LDFLAGS" \
-    --extra-libs="-lpthread -lm" \
-	--cc="$CC" \
-	--cxx="$CXX" \
-	--enable-static \
+env "$COMPILER_SET" ./configure \
+    "${CONFIGURE_OPTIONS[@]}" \
 	--disable-debug \
-	--disable-shared \
-	--disable-ffplay \
 	--disable-doc \
-	--enable-openssl \
+	--disable-ffplay \
+	--disable-shared \
 	--enable-gpl \
-	--enable-version3 \
 	--enable-nonfree \
 	--enable-pthreads \
-	--enable-libvpx \
-	--enable-libmp3lame \
-    --enable-libopus \
-	--enable-libtheora \
-	--enable-libvorbis \
-	--enable-libx264 \
-	--enable-libx265 \
-	--enable-runtime-cpudetect \
-	--enable-libfdk-aac \
-	--enable-avfilter \
-	--enable-libopencore_amrwb \
-	--enable-libopencore_amrnb \
-	--enable-filters \
-	--enable-libvidstab \
-	--enable-libaom
+	--enable-static \
+	--enable-small \
+	--enable-version3 \
+	--extra-cflags="${CFLAGS}" \
+	--extra-ldflags="${LDFLAGS}" \
+	--extra-libs="${EXTRALIBS}" \
+	--pkgconfigdir="$WORKSPACE/lib/pkgconfig" \
+	--pkg-config-flags="--static" \
+	--prefix="${WORKSPACE}"
+
 
 execute make -j $MJOBS
 execute make install
 
-
-
 echo ""
 echo "Building done. The binary can be found here: $WORKSPACE/bin/ffmpeg"
 echo ""
+
+if [[ $AUTOINSTALL == "yes" ]]; then
+	if command_exists "sudo"; then
+		sudo cp "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
+		sudo cp "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
+		echo "Done. ffmpeg is now installed to your system"
+	else
+		cp "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
+		cp "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
+		echo "Done. ffmpeg is now installed to your system"
+	fi
+elif [[ ! $SKIPINSTALL == "yes" ]]; then
+	read -r -p "Install the binary to your $INSTALL_FOLDER folder? [Y/n] " response
+	case $response in
+	[yY][eE][sS]|[yY])
+		if command_exists "sudo"; then
+			sudo cp "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
+			sudo cp "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
+		else
+			cp "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
+			cp "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
+		fi
+		echo "Done. ffmpeg is now installed to your system"
+		;;
+	esac
+fi
 
 
 exit 0
