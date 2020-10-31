@@ -29,7 +29,7 @@ elif [[ -f /proc/cpuinfo ]]; then
     MJOBS=$(grep -c processor /proc/cpuinfo)
 elif [[ "$OSTYPE" == "darwin"* ]]; then
 	MJOBS=$(sysctl -n machdep.cpu.thread_count)
-	ADDITIONAL_CONFIGURE_OPTIONS="--enable-videotoolbox"
+	CONFIGURE_OPTIONS+=("--enable-videotoolbox")
 else
     MJOBS=4
 fi
