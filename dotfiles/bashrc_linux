@@ -117,7 +117,7 @@ fi
 # Geolocation
 if [ -x "$(command -v jq)" ]; then
 	echo "jq found, we can use geolocation alias as: geoloc"
-	alias geoloc="$ curl -s https://ipvigilante.com/$(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
+	alias geoloc="curl -s https://ipvigilante.com/$(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
 fi
 
 
