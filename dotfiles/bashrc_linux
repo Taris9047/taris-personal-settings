@@ -18,7 +18,7 @@ if [ -x "$(command -v vncserver)" ]; then
 	echo " To start: vncstart"
 	echo " To end: vnckill"
 	echo ""
-	alias vncstart="vncserver -geometry 1200x800"
+	alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
 	alias vnckill="vncserver -kill :1"
 fi
 
@@ -112,6 +112,12 @@ if [ -x "$(command -v rclone)" ]; then
 		rclone mount google-drive: $GOOGLE_DRIVE &
 		sleep 2
 	fi
+fi
+
+# Geolocation
+if [ -x "$(command -v jq)" ]; then
+	echo "jq found, we can use geolocation alias as: geoloc"
+	alias geoloc="$ curl -s https://ipvigilante.com/$(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
 fi
 
 
