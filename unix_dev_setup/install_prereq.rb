@@ -35,6 +35,8 @@ $ubuntu_pkgs = [
   "libzmq3-dev",
   "libtool-bin",
   "dos2unix",
+  "liblzma-dev",
+  "lzma"
 ]
 
 # Other dev tools
