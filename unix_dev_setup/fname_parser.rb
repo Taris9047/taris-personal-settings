@@ -1,11 +1,64 @@
 #!/usr/bin/env ruby
 
+# Version handlig stuffs
+# Referenced: https://stackoverflow.com/questions/2051229/how-to-compare-versions-in-ruby/2051427#2051427
+#
+class Version < Array
+  def initialize(s)
+    super( s.split('.').map{ |e| e.delete(',').delete('v').delete('V').to_i } )
+  end
+
+  # Version comparison operators
+  def <(x)
+    (self <=> x) < 0
+  end
+  def <=(x)
+    (self <=> x) <= 0
+  end
+  def >(x)
+    (self <=> x) > 0
+  end
+  def >=(x)
+    (self <=> x) >= 0
+  end
+  def ==(x)
+    (self <=> x) == 0
+  end
+
+  # Returning the version info. from integer array to ...
+  def to_s
+    return self.join('.')
+  end
+
+  def to_sA
+    return self.map{ |e| e.to_s }
+  end
+
+  def major
+    return self[0].to_s
+  end
+
+  def minor
+    if self.length() > 1
+      return self[1].to_s
+    else
+      return self[0].to_s
+    end
+  end
+
+  def patch
+    return self[-1].to_s
+  end
+
+end # class Version
+
 # Filename parser
 # Only works with XXXX-X.X.X.ext1.ext2 or XXXX_X.X.X.ext1.ext2 format
 
 class FNParser
   @@fname = nil
   @@bname = nil
+  @@version = nil
 
   # Initializer
   def initialize(fname_url)
@@ -31,9 +84,6 @@ class FNParser
 
   # Returns version
   def version()
-    major = "0"
-    minor = "0"
-    patch = "0"
 
     if @@bname.include?'_'
       # In case of boost
@@ -47,21 +97,8 @@ class FNParser
       ver_split = bname_split.split('.')
     end
 
-    major = ver_split[0]
-    minor = ver_split[1]
-
-    if ver_split.length > 2
-      patch = ver_split[2]
-    end
-
-    ret_stuff = nil
-    if ver_split.length > 2
-      ret_stuff = [major, minor, patch]
-    else
-      ret_stuff = [major, minor]
-    end
-
-    return ret_stuff
+    @@version = Version.new(ver_split.join('.'))
+    return @@version.to_sA
   end # def version()
 
 end # class fnParser

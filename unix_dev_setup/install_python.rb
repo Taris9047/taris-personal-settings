@@ -53,6 +53,9 @@ class InstPython2 < InstallStuff
 
     @need_sudo = need_sudo
 
+    # Checking up version
+    VerCheck()
+
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
