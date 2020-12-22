@@ -1,14 +1,15 @@
 #!/bin/bash
 
+# Referenced: 
 # https://github.com/markus-perl/ffmpeg-build-script
 
-VERSION=1.17
+VERSION=1.20
 CWD=$(pwd)
 PACKAGES=$CWD/packages
 WORKSPACE=$CWD/workspace
 CC=clang
 CXX=clang++
-LDFLAGS="-L${WORKSPACE}/lib -lm -lpthread"
+LDFLAGS="-L${WORKSPACE}/lib -ldl -lm -lpthread -lz"
 CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIE"
 CXXFLAGS=$CFLAGS
 COMPILER_SET="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\" "
@@ -50,25 +51,28 @@ remove_dir () {
 }
 
 download () {
+	# download url [filename[dirname]]
 
-	DOWNLOAD_PATH=$PACKAGES;
+	DOWNLOAD_PATH="$PACKAGES"
+	DOWNLOAD_FILE="${2:-"${1##*/}"}"
 
-	if [ -n "$3" ]; then
-		mkdir -p "$PACKAGES"/"$3"
-		DOWNLOAD_PATH=$PACKAGES/$3
-	fi;
+	if [[ "$DOWNLOAD_FILE" =~ "tar." ]]; then
+		TARGETDIR="${DOWNLOAD_FILE%.*}"
+		TARGETDIR="${3:-"${TARGETDIR%.*}"}"
+	else
+		TARGETDIR="${3:-"${DOWNLOAD_FILE%.*}"}"
+	fi
 
-	if [ ! -f "$DOWNLOAD_PATH/$2" ]; then
-
-		echo "Downloading $1"
-		curl -L --silent -o "$DOWNLOAD_PATH/$2" "$1"
+	if [ ! -f "$DOWNLOAD_PATH/$DOWNLOAD_FILE" ]; then
+		echo "Downloading $1 as $DOWNLOAD_FILE"
+		curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
 
 		EXITCODE=$?
 		if [ $EXITCODE -ne 0 ]; then
 			echo ""
 			echo "Failed to download $1. Exitcode $EXITCODE. Retrying in 10 seconds";
 			sleep 10
-			curl -L --silent -o "$DOWNLOAD_PATH/$2" "$1"
+			curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
 		fi
 
 		EXITCODE=$?
@@ -79,13 +83,27 @@ download () {
 		fi
 
 		echo "... Done"
+	else
+		echo "$DOWNLOAD_FILE has already downloaded."
+	fi
 
-		if ! tar -xvf "$DOWNLOAD_PATH/$2" -C "$DOWNLOAD_PATH" 2>/dev/null >/dev/null; then
-			echo "Failed to extract $2";
+	make_dir "$DOWNLOAD_PATH/$TARGETDIR"
+
+	if [ -n "$3" ]; then
+		if ! tar -xvf "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -C "$DOWNLOAD_PATH/$TARGETDIR" 2>/dev/null >/dev/null; then
+			echo "Failed to extract $DOWNLOAD_FILE";
 			exit 1
 		fi
-
+	else
+		if ! tar -xvf "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -C "$DOWNLOAD_PATH/$TARGETDIR" --strip-components 1 2>/dev/null >/dev/null; then
+			echo "Failed to extract $DOWNLOAD_FILE";
+			exit 1
+		fi
 	fi
+
+	echo "Extracted $DOWNLOAD_FILE";
+
+	cd "$DOWNLOAD_PATH/$TARGETDIR" || (echo "Error has occurred." ; exit 1)
 }
 
 execute () {
@@ -123,10 +141,29 @@ command_exists() {
     return 0
 }
 
+library_exists () {
+	local result=0
+	local output=$(pkg-config --exists --print-errors "$1" 2>&1 > /dev/null) || result=$?
+	if [ ! "$result" = "0" ]; then
+		return 1
+	fi
+
+	return 0
+}
+
 
 build_done () {
-    touch "$PACKAGES/$1.done"
+    touch "$PACKAGES"/"$1.done"
 }
+
+cleanup () {
+	remove_dir "$PACKAGES"
+	remove_dir "$WORKSPACE"
+	echo "Cleanup done."
+	echo ""
+}
+
+
 
 echo "ffmpeg-build-script v$VERSION"
 echo "========================="
@@ -180,6 +217,17 @@ if ! command_exists "cmake"; then
     exit 1
 fi
 
+
+if [ -n "$LDEXEFLAGS" ]; then
+	echo "Start the build in full static mode."
+fi
+
+export PATH="${WORKSPACE}/bin:$PATH"
+PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig"
+PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig"
+export PKG_CONFIG_PATH
+
+## Base Libraries to build stuffs
 if build "yasm"; then
 	download "https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz" "yasm-1.3.0.tar.gz"
 	cd "$PACKAGES"/yasm-1.3.0 || exit
@@ -190,14 +238,44 @@ if build "yasm"; then
 fi
 
 if build "nasm"; then
-	download "https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/nasm-2.14.02.tar.gz" "nasm.tar.gz"
-	cd "$PACKAGES"/nasm-2.14.02 || exit
+	download "https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.xz" "nasm-2.15.05.tar.xz"
+	cd "$PACKAGES"/nasm-2.15.05 || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
 	build_done "nasm"
 fi
 
+if build "pkg-config"; then
+	download "https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz" "pkg-config-0.29.2.tar.gz"
+	cd "$PACKAGES"/pkg-config-0.29.2 || exit
+	execute env "$COMPILER_SET" ./configure --silent --prefix="${WORKSPACE}" --with-pc-path="${WORKSPACE}"/lib/pkgconfig --with-internal-glib --disable-host-tool
+	execute make -j $MJOBS
+	execute make install
+	build_done "pkg-config"
+fi
+
+if build "zlib"; then
+	download "https://www.zlib.net/zlib-1.2.11.tar.gz" "zlib-1.2.11.tar.gz"
+	cd "$PACKAGES"/zlib-1.2.11 || exit
+	execute env "$COMPILER_SET" ./configure --static --prefix="${WORKSPACE}"
+	execute make -j $MJOBS
+	execute make install
+	build_done "zlib"
+fi
+
+if build "openssl"; then
+	download "https://www.openssl.org/source/openssl-1.1.1g.tar.gz" "openssl-1.1.1g.tar.gz"
+	cd "$PACKAGES"/openssl-1.1.1g || exit
+	execute env "$COMPILER_SET" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
+	execute make -j $MJOBS
+	execute make install
+	
+	CONFIGURE_OPTIONS+=("--enable-openssl")
+	build_done "openssl"
+fi
+
+## Media Libraries
 if build "opencore"; then
 	download "https://deac-riga.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-0.1.5.tar.gz" "opencore-amr-0.1.5.tar.gz"
 	cd "$PACKAGES"/opencore-amr-0.1.5 || exit
@@ -210,8 +288,8 @@ if build "opencore"; then
 fi
 
 if build "libvpx"; then
-    download "https://github.com/webmproject/libvpx/archive/v1.8.1.tar.gz" "libvpx-1.8.1.tar.gz"
-    cd "$PACKAGES"/libvpx-1.8.1 || exit
+    download "https://github.com/webmproject/libvpx/archive/v1.9.0.tar.gz" "libvpx-1.9.0.tar.gz"
+    cd "$PACKAGES"/libvpx-1.9.0 || exit
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
         echo "Applying Darwin patch"
@@ -251,7 +329,7 @@ fi
 
 if build "xvidcore"; then
 	download "https://downloads.xvid.com/downloads/xvidcore-1.3.7.tar.gz" "xvidcore-1.3.7.tar.gz"
-	cd "$PACKAGES"/xvidcore  || exit
+	cd "$PACKAGES"/xvidcore-1.3.7  || exit
 	cd build/generic  || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
@@ -271,7 +349,7 @@ if build "xvidcore"; then
 fi
 
 if build "x264"; then
-	download "https://code.videolan.org/videolan/x264/-/archive/stable/x264-stable.tar.bz2" "last_x264.tar.bz2"
+	download "https://code.videolan.org/videolan/x264/-/archive/stable/x264-stable.tar.bz2" "x264-stable.tar.bz2"
 	cd "$PACKAGES"/x264-stable || exit
 
 	if [[ "$OSTYPE" == "linux-gnu" ]]; then
@@ -322,29 +400,8 @@ if build "libtheora"; then
 	build_done "libtheora"
 fi
 
-if build "pkg-config"; then
-	download "https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz" "pkg-config-0.29.2.tar.gz"
-	cd "$PACKAGES"/pkg-config-0.29.2 || exit
-	execute env "$COMPILER_SET" ./configure --silent --prefix="${WORKSPACE}" --with-pc-path="${WORKSPACE}"/lib/pkgconfig --with-internal-glib --disable-host-tool
-	execute make -j $MJOBS
-	execute make install
-	build_done "pkg-config"
-fi
-
-#if build "cmake"; then
-#	download "https://cmake.org/files/v3.15/cmake-3.15.4.tar.gz" "cmake-3.15.4.tar.gz"
-#	cd "$PACKAGES"/cmake-3.15.4  || exit
-#	rm Modules/FindJava.cmake
-#	perl -p -i -e "s/get_filename_component.JNIPATH/#get_filename_component(JNIPATH/g" Tests/CMakeLists.txt
-#	perl -p -i -e "s/get_filename_component.JNIPATH/#get_filename_component(JNIPATH/g" Tests/CMakeLists.txt
-#	execute env env "$COMPILER_SET" ./bootstrap  --prefix="${WORKSPACE}"
-#	execute make -j $MJOBS
-#	execute make install
-#	build_done "cmake"
-#fi
-
 if build "vid_stab"; then
-	download "https://github.com/georgmartius/vid.stab/archive/v1.1.0.tar.gz" "georgmartius-vid.stab-v1.1.0-0-g60d65da.tar.tgz"
+	download "https://github.com/georgmartius/vid.stab/archive/v1.1.0.tar.gz" "vid.stab-1.1.0.tar.gz"
 	cd "$PACKAGES"/vid.stab-1.1.0 || exit
 	execute env "$COMPILER_SET" cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DUSE_OMP=OFF -DENABLE_SHARED:bool=off .
 	execute make
@@ -393,28 +450,33 @@ if build "av1"; then
 	build_done "av1"
 fi
 
-if build "zlib"; then
-	download "https://www.zlib.net/zlib-1.2.11.tar.gz" "zlib-1.2.11.tar.gz"
-	cd "$PACKAGES"/zlib-1.2.11 || exit
-	execute env "$COMPILER_SET" ./configure --static --prefix="${WORKSPACE}"
-	execute make -j $MJOBS
-	execute make install
-	build_done "zlib"
-fi
 
-if build "openssl"; then
-	download "https://www.openssl.org/source/openssl-1.1.1g.tar.gz" "openssl-1.1.1g.tar.gz"
-	cd "$PACKAGES"/openssl-1.1.1g || exit
-	execute env "$COMPILER_SET" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
+## Image Library
+if build "libwebp"; then
+	download "https://github.com/webmproject/libwebp/archive/v1.1.0.tar.gz" "libwebp-1.1.0.tar.gz"
+	make_dir "$PACKAGES"/libwebp-1.1.0/build
+	cd "$PACKAGES"/libwebp-1.1.0/build || exit
+	execute cmake -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_INSTALL_INCLUDEDIR=include -DENABLE_SHARED=OFF -DENABLE_STATIC=ON ../
 	execute make -j $MJOBS
 	execute make install
-	
-	CONFIGURE_OPTIONS+=("--enable-openssl")
-	build_done "openssl"
+
+	build_done "libwebp"
+fi
+CONFIGURE_OPTIONS+=("--enable-libwebp")
+
+
+## Other Library
+if build "libsdl"; then
+	download "https://www.libsdl.org/release/SDL2-2.0.14.tar.gz"
+	execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+	execute make -j $MJOBS
+	execute make install
+
+	build_done "libsdl"
 fi
 
 if build "srt"; then
-	download "https://github.com/Haivision/srt/archive/v1.4.1.tar.gz" "v1.4.1.tar.gz"
+	download "https://github.com/Haivision/srt/archive/v1.4.1.tar.gz" "srt-1.4.1.tar.gz"
 	cd "$PACKAGES"/srt-1.4.1 || exit
 	export OPENSSL_ROOT_DIR="${WORKSPACE}"
 	export OPENSSL_LIB_DIR="${WORKSPACE}"/lib
@@ -422,10 +484,15 @@ if build "srt"; then
 	execute cmake "$PACKAGES"/srt-1.4.1 -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DENABLE_SHARED=OFF -DENABLE_STATIC=ON -DENABLE_APPS=OFF
 	execute make install
 
+	if [ -n "$LDEXEFLAGS" ]; then
+		sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}"/lib/pkgconfig/srt.pc # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
+	fi
+
 	CONFIGURE_OPTIONS+=("--enable-libsrt")
 	build_done "srt"
 fi
 
+## NVCC crap
 if command -v nvcc > /dev/null ; then
 	if build "nv-codec"; then
 		download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n10.0.26.0/nv-codec-headers-10.0.26.0.tar.gz" "nv-codec-headers-10.0.26.0.tar.gz"
