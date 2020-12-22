@@ -88,6 +88,15 @@ if [ -x "$(command -v nvim)" ]; then
 	alias vi="nvim"
 fi
 
+# Texlive
+texlive_year="2020"
+texlive_arch=x86_64-linux
+texlive_bin_dir=$HOME/.texlive/$texlive_year/bin/$texlive_arch/
+if [ -d $texlive_bin_dir ]; then
+    echo "Texlive found at $texlive_bin_dir directory!! Adding to path!"
+    export PATH=$texlive_bin_dir:$PATH
+fi
+
 # Rip
 #if [ -x "$(command -v rip)" ]; then
 #	echo "rip - rm-improved found! replacing rm!"
