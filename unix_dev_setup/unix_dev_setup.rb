@@ -19,6 +19,7 @@ list_of_progs = [
     'boost',
     'lua',
     'ruby',
+    'ruby3',
     'node',
     'clang',
     'rust'
@@ -192,6 +193,13 @@ for op_mode in op_mode_list do
     inst_lua = InstRuby.new(prefix_dir, work_dirs, need_sudo)
     inst_lua.install
   end
+
+  if op_mode == 'ruby3'
+    require "./install_ruby3.rb"
+    inst_lua = InstRuby3.new(prefix_dir, work_dirs, need_sudo)
+    inst_lua.install
+  end
+
 
   if op_mode == 'node'
     require "./install_node.rb"

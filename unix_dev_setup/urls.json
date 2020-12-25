@@ -10,6 +10,9 @@
   # Ruby
   "ruby": "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz",
 
+  # Ruby3
+  "ruby3": "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.0.tar.gz",
+
   # Python stuffs
   "get_pip": "https://bootstrap.pypa.io/get-pip.py",
   "python2": "https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz",
