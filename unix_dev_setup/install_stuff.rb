@@ -58,20 +58,22 @@ class InstallStuff
           puts "Current #{@pkgname}: "+@ver_current.to_s
           puts "Source database #{@pkgname}: "+@ver_source.to_s
           puts "Consider updating the urls.json or keep it this way!"
-          exit(0)
+          return true
         else
           puts "It seems current urls.json has newer version!!"
           puts "Current #{@pkgname}: "+@ver_current.to_s
           puts "Source database #{@pkgname}: "+@ver_source.to_s
           puts "Working on the newer version of #{@pkgname}!!"
+          return false
         end
       else
         puts "No previous installation info. found for #{@pkgname}"
         puts "Working on the stuff anyway!"
+        return false
       end
     end # if @check_ver
 
-    return 0
+    return false
   end # VerCheck
 
   def Run(*args)
@@ -152,8 +154,7 @@ class InstallStuff
 
   def CheckInfo
     if File.file?(@pkginfo_file)
-      VerCheck()
-      return true
+      return VerCheck()
     end
   end
 end # class InstallStuff

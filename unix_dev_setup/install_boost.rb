@@ -70,6 +70,8 @@ class InstBoost < InstallStuff
       inst_cmd
     ]
 
+    # Ok let's rock!
+    puts "Compiling and Installing ..."
     self.Run( @env, cmds.join(" ") )
 
     @conf_options = @b2_opts

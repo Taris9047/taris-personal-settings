@@ -45,6 +45,7 @@ class InstNode < InstallStuff
       inst_gcc.install
     end
 
+    puts "Downloading source from ... "+@source_url
     dl = Download.new(@source_url, @src_dir)
 
     fp = FNParser.new(@source_url)
@@ -58,7 +59,7 @@ class InstNode < InstallStuff
       puts "Deleting it"
       self.Run( ['rm -rf', src_extract_folder].join(' ') )
     end
-    puts "Extracting"
+    puts "Extracting..."
     self.Run( "tar xf "+File.realpath(File.join(@src_dir, src_tarball_fname))+" -C "+@build_dir )
 
     opts = ["--prefix="+@prefix]+@conf_options
@@ -78,6 +79,7 @@ class InstNode < InstallStuff
     #@env['CXXFLAGS'] = @env['CXXFLAGS'] + " -fPIE"
 
     # Ok let's rock!
+    puts "Compiling and Installing ..."
     cmds = [
       "cd", src_extract_folder, "&&",
       File.join(src_extract_folder,"configure"),

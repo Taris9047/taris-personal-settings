@@ -16,10 +16,10 @@
   # Python stuffs
   "get_pip": "https://bootstrap.pypa.io/get-pip.py",
   "python2": "https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz",
-  "python3": "https://www.python.org/ftp/python/3.8.6/Python-3.8.6.tgz",
+  "python3": "https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz",
 
   # Node.JS
-  "node": "https://nodejs.org/dist/v15.4.0/node-v15.4.0.tar.gz",
+  "node": "https://nodejs.org/dist/v15.5.0/node-v15.5.0.tar.gz",
 
   # Boost
   "boost": "https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.bz2",

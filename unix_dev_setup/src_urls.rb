@@ -29,13 +29,12 @@ require 'json'
 class ParseHjson
   def initialize(json_path='./')
     real_f_name = File.join(json_path, $def_db_json_name)
-    @json_file = File.read(real_f_name)
     @json_data = File.readlines(real_f_name)
     @cleaned_up_data = []
     for line in @json_data
       unless line.include?('#')
-        cleaned_up_line = line.delete('\n').delete(' ')
-        if cleaned_up_line.size > 1
+        cleaned_up_line = line.delete("\n").delete(' ')
+        if cleaned_up_line.size > 0
           @cleaned_up_data.push(cleaned_up_line)
         end
       end
@@ -52,7 +51,7 @@ end # class ParseHjson
 module SRC_URL
 
   def [](pkg_name)
-    json_parse = ParseHjson.new
+    json_parse = ParseHjson.new()
     return json_parse.Get(pkg_name)
   end
 

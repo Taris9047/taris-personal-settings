@@ -103,6 +103,8 @@ class InstGCC < InstallStuff
       inst_cmd
     ]
 
+    # Ok let's rock!
+    puts "Compiling and Installing ..."
     self.Run( @env, cmd.join(" ") )
 
     self.WriteInfo
