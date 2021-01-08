@@ -98,10 +98,23 @@ if [ -d $texlive_bin_dir ]; then
 fi
 
 # Rip
-#if [ -x "$(command -v rip)" ]; then
-#	echo "rip - rm-improved found! replacing rm!"
-#	alias rm="rip"
-#fi
+trash_location="$HOME/.local/share/Trash/files/"
+if [ -x "$(command -v rip)" ]; then
+	echo "rip, rm-improved found! Setting up graveyard at $trash_location"
+	alias rip="rip --graveyard $trash_location"
+fi
+
+# IrfanView
+iview64_path='$HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe'
+run_iview ()
+{
+    # Not sure why but passing a variable causes segfault on wine...
+    wine $HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe `winepath --windows $@`
+}
+if [ -x $($iview64_path) ]; then
+    echo "Irfanview found!! at $iview64_path !!"
+    alias iview=run_iview
+fi
 
 # Rclone
 # If you're using Ubuntu, it's pretty easy. Other than that, just
