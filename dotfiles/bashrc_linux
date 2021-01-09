@@ -111,7 +111,7 @@ run_iview ()
     # Not sure why but passing a variable causes segfault on wine...
     wine $HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe `winepath --windows $@`
 }
-if [ -f $($iview64_path) ]; then
+if [ -x "$(command -v wine)" ] || [ -f $iview64_path ]; then
     echo "Irfanview found!! at $iview64_path !!"
     alias iview=run_iview
 fi
