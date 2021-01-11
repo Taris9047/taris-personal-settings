@@ -19,9 +19,9 @@ $py2_conf_options = [
 
 $py3_modules = [
   "pexpect", "sphinx", "cython", "autopep8", "xlrd", "xlsxwriter",
-  "pylint", "pyparsing", "pyopengl", "pyqt5==5.12", "pyqtwebengine==5.12",
+  "pylint", "pyparsing", "pyopengl", "pyqt5", "pyqtwebengine",
   "numpy", "scipy", "matplotlib", "pandas", "ipython", "ipywidgets",
-  "jedi==0.17.1","parso==0.7.0", "qtconsole", "sympy", "cytoolz",
+  "jedi","parso", "qtconsole", "sympy", "cytoolz",
   "spyder", "pyinstaller", "proio", "jupyter",
 ]
 $py3_conf_options = [
