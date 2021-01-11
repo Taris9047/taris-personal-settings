@@ -109,7 +109,7 @@ iview64_path=$HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe
 run_iview ()
 {
     # Not sure why but passing a variable causes segfault on wine...
-    wine $iview64_path `winepath --windows $@`
+    wine "$iview64_path" `winepath --windows $@`
 }
 if [ -x "$(command -v wine)" ]; then
 	if [ -f "$iview64_path" ]; then
