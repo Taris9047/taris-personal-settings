@@ -104,6 +104,7 @@ if [ -x "$(command -v rip)" ]; then
 	alias rip="rip --graveyard $trash_location"
 fi
 
+
 # IrfanView
 iview64_path=$HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe
 run_iview ()
@@ -332,5 +333,8 @@ if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Lin
 
 fi
 
-
-
+# starship
+if [ -x "$(command -v starship)" ]; then
+	echo "Starship found! Let's start it!"
+	eval "$(starship init bash)"
+fi
