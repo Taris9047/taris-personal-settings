@@ -3,7 +3,7 @@
 # Referenced: 
 # https://github.com/markus-perl/ffmpeg-build-script
 
-VERSION=1.20
+VERSION=1.21
 CWD=$(pwd)
 PACKAGES=$CWD/packages
 WORKSPACE=$CWD/workspace
@@ -265,8 +265,8 @@ if build "zlib"; then
 fi
 
 if build "openssl"; then
-	download "https://www.openssl.org/source/openssl-1.1.1g.tar.gz" "openssl-1.1.1g.tar.gz"
-	cd "$PACKAGES"/openssl-1.1.1g || exit
+	download "https://www.openssl.org/source/openssl-1.1.1h.tar.gz" "openssl-1.1.1h.tar.gz"
+	cd "$PACKAGES"/openssl-1.1.1h || exit
 	execute env "$COMPILER_SET" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
 	execute make -j $MJOBS
 	execute make install
@@ -276,6 +276,74 @@ if build "openssl"; then
 fi
 
 ## Media Libraries
+
+if command_exists "python2"; then
+
+  if build "lv2"; then
+    download "https://lv2plug.in/spec/lv2-1.18.0.tar.bz2" "lv2-1.18.0.tar.bz2"
+    execute python2 ./waf configure --prefix="${WORKSPACE}" --lv2-user
+    execute python2 ./waf
+    execute python2 ./waf install
+
+    build_done "lv2"
+  fi
+
+  if build "waflib"; then
+    download "https://gitlab.com/drobilla/autowaf/-/archive/cc37724b9bfa889baebd8cb10f38b8c7cab83e37/autowaf-cc37724b9bfa889baebd8cb10f38b8c7cab83e37.tar.gz" "autowaf.tar.gz"
+    build_done "waflib"
+  fi
+
+  if build "serd"; then
+    download "https://gitlab.com/drobilla/serd/-/archive/v0.30.6/serd-v0.30.6.tar.gz" "serd-v0.30.6.tar.gz"
+    execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/serd-v0.30.6/waflib/"
+    execute python2 ./waf configure --prefix="${WORKSPACE}" --static --no-shared --no-posix
+    execute python2 ./waf
+    execute python2 ./waf install
+    build_done "serd"
+  fi
+
+  if build "pcre"; then
+    download "https://ftp.pcre.org/pub/pcre/pcre-8.44.tar.gz" "pcre-8.44.tar.gz"
+    execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+    execute make -j $MJOBS
+    execute make install
+
+    build_done "pcre"
+  fi
+
+  if build "sord"; then
+    download "https://gitlab.com/drobilla/sord/-/archive/v0.16.6/sord-v0.16.6.tar.gz" "sord-v0.16.6.tar.gz"
+    execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sord-v0.16.6/waflib/"
+    execute python2 ./waf configure --prefix="${WORKSPACE}" CFLAGS="\"${CFLAGS}\"" --static --no-shared --no-utils
+    execute python2 ./waf CFLAGS="\"${CFLAGS}\""
+    execute python2 ./waf install
+
+    build_done "sord"
+  fi
+
+  if build "sratom"; then
+    download "https://gitlab.com/lv2/sratom/-/archive/v0.6.6/sratom-v0.6.6.tar.gz" "sratom-v0.6.6.tar.gz"
+    execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sratom-v0.6.6/waflib/"
+    execute python2 ./waf configure --prefix="${WORKSPACE}" --static --no-shared
+    execute python2 ./waf
+    execute python2 ./waf install
+
+    build_done "sratom"
+  fi
+
+  if build "lilv"; then
+    download "https://gitlab.com/lv2/lilv/-/archive/v0.24.10/lilv-v0.24.10.tar.gz" "lilv-v0.24.10.tar.gz"
+    execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/lilv-v0.24.10/waflib/"
+    execute python2 ./waf configure --prefix="${WORKSPACE}" --static --no-shared --no-utils
+    execute python2 ./waf
+    execute python2 ./waf install
+		CFLAGS+=" -I$WORKSPACE/include/lilv-0"
+    build_done "lilv"
+  fi
+
+  CONFIGURE_OPTIONS+=("--enable-lv2")
+fi
+
 if build "opencore"; then
 	download "https://deac-riga.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-0.1.5.tar.gz" "opencore-amr-0.1.5.tar.gz"
 	cd "$PACKAGES"/opencore-amr-0.1.5 || exit
@@ -412,7 +480,7 @@ if build "vid_stab"; then
 fi
 
 if build "x265"; then
-	download "https://github.com/videolan/x265/archive/3.4.tar.gz" "x265-3.4.tar.gz"
+	download "https://github.com/videolan/x265/archive/Release_3.5.tar.gz" "x265-3.5.tar.gz"
 	cd "$PACKAGES"/x265-*/ || exit
 	cd source || exit
 	execute env "$COMPILER_SET" cmake -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DENABLE_SHARED:bool=off .
