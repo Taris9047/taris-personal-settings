@@ -4,15 +4,17 @@
 # https://github.com/markus-perl/ffmpeg-build-script
 
 VERSION=1.21
-CWD=$(pwd)
+CWD=$(pwd -P)
 PACKAGES=$CWD/packages
 WORKSPACE=$CWD/workspace
 CC=clang
 CXX=clang++
 LDFLAGS="-L${WORKSPACE}/lib -ldl -lm -lpthread -lz"
+LDFLAGS_Z="-L${WORKSPACE}/lib -ldl -lm -lpthread"
 CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIE"
 CXXFLAGS=$CFLAGS
 COMPILER_SET="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\" "
+COMPILER_SET_Z="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS_Z\" "
 
 CONFIGURE_OPTIONS=()
 
@@ -228,6 +230,15 @@ PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfi
 export PKG_CONFIG_PATH
 
 ## Base Libraries to build stuffs
+if build "zlib"; then
+	download "https://www.zlib.net/zlib-1.2.11.tar.gz" "zlib-1.2.11.tar.gz"
+	cd "$PACKAGES"/zlib-1.2.11 || exit
+	execute env "$COMPILER_SET_Z" ./configure --static --prefix="${WORKSPACE}"
+	execute make -j $MJOBS
+	execute make install
+	build_done "zlib"
+fi
+
 if build "yasm"; then
 	download "https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz" "yasm-1.3.0.tar.gz"
 	cd "$PACKAGES"/yasm-1.3.0 || exit
@@ -253,15 +264,6 @@ if build "pkg-config"; then
 	execute make -j $MJOBS
 	execute make install
 	build_done "pkg-config"
-fi
-
-if build "zlib"; then
-	download "https://www.zlib.net/zlib-1.2.11.tar.gz" "zlib-1.2.11.tar.gz"
-	cd "$PACKAGES"/zlib-1.2.11 || exit
-	execute env "$COMPILER_SET" ./configure --static --prefix="${WORKSPACE}"
-	execute make -j $MJOBS
-	execute make install
-	build_done "zlib"
 fi
 
 if build "openssl"; then
