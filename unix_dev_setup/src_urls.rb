@@ -33,7 +33,7 @@ class ParseHjson
     @cleaned_up_data = []
     for line in @json_data
       unless line.include?('#')
-        cleaned_up_line = line.delete("\n").delete(' ')
+        cleaned_up_line = line.delete("\n").delete("\r").delete(' ')
         if cleaned_up_line.size > 0
           @cleaned_up_data.push(cleaned_up_line)
         end

@@ -14,7 +14,8 @@ require 'json'
 
 # Anyway, here's some useful tools to install
 $rust_utils_to_install = [
-  "exa", "bat", "rm-improved", "diskonaut", "lsd"
+  "exa", "bat", "rm-improved", "diskonaut", "lsd",
+  "cargo-update", "starship", "tokei"
 ]
 
 # The command installs rust with default option.
@@ -29,8 +30,19 @@ class InstRust < InstallStuff
 
   def install
 
+    rustup_cmd = File.join(ENV["HOME"], '.cargo/bin/rustup')
+    if File.file?( rustup_cmd )
+      puts "Looks like the Rust is already installed!. Attempting to update"
+      puts "Running rustup update"
+      self.Run( ["rustup update"] )
+      puts "Updating cargo packages"
+      self.Run( ["cargo install-update -a"] )
+      puts "Done working on Rust!"
+      return 0
+    end
+
     # Installing the rust
-    self.Run( $rust_inst_cmd, @pkgname)
+    self.Run( $rust_inst_cmd, @pkgname )
 
     # path for cargo
     cargo_cmd = File.join(ENV["HOME"], '.cargo/bin/cargo')
