@@ -15,7 +15,9 @@ require 'json'
 # Anyway, here's some useful tools to install
 $rust_utils_to_install = [
   "exa", "bat", "rm-improved", "diskonaut", "lsd",
-  "cargo-update", "starship", "tokei"
+  "cargo-update", "starship", "tokei", "fd-find", "procs",
+  "dust", "ripgrep", "hyperfine", "ytop", "grex", "zoxide",
+  "nu"
 ]
 
 # The command installs rust with default option.

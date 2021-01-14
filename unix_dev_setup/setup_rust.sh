@@ -9,7 +9,7 @@ fi
 
 inst_cargo_pkgs ()
 {
-    pkgs="exa lsd bat cargo-update diskonaut rm-improved starship tokei"
+    pkgs="exa bat rm-improved diskonaut lsd cargo-update starship tokei fd-find procs dust ripgrep hyperfine ytop grex zoxide nu"
     cargo install $pkgs
 }
 

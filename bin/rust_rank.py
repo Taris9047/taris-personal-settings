@@ -1,4 +1,4 @@
-#/usr/bin/env python3
+#!/usr/bin/env python3
 #
 # from: https://towardsdatascience.com/awesome-rust-powered-command-line-utilities-b5359c38692
 #
