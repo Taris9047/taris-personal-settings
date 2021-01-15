@@ -11,6 +11,7 @@
 require './install_stuff.rb'
 
 require 'json'
+require 'open3'
 
 # Anyway, here's some useful tools to install
 $rust_utils_to_install = [
@@ -52,6 +53,10 @@ class InstRust < InstallStuff
       puts("Installing "+pkg)
       self.Run( [cargo_cmd, 'install', pkg].join(' '), @pkgname )
     end
+    
+    stdo, stde, stat = Open3.capture3("rustc --version")
+    ver = stdo.split(" ")[1].split(".")
+    @@Version_Info = ver
 
     self.WriteInfo
 
@@ -63,7 +68,7 @@ class InstRust < InstallStuff
     compile_info_json = {
       "Package Name" => @pkgname,
       "Install CMD" => $rust_inst_cmd,
-      "Version" => ["0","0","0"],
+      "Version" => @@Version_Info,
     }
     fp.write(compile_info_json.to_json)
     fp.close
