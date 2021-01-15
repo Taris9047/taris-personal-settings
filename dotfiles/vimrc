@@ -1,5 +1,9 @@
 " .vimrc for Taylor Shin. Optimized for cygwin.
 
+" Also usable for other situations such as Ubuntu.
+" But then again, we've migrated to nvim...
+"
+
 " Detects OS
 if !exists("g:os")
     if has("win64") || has("win32") || has("win16")

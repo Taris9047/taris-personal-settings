@@ -104,6 +104,13 @@ if [ -x "$(command -v rip)" ]; then
 	alias rip="rip --graveyard $trash_location"
 fi
 
+# bpytop
+if [ -x "$(command -v $HOMEBREW/bin/pip3)" ]; then
+  if [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
+    echo "Locally installed bpytop found!"
+	alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
+  fi
+fi
 
 # IrfanView
 iview64_path=$HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe
