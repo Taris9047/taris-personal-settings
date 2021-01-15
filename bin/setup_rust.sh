@@ -1,1 +1,1 @@
-/home/taris/.settings/unix_dev_setup/setup_rust.sh
+../unix_dev_setup/setup_rust.sh
