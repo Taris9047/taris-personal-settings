@@ -1,6 +1,6 @@
 #!/bin/bash
 USR_DIR=$HOME
-CURRENT_DIR=`pwd`
+CURRENT_DIR=`pwd -P`
 echo "Target directory: ${USR_DIR}"
 echo "Source directory: ${CURRENT_DIR}"
 
