@@ -12,9 +12,11 @@ set -u
 
 /sbin/modprobe msr
 # sudo touch temp
+r=`/usr/sbin/rdmsr 0x1FC`
 #echo $r > temp
 s='0x'$r'' 
 f=$(($s&0xFFFFE))
-/usr/sbin/wrmsr 0x1FC 4005d
-echo "BD PROCHOT on."
+/usr/sbin/wrmsr 0x1FC "obase=16;$f"|/usr/bin/bc
+echo "$r"" write to ""reg 0x1FC" 
+echo "BD PROCHOT off."
 
