@@ -36,7 +36,15 @@ $ubuntu_pkgs = [
   "libtool-bin",
   "dos2unix",
   "liblzma-dev",
-  "lzma"
+  "lzma",
+  "pkg-config", 
+  "libbz2-dev",
+  "libncurses5-dev",
+  "libexpat1-dev",
+  "libgdbm-dev",
+  "tk-dev",
+  "libgc-dev",
+  "python-cffi",
 ]
 
 # Other dev tools
@@ -73,7 +81,7 @@ def inst_prereq
   system( cmd )
 
   # Installing some gems
-  puts "Installing some gems"
+  puts "Installing some gems to system Ruby."
   cmd = ["sudo", "gem", "install"] + $ubuntu_ruby_gems
   system( cmd.join(" ") )
 end

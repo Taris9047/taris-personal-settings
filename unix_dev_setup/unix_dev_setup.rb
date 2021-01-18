@@ -22,7 +22,8 @@ list_of_progs = [
     'ruby3',
     'node',
     'clang',
-    'rust'
+    'rust',
+    'pypy',
   ]
 
 # Operatnion mode
@@ -60,6 +61,12 @@ end
 if op_mode_list.include?('clang') and op_mode_list.include?('python3')
   op_mode_list.delete('clang')
   op_mode_list.insert(op_mode_list.index('python3')+1, 'clang')
+end
+
+# In case of pypy -- We need hg from python2
+if op_mode_list.include?('pypy')
+  op_mode_list.delete('pypy')
+  op_mode_list.insert(op_mode_list.index('python2')+1, 'pypy')
 end
 
 # Working directories
@@ -211,6 +218,12 @@ for op_mode in op_mode_list do
     require "./install_rust.rb"
     inst_rust = InstRust.new(prefix_dir, work_dirs, need_sudo)
     inst_rust.install
+  end
+
+  if op_mode == 'pypy'
+    require "./install_pypy.rb"
+    inst_pypy = InstPyPy.new(prefix_dir, work_dirs, need_sudo)
+    inst_pypy.install
   end
 
 end

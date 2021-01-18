@@ -12,6 +12,42 @@ alias df='df -h'
 alias rsync='rsync -azvh --info=progress2'
 alias sudo='sudo -H'
 
+# Delete certain files recursively!!
+delete_recursive ()
+{
+  echo "Querying files!!"
+  echo "================================"
+  if [ -x "$(command -v fd)" ]; then
+    fd -IH -g "$1" -tf
+  else
+    find . -name "$1" -type f
+  fi
+  echo "================================"
+  read -p "Do you wish to delete them? [yn]" yn
+  while true; do
+    case $yn in
+      [Yy]* )
+        if [ -x "$(command -v fd)" ]; then
+          if [ -x "$(command -v rip)"]; then
+            fd -IH -g "$1" -tf -X rip
+          else
+            fd -IH -g "$1" -tf -X rm
+          fi
+        else
+          find . -name "$1" -type f -delete
+        fi
+        echo "Deleted the files!!"
+        ;;
+	  [Nn]* )
+	    echo "Not deleting!!"; break
+	    ;;
+	  * )
+	    echo "Please answer y or n."
+	    ;;
+    esac
+  done
+}
+
 # VNC stuff
 if [ -x "$(command -v vncserver)" ]; then
 	echo "** VNC server found! **"
@@ -62,9 +98,10 @@ fi
 
 
 # Rust
-if [ -d $HOME/.cargo/bin ]; then
-	echo "Cargo directory detected at $HOME/.cargo/bin"
-	export PATH=$HOME/.cargo/bin:$PATH
+if [ -d $HOME/.cargo ]; then
+	echo "Cargo directory detected at $HOME/.cargo"
+	# export PATH=$HOME/.cargo/bin:$PATH
+	source $HOME/.cargo/env
 fi
 
 # Exa
@@ -122,14 +159,14 @@ fi
 iview64_path=$HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe
 run_iview ()
 {
-    # Not sure why but passing a variable causes segfault on wine...
-    wine "$iview64_path" `winepath --windows $@`
+  # Not sure why but passing a variable causes segfault on wine...
+  wine "$iview64_path" `winepath --windows $@`
 }
 if [ -x "$(command -v wine)" ]; then
-	if [ -f "$iview64_path" ]; then
-    	echo "Irfanview found!! at $iview64_path !!"
-    	alias iview=run_iview
-    fi
+  if [ -f "$iview64_path" ]; then
+    echo "Irfanview found!! at $iview64_path !!"
+    alias iview=run_iview
+  fi
 fi
 
 # Rclone
