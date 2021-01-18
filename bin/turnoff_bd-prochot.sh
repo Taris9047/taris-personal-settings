@@ -11,8 +11,6 @@
 set -u
 
 /sbin/modprobe msr
-# sudo touch temp
-#echo $r > temp
 s='0x'$r'' 
 f=$(($s&0xFFFFE))
 /usr/sbin/wrmsr 0x1FC 4005d
