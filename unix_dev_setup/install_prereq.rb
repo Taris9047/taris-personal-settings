@@ -45,6 +45,7 @@ $ubuntu_pkgs = [
   "tk-dev",
   "libgc-dev",
   "python-cffi",
+  "libopenblas-dev",
 ]
 
 # Other dev tools
