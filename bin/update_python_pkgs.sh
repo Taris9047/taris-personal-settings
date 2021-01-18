@@ -1,9 +1,9 @@
 #!/bin/sh
 
-PIP=`which pip3`
+PIP=$(command -v pip3)
 
 if [ $# -eq 0 ]; then
-    echo "Setting up PIP as ... " `which pip3`
+    echo "Setting up PIP as ... " $PIP
 else
     PIP=$1
     echo "PIP will be ... " $PIP

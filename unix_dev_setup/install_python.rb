@@ -9,7 +9,8 @@ require './install_stuff.rb'
 require './src_urls.rb'
 
 $py2_modules = [
-  'numpy', 'scipy', 'matplotlib', 'mercurial', 'pycparser', 'sympy'
+  'numpy', 'scipy', 'matplotlib', 'mercurial', 
+  'pycparser', 'sympy', 'nose'
 ]
 $py2_conf_options = [
   "--enable-shared",
@@ -22,8 +23,8 @@ $py2_conf_options = [
 $py3_modules = [
   "pexpect", "sphinx", "autopep8", "xlrd", "xlsxwriter",
   "pylint", "pyparsing", "pyopengl",
-  "numpy", "scipy", "matplotlib", "pandas", "ipython", "ipywidgets",
-  "jedi","parso", "qtconsole", "sympy", "cytoolz",
+  "numpy", "scipy", "matplotlib", "pandas", "nose",
+  "ipython", "jedi", "parso", "sympy", "cytoolz",
   "spyder", "pyinstaller", "jupyter", "bpytop", "pycparser"
 ]
 $py3_conf_options = [

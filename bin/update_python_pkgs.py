@@ -10,7 +10,7 @@ if python_ver < 3:
 else:
     pip_cmd = 'pip3'
 
-pip_ver_cmd = sbp.Popen(['pip', '-V'], stdout=sbp.PIPE, stderr=sbp.STDOUT)
+pip_ver_cmd = sbp.Popen([pip_cmd, '-V'], stdout=sbp.PIPE, stderr=sbp.STDOUT)
 stdout, stderr = pip_ver_cmd.communicate()
 
 pip_ver_text = stdout.decode('utf-8').split(" ")[1]
