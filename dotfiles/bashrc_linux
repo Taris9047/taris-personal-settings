@@ -112,6 +112,12 @@ if [ -x "$(command -v $HOMEBREW/bin/pip3)" ]; then
   fi
 fi
 
+# pypy
+if [ -x "$(command -v $HOMEBREW/opt/pypy/bin/pypy3)" ]; then
+  echo "pypy3 found in $HOMEBREW/opt/pypy/bin/pypy3 !! Extending PATH!"
+  export PATH=$HOMEBREW/opt/pypy/bin:$PATH
+fi
+
 # IrfanView
 iview64_path=$HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe
 run_iview ()
