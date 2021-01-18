@@ -21,29 +21,106 @@ alias ps='ps -W'
 # enabling color for mac
 CLICOLOR="YES";    export CLICOLOR
 
-# NVIM to VIM
-if type nvim > /dev/null 2>&1; then
-	alias vim='nvim'
+# Delete certain files recursively!!
+delete_recursive ()
+{
+  echo "Querying files!!"
+  echo "================================"
+  if [ -x "$(command -v fd)" ]; then
+    fd -IH -g "$1" -tf
+  else
+    find . -name "$1" -type f
+  fi
+  echo "================================"
+  read -p "Do you wish to delete them? [yn]" yn
+  while true; do
+    case $yn in
+      [Yy]* )
+        if [ -x "$(command -v fd)" ]; then
+          if [ -x "$(command -v rip)"]; then
+            fd -IH -g "$1" -tf -X rip
+          else
+            fd -IH -g "$1" -tf -X rm
+          fi
+        else
+          find . -name "$1" -type f -delete
+        fi
+        echo "Deleted the files!!"
+        ;;
+	  [Nn]* )
+	    echo "Not deleting!!"; break
+	    ;;
+	  * )
+	    echo "Please answer y or n."
+	    ;;
+    esac
+  done
+}
+
+
+# Setting for JRE
+JAVAHOME=/opt/java
+if [ -d $JAVAHOME ]; then
+    echo "Java (Possibly Oracle) found at $JAVAHOME"
+    export PATH=$JAVAHOME/bin:$PATH
 fi
 
-# Rust Cargo - Just use brew cargo
-if [ -x "$HOME/.cargo" ]; then
-	PATH="$HOME/.cargo/bin:${PATH}"
+# Rust
+if [ -d $HOME/.cargo ]; then
+	echo "Cargo directory detected at $HOME/.cargo"
+	# export PATH=$HOME/.cargo/bin:$PATH
+	source $HOME/.cargo/env
 fi
 
-# exa alias
-if type exa > /dev/null 2>&1; then
-	echo "exa found! will use it instead of ls"
+# Exa
+if [ -x "$(command -v exa)" ]; then
+	echo "exa found! using it instead of ls"
 	alias ls='exa -hF'
-	alias ll='exa -ahlF'
-	alias la='exa -haF'
+	alias ll='exa -lahF'
 	alias l='exa -hF'
 fi
 
-# bat alias
-if type bat > /dev/null 2>&1; then
-	echo "bat found!! will use it instead of cat"
+# Bat
+if [ -x "$(command -v bat)" ]; then
+	echo "Bat found! using it instead of cat"
 	alias cat='bat'
+fi
+
+# Neovim
+if [ -x "$(command -v nvim)" ]; then
+	echo "Neovim found! replacing vim!"
+	alias vim="nvim"
+	alias vi="nvim"
+fi
+
+# Texlive
+texlive_year="2020"
+texlive_arch=x86_64-linux
+texlive_bin_dir=$HOME/.texlive/$texlive_year/bin/$texlive_arch/
+if [ -d $texlive_bin_dir ]; then
+    echo "Texlive found at $texlive_bin_dir directory!! Adding to path!"
+    export PATH=$texlive_bin_dir:$PATH
+fi
+
+# Rip
+trash_location="$HOME/.local/share/Trash/files/"
+if [ -x "$(command -v rip)" ]; then
+	echo "rip, rm-improved found! Setting up graveyard at $trash_location"
+	alias rip="rip --graveyard $trash_location"
+fi
+
+# bpytop
+if [ -x "$(command -v $HOMEBREW/bin/pip3)" ]; then
+  if [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
+    echo "Locally installed bpytop found!"
+	alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
+  fi
+fi
+
+# pypy
+if [ -x "$(command -v $HOMEBREW/opt/pypy/bin/pypy3)" ]; then
+  echo "pypy3 found in $HOMEBREW/opt/pypy/bin/pypy3 !! Extending PATH!"
+  export PATH=$HOMEBREW/opt/pypy/bin:$PATH
 fi
 
 
