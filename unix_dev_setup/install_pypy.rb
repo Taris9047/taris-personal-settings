@@ -17,7 +17,7 @@ $pypy_modules = [
   'pycparser', 'sympy', 'nose'
 ]
 
-$pypy_ver = '3.7'
+$pypy3_ver = '3.7'
 $platform = 'x86_64'
 $pypy_prefix_dir = '/opt'
 
@@ -31,7 +31,7 @@ class InstPyPy3 < InstallStuff
 
     # Python2 modules to install
     @pypy_modules = $pypy_modules
-    @pypy_ver = $pypy_ver
+    @pypy3_ver = $pypy3_ver
     @platform = $platform
     @pypy_dest_dir = File.join(prefix, $pypy_prefix_dir)
 
@@ -40,7 +40,7 @@ class InstPyPy3 < InstallStuff
   def install
 
     puts "Cloning PyPy source from mercurial repo."
-    system( "cd #{@src_dir} && hg clone #{@source_url} pypy && cd ./pypy && hg update py#{@pypy_ver}" )
+    system( "cd #{@src_dir} && hg clone #{@source_url} pypy && cd ./pypy && hg update py#{@pypy3_ver}" )
     pypy_src_dir = File.join(@src_dir, 'pypy')
 
     puts "Working on rpython interpretation with system python2"
@@ -53,7 +53,7 @@ class InstPyPy3 < InstallStuff
     system("cd #{pypy_src_dir}/pypy/goal && python2 ../../rpython/bin/rpython --opt=2 && PYTHONPATH=../.. ./pypy3-c ../../lib_pypy/pypy_tools/build_cffi_imports.py")
 
     puts "Ok, let's package them!"
-    so, se, stat = Open3.capture3("cd #{pypy_src_dir}/pypy/tool/release && python2 ./package.py --archive-name=pypy-#{@pypy_ver}-#{@platform}")
+    so, se, stat = Open3.capture3("cd #{pypy_src_dir}/pypy/tool/release && python2 ./package.py --archive-name=pypy-#{@pypy3_ver}-#{@platform}")
 
     archive_path = so.split('\n')[-1]
 
