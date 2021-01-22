@@ -23,7 +23,7 @@ list_of_progs = [
     'node',
     'clang',
     'rust',
-    'pypy',
+    'pypy3',
   ]
 
 # Operatnion mode
@@ -39,6 +39,7 @@ op_mode_list.each_with_index do |op_mode, i|
 end
 
 # Doing some re-organization
+# TODO: This dependency stuff needs to be revised!
 # Gcc
 if op_mode_list.include?('gcc')
   op_mode_list.delete('gcc')
@@ -64,11 +65,12 @@ if op_mode_list.include?('clang') and op_mode_list.include?('python3')
 end
 
 # In case of pypy -- We need hg from python2
-if op_mode_list.include?('pypy')
-  op_mode_list.delete('pypy')
-  op_mode_list.insert(op_mode_list.index('python2')+1, 'pypy')
+unless op_mode_list.include('python2')
+  if op_mode_list.include?('pypy3')
+    op_mode_list.delete('pypy3')
+    op_mode_list.insert(op_mode_list.index('python2')+1, 'pypy')
+  end
 end
-
 # Working directories
 require 'fileutils'
 
@@ -222,7 +224,7 @@ for op_mode in op_mode_list do
 
   if op_mode == 'pypy'
     require "./install_pypy.rb"
-    inst_pypy = InstPyPy.new(prefix_dir, work_dirs, need_sudo)
+    inst_pypy = InstPyPy3.new(prefix_dir, work_dirs, need_sudo)
     inst_pypy.install
   end
 
