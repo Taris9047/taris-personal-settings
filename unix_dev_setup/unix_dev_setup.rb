@@ -223,10 +223,19 @@ for op_mode in op_mode_list do
     inst_rust.install
   end
 
-  if op_mode == 'pypy'
+  if op_mode == 'pypy3'
     require "./install_pypy.rb"
     inst_pypy = InstPyPy3.new(prefix_dir, work_dirs, need_sudo)
     inst_pypy.install
+  end
+
+  unless op_mode_list.include?(op_mode)
+    puts "Looks like #{op_mode} has not implemented yet!"
+    puts "Available modules are..."
+    for pkg in list_of_progs
+      puts pkg
+    end
+    puts "Passing #{op_mode} for now..."
   end
 
 end
