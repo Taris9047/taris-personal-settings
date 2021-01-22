@@ -65,7 +65,7 @@ if op_mode_list.include?('clang') and op_mode_list.include?('python3')
 end
 
 # In case of pypy -- We need hg from python2
-unless op_mode_list.include('python2')
+unless op_mode_list.include?('python2')
   if op_mode_list.include?('pypy3')
     op_mode_list.delete('pypy3')
     op_mode_list.insert(op_mode_list.index('python2')+1, 'pypy')
