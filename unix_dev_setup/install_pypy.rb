@@ -39,6 +39,10 @@ class InstPyPy3 < InstallStuff
 
   def install
 
+    puts "Working on #{@pkgname}!!"
+    puts "*** Note that we cannot gaurantee if it will work or not."
+    puts "*** If it fails, it fails!"
+
     puts "Cloning PyPy source from mercurial repo."
     system( "cd #{@src_dir} && hg clone #{@source_url} pypy && cd ./pypy && hg update py#{@pypy3_ver}" )
     pypy_src_dir = File.join(@src_dir, 'pypy')
@@ -58,6 +62,15 @@ class InstPyPy3 < InstallStuff
     archive_path = so.split('\n')[-1]
 
     puts "The pypy3 packages are located at #{archive_path}!!"
+    puts "** A few remarks: **"
+    puts "1. Do not put #{@pkgname} tarball into system directory. Put it somewhere isolated!"
+    puts "2. Make sure resolve path problem manually if you added #{@pkgname}'s into your system PATH variable. It will install pip as pip3, same as python3's pip."
+    puts "3. The #{@pkgname} currently based on python#{pypy3_ver}. Make sure you do not have the same version of python3 or resolve collusion."
+    puts "4. To install pip, just use pypy3 -mensurepip"
+    pkgs_str = $pypy_modules.join(', ')
+    puts "5. Currently we can install #{pkgs_str} without too much trouble. Other packages, we cannot be sure! If it breaks, it breaks at this moment."
+    puts "****"
+    puts ""
 
     self.WriteInfo
 
