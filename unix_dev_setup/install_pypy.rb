@@ -39,7 +39,8 @@ class InstPyPy3 < InstallStuff
 
   def install
 
-    dl = system( "cd #{@src_dir} && hg clone #{@source_url} pypy && cd ./pypy && hg update py#{@pypy_ver}" )
+    puts "Cloning PyPy source from mercurial repo."
+    system( "cd #{@src_dir} && hg clone #{@source_url} pypy && cd ./pypy && hg update py#{@pypy_ver}" )
     pypy_src_dir = File.join(@src_dir, 'pypy')
 
     puts "Working on rpython interpretation with system python2"
