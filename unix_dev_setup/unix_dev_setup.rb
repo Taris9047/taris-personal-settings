@@ -26,10 +26,16 @@ list_of_progs = [
     'pypy3',
   ]
 
-# Operatnion mode
+exclude_for_all = [ 'pypy3' ]
+
+
+# Setting up operatnion mode
 op_mode = nil
 if ARGV.empty? or ARGV[0].downcase == 'all'
   op_mode_list = list_of_progs
+  for excl in exclude_for_all
+    op_mode_list.delete(excl)
+  end
 else
   op_mode_list = ARGV
 end

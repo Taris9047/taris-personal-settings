@@ -1,8 +1,8 @@
 #!/bin/sh
 
-if [ -x $(command -v cargo) ]; then
+if [ -x "$(command -v cargo)" ]; then
     rustup update
-elif [ ! -x $(command -v cargo) ]; then
+else
 	echo "Looks like we don't have Rust! Installing from main repo!"
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 fi

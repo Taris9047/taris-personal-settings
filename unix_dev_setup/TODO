@@ -1,12 +1,17 @@
-1. Implement other platforms... namely Fedora, OS X
+>> Implement other platforms... namely Fedora, OS X
   --> Fedora would be pretty easy since the system's almost similar...
   --> OS X, we may not need do do too much. They have homebrew!
+  --> Fedora and Manjaro may not need this kind of crap anyway. They provide state-of-art packages anyway. But then they aren't really optimized for current machine.
+  ----> Thus, we may need some benchmarking session.
 
---2. Improve package information with more delicate format. Current text format is kinda lacking.--
+>> Implement some dependency checking routines. Since we have version checking stuff, this might be ok to implement.
+>>> Maybe, we would rather use json database than *.info text files.
 
-3. Think about implementing compiler options per package not a general option.
 
-4. Some automatic update checking system? Many open source projects implement rss feed to notify newer versions.
+>> Some automatic update checking system? Many open source projects implement rss feed to notify newer versions.
  -> At least version checking has been implemented.
 
-5. Some web-based system using rails. (far fetched)
+>> Implement some fancy method to install pypy3.
+
+>> Some web-based system using rails. (far fetched)
+
