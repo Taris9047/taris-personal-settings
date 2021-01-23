@@ -21,8 +21,8 @@ $pkg_name = 'ruby3'
 
 class InstRuby3 < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false)
-    super($pkg_name, prefix, work_dirs)
+  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
+    super($pkg_name, prefix, work_dirs, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
 

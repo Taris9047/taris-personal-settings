@@ -17,8 +17,8 @@ $b2_opts = [
 
 class InstBoost < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo)
-    super('boost', prefix, work_dirs)
+  def initialize(prefix, work_dirs, need_sudo, verbose_mode=false)
+    super('boost', prefix, work_dirs, verbose_mode=verbose_mode)
 
     @need_sudo = need_sudo
 

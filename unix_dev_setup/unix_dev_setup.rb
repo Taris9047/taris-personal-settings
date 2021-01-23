@@ -10,6 +10,9 @@ def_prefix = File.join(home_dir, "/.local")
 # def_prefix = File.join("/usr/local")
 def_system = "Linux"
 
+# Verbose mode? Default: false
+verbose = false
+
 list_of_progs = [
     'gcc',
     'cudacc',
@@ -28,7 +31,6 @@ list_of_progs = [
 
 exclude_for_all = [ 'pypy3' ]
 
-
 # Setting up operatnion mode
 op_mode = nil
 if ARGV.empty? or ARGV[0].downcase == 'all'
@@ -38,6 +40,24 @@ if ARGV.empty? or ARGV[0].downcase == 'all'
   end
 else
   op_mode_list = ARGV
+end
+
+# Main title banner
+puts "******************************************"
+puts "***                                    ***"
+puts "*** Unix development environment setup ***"
+puts "*** Currently... only works on Ubuntu. ***"
+puts "***                                    ***"
+puts "******************************************"
+
+# Handling Verbose mode
+if op_mode_list.include?('-v') or op_mode_list.include?('--verbose')
+  verbose = true
+  puts ""
+  puts "*** Verbose ON! It will be pretty loud! ***"
+  puts ""
+  op_mode_list.delete('-v')
+  op_mode_list.delete('--verbose')
 end
 
 op_mode_list.each_with_index do |op_mode, i|
@@ -80,10 +100,6 @@ end
 
 # Working directories
 require 'fileutils'
-
-puts "Unix development environment setup for me..."
-puts "Currently... only works on Ubuntu"
-puts ""
 
 work_dir_path = "./build"
 puts work_dir_path
@@ -139,17 +155,17 @@ need_sudo = !File.writable?(prefix_dir)
 for op_mode in op_mode_list do
   if op_mode == 'gcc'
     require "./install_gcc.rb"
-    inst_gcc = InstGCC.new(prefix_dir, def_system, work_dirs, need_sudo)
+    inst_gcc = InstGCC.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst_gcc.install
   end
   if op_mode == 'cudacc'
     require "./install_gcc.rb"
-    inst_gcc = InstGCCCuda.new(prefix_dir, def_system, work_dirs, need_sudo)
+    inst_gcc = InstGCCCuda.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst_gcc.install
   end
   if op_mode == 'gccold'
     require "./install_gcc.rb"
-    inst_gcc = InstGCCOld.new(prefix_dir, def_system, work_dirs, need_sudo)
+    inst_gcc = InstGCCOld.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst_gcc.install
   end
 
@@ -158,7 +174,7 @@ for op_mode in op_mode_list do
     require "./install_clang.rb"
     # puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
     sleep(2)
-    inst_clang = InstClang.new(prefix_dir, def_system, work_dirs, need_sudo)
+    inst_clang = InstClang.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst_clang.install_clang
   end
 
@@ -166,15 +182,15 @@ for op_mode in op_mode_list do
   if op_mode.include?'python'
     require "./install_python.rb"
     if op_mode.include?'2'
-      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo)
+      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
       inst_python2.install
     elsif op_mode.include?'3'
-      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo)
+      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
       inst_python3.install
     else
-      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo)
+      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
       inst_python2.install
-      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo)
+      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
       inst_python3.install
     end
 
@@ -194,38 +210,38 @@ for op_mode in op_mode_list do
 
   if op_mode == 'boost'
     require "./install_boost.rb"
-    inst_boost = InstBoost.new(prefix_dir, work_dirs, need_sudo)
+    inst_boost = InstBoost.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst_boost.install
   end
 
   if op_mode == 'lua'
     require "./install_lua.rb"
-    inst_lua = InstLua.new(prefix_dir, work_dirs, need_sudo)
+    inst_lua = InstLua.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst_lua.install
   end
 
   if op_mode == 'ruby'
     require "./install_ruby.rb"
-    inst_lua = InstRuby.new(prefix_dir, work_dirs, need_sudo)
+    inst_lua = InstRuby.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst_lua.install
   end
 
   if op_mode == 'ruby3'
     require "./install_ruby3.rb"
-    inst_lua = InstRuby3.new(prefix_dir, work_dirs, need_sudo)
+    inst_lua = InstRuby3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst_lua.install
   end
 
 
   if op_mode == 'node'
     require "./install_node.rb"
-    inst_node = InstNode.new(prefix_dir, work_dirs, need_sudo)
+    inst_node = InstNode.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst_node.install
   end
 
   if op_mode == 'rust'
     require "./install_rust.rb"
-    inst_rust = InstRust.new(prefix_dir, work_dirs, need_sudo)
+    inst_rust = InstRust.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst_rust.install
   end
 

@@ -10,8 +10,8 @@ require './src_urls.rb'
 
 class InstLua < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false)
-    super('lua', prefix, work_dirs)
+  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
+    super('lua', prefix, work_dirs, verbose_mode=verbose_mode)
     @need_sudo = need_sudo
 
     @source_url = SRC_URL[@pkgname]

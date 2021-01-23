@@ -42,8 +42,8 @@ $py3_conf_options = [
 
 class InstPython2 < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false)
-    super('python2', prefix, work_dirs)
+  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
+    super('python2', prefix, work_dirs, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
     @get_pip_url = SRC_URL['get_pip']

@@ -14,8 +14,8 @@ $conf_options = [
 
 class InstNode < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false)
-    super('node', prefix, work_dirs)
+  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
+    super('node', prefix, work_dirs, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
     @need_sudo = need_sudo

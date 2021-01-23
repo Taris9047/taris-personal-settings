@@ -20,8 +20,8 @@ $projects_to_enable = [
 
 class InstClang < InstallStuff
 
-  def initialize(prefix, def_system, work_dirs, need_sudo)
-    super('clang', prefix, work_dirs)
+  def initialize(prefix, def_system, work_dirs, need_sudo, verbose_mode=false)
+    super('clang', prefix, work_dirs, , verbose_mode=verbose_mode)
     @def_system = def_system
 
   end

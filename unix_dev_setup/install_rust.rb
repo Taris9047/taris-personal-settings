@@ -26,8 +26,8 @@ $rust_inst_cmd = "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 class InstRust < InstallStuff
 
-  def initialize(prefix='', work_dirs=[], need_sudo=false)
-    super('rust', prefix=ENV["HOME"], work_dirs)
+  def initialize(prefix='', work_dirs=[], need_sudo=false, verbose_mode=false)
+    super('rust', prefix=ENV["HOME"], work_dirs, verbose_mode=verbose_mode)
     @rust_utils_to_install = $rust_utils_to_install
   end
 
@@ -54,7 +54,7 @@ class InstRust < InstallStuff
     cargo_cmd = File.join(ENV["HOME"], '.cargo/bin/cargo')
     for pkg in @rust_utils_to_install do
       puts("Installing "+pkg)
-      self.Run( [cargo_cmd, 'install', pkg].join(' '), @pkgname )
+      self.Run( [cargo_cmd, 'install', pkg].join(' ') )
     end
     
     stdo, stde, stat = Open3.capture3("rustc --version")

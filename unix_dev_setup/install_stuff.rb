@@ -25,7 +25,7 @@ class InstallStuff
   @pkginfo_dir=''
   @pkginfo_file=''
 
-  def initialize(pkgname, prefix, work_dirs=[], ver_check=true)
+  def initialize(pkgname, prefix, work_dirs=[], ver_check=true, verbose_mode)
 
     @pkgname=pkgname
     @prefix=File.realpath(prefix)
@@ -33,6 +33,7 @@ class InstallStuff
     @pkginfo_file = File.join(
       @pkginfo_dir, "#{@pkgname}.info" )
     @check_ver = ver_check
+    @verbose = verbose_mode
 
     # Setting up processors
     procs = Etc.nprocessors
@@ -85,22 +86,7 @@ class InstallStuff
     return false
   end # VerCheck
 
-  def Run(*args)
-
-    if args[0].class == Hash
-      env = args[0]
-      cmds = args[1]
-      opts = Array(args[2...])
-    elsif args[0].class == Array
-      env = {}
-      cmds = args[0].join(' ')
-      opts = Array(args[1...])
-    elsif args[0].class == String
-      env = {}
-      cmds = args[0]
-      opts = Array(args[1...])
-    end
-
+  def __run_quiet( env, cmds, opts )
     o, e, s = Open3.capture3( env, cmds )
 
     log_file_name = @pkgname+'.log'
@@ -118,18 +104,81 @@ class InstallStuff
     fp.close
     # puts "Log file for #{@pkgname} has been saved at #{log_file_name}"
 
-    unless s.success?
-      puts "Execution ended up with an error!!"
-      puts e
-      # TODO: Implement some error handling stuff
-      exit(-1)
-    end
-
-    if opts.include?('-v') or opts.include?('verbose')
-      puts o
-    end
+    # unless s.success?
+    #   puts "*** Execution ended up with an error!! ***"
+    #   puts e
+    #   # TODO: Implement some error handling stuff
+    #   exit(-1)
+    # end
 
     return 0
+  end
+
+  def __run_verbose( env, cmds, opts )
+    o = []
+    e = []
+    Open3.popen3( env, cmds ) do |stdin, stdout, stderr, wait_thr|
+      Thread.new do
+        stdout.each do |l|
+          puts l
+          stdout.flush
+          o.append(l)
+        end
+        stderr.each {|l| e.append(l)}
+      end
+      wait_thr.value
+    end
+
+    log_file_name = @pkgname+'.log'
+    if opts.length() >= 1
+      log_file_name = opts[0]+'.log'
+    end
+
+    log_file = File.join(@pkginfo_dir, log_file_name)
+    unless File.file?(log_file)
+      fp = File.open(log_file, 'w')
+    else
+      fp = File.open(log_file, 'a')
+    end
+    fp.puts(o.join("\n"))
+    fp.close
+    # puts "Log file for #{@pkgname} has been saved at #{log_file_name}"
+
+    # unless e.empty?
+    #   puts "*** Execution ended up with an error!! ***"
+    #   puts e.join("\n")
+    #   # TODO: Implement some error handling stuff
+    #   exit(-1)
+    # end
+
+    return 0
+  end
+
+  def Run(*args)
+
+    if args[0].class == Hash
+      env = args[0]
+      cmds = args[1]
+      opts = Array(args[2...])
+    elsif args[0].class == Array
+      env = {}
+      cmds = args[0].join(' ')
+      opts = Array(args[1...])
+    elsif args[0].class == String
+      env = {}
+      cmds = args[0]
+      if args.length > 1
+        opts = Array(args[1...])
+      else
+        opts = []
+      end
+    end
+
+    if @verbose
+      self.__run_verbose(env, cmds, opts)
+    else
+      self.__run_quiet(env, cmds, opts)
+    end
 
   end
 

@@ -23,8 +23,8 @@ $pypy_prefix_dir = '/opt'
 
 class InstPyPy3 < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false)
-    super('pypy3', prefix, work_dirs)
+  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
+    super('pypy3', prefix, work_dirs, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
     @get_pip_url = SRC_URL['get_pip']
@@ -41,7 +41,7 @@ class InstPyPy3 < InstallStuff
     puts ""
     puts "Working on #{@pkgname}!!"
     puts ""
-    
+
     puts "*** Note that we cannot gaurantee if it will work or not."
     puts "*** If it fails, it fails!"
 
