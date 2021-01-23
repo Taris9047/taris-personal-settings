@@ -29,7 +29,7 @@ list_of_progs = [
     'pypy3',
   ]
 
-exclude_for_all = [ 'pypy3' ]
+exclude_for_all = [ 'pypy3', 'clang' ]
 
 # Setting up operatnion mode
 op_mode = nil
