@@ -54,21 +54,30 @@ class InstallStuff
         fnp_dummy = FNParser.new(@source_url)
         @ver_source = Version.new(fnp_dummy.version().join('.'))
         if (@ver_current >= @ver_source)
+          puts "===================================================="
           puts "It seems Current version of #{@pkgname} is not so behind!"
           puts "Current #{@pkgname}: "+@ver_current.to_s
           puts "Source database #{@pkgname}: "+@ver_source.to_s
           puts "Consider updating the urls.json or keep it this way!"
+          puts "===================================================="
+          puts ""
           return true
         else
+          puts "===================================================="
           puts "It seems current urls.json has newer version!!"
           puts "Current #{@pkgname}: "+@ver_current.to_s
           puts "Source database #{@pkgname}: "+@ver_source.to_s
           puts "Working on the newer version of #{@pkgname}!!"
+          puts "===================================================="
+          puts ""
           return false
         end
       else
+        puts "===================================================="
         puts "No previous installation info. found for #{@pkgname}"
         puts "Working on the stuff anyway!"
+        puts "===================================================="
+        puts ""
         return false
       end
     end # if @check_ver

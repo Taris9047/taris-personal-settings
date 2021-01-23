@@ -33,6 +33,9 @@ class InstNode < InstallStuff
   end
 
   def install
+    puts ""
+    puts "Working on #{@pkgname}!!"
+    puts ""
 
     if self.CheckInfo
       return 0

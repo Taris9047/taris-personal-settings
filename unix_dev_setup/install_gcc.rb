@@ -42,7 +42,7 @@ class InstGCC < InstallStuff
 
   def install
     puts ""
-    puts "Working on {pkgname}!!".gsub('{pkgname}', @pkgname)
+    puts "Working on #{@pkgname}!!"
     puts ""
 
     @pkginfo_file=File.join(@pkginfo_dir, @pkgname+'.info')

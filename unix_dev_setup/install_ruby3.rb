@@ -45,7 +45,7 @@ class InstRuby3 < InstallStuff
 
   def install
     puts ""
-    puts "Working on Ruby!!"
+    puts "Working on Ruby3!!"
     puts ""
 
     if self.CheckInfo

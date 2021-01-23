@@ -60,7 +60,7 @@ class InstPython2 < InstallStuff
     VerCheck()
 
     # Setting up compilers
-    compiler_path = File.join(prefix,'bin')
+    compiler_path = File.join(prefix, 'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
     @CompilerSettings = gc.get_settings
     @env = gc.get_env_settings
@@ -68,6 +68,8 @@ class InstPython2 < InstallStuff
   end
 
   def install
+
+    puts "Working on #{@pkgname}!!!"
 
     if self.CheckInfo
       return 0
@@ -126,7 +128,7 @@ class InstPython2 < InstallStuff
       dl_pip = Download.new(@get_pip_url, @src_dir)
     end
 
-    puts "Installing modules for python2"
+    puts "Installing modules for #{@pkgname}"
     inst_pip_cmds = [
       pip_inst_sudo,
       File.join(@prefix, "bin/python"+major.to_s+"."+minor.to_s),
@@ -177,6 +179,9 @@ class InstPython3 < InstallStuff
   end
 
   def install
+    puts ""
+    puts "Working on #{@pkgname}!!!"
+    puts ""
 
     if self.CheckInfo
       return 0
@@ -235,7 +240,7 @@ class InstPython3 < InstallStuff
       dl_pip = Download.new(@get_pip_url, @src_dir)
     end
 
-    puts "Installing modules for python3"
+    puts "Installing modules for #{@pkgname}"
     inst_pip_cmds = [
       pip_inst_sudo,
       File.join(@prefix, "bin/python"+major.to_s+"."+minor.to_s),

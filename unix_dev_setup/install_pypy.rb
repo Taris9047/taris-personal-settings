@@ -38,8 +38,10 @@ class InstPyPy3 < InstallStuff
   end
 
   def install
-
+    puts ""
     puts "Working on #{@pkgname}!!"
+    puts ""
+    
     puts "*** Note that we cannot gaurantee if it will work or not."
     puts "*** If it fails, it fails!"
 

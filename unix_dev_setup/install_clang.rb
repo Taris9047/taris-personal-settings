@@ -33,9 +33,9 @@ class InstClang < InstallStuff
 
     @src_url = SRC_URL['llvm']
 
-    if self.CheckInfo
-      return 0
-    end
+    # if self.CheckInfo
+    #   return 0
+    # end
 
     unless File.file?(File.join(@pkginfo_dir, 'gccold.info'))
       puts "Looks like we need to install gccold!!"
