@@ -47,10 +47,12 @@ class InstBoost < InstallStuff
     fp = FNParser.new(@source_url)
     src_tarball_fname, src_tarball_bname = fp.name
     major, minor, patch = fp.version
+    @@Version_Info = [major.to_s, minor.to_s, patch.to_s]
 
     src_extracted_folder = File.join(@build_dir,src_tarball_bname)
     if File.exists?(src_extracted_folder)
       puts "Previous Boost installation exists"
+      puts "Using it."
     else
       self.Run( ["tar xvf", src_tarball_path, "-C", @build_dir].join(' ') )
     end
@@ -73,6 +75,8 @@ class InstBoost < InstallStuff
       inst_cmd
     ]
 
+    @inst_cmd = cmds
+
     # Ok let's rock!
     puts "Compiling and Installing ..."
     self.Run( @env, cmds.join(" ") )
@@ -83,5 +87,18 @@ class InstBoost < InstallStuff
 
   end # install
 
+  def WriteInfo
+    puts "Writing package info for #{@pkgname}..."
+    fp = File.open(@pkginfo_file, 'w')
+    compile_info_json = {
+      "Package Name" => @pkgname,
+      "Install ENV" => @env,
+      "Install CMD" => @inst_cmd,
+      "Config options" => @conf_options,
+      "Version" => @@Version_Info,
+    }
+    fp.write(compile_info_json.to_json)
+    fp.close    
+  end
 
 end # class InstBoost

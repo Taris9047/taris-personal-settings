@@ -136,10 +136,15 @@ puts prefix_dir
 puts ""
 
 # Some edge cases... cleaning and installing prereq
-if op_mode_list.include?('clean')
+if op_mode_list.include?('purge')
   system( 'rm -rvf '+work_dirs.join(' ') )
   puts "Cleaned up everything!!"
   exit(0)
+end
+
+if op_mode_list.include?('clean')
+  system( "rm -rvf #{work_dir} #{source_dir}" )
+  puts "Cleaned up source files to save space!!"
 end
 
 if op_mode_list.include?('prereq')
