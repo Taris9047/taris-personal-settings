@@ -148,8 +148,13 @@ if op_mode_list.include?('clean')
 end
 
 if op_mode_list.include?('prereq')
-  require "./install_prereq.rb"
-  inst_prereq
+  puts ""
+  puts "========================================================="
+  puts "| It's recommended to run prereq. installation script!  |"
+  puts "|                                                       |"
+  puts "| Prereq. installation script: install_prereq.sh        |"
+  puts "========================================================="
+  puts ""
   exit(0)
 end
 

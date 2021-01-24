@@ -88,7 +88,9 @@ Ubuntu_packages=( \
   "subversion" \
   "git" \
   "wget" \
-  "curl" )
+  "curl" \
+  "neofetch" \
+  )
 
 Fedora_packages=( \
   "ruby" \
@@ -102,6 +104,7 @@ Fedora_packages=( \
   "wget" \
   "curl" \
   "valgrind" \
+  "neofetch" \
   )
 
 Arch_packages=( \
@@ -113,6 +116,8 @@ Arch_packages=( \
   "neovim" \
   "emacs" \
   "valgrind" \
+  "cmake" \
+  "neofetch" \
   )
 
 
@@ -131,20 +136,26 @@ array_to_string ()
 install_prereq_Ubuntu ()
 {
   pkgs=$( array_to_string "${Ubuntu_packages[@]}")
-  sudo apt-get -y update && sudo apt-get -y install $pkgs
+  gems=$( array_to_string "${Ruby_gems[@]}")
+  sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y install $pkgs
+  sudo gem install $gems
 }
 
 install_prereq_Fedora ()
 {
   pkgs=$( array_to_string "${Fedora_packages[@]}" )
+  gems=$( array_to_string "${Ruby_gems[@]}")
   sudo dnf groupinstall "Development Tools" "Development Libraries"
-  sudo dnf -y update && sudo dnf -y install $pkgs
+  sudo dnf -y update && sudo dnf -y upgrade && sudo dnf -y install $pkgs
+  sudo gem install $gems
 }
 
 install_prereq_Arch ()
 {
   pkgs=$( array_to_string "${Arch_packages[@]}" )
+  gems=$( array_to_string "${Ruby_gems[@]}")
   sudo pacman -Syyu $pkgs
+  sudo gem install $gems
 }
 
 
@@ -154,4 +165,19 @@ elif [[ "$MODE" == "Fedora" ]]; then
   install_prereq_Fedora
 elif [[ "$MODE" == "Arch" ]]; then
   install_prereq_Arch
-fi 
+fi
+
+# Putting up some system info!
+if [ -x "$(command -v neofetch)" ]; then
+  neofetch
+fi
+
+echo ""
+echo "=========================================="
+echo "| Prereq. package installation finished! |"
+echo "|                                        |"
+echo "| Now we can run ./unix_dev_setup.rb     |"
+echo "|                                        |"
+echo "| Hopefully, it compiles everything fine.|"
+echo "=========================================="
+echo ""
