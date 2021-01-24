@@ -23,13 +23,13 @@ def display_help():
 # The XML Background maker
 #
 class MakeXMLBackground(object):
-    def __init__(self, img_path, outf_name=def_outf_name, image_extensions=image_exts, verbose=False, duration=1795.0, transition=5.0):
+    def __init__(self, img_path, outf_name=def_outf_name, image_extensions=image_exts, verbose=False, duration=900.0, transition=5.0):
         self.img_path = os.path.realpath(img_path)
         self.img_exts = image_extensions
         self.outf_name = outf_name
 
         # Slideshow setting (duration, transition)
-        self.slideshow_setting = [duration, transition]
+        self.slideshow_setting = [duration-transition, transition]
 
         file_list = \
             [os.path.join(self.img_path, fn)
