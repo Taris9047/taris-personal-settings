@@ -67,7 +67,7 @@ class InstPyPy3 < InstallStuff
     puts "** A few remarks: **"
     puts "1. Do not put #{@pkgname} tarball into system directory. Put it somewhere isolated!"
     puts "2. Make sure resolve path problem manually if you added #{@pkgname}'s into your system PATH variable. It will install pip as pip3, same as python3's pip."
-    puts "3. The #{@pkgname} currently based on python#{pypy3_ver}. Make sure you do not have the same version of python3 or resolve collusion."
+    puts "3. The #{@pkgname} currently based on python#{@pypy3_ver}. Make sure you do not have the same version of python3 or resolve collusion."
     puts "4. To install pip, just use pypy3 -mensurepip"
     pkgs_str = $pypy_modules.join(', ')
     puts "5. Currently we can install #{pkgs_str} without too much trouble. Other packages, we cannot be sure! If it breaks, it breaks at this moment."
@@ -77,4 +77,16 @@ class InstPyPy3 < InstallStuff
     self.WriteInfo
 
   end
+
+  def WriteInfo
+    puts "Writing package info for #{@pkgname}..."
+    fp = File.open(@pkginfo_file, 'w')
+    compile_info_json = {
+      "Package Name" => @pkgname,
+      "Version" => ["3", "7"]
+    }
+    fp.write(compile_info_json.to_json)
+    fp.close
+  end
+
 end # class InstPyPy3
