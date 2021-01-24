@@ -14,7 +14,7 @@ fi
 # Some Distro information
 Ubuntu_base=("Ubuntu" "Linuxmint")
 Fedora_base=("Fedora" "openSUSE project")
-Arch_base=("Arch" "Manjaro")
+Arch_base=("ArchLinux" "ManjaroLinux")
 
 # Supported modes
 # "Ubuntu" "Fedora" "Arch"
@@ -98,6 +98,10 @@ Fedora_packages=( \
   "cmake" \
   "tk-devel" \
   "bzip2-libs" \
+  "openblas" \
+  "cblas" \
+  "lapack" \
+  "zlib" \
   "emacs" \
   "subversion" \
   "git" \
@@ -109,6 +113,8 @@ Fedora_packages=( \
 
 Arch_packages=( \
   "base-devel" \
+  "flex" \
+  "bison" \
   "git" \
   "wget" \
   "curl" \
@@ -117,6 +123,8 @@ Arch_packages=( \
   "emacs" \
   "valgrind" \
   "cmake" \
+  "pkgconf" \
+  
   "neofetch" \
   )
 
@@ -181,3 +189,18 @@ echo "|                                        |"
 echo "| Hopefully, it compiles everything fine.|"
 echo "=========================================="
 echo ""
+
+if [[ "$MODE" == "Arch" ]]; then
+  echo "=========================================="
+  echo "| Note on Arch based Linux!!             |"
+  echo "|                                        |"
+  echo "| Arch based distros do not usually      |"
+  echo "| provide -dev packages.                 |"
+  echo "| Thus, we may need to rather use ABS or |"
+  echo "| just use package version rather than   |"
+  echo "| compiling everything!!                 |"
+  echo "=========================================="
+  echo ""
+  echo ">> Cheap way to finish all the installation in Arch based distros:"
+  echo "sudo pacman -Syyu ruby lua python python-pip python2 python2-pip clang nodejs npm boost cmake"
+fi
