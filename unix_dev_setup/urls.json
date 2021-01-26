@@ -22,7 +22,7 @@
   "pypy3": "https://foss.heptapod.net/pypy/pypy",
 
   # Node.JS
-  "node": "https://nodejs.org/dist/v15.5.1/node-v15.5.1.tar.gz",
+  "node": "https://nodejs.org/dist/v15.6.0/node-v15.6.0.tar.gz",
 
   # Boost
   "boost": "https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.bz2",
