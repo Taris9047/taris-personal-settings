@@ -33,20 +33,22 @@ class InstNode < InstallStuff
   end
 
   def install
+
+    self.GetSrcVer
     puts ""
-    puts "Working on #{@pkgname}!!"
+    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
 
     if self.CheckInfo
       return 0
     end
 
-    unless File.file?(File.join(@pkginfo_dir, 'gccold.info'))
-      puts "Looks like we need to install gccold!!"
-      require './install_gcc.rb'
-      inst_gcc = InstGCCOld.new(@prefix, "Linux", @work_dirs, @need_sudo)
-      inst_gcc.install
-    end
+    # unless File.file?(File.join(@pkginfo_dir, 'gccold.info'))
+    #   puts "Looks like we need to install gccold!!"
+    #   require './install_gcc.rb'
+    #   inst_gcc = InstGCCOld.new(@prefix, "Linux", @work_dirs, @need_sudo)
+    #   inst_gcc.install
+    # end
 
     puts "Downloading source from ... "+@source_url
     dl = Download.new(@source_url, @src_dir)
@@ -74,8 +76,10 @@ class InstNode < InstallStuff
     end
 
     # A bit of last minute changes
-    @env['CC'] = 'gcc-old'
-    @env['CXX'] = 'g++-old'
+    # @env['CC'] = 'gcc-old'
+    # @env['CXX'] = 'g++-old'
+    @env['CC'] = 'gcc'
+    @env['CXX'] = 'g++'
     #@env['CFLAGS'] = @env['CFLAGS'] + " -fPIE"
     #@env['CFLAGS'] = @env['CFLAGS'] + " -fno-pie"
     #@env['CXXFLAGS'] = @env['CXXFLAGS'] + " -fPIE"

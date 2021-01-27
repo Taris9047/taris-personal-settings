@@ -32,8 +32,9 @@ class InstBoost < InstallStuff
   end
 
   def install
+    self.GetSrcVer
     puts ""
-    puts "Working on #{@pkgname}!!"
+    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
 
     if self.CheckInfo
@@ -78,7 +79,7 @@ class InstBoost < InstallStuff
     @inst_cmd = cmds
 
     # Ok let's rock!
-    puts "Compiling and Installing ..."
+    puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.Run( @env, cmds.join(" ") )
 
     @conf_options = @b2_opts

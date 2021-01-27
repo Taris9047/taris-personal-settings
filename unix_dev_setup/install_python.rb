@@ -69,7 +69,9 @@ class InstPython2 < InstallStuff
 
   def install
 
-    puts "Working on #{@pkgname}!!!"
+    puts ""
+    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
+    puts ""
 
     if self.CheckInfo
       return 0
@@ -112,7 +114,7 @@ class InstPython2 < InstallStuff
       pip_inst_sudo = ""
     end
 
-    puts "Compiling..."
+    puts "Compiling (with #{@Processors} processors) and Installing ..."
     cmds = [
       "cd", src_build_folder, "&&",
       File.join(src_extract_folder,"configure"),
@@ -180,7 +182,7 @@ class InstPython3 < InstallStuff
 
   def install
     puts ""
-    puts "Working on #{@pkgname}!!!"
+    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
 
     if self.CheckInfo
@@ -224,7 +226,7 @@ class InstPython3 < InstallStuff
     end
 
     # Ok let's roll!!
-    puts "Compiling..."
+    puts "Compiling (with #{@Processors} processors) and Installing ..."
     cmds = [
       "cd", src_build_folder, "&&",
       File.join(src_extract_folder,"configure"),

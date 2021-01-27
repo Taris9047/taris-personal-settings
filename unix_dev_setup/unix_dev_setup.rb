@@ -29,7 +29,15 @@ list_of_progs = [
     'pypy3',
   ]
 
+aliases = {
+  'gcc-old' => 'gccold',
+  'gcc-cuda' => 'cudacc',
+}
+
 exclude_for_all = [ 'pypy3', 'clang' ]
+
+flag_wrong_pkg_given = false
+wrong_pkgs = []
 
 # Setting up operatnion mode
 op_mode = nil
@@ -40,6 +48,16 @@ if ARGV.empty? or ARGV[0].downcase == 'all'
   end
 else
   op_mode_list = ARGV
+end
+
+# Cleaning up op_mode_list with aliases
+alias_keys = aliases.keys
+for k in alias_keys
+  if op_mode_list.include?(k)
+    ind = op_mode_list.index(k)
+    op_mode_list[ind] = aliases[k]
+    puts "Package #{k} was an alias of #{aliases[k]}. Refined the list."
+  end
 end
 
 # Main title banner
@@ -55,6 +73,7 @@ if op_mode_list.include?('-v') or op_mode_list.include?('--verbose')
   verbose = true
   puts ""
   puts "*** Verbose ON! It will be pretty loud! ***"
+  puts "* Note that some compilation jobs hang up with Verbose ON. *"
   puts ""
   op_mode_list.delete('-v')
   op_mode_list.delete('--verbose')
@@ -79,10 +98,10 @@ if op_mode_list.include?('cudacc') and op_mode_list.include?('gcc')
 end
 
 # In case of node
-if op_mode_list.include?('node') and op_mode_list.include?('gccold')
-  op_mode_list.delete('node')
-  op_mode_list.insert(op_mode_list.index('gccold')+1, 'node')
-end
+# if op_mode_list.include?('node') and op_mode_list.include?('gccold')
+#   op_mode_list.delete('node')
+#   op_mode_list.insert(op_mode_list.index('gccold')+1, 'node')
+# end
 
 # In case of Clang -- which is not in the list at this moment...
 if op_mode_list.include?('clang') and op_mode_list.include?('python3')
@@ -97,6 +116,14 @@ end
 #     op_mode_list.insert(op_mode_list.index('python2')+1, 'pypy')
 #   end
 # end
+
+# List packages to install
+puts "List of packages to install..."
+puts ""
+for pkg in op_mode_list
+  puts pkg
+end
+puts ""
 
 # Working directories
 require 'fileutils'
@@ -137,14 +164,35 @@ puts ""
 
 # Some edge cases... cleaning and installing prereq
 if op_mode_list.include?('purge')
-  system( 'rm -rvf '+work_dirs.join(' ') )
+  puts "Purging everything!!!"
+  system( 'rm -rf '+work_dirs.join(' ') )
+  op_mode_list.delete('purge')
   puts "Cleaned up everything!!"
   exit(0)
 end
 
+if op_mode_list.include?('--purge')
+  puts "Performing purge install..."
+  system( 'rm -rf '+work_dirs.join(' ') )
+  puts "Deleted every build stuff!!"
+  op_mode_list.delete('--purge')
+end
+
+
 if op_mode_list.include?('clean')
-  system( "rm -rvf #{work_dir} #{source_dir}" )
+  puts "Cleaning up source files and build dirs..."
+  system( "rm -rf #{work_dir} #{source_dir}" )
   puts "Cleaned up source files to save space!!"
+  op_mode_list.delete('clean')
+  exit(0)
+end
+
+if op_mode_list.include?('--clean')
+  puts "Performing clean install..."
+  puts "Cleaning up source files and build dirs..."
+  system( "rm -rf #{work_dir} #{source_dir}" )
+  puts "Cleaned up source files to save space!!"
+  op_mode_list.delete('--clean')
 end
 
 if op_mode_list.include?('prereq')
@@ -204,7 +252,7 @@ for op_mode in op_mode_list do
       inst_python3.install
     end
 
-    puts "Removing 'python' to preserve system native python..."
+    puts "Removing 'python' command to preserve system native python..."
     sudo_cmd = ''
     if need_sudo
       sudo_cmd = "sudo"
@@ -261,13 +309,30 @@ for op_mode in op_mode_list do
     inst_pypy.install
   end
 
-  unless op_mode_list.include?(op_mode)
+  unless list_of_progs.include?(op_mode)
     puts "Looks like #{op_mode} has not implemented yet!"
-    puts "Available modules are..."
-    for pkg in list_of_progs
-      puts pkg
-    end
+    flag_wrong_pkg_given = true
+    wrong_pkgs.append(op_mode)
     puts "Passing #{op_mode} for now..."
+    puts ""
   end
 
 end
+
+if flag_wrong_pkg_given
+  puts ""
+  puts "Looks like there were some pkgs weren't recognized!!"
+  puts ""
+  puts "Wrong pkgs:"
+  puts wrong_pkgs.join(" ")
+  puts ""
+  puts "Available modules are..."
+  puts ""
+  for pkg in list_of_progs
+    puts pkg
+  end
+end
+
+puts ""
+puts "Jobs finished!!"
+puts ""

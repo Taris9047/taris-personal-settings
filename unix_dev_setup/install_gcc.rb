@@ -18,12 +18,13 @@ class InstGCC < InstallStuff
 
     @conf_options = [
       "--enable-languages=c,c++,fortran,objc,obj-c++",
-      "--enable-shared" ,
-      "--enable-linker-build-id" ,
-      "--enable-threads=posix" ,
-      "--enable-plugin" ,
-      "--with-system-zlib" ,
-      "--disable-multilib" ,
+      "--enable-shared",
+      "--enable-default-pie",
+      "--enable-linker-build-id",
+      "--enable-threads=posix",
+      "--enable-plugin",
+      "--with-system-zlib",
+      "--disable-multilib",
       "--build=x86_64-linux-gnu",
     ]
 
@@ -41,11 +42,12 @@ class InstGCC < InstallStuff
   end
 
   def install
-    puts ""
-    puts "Working on #{@pkgname}!!"
-    puts ""
-
     @pkginfo_file=File.join(@pkginfo_dir, @pkgname+'.info')
+
+    self.GetSrcVer
+    puts ""
+    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
+    puts ""
 
     if self.CheckInfo
       return 0
@@ -76,7 +78,7 @@ class InstGCC < InstallStuff
 
     # Let's build!!
     if Dir.exists?(bld_dir) == false
-      puts "Build dir missing.. making one.."
+      puts "Build dir missing... making one..."
     else
       puts "Build dir exists, cleaning up before work!!"
       self.Run( "rm -rf "+bld_dir )
@@ -104,11 +106,10 @@ class InstGCC < InstallStuff
     ]
 
     # Ok let's rock!
-    puts "Compiling and Installing ..."
+    puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.Run( @env, cmd.join(" ") )
 
     self.WriteInfo
-
   end
 
 end # class InstGCC
@@ -126,12 +127,13 @@ class InstGCCCuda < InstGCC
     @conf_options = [
       "--program-suffix=-cuda",
       "--enable-languages=c,c++,fortran,objc,obj-c++",
-      "--enable-shared" ,
-      "--enable-linker-build-id" ,
-      "--enable-threads=posix" ,
-      "--enable-plugin" ,
-      "--with-system-zlib" ,
-      "--disable-multilib" ,
+      "--enable-shared",
+      "--enable-default-pie",
+      "--enable-linker-build-id",
+      "--enable-threads=posix",
+      "--enable-plugin",
+      "--with-system-zlib",
+      "--disable-multilib",
       "--build=x86_64-linux-gnu",
     ]
 
@@ -167,12 +169,13 @@ class InstGCCOld < InstGCC
     @conf_options = [
       "--program-suffix=-old",
       "--enable-languages=c,c++,fortran,objc,obj-c++",
-      "--enable-shared" ,
-      "--enable-linker-build-id" ,
-      "--enable-threads=posix" ,
-      "--enable-plugin" ,
-      "--with-system-zlib" ,
-      "--disable-multilib" ,
+      "--enable-shared",
+      "--enable-default-pie",
+      "--enable-linker-build-id",
+      "--enable-threads=posix",
+      "--enable-plugin",
+      "--with-system-zlib",
+      "--disable-multilib",
       "--build=x86_64-linux-gnu",
     ]
 

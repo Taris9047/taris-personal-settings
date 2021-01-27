@@ -44,8 +44,9 @@ class InstRuby3 < InstallStuff
   end
 
   def install
+    self.GetSrcVer
     puts ""
-    puts "Working on Ruby3!!"
+    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
 
     if self.CheckInfo
@@ -97,7 +98,7 @@ class InstRuby3 < InstallStuff
       inst_cmd
     ]
 
-    puts "Compiling..."
+    puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.Run( @env, cmds.join(" ") )
 
     inst_module_cmds = [

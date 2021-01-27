@@ -25,8 +25,10 @@ class InstLua < InstallStuff
   end
 
   def install
+    
+    self.GetSrcVer
     puts ""
-    puts "Working on #{@pkgname}!!"
+    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
 
     if self.CheckInfo

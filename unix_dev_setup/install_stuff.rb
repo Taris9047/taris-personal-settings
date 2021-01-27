@@ -11,7 +11,7 @@ require './get_compiler.rb'
 
 class InstallStuff
 
-  @souce_url = 'some_url-0.0.0'
+  @souce_url = 'https://some_site.net.org/some_url-0.0.0'
   @conf_options = []
   @env = {}
 
@@ -30,19 +30,24 @@ class InstallStuff
     @pkgname=pkgname
     @prefix=File.realpath(prefix)
     @build_dir, @src_dir, @pkginfo_dir = work_dirs
-    @pkginfo_file = File.join(
-      @pkginfo_dir, "#{@pkgname}.info" )
+    @pkginfo_file = File.join(@pkginfo_dir, "#{@pkgname}.info" )
     @check_ver = ver_check
     @verbose = verbose_mode
+
 
     # Setting up processors
     procs = Etc.nprocessors
     if procs > 2
-      @Processors = 4
+      @Processors = procs
     elsif procs <= 4
       @Processors = procs-1
     end
   end # initialize
+
+  def GetSrcVer
+    fnp_dummy = FNParser.new(@source_url)
+    @ver_source = Version.new(fnp_dummy.version().join('.'))
+  end
 
   def VerCheck
     # Checking if newer version has rolled out
@@ -52,8 +57,9 @@ class InstallStuff
         pkf = File.read(@pkginfo_file)
         data_hash = JSON.parse(pkf)
         @ver_current = Version.new(data_hash['Version'].join('.'))
-        fnp_dummy = FNParser.new(@source_url)
-        @ver_source = Version.new(fnp_dummy.version().join('.'))
+        self.GetSrcVer
+        # fnp_dummy = FNParser.new(@source_url)
+        # @ver_source = Version.new(fnp_dummy.version().join('.'))
         if (@ver_current >= @ver_source)
           puts "===================================================="
           puts "It seems Current version of #{@pkgname} is not so behind!"
