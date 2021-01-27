@@ -37,12 +37,12 @@ class InstClang < InstallStuff
     #   return 0
     # end
 
-    unless File.file?(File.join(@pkginfo_dir, 'gccold.info'))
-      puts "Looks like we need to install gccold!!"
-      require './install_gcc.rb'
-      inst_gcc = InstGCCOld.new(@prefix, @def_system, @work_dirs, @need_sudo)
-      inst_gcc.install
-    end
+    # unless File.file?(File.join(@pkginfo_dir, 'gccold.info'))
+    #   puts "Looks like we need to install gccold!!"
+    #   require './install_gcc.rb'
+    #   inst_gcc = InstGCCOld.new(@prefix, @def_system, @work_dirs, @need_sudo)
+    #   inst_gcc.install
+    # end
 
     dn = Download.new(@src_url, destination=@src_dir, source_ctl='git')
     @src_dir = dn.GetPath
