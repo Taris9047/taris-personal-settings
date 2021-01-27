@@ -126,7 +126,7 @@ Arch_packages=( \
   "cmake" \
   "pkgconf" \
   "ruby" \
-  "ruby-rib" \
+  "ruby-irb" \
   "openblas" \
   "lapack" "cblas" \
   "mercurial" \
@@ -208,5 +208,5 @@ if [[ "$MODE" == "Arch" ]]; then
   echo "=========================================="
   echo ""
   echo ">> Cheap way to finish all the installation in Arch based distros:"
-  echo "sudo pacman -Syyu ruby lua python python-pip python2 python2-pip pypy3 clang nodejs npm boost cmake tk tk-devel sqlite"
+  echo "sudo pacman -Syyu ruby lua python python-pip python2 python2-pip pypy3 clang nodejs npm boost cmake tk sqlite"
 fi
