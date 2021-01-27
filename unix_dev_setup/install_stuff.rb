@@ -38,7 +38,7 @@ class InstallStuff
     # Setting up processors
     procs = Etc.nprocessors
     if procs > 2
-      @Processors = procs
+      @Processors = 4
     elsif procs <= 4
       @Processors = procs-1
     end
