@@ -66,16 +66,28 @@ echo "**** Note ****"
 # Importing bash settings
 DOTFILESDIR=$CURRENT_DIR"/dotfiles"
 LINUXBASHFILE="$DOTFILESDIR"/bashrc_linux
+LINUXZSHFILE="$DOTFILESDIR"/zshrc_linux
 DARWINBASHFILE="$DOTFILESDIR"/zshrc_osx
+SHELL_TYPE="$(echo $0)"
+
+# Now install the shell environments!!
 if [[ "$PLATFORM" == "linux" || "$PLATFORM" == "cygwin" ]]; then
-    echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
-    echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
+    if [[ "$SHELL_TYPE" == "bash" ]]; then
+        echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
+        echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
+    elif [[ "$SHELL_TYPE" == "zsh" ]]; then
+        echo "Appending $HOME/.zshrc with $LINUXZSHFILE"
+        echo "source $LINUXZSHFILE" >> "$HOME/.zshrc"
+    fi
 elif [[ "$PLATFORM" == "darwin" ]]; then
-    touch "$HOME/.zshrc"
-    echo "source $DARWINBASHFILE" >> "$HOME/.zshrc"
-    echo "Appending $HOME/.zshrc with $DARWINBASHFILE"
-else
-    echo "Manual installation is recommended for .bashrc or .bash_profile depending on your OS."
+    if [[ "$SHELL_TYPE" == "bash" ]]; then
+        echo "Appending $HOME/.bash_profile with $DARWINBASHFILE"
+        echo "source $DARWINBASHFILE" >> "$HOME/.bash_profile"
+    elif [[ "$SHELL_TYPE" == "zsh" ]]; then
+        touch "$HOME/.zshrc"
+        echo "source $DARWINBASHFILE" >> "$HOME/.zshrc"
+        echo "Appending $HOME/.zshrc with $DARWINBASHFILE"
+    fi
 fi
 
 echo ""
