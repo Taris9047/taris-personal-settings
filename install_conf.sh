@@ -71,7 +71,7 @@ DARWINBASHFILE="$DOTFILESDIR"/zshrc_osx
 SHELL_TYPE="$(echo $0)"
 
 # Now install the shell environments!!
-if [[ "$PLATFORM" == "linux" || "$PLATFORM" == "cygwin" ]]; then
+if [[ "$PLATFORM" == "linux" ]]; then
     if [[ "$SHELL_TYPE" == "bash" ]]; then
         echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
         echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
@@ -79,6 +79,9 @@ if [[ "$PLATFORM" == "linux" || "$PLATFORM" == "cygwin" ]]; then
         echo "Appending $HOME/.zshrc with $LINUXZSHFILE"
         echo "source $LINUXZSHFILE" >> "$HOME/.zshrc"
     fi
+if [[ "$PLATFORM" == "cygwin" ]]; then
+    echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
+    echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
 elif [[ "$PLATFORM" == "darwin" ]]; then
     if [[ "$SHELL_TYPE" == "bash" ]]; then
         echo "Appending $HOME/.bash_profile with $DARWINBASHFILE"
