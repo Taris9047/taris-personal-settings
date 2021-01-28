@@ -42,7 +42,7 @@ $py3_conf_options = [
 
 class InstPython2 < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
+  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false, use_clang=false)
     super('python2', prefix, work_dirs, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
@@ -60,8 +60,14 @@ class InstPython2 < InstallStuff
     VerCheck()
 
     # Setting up compilers
+    @clang_mode = use_clang
     compiler_path = File.join(prefix, 'bin')
-    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
+    gc = GetCompiler.new(
+      cc_path=compiler_path, 
+      cxx_path=compiler_path, 
+      cflags='', 
+      cxxflags='',
+      clang=@clang_mode)
     @CompilerSettings = gc.get_settings
     @env = gc.get_env_settings
 
@@ -156,7 +162,7 @@ end # class InstPython2
 
 class InstPython3 < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
+  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false, use_clang=false)
     super('python3', prefix, work_dirs, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
@@ -171,8 +177,14 @@ class InstPython3 < InstallStuff
     @need_sudo = need_sudo
 
     # Setting up compilers
-    compiler_path = File.join(prefix,'bin')
-    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
+    @clang_mode = use_clang
+    compiler_path = File.join(prefix, 'bin')
+    gc = GetCompiler.new(
+      cc_path=compiler_path, 
+      cxx_path=compiler_path, 
+      cflags='', 
+      cxxflags='',
+      clang=@clang_mode)
     @CompilerSettings = gc.get_settings
     @env = gc.get_env_settings
   end

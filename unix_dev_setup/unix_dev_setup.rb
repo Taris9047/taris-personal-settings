@@ -92,6 +92,59 @@ if op_mode_list.include?('-v') or op_mode_list.include?('--verbose')
   op_mode_list.delete('--verbose')
 end
 
+# Use clang as compiler
+# Currently, only Python accepts those stuff.
+#
+clang_mode = false
+if op_mode_list.include?('--use-clang')
+  clang_mode = true
+  op_mode_list.delete('--use-clang')
+end
+
+# Some edge cases... cleaning and installing prereq
+if op_mode_list.include?('purge')
+  puts "Purging everything!!!"
+  system( 'rm -rf '+work_dirs.join(' ') )
+  op_mode_list.delete('purge')
+  puts "Cleaned up everything!!"
+  exit(0)
+end
+
+if op_mode_list.include?('--purge')
+  puts "Performing purge install..."
+  system( 'rm -rf '+work_dirs.join(' ') )
+  puts "Deleted every build stuff!!"
+  op_mode_list.delete('--purge')
+end
+
+
+if op_mode_list.include?('clean')
+  puts "Cleaning up source files and build dirs..."
+  system( "rm -rf #{work_dir} #{source_dir}" )
+  puts "Cleaned up source files to save space!!"
+  op_mode_list.delete('clean')
+  exit(0)
+end
+
+if op_mode_list.include?('--clean')
+  puts "Performing clean install..."
+  puts "Cleaning up source files and build dirs..."
+  system( "rm -rf #{work_dir} #{source_dir}" )
+  puts "Cleaned up source files to save space!!"
+  op_mode_list.delete('--clean')
+end
+
+if op_mode_list.include?('prereq')
+  puts ""
+  puts "========================================================="
+  puts "| It's recommended to run prereq. installation script!  |"
+  puts "|                                                       |"
+  puts "| Prereq. installation script: install_prereq.sh        |"
+  puts "========================================================="
+  puts ""
+  exit(0)
+end
+
 # Make everything lowercase.. --> not really needed now.
 # op_mode_list.each_with_index do |op_mode, i|
 #   op_mode_list[i] = op_mode_list[i].downcase
@@ -176,49 +229,7 @@ puts "Prefix confirmed! Everything will be installed at..."
 puts prefix_dir
 puts ""
 
-# Some edge cases... cleaning and installing prereq
-if op_mode_list.include?('purge')
-  puts "Purging everything!!!"
-  system( 'rm -rf '+work_dirs.join(' ') )
-  op_mode_list.delete('purge')
-  puts "Cleaned up everything!!"
-  exit(0)
-end
 
-if op_mode_list.include?('--purge')
-  puts "Performing purge install..."
-  system( 'rm -rf '+work_dirs.join(' ') )
-  puts "Deleted every build stuff!!"
-  op_mode_list.delete('--purge')
-end
-
-
-if op_mode_list.include?('clean')
-  puts "Cleaning up source files and build dirs..."
-  system( "rm -rf #{work_dir} #{source_dir}" )
-  puts "Cleaned up source files to save space!!"
-  op_mode_list.delete('clean')
-  exit(0)
-end
-
-if op_mode_list.include?('--clean')
-  puts "Performing clean install..."
-  puts "Cleaning up source files and build dirs..."
-  system( "rm -rf #{work_dir} #{source_dir}" )
-  puts "Cleaned up source files to save space!!"
-  op_mode_list.delete('--clean')
-end
-
-if op_mode_list.include?('prereq')
-  puts ""
-  puts "========================================================="
-  puts "| It's recommended to run prereq. installation script!  |"
-  puts "|                                                       |"
-  puts "| Prereq. installation script: install_prereq.sh        |"
-  puts "========================================================="
-  puts ""
-  exit(0)
-end
 
 # Checking if the destination directory is writable or not.
 need_sudo = !File.writable?(prefix_dir)
@@ -254,15 +265,15 @@ for op_mode in op_mode_list do
   if op_mode.include?'python'
     require "./install_python.rb"
     if op_mode.include?'2'
-      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
       inst_python2.install
     elsif op_mode.include?'3'
-      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
       inst_python3.install
     else
-      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
       inst_python2.install
-      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
       inst_python3.install
     end
 

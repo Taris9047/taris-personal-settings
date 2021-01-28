@@ -8,8 +8,14 @@ $cxxflags = "-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer 
 $rpath = "-Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib"
 
 class GetCompiler
+  attr_accessor :cc_path, :cxx_path, :cflags, :cxxflags, :clang, :suffix, :env_path
 
-  def initialize(cc_path='/usr/bin', cxx_path='/usr/bin', cflags='', cxxflags='', clang=false, suffix='', env_path='')
+  def initialize(
+    cc_path='/usr/bin', 
+    cxx_path='/usr/bin', 
+    cflags='', 
+    cxxflags='', 
+    clang=false, suffix='', env_path='')
 
     @fallback_compiler_path = '/usr/bin/'
 
@@ -21,9 +27,6 @@ class GetCompiler
     @CC = File.join(@CC_PATH, 'gcc')
     @CXX = File.join(@CXX_PATH, 'g++')
 
-    c_compiler = 'gcc'
-    cxx_compiler = 'g++'
-
     r_path = '/usr/local'
     if env_path == ''
       r_path = File.dirname(cc_path)
@@ -33,6 +36,9 @@ class GetCompiler
     if clang
       c_compiler = 'clang'
       cxx_compiler = 'clang++'
+    else
+      c_compiler = 'gcc'
+      cxx_compiler = 'g++'
     end
 
     unless suffix == ''
