@@ -69,6 +69,7 @@ class InstPython2 < InstallStuff
 
   def install
 
+    self.GetSrcVer
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
@@ -124,17 +125,13 @@ class InstPython2 < InstallStuff
     ]
     self.Run( @env, cmds.join(" ") )
 
-    if File.exists?(File.join(@src_dir, 'get-pip.py'))
-      puts "Found get-pip.py"
-    else
-      dl_pip = Download.new(@get_pip_url, @src_dir)
-    end
-
+    # It seems get-pip.py doesn't support python2 anymore
+    puts "Running python2 -mensurepip"
     puts "Installing modules for #{@pkgname}"
     inst_pip_cmds = [
       pip_inst_sudo,
       File.join(@prefix, "bin/python"+major.to_s+"."+minor.to_s),
-      File.realpath(File.join(@src_dir, 'get-pip.py')),
+      "-mensurepip",
       "&&",
       pip_inst_sudo,
       "mv -fv",
@@ -159,8 +156,8 @@ end # class InstPython2
 
 class InstPython3 < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false)
-    super('python3', prefix, work_dirs)
+  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
+    super('python3', prefix, work_dirs, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
     @get_pip_url = SRC_URL['get_pip']
@@ -181,6 +178,8 @@ class InstPython3 < InstallStuff
   end
 
   def install
+
+    self.GetSrcVer
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
