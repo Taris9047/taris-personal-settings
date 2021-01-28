@@ -27,8 +27,9 @@ class InstClang < InstallStuff
   end
 
   def install_clang
+    
     puts ""
-    puts "Working on Clang!!"
+    puts "Working on LLVM-Clang!! (git)"
     puts ""
 
     @src_url = SRC_URL['llvm']
@@ -88,7 +89,7 @@ class InstClang < InstallStuff
       "-DCMAKE_BUILD_TYPE=Release",
     ]
 
-    cmd = [
+    config_cmd = [
     	"cd",
     	@build_dir,
     	"&&",
@@ -97,21 +98,56 @@ class InstClang < InstallStuff
         cmake_opts.join(' '),
     	comp_settings.join(' '),
     	File.join(@src_dir, "llvm"),
-    	"&&",
-    	"ninja",
-    	"&&",
-    	inst_cmd
     ]
+
+    compile_cmd = [
+      "cd",
+      @build_dir,
+      "&&",
+      "ninja",
+      "&&",
+      inst_cmd
+    ]
+
+    puts "Configuring with cmake"
+    system( config_cmd.join(' ') )
+
+    # Fetching version info.
+    ver_text = ''
+    fp = File.open(File.join(@build_dir, 'llvm.spec'), 'r')
+    llvm_spec = fp.readlines
+    for l in llvm_spec
+      if l.include?('Version:')
+        ver_text = l.split(' ')[-1]
+        break
+      end
+    end
+    ver_text.delete! 'git'
+    @Version = ver_text.split('.')
+    puts ""
+    puts "LLVM-Clang version detected: "+ver_text
+    puts ""
 
     # self.Run( cmd.join(" ") )
 
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    system( cmd.join(' ') )
+    system( compile_cmd.join(' ') )
 
     @conf_options = [inst_prefix_opt]+cmake_opts+comp_settings
 
     self.WriteInfo
 
+  end
+
+  def WriteInfo
+    puts "Writing package info for #{@pkgname}..."
+    fp = File.open(@pkginfo_file, 'w')
+    compile_info_json = {
+      "Package Name" => @pkgname,
+      "Version" => @Version,
+    }
+    fp.write(compile_info_json.to_json)
+    fp.close
   end
 
 end # InstClang

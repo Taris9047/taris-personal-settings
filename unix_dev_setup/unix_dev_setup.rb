@@ -32,20 +32,31 @@ list_of_progs = [
 aliases = {
   'gcc-old' => 'gccold',
   'gcc-cuda' => 'cudacc',
+  'python' => 'python3',
+  'Boost' => 'boost',
+  'ruby2' => 'ruby',
+  'pypy' => 'pypy3',
+  'Rust' => 'rust',
 }
 
-exclude_for_all = [ 'pypy3', 'clang' ]
+# Included clang back into the list. Now it compiles fine!
+# --enable-default-pie was the key!
+exclude_for_all = [ 'pypy3' ]
 
 flag_wrong_pkg_given = false
 wrong_pkgs = []
 
+all_install_list = list_of_progs
+for excl in exclude_for_all
+  all_install_list.delete(excl)
+end
 # Setting up operatnion mode
 op_mode = nil
-if ARGV.empty? or ARGV[0].downcase == 'all'
-  op_mode_list = list_of_progs
-  for excl in exclude_for_all
-    op_mode_list.delete(excl)
-  end
+if ARGV.empty?
+  op_mode_list = all_install_list
+elsif ARGV.include?('all')
+  op_mode_list = all_install_list
+  op_mode_list.delete('all')
 else
   op_mode_list = ARGV
 end
