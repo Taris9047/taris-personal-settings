@@ -27,6 +27,7 @@ list_of_progs = [
     'clang',
     'rust',
     'pypy3',
+    'ROOT',
   ]
 
 aliases = {
@@ -37,6 +38,7 @@ aliases = {
   'ruby2' => 'ruby',
   'pypy' => 'pypy3',
   'Rust' => 'rust',
+  'root' => 'ROOT',
 }
 
 # Included clang back into the list. Now it compiles fine!
@@ -245,7 +247,7 @@ for op_mode in op_mode_list do
     # puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
     sleep(2)
     inst_clang = InstClang.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
-    inst_clang.install_clang
+    inst_clang.install
   end
 
   # Then Python stuffs

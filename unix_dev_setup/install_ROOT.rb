@@ -9,19 +9,13 @@ require './get_compiler.rb'
 require './install_stuff.rb'
 require './src_urls.rb'
 
+root_version = ["6", "21", "01"]
 
-$projects_to_enable = [
-  'clang',
-  'compiler-rt',
-  'clang-tools-extra',
-  'openmp',
-  'lld',
-]
 
-class InstClang < InstallStuff
+class InstROOT < InstallStuff
 
   def initialize(prefix, def_system, work_dirs, need_sudo, verbose_mode=false)
-    super('clang', prefix, work_dirs, verbose_mode=verbose_mode)
+    super('ROOT', prefix, work_dirs, verbose_mode=verbose_mode)
     @def_system = def_system
 
   end
@@ -29,10 +23,10 @@ class InstClang < InstallStuff
   def install
     
     puts ""
-    puts "Working on LLVM-Clang!! (git)"
+    puts "Working on ROOT!! (git)"
     puts ""
 
-    @src_url = SRC_URL['llvm']
+    @src_url = SRC_URL['ROOT']
 
     # if self.CheckInfo
     #   return 0
@@ -49,7 +43,7 @@ class InstClang < InstallStuff
     @src_dir = dn.GetPath
 
     # Let's build!!
-    @build_dir = File.join(@build_dir, "llvm-clang-build")
+    @build_dir = File.join(@build_dir, "ROOT-build")
     if Dir.exists?(@build_dir) == false
       puts "Build dir missing.. making one.."
     else
@@ -80,13 +74,10 @@ class InstClang < InstallStuff
     cmake_opts = [
       "-Wno-dev",
       "-G Ninja",
-      "-DLLVM_ENABLE_PROJECTS=\"#{$projects_to_enable.join(';')}\"",
-      "-DLLVM_ENABLE_FFI=ON",
-      "-DLLVM_BUILD_LLVM_DYLIB=ON",
-      "-DLLVM_LINK_LLVM_DYLIB=ON",
-      "-DLLVM_ENABLE_RTTI=ON",
-      "-DLLVM_TARGETS_TO_BUILD=\"host\"",
       "-DCMAKE_BUILD_TYPE=Release",
+      "-DLLVM_BUILD_TYPE=Release",
+      "-Dopengl=ON"
+      "-Drpath=ON"
     ]
 
     config_cmd = [
@@ -112,21 +103,24 @@ class InstClang < InstallStuff
     puts "Configuring with cmake"
     system( config_cmd.join(' ') )
 
-    # Fetching version info.
-    ver_text = ''
-    fp = File.open(File.join(@build_dir, 'llvm.spec'), 'r')
-    llvm_spec = fp.readlines
-    for l in llvm_spec
-      if l.include?('Version:')
-        ver_text = l.split(' ')[-1]
-        break
-      end
-    end
-    ver_text.delete! 'git'
-    @Version = ver_text.split('.')
-    puts ""
-    puts "LLVM-Clang version detected: "+ver_text
-    puts ""
+    # Fetching version info. 
+    # TODO: Not sure how to get this yet
+    #
+    # ver_text = ''
+    # fp = File.open(File.join(@build_dir, 'llvm.spec'), 'r')
+    # llvm_spec = fp.readlines
+    # for l in llvm_spec
+    #   if l.include?('Version:')
+    #     ver_text = l.split(' ')[-1]
+    #     break
+    #   end
+    # end
+    # ver_text.delete! 'git'
+    # @Version = ver_text.split('.')
+    # puts ""
+    # puts "LLVM-Clang version detected: "+ver_text
+    # puts ""
+    @Version = root_version
 
     # self.Run( cmd.join(" ") )
 
