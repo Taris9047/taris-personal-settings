@@ -86,7 +86,7 @@ class InstNode < InstallStuff
     #@env['CXXFLAGS'] = @env['CXXFLAGS'] + " -fPIE"
 
     # Ok let's rock!
-    puts "Compiling and Installing ..."
+    puts "Compiling (with #{@Processors} processors) and Installing ..."
     cmds = [
       "cd", src_extract_folder, "&&",
       File.join(src_extract_folder,"configure"),
