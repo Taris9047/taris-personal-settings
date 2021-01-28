@@ -210,3 +210,5 @@
 	smudge = git-lfs smudge -- %f
 [credential]
 	helper = store
+[cola]
+	spellcheck = false

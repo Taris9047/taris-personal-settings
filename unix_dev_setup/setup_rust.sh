@@ -14,7 +14,7 @@ inst_cargo_pkgs ()
 		source $HOME/.cargo/env
 	else
 		echo "Cargo seems not installed!!"
-		exit(-1)
+		exit -1
 	fi
     pkgs="exa bat rm-improved diskonaut lsd cargo-update starship tokei fd-find procs du-dust ripgrep hyperfine ytop grex zoxide nu"
     cargo install $pkgs
