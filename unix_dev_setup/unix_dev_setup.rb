@@ -90,9 +90,10 @@ if op_mode_list.include?('-v') or op_mode_list.include?('--verbose')
   op_mode_list.delete('--verbose')
 end
 
-op_mode_list.each_with_index do |op_mode, i|
-  op_mode_list[i] = op_mode_list[i].downcase
-end
+# Make everything lowercase.. --> not really needed now.
+# op_mode_list.each_with_index do |op_mode, i|
+#   op_mode_list[i] = op_mode_list[i].downcase
+# end
 
 # Doing some re-organization
 # TODO: This dependency stuff needs to be revised!

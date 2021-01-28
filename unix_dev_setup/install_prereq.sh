@@ -76,6 +76,12 @@ Ubuntu_packages=( \
   "libgc-dev" \
   "python-cffi" \
   "libopenblas-dev" \
+  "libx11-dev" \
+  "libxpm-dev" \
+  "libxft-dev" \
+  "libxext-dev" \
+  "libpng-dev" \
+  "libjpeg-dev" \
   "valgrind" \
   "cmake" \
   "cmake-gui" \
