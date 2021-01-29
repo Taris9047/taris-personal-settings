@@ -92,6 +92,43 @@ if op_mode_list.include?('-v') or op_mode_list.include?('--verbose')
   op_mode_list.delete('--verbose')
 end
 
+# Working directories
+require 'fileutils'
+
+work_dir_path = "./build"
+puts work_dir_path
+unless File.directory?(work_dir_path)
+  puts work_dir_path+" not found, making one..."
+  FileUtils.mkdir_p(work_dir_path)
+end
+work_dir = File.realpath(work_dir_path)
+
+source_dir_path = "./src"
+unless File.directory?(source_dir_path)
+  puts source_dir_path+" not found, making one..."
+  FileUtils.mkdir_p(source_dir_path)
+end
+source_dir = File.realpath(source_dir_path)
+
+pkginfo_dir_path = "./pkginfo"
+unless File.directory?(pkginfo_dir_path)
+  puts pkginfo_dir_path+" not found, making one..."
+  FileUtils.mkdir_p(pkginfo_dir_path)
+end
+pkginfo_dir = File.realpath(pkginfo_dir_path)
+
+work_dirs = [work_dir, source_dir, pkginfo_dir]
+
+prefix_dir_path = def_prefix
+unless File.directory?(prefix_dir_path)
+  puts prefix_dir_path+" not found, making one..."
+  FileUtils.mkdir_p(prefix_dir_path)
+end
+prefix_dir = File.realpath(prefix_dir_path)
+puts "Prefix confirmed! Everything will be installed at..."
+puts prefix_dir
+puts ""
+
 # Use clang as compiler
 # Currently, only Python accepts those stuff.
 #
@@ -192,42 +229,7 @@ for pkg in op_mode_list
 end
 puts ""
 
-# Working directories
-require 'fileutils'
 
-work_dir_path = "./build"
-puts work_dir_path
-unless File.directory?(work_dir_path)
-	puts work_dir_path+" not found, making one..."
-	FileUtils.mkdir_p(work_dir_path)
-end
-work_dir = File.realpath(work_dir_path)
-
-source_dir_path = "./src"
-unless File.directory?(source_dir_path)
-	puts source_dir_path+" not found, making one..."
-	FileUtils.mkdir_p(source_dir_path)
-end
-source_dir = File.realpath(source_dir_path)
-
-pkginfo_dir_path = "./pkginfo"
-unless File.directory?(pkginfo_dir_path)
-	puts pkginfo_dir_path+" not found, making one..."
-	FileUtils.mkdir_p(pkginfo_dir_path)
-end
-pkginfo_dir = File.realpath(pkginfo_dir_path)
-
-work_dirs = [work_dir, source_dir, pkginfo_dir]
-
-prefix_dir_path = def_prefix
-unless File.directory?(prefix_dir_path)
-	puts prefix_dir_path+" not found, making one..."
-	FileUtils.mkdir_p(prefix_dir_path)
-end
-prefix_dir = File.realpath(prefix_dir_path)
-puts "Prefix confirmed! Everything will be installed at..."
-puts prefix_dir
-puts ""
 
 
 
