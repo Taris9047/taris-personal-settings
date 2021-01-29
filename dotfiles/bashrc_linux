@@ -112,6 +112,14 @@ if [ -x "$(command -v exa)" ]; then
 	alias l='exa -hF'
 fi
 
+# Lsd
+if [ -x "$(command -v lsd)" ]; then
+	echo "lsd found! using it instead of ls or exa"
+	alias ls='lsd -hFX'
+	alias ll='lsd -lahFX'
+	alias l='lsd -hFX'
+fi
+
 # Bat
 if [ -x "$(command -v bat)" ]; then
 	echo "Bat found! using it instead of cat"
@@ -129,9 +137,13 @@ fi
 texlive_year="2020"
 texlive_arch=x86_64-linux
 texlive_bin_dir=$HOME/.texlive/$texlive_year/bin/$texlive_arch/
+texlive_bin_dir_woyear=$HOME/.texlive/bin/$texlive_arch/
 if [ -d $texlive_bin_dir ]; then
     echo "Texlive found at $texlive_bin_dir directory!! Adding to path!"
     export PATH=$texlive_bin_dir:$PATH
+elif [ -d $texlive_bin_dir_woyear ]; then
+	echo "Texlive found at $texlive_bin_dir_woyear directory!! Adding to path!"
+	export PATH=$texlive_bin_dir_woyear:$PATH
 fi
 
 # Rip
@@ -390,3 +402,18 @@ if [[ "$(echo $0)" == *bash ]]; then
 	eval "$(starship init bash)"
   fi
 fi
+
+# zoxide
+if [ -x "$(command -v zoxide)" ]; then
+  echo "zoxide found! activating it!"
+  if [[ "$(echo $0)" == *bash ]]; then
+    eval "$(zoxide init bash)"
+  elif [[ "$(echo $0)" == *zsh ]]; then
+    eval "$(zoxide init zsh)"
+  else
+    eval "$(zoxide init posix --hook prompt)"
+  fi
+  alias cd='z'
+fi
+
+

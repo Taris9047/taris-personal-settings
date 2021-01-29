@@ -1,24 +1,22 @@
 #!/bin/sh
 
 if [ -x "$(command -v cargo)" ]; then
-    rustup update
+  rustup update
+  cargo install-update -a
 else
-	echo "Looks like we don't have Rust! Installing from main repo!"
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-	source $HOME/.bashrc
+  echo "Looks like we don't have Rust! Installing from main repo!"
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  source $HOME/.bashrc
 fi
 
 inst_cargo_pkgs ()
 {
-	if [ -d $HOME/.cargo ]; then
-		source $HOME/.cargo/env
-	else
-		echo "Cargo seems not installed!!"
-		exit -1
-	fi
-    pkgs="exa bat rm-improved diskonaut lsd cargo-update starship tokei fd-find procs du-dust ripgrep hyperfine ytop grex zoxide nu"
-    cargo install $pkgs
+  pkgs="exa bat rm-improved diskonaut lsd cargo-update starship tokei fd-find procs du-dust ripgrep hyperfine ytop grex zoxide nu"
+  cargo install $pkgs
+  cargo install-update -a
 }
 
-inst_cargo_pkgs
+if [ -d $HOME/.cargo ]; then
+  inst_cargo_pkgs
+fi
 
