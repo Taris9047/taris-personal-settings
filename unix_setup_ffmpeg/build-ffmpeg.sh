@@ -658,7 +658,7 @@ echo "Building done. The binary can be found here: $WORKSPACE/bin/ffmpeg"
 echo ""
 
 if [[ $AUTOINSTALL == "yes" ]]; then
-  if ! -w $INSTALL_FOLDER ; then
+  if [ ! -w "$INSTALL_FOLDER" ]; then
     sudo cp "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
     sudo cp "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
     echo "Done. ffmpeg is now installed to your system"
@@ -671,7 +671,7 @@ elif [[ ! $SKIPINSTALL == "yes" ]]; then
   read -r -p "Install the binary to your $INSTALL_FOLDER folder? [Y/n] " response
   case $response in
   [yY][eE][sS]|[yY])
-    if ! -w $INSTALL_FOLDER ; then
+    if [ ! -w "$INSTALL_FOLDER" ]; then
       sudo cp "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
       sudo cp "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
     else
