@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Referenced: 
+# Referenced:
 # https://github.com/markus-perl/ffmpeg-build-script
 
 VERSION=1.21
@@ -272,7 +272,7 @@ if build "openssl"; then
 	execute env "$COMPILER_SET" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
 	execute make -j $MJOBS
 	execute make install
-	
+
 	CONFIGURE_OPTIONS+=("--enable-openssl")
 	build_done "openssl"
 fi
@@ -352,7 +352,7 @@ if build "opencore"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
-	
+
 	CONFIGURE_OPTIONS+=("--enable-libopencore_amrnb" "--enable-libopencore_amrwb")
 	build_done "opencore"
 fi
@@ -370,7 +370,7 @@ if build "libvpx"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-unit-tests --disable-shared
 	execute make -j $MJOBS
 	execute make install
-	
+
 	CONFIGURE_OPTIONS+=("--enable-libvpx")
 	build_done "libvpx"
 fi
@@ -381,7 +381,7 @@ if build "lame"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
-	
+
 	CONFIGURE_OPTIONS+=("--enable-libmp3lame")
 	build_done "lame"
 fi
@@ -392,7 +392,7 @@ if build "opus"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
-	
+
 	CONFIGURE_OPTIONS+=("--enable-libopus")
 	build_done "opus"
 fi
@@ -431,7 +431,7 @@ if build "x264"; then
     execute make -j $MJOBS
 	execute make install
 	execute make install-lib-static
-	
+
 	CONFIGURE_OPTIONS+=("--enable-libx264")
 	build_done "x264"
 fi
@@ -451,7 +451,7 @@ if build "libvorbis"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest
 	execute make -j $MJOBS
 	execute make install
-	
+
 	CONFIGURE_OPTIONS+=("--enable-libvorbis")
 	build_done "libvorbis"
 fi
@@ -465,7 +465,7 @@ if build "libtheora"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --with-vorbis-libraries="${WORKSPACE}"/lib --with-vorbis-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest --disable-vorbistest --disable-examples --disable-asm --disable-spec
 	execute make -j $MJOBS
 	execute make install
-	
+
 	CONFIGURE_OPTIONS+=("--enable-libtheora")
 	build_done "libtheora"
 fi
@@ -476,7 +476,7 @@ if build "vid_stab"; then
 	execute env "$COMPILER_SET" cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DUSE_OMP=OFF -DENABLE_SHARED:bool=off .
 	execute make
 	execute make install
-	
+
 	CONFIGURE_OPTIONS+=("--enable-libvidstab")
 	build_done "vid_stab"
 fi
@@ -490,7 +490,7 @@ if build "x265"; then
 	execute make install
 	sed "s/-lx265/-lx265 -lstdc++/g" "$WORKSPACE/lib/pkgconfig/x265.pc" > "$WORKSPACE/lib/pkgconfig/x265.pc.tmp"
 	mv "$WORKSPACE/lib/pkgconfig/x265.pc.tmp" "$WORKSPACE/lib/pkgconfig/x265.pc"
-	
+
 	CONFIGURE_OPTIONS+=("--enable-libx265")
 	build_done "x265"
 fi
@@ -501,7 +501,7 @@ if build "fdk_aac"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
-	
+
 	CONFIGURE_OPTIONS+=("--enable-libfdk-aac")
 	build_done "fdk_aac"
 fi
@@ -515,7 +515,7 @@ if build "av1"; then
 	execute env "$COMPILER_SET" cmake -DENABLE_TESTS=0 -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" "$PACKAGES"/av1
 	execute make -j $MJOBS
 	execute make install
-	
+
 	CONFIGURE_OPTIONS+=("--enable-libaom")
 	build_done "av1"
 fi
@@ -578,21 +578,20 @@ if command -v nvcc > /dev/null ; then
 	CONFIGURE_OPTIONS+=("--nvccflags=-gencode arch=compute_52,code=sm_52")
 fi
 
-
-#CFLAGS="-I$WORKSPACE/include"
-#LDFLAGS="-L$WORKSPACE/lib"
-#if command -v nvcc > /dev/null ; then
-#       if build "nv-codec"; then
-#               download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n10.0.26.0/nv-codec-headers-10.0.26.0.tar.gz" "nv-codec-headers-10.0.26.0.tar.gz"
-#               cd "$PACKAGES"/nv-codec-headers-10.0.26.0 || exit
-#               sed -i  "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-10.0.26.0/Makefile
-#               execute make install
-#               build_done "nv-codec"
-#       fi
-#       CFLAGS="$CFLAGS -I/usr/local/cuda/include"
-#       LDFLAGS="$LDFLAGS -L/usr/local/cuda/lib64"
-#       ADDITIONAL_CONFIGURE_OPTIONS="$ADDITIONAL_CONFIGURE_OPTIONS --enable-cuda-nvcc --enable-cuvid --enable-nvenc --enable-libnpp  --enable-cuda-llvm"
-#fi
+CFLAGS="$CFLAGS -I$WORKSPACE/include"
+LDFLAGS="$LDFLAGS -L$WORKSPACE/lib"
+if command -v nvcc > /dev/null ; then
+  if build "nv-codec"; then
+    download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n10.0.26.0/nv-codec-headers-10.0.26.0.tar.gz" "nv-codec-headers-10.0.26.0.tar.gz"
+    cd "$PACKAGES"/nv-codec-headers-10.0.26.0 || exit
+    sed -i  "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-10.0.26.0/Makefile
+    execute make install
+    build_done "nv-codec"
+  fi
+  CFLAGS="$CFLAGS -I/usr/local/cuda/include"
+  LDFLAGS="$LDFLAGS -L/usr/local/cuda/lib64"
+  CONFIGURE_OPTIONS+=("--enable-cuda-nvcc" "--enable-cuvid" "--enable-nvenc" "--enable-libnpp" "--enable-cuda-llvm")
+fi
 
 build "ffmpeg"
 #download "https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2" "ffmpeg-snapshot.tar.bz2"

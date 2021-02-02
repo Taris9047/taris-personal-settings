@@ -1,0 +1,27 @@
+/* confdefs.h */
+#define PACKAGE_NAME "pkg-config"
+#define PACKAGE_TARNAME "pkg-config"
+#define PACKAGE_VERSION "0.29.2"
+#define PACKAGE_STRING "pkg-config 0.29.2"
+#define PACKAGE_BUGREPORT "https://bugs.freedesktop.org/enter_bug.cgi?product=pkg-config"
+#define PACKAGE_URL ""
+#define PACKAGE "pkg-config"
+#define VERSION "0.29.2"
+#define STDC_HEADERS 1
+#define HAVE_SYS_TYPES_H 1
+#define HAVE_SYS_STAT_H 1
+#define HAVE_STDLIB_H 1
+#define HAVE_STRING_H 1
+#define HAVE_MEMORY_H 1
+#define HAVE_STRINGS_H 1
+#define HAVE_INTTYPES_H 1
+#define HAVE_STDINT_H 1
+#define HAVE_UNISTD_H 1
+#define HAVE_DLFCN_H 1
+#define LT_OBJDIR ".libs/"
+#define HAVE_DIRENT_H 1
+#define HAVE_UNISTD_H 1
+#define HAVE_SYS_WAIT_H 1
+#define HAVE_MALLOC_H 1
+#define ENABLE_INDIRECT_DEPS FALSE
+#define ENABLE_DEFINE_PREFIX FALSE
