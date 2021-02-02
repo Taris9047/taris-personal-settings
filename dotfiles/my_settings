@@ -6,6 +6,9 @@ HBREW_PATH=$HOME/.local
 # Default Google-drive Path
 GOOGLE_DRIVE=$HOME/.google-drive
 
+# Default OneDrive Path
+ONE_DRIVE=$HOME/.onedrive
+
 # Default texlive base path
 texlive_base_path=$HOME/.texlive
 
@@ -199,10 +202,23 @@ if [ -x "$(command -v rclone)" ]; then
 	fi
 
 	if mountpoint -q $GOOGLE_DRIVE; then
-		echo "Google drive already mounted.."
+		echo "Google Drive already mounted.."
 	else
-		echo "Mounting google drive to $GOOGLE_DRIVE"
+		echo "Mounting Google Drive to $GOOGLE_DRIVE"
 		rclone mount google-drive: $GOOGLE_DRIVE &
+		sleep 2
+	fi
+
+	if [ ! -d $ONE_DRIVE ]; then
+		echo "MS One Drive mount point not found! making one.."
+		mkdir -p $ONE_DRIVE
+	fi
+
+	if mountpoint -q $ONE_DRIVE; then
+		echo "MS One Drive already mounted.."
+	else
+		echo "Mounting MS One Drive to $ONE_DRIVE"
+		rclone mount onedrive: $ONE_DRIVE &
 		sleep 2
 	fi
 fi

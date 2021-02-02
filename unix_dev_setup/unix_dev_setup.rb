@@ -229,10 +229,6 @@ for pkg in op_mode_list
 end
 puts ""
 
-
-
-
-
 # Checking if the destination directory is writable or not.
 need_sudo = !File.writable?(prefix_dir)
 

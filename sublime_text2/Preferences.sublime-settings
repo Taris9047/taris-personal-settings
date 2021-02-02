@@ -33,7 +33,7 @@
 	"bold_folder_labels": false,
 	"caret_style": "smooth",
 	"close_windows_when_empty": false,
-	"color_scheme": "Packages/User/SublimeLinter/Cobalt (SL).tmTheme",
+	"color_scheme": "Packages/Theme - Cobalt2/cobalt2.tmTheme",
 	"create_window_at_startup": true,
 	"default_encoding": "UTF-8",
 	"default_line_ending": "system",
@@ -79,11 +79,11 @@
 		".hg",
 		"CVS"
 	],
-	"font_face": "Bitstream Vera Sans Mono",
+	"font_face": "BitstreamVeraSansMono Nerd Font Mono",
 	"font_options":
 	[
 	],
-	"font_size": 10,
+	"font_size": 11,
 	"gutter": true,
 	"highlight_line": false,
 	"highlight_modified_tabs": false,
@@ -128,7 +128,7 @@
 	"spell_check": false,
 	"tab_completion": true,
 	"tab_size": 4,
-	"theme": "Default.sublime-theme",
+	"theme": "Adaptive.sublime-theme",
 	"translate_tabs_to_spaces": false,
 	"tree_animation_enabled": true,
 	"trim_automatic_white_space": true,
@@ -139,3 +139,4 @@
 	"word_wrap": "auto",
 	"wrap_width": 0
 }
+
