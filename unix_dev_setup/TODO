@@ -4,14 +4,9 @@
   --> Fedora and Manjaro may not need this kind of crap anyway. They provide state-of-art packages anyway. But then they aren't really optimized for current machine.
   ----> Thus, we may need some benchmarking session.
 
->> Implement some dependency checking routines. Since we have version checking stuff, this might be ok to implement.
->>> Maybe, we would rather use json database than *.info text files.
-
-
 >> Some automatic update checking system? Many open source projects implement rss feed to notify newer versions.
  -> At least version checking has been implemented.
 
 >> Implement some fancy method to install pypy3.
 
 >> Some web-based system using rails. (far fetched)
-
