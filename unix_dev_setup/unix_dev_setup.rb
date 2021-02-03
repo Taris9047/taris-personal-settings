@@ -30,6 +30,7 @@ list_of_progs = [
   'ROOT',
   'mpich',
   'hydra',
+  'golang',
 ]
 
 aliases = {
@@ -42,6 +43,7 @@ aliases = {
   'Rust' => 'rust',
   'root' => 'ROOT',
   'MPICH' => 'mpich',
+  'go' => 'golang',
 }
 
 # Included clang back into the list. Now it compiles fine!
@@ -224,7 +226,6 @@ for op_mode in op_mode_list do
     inst.install
   end
 
-
   if op_mode == 'clang'
     require "./install_clang.rb"
     # puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
@@ -303,6 +304,12 @@ for op_mode in op_mode_list do
   if op_mode == 'pypy3'
     require "./install_pypy.rb"
     inst = InstPyPy3.new(prefix_dir, work_dirs, need_sudo)
+    inst.install
+  end
+
+  if op_mode == 'golang'
+    require "./install_golang.rb"
+    inst = InstGolang.new(prefix_dir, work_dirs, need_sudo)
     inst.install
   end
 

@@ -22,6 +22,7 @@ $dependency_table = {
   "boost" => [ 'gcc' ],
   "mpich" => [ 'gcc' ],
   "hydra" => [ 'mpich' ],
+  "golang" => [],
 }
 
 # class dependency resolve
