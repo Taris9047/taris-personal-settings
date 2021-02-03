@@ -20,6 +20,8 @@ $dependency_table = {
   "rust" => [],
   "clang" => [],
   "boost" => [ 'gcc' ],
+  "mpich" => [ 'gcc' ],
+  "hydra" => [ 'mpich' ],
 }
 
 # class dependency resolve

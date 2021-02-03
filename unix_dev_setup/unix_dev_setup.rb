@@ -14,21 +14,23 @@ def_system = "Linux"
 verbose = false
 
 list_of_progs = [
-    'gcc',
-    'cudacc',
-    'gccold',
-    'python2',
-    'python3',
-    'boost',
-    'lua',
-    'ruby',
-    'ruby3',
-    'node',
-    'clang',
-    'rust',
-    'pypy3',
-    'ROOT',
-  ]
+  'gcc',
+  'cudacc',
+  'gccold',
+  'python2',
+  'python3',
+  'boost',
+  'lua',
+  'ruby',
+  'ruby3',
+  'node',
+  'clang',
+  'rust',
+  'pypy3',
+  'ROOT',
+  'mpich',
+  'hydra',
+]
 
 aliases = {
   'gcc-old' => 'gccold',
@@ -39,6 +41,7 @@ aliases = {
   'pypy' => 'pypy3',
   'Rust' => 'rust',
   'root' => 'ROOT',
+  'MPICH' => 'mpich',
 }
 
 # Included clang back into the list. Now it compiles fine!
@@ -207,18 +210,18 @@ need_sudo = !File.writable?(prefix_dir)
 for op_mode in op_mode_list do
   if op_mode == 'gcc'
     require "./install_gcc.rb"
-    inst_gcc = InstGCC.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
-    inst_gcc.install
+    inst = InstGCC.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
   end
   if op_mode == 'cudacc'
     require "./install_gcc.rb"
-    inst_gcc = InstGCCCuda.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
-    inst_gcc.install
+    inst = InstGCCCuda.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
   end
   if op_mode == 'gccold'
     require "./install_gcc.rb"
-    inst_gcc = InstGCCOld.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
-    inst_gcc.install
+    inst = InstGCCOld.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
   end
 
 
@@ -226,8 +229,8 @@ for op_mode in op_mode_list do
     require "./install_clang.rb"
     # puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
     sleep(2)
-    inst_clang = InstClang.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
-    inst_clang.install
+    inst = InstClang.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
   end
 
   # Then Python stuffs
@@ -262,20 +265,20 @@ for op_mode in op_mode_list do
 
   if op_mode == 'boost'
     require "./install_boost.rb"
-    inst_boost = InstBoost.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-    inst_boost.install
+    inst = InstBoost.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
   end
 
   if op_mode == 'lua'
     require "./install_lua.rb"
-    inst_lua = InstLua.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-    inst_lua.install
+    inst = InstLua.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
   end
 
   if op_mode == 'ruby'
     require "./install_ruby.rb"
-    inst_lua = InstRuby.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-    inst_lua.install
+    inst = InstRuby.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
   end
 
   if op_mode == 'ruby3'
@@ -287,20 +290,32 @@ for op_mode in op_mode_list do
 
   if op_mode == 'node'
     require "./install_node.rb"
-    inst_node = InstNode.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-    inst_node.install
+    inst = InstNode.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
   end
 
   if op_mode == 'rust'
     require "./install_rust.rb"
-    inst_rust = InstRust.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-    inst_rust.install
+    inst = InstRust.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
   end
 
   if op_mode == 'pypy3'
     require "./install_pypy.rb"
-    inst_pypy = InstPyPy3.new(prefix_dir, work_dirs, need_sudo)
-    inst_pypy.install
+    inst = InstPyPy3.new(prefix_dir, work_dirs, need_sudo)
+    inst.install
+  end
+
+  if op_mode == 'mpich'
+    require "./install_mpich.rb"
+    inst = InstMPICH.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
+  end
+
+  if op_mode == 'hydra'
+    require "./install_hydra.rb"
+    inst = InstHydra.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
   end
 
   if !list_of_progs.include?(op_mode)

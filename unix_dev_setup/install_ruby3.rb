@@ -26,10 +26,10 @@ class InstRuby3 < InstallStuff
 
     @source_url = SRC_URL[@pkgname]
 
-    # Python2 modules to install
+    # Ruby3 modules to install
     @ruby_gems = $gems_to_install
 
-    # Python2 build options
+    # Ruby3 build options
     @conf_options = [
       "--enable-shared",
       "--program-suffix=3"

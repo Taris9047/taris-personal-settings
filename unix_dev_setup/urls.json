@@ -41,5 +41,9 @@
 
   # Haskell
   "ghc": "https://downloads.haskell.org/~ghc/8.10.2/ghc-8.10.2-src.tar.xz",
-  "cabal-install": "http://hackage.haskell.org/package/cabal-install-3.2.0.0/cabal-install-3.2.0.0.tar.gz"
+  "cabal-install": "http://hackage.haskell.org/package/cabal-install-3.2.0.0/cabal-install-3.2.0.0.tar.gz",
+
+  # MPICH
+  "mpich": "http://www.mpich.org/static/downloads/3.4.1/mpich-3.4.1.tar.gz",
+  "hydra": "http://www.mpich.org/static/downloads/3.4.1/hydra-3.4.1.tar.gz"
 }

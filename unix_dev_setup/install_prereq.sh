@@ -74,6 +74,7 @@ Ubuntu_packages=( \
   "libgdbm-dev" \
   "tk-dev" \
   "libgc-dev" \
+  "libnuma-dev" \
   "python-cffi" \
   "libopenblas-dev" \
   "libx11-dev" \
@@ -144,8 +145,7 @@ Arch_packages=( \
 Ruby_gems=( \
   "rsense" \
   "open3" \
-  "json" \
-  "hjson" )
+  "json" )
 
 array_to_string ()
 {

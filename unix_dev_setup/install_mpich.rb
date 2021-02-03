@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# this will handle Ruby
+# this will handle MPICH
 
 require './download.rb'
 require './fname_parser.rb'
@@ -8,28 +8,19 @@ require './get_compiler.rb'
 require './install_stuff.rb'
 require './src_urls.rb'
 
-$gems_to_install = [
-    "rsense",
-    "rails",
-    "bundler",
-    "open3",
-    "json",
-    "hjson",
-  ]
-
-class InstRuby < InstallStuff
+class InstMPICH < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('ruby', prefix, work_dirs, verbose_mode=verbose_mode)
+    super('mpich', prefix, work_dirs, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
 
-    # Ruby modules to install
-    @ruby_gems = $gems_to_install
-
-    # Ruby build options
+    # mpich build options
     @conf_options = [
-      "--enable-shared"
+      "--with-device=ch4:ucx",
+      "--enable-threads=multiple",
+      "--enable-fast=O3",
+      "FFLAGS=-fallow-argument-mismatch"
     ]
     @need_sudo = need_sudo
 
@@ -97,16 +88,6 @@ class InstRuby < InstallStuff
 
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.Run( @env, cmds.join(" ") )
-
-    inst_module_cmds = [
-      mod_sudo,
-      File.join(@prefix,"bin/gem"),
-      "install",
-      @ruby_gems.join(" ")
-    ]
-
-    puts "Installing additional gems..."
-    self.Run( inst_module_cmds.join(" ") )
 
     self.WriteInfo
   end
