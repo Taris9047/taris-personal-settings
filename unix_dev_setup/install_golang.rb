@@ -1,9 +1,5 @@
 #!/usr/bin/env ruby
 
-# Packages to install:
-# numpy scipy pandas sympy nose (matplotlib is currently doosh at this moment.)
-#
-
 require './download.rb'
 require './fname_parser.rb'
 require './get_compiler.rb'
