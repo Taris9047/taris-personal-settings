@@ -34,13 +34,10 @@ class InstallStuff
     @check_ver = ver_check
     @verbose = verbose_mode
 
-
     # Setting up processors
-    procs = Etc.nprocessors
-    if procs > 2
-      @Processors = procs
-    elsif procs <= 4
-      @Processors = procs-1
+    @Processors = Etc.nprocessors
+    if procs <= 4
+      @Processors -= 1
     end
   end # initialize
 
