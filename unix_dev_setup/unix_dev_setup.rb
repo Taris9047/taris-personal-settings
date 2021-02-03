@@ -182,51 +182,22 @@ if op_mode_list.include?('prereq')
   exit(0)
 end
 
-# Make everything lowercase.. --> not really needed now.
-# op_mode_list.each_with_index do |op_mode, i|
-#   op_mode_list[i] = op_mode_list[i].downcase
-# end
-
-# Doing some re-organization
-# TODO: This dependency stuff needs to be revised!
-# Gcc
-if op_mode_list.include?('gcc')
-  op_mode_list.delete('gcc')
-  op_mode_list.insert(0, 'gcc')
-end
-
-# In case of CudaCC
-if op_mode_list.include?('cudacc') and op_mode_list.include?('gcc')
-  op_mode_list.delete('cudacc')
-  op_mode_list.insert(op_mode_list.index('gcc')+1, 'cudacc')
-end
-
-# In case of node
-# if op_mode_list.include?('node') and op_mode_list.include?('gccold')
-#   op_mode_list.delete('node')
-#   op_mode_list.insert(op_mode_list.index('gccold')+1, 'node')
-# end
-
-# In case of Clang -- which is not in the list at this moment...
-if op_mode_list.include?('clang') and op_mode_list.include?('python3')
-  op_mode_list.delete('clang')
-  op_mode_list.insert(op_mode_list.index('python3')+1, 'clang')
-end
-
-# In case of pypy -- We need hg from python2
-# if op_mode_list.include?('python2')
-#   if op_mode_list.include?('pypy3')
-#     op_mode_list.delete('pypy3')
-#     op_mode_list.insert(op_mode_list.index('python2')+1, 'pypy')
-#   end
-# end
+# Resolving dependencies
+require './dep_resolve.rb'
+puts "Checking dependency for #{op_mode_list.join(" ")}"
+dep_resolve = DepResolve.new(op_mode_list, pkginfo_dir_path)
+op_mode_list = dep_resolve.GetInstList()
 
 # List packages to install
+if !dep_resolve.GetDepList().empty?
+  puts "Following packages are selected to satisfy dependency."
+  puts ""
+  puts dep_resolve.PrintDepList()
+  puts ""
+end
 puts "List of packages to install..."
 puts ""
-for pkg in op_mode_list
-  puts pkg
-end
+puts dep_resolve.PrintInstList()
 puts ""
 
 # Checking if the destination directory is writable or not.

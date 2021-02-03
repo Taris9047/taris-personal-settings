@@ -13,16 +13,15 @@ function lowercase()
 PLATFORM='none'
 function set_os_type ()
 {
-    UNAMESTR=`lowercase \`uname\``
-    if [[ "$UNAMESTR" == *"cygwin"* ]]; then
-        PLATFORM="cygwin"
-    elif [[ "$UNAMESTR" == *"linux"* ]]; then
-        PLATFORM="linux"
-    elif [[ "$UNAMESTR" == *"darwin"* ]]; then
-        PLATFORM="darwin"
-    fi
-
-    echo $PLATFORM
+  UNAMESTR=`lowercase \`uname\``
+  if [[ "$UNAMESTR" == *"cygwin"* ]]; then
+    PLATFORM="cygwin"
+  elif [[ "$UNAMESTR" == *"linux"* ]]; then
+    PLATFORM="linux"
+  elif [[ "$UNAMESTR" == *"darwin"* ]]; then
+    PLATFORM="darwin"
+  fi
+  echo $PLATFORM
 }
 
 # Set OS Type
@@ -35,9 +34,9 @@ DOT="."
 echo ""
 for conf_file in ${CONF_LIST[*]}
 do
-    echo "Installing: ${DOT}${conf_file}"
-    rm -rvf $USR_DIR/$DOT$conf_file
-    ln -sfv $CURRENT_DIR/dotfiles/$conf_file $USR_DIR/$DOT$conf_file
+  echo "Installing: ${DOT}${conf_file}"
+  rm -rvf $USR_DIR/$DOT$conf_file
+  ln -sfv $CURRENT_DIR/dotfiles/$conf_file $USR_DIR/$DOT$conf_file
 done
 
 # NVIM
@@ -49,15 +48,35 @@ if [ ! -d $NVIM_CONF_HOME ]; then
 fi
 ln -sfv $CURRENT_DIR/dotfiles/init.vim.nvim $NVIM_CONF_HOME/init.vim
 
+# Some Handy dirs and Symbolic links
+GOOGLE_DRIVE=$HOME/".google-drive"
+GOOGLE_DRIVE_SYM=$HOME/"GoogleDrive"
+ONE_DRIVE=$HOME/".onedrive"
+ONE_DRIVE_SYM=$HOME/"OneDrive"
+if [ ! -d $GOOGLE_DRIVE ]; then
+  mkdir -pv $GOOGLE_DRIVE
+  ln -sfv $GOOGLE_DRIVE $GOOGLE_DRIVE_SYM
+fi
+if [ ! -d $ONE_DRIVE ]; then
+  mkdir -pv $ONE_DRIVE
+  ln -sfv $ONE_DRIVE $ONE_DRIVE_SYM
+fi
+HOMEBREW_OPT=$HOMEBREW/.opt
+HOMEBREW_OPT_SYM=$HOMEBREW/opt
+if [ ! -d $HOMEBREW_OPT ]; then
+  mkdir -pv $HOMEBREW_OPT
+  ln -sfv $HOMEBREW_OPT $HOMEBREW_OPT_SYM
+fi
+
 # Config Directories
 # On Linux, this part is unnecessary. However, on OS X or Freebsd..
 # ln works differently for directories.
 CONF_LIST_D=("emacs.d")
 for conf_dir in ${CONF_LIST_D[*]}
 do
-    echo "Installing: ${conf_dir}"
-    rm -rfv $USR_DIR/$DOT$conf_dir
-    ln -sfv $CURRENT_DIR/dotfiles/$conf_dir $USR_DIR/$DOT$conf_dir
+  echo "Installing: ${conf_dir}"
+  rm -rfv $USR_DIR/$DOT$conf_dir
+  ln -sfv $CURRENT_DIR/dotfiles/$conf_dir $USR_DIR/$DOT$conf_dir
 done
 
 
@@ -67,30 +86,31 @@ echo "**** Note ****"
 DOTFILESDIR=$CURRENT_DIR"/dotfiles"
 LINUXBASHFILE="$DOTFILESDIR"/bashrc_linux
 LINUXZSHFILE="$DOTFILESDIR"/zshrc_linux
-DARWINBASHFILE="$DOTFILESDIR"/zshrc_osx
+DARWINBASHFILE="$DOTFILESDIR"/bash_profile_osx
+DARWINZSHFILE="$DOTFILESDIR"/zshrc_osx
 SHELL_TYPE="$(echo $0)"
 
 # Now install the shell environments!!
 if [[ "$PLATFORM" == "linux" ]]; then
-    if [[ "$SHELL_TYPE" == "bash" ]]; then
-        echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
-        echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
-    elif [[ "$SHELL_TYPE" == "zsh" ]]; then
-        echo "Appending $HOME/.zshrc with $LINUXZSHFILE"
-        echo "source $LINUXZSHFILE" >> "$HOME/.zshrc"
-    fi
-if [[ "$PLATFORM" == "cygwin" ]]; then
+  if [[ "$SHELL_TYPE" == "bash" ]]; then
     echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
     echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
-elif [[ "$PLATFORM" == "darwin" ]]; then
+  elif [[ "$SHELL_TYPE" == "zsh" ]]; then
+    echo "Appending $HOME/.zshrc with $LINUXZSHFILE"
+    echo "source $LINUXZSHFILE" >> "$HOME/.zshrc"
+  elif [[ "$PLATFORM" == "cygwin" ]]; then
+    echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
+    echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
+  elif [[ "$PLATFORM" == "darwin" ]]; then
     if [[ "$SHELL_TYPE" == "bash" ]]; then
-        echo "Appending $HOME/.bash_profile with $DARWINBASHFILE"
-        echo "source $DARWINBASHFILE" >> "$HOME/.bash_profile"
+      echo "Appending $HOME/.bash_profile with $DARWINBASHFILE"
+      echo "source $DARWINBASHFILE" >> "$HOME/.bash_profile"
     elif [[ "$SHELL_TYPE" == "zsh" ]]; then
-        touch "$HOME/.zshrc"
-        echo "source $DARWINBASHFILE" >> "$HOME/.zshrc"
-        echo "Appending $HOME/.zshrc with $DARWINBASHFILE"
+      touch "$HOME/.zshrc"
+      echo "source $DARWINBASHFILE" >> "$HOME/.zshrc"
+      echo "Appending $HOME/.zshrc with $DARWINZSHFILE"
     fi
+  fi
 fi
 
 echo ""
