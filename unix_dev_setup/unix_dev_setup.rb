@@ -306,6 +306,12 @@ for op_mode in op_mode_list do
     inst.install
   end
 
+  if op_mode == 'ROOT'
+    require "./install_ROOT.rb"
+    inst = InstROOT.new(prefix_dir, 'x86_64', work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
+  end
+
   if op_mode == 'mpich'
     require "./install_mpich.rb"
     inst = InstMPICH.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
