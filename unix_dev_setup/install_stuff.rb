@@ -36,7 +36,7 @@ class InstallStuff
 
     # Setting up processors
     @Processors = Etc.nprocessors
-    if procs <= 4
+    if @Processors <= 4
       @Processors -= 1
     end
   end # initialize

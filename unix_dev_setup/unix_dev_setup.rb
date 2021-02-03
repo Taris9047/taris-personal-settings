@@ -303,7 +303,7 @@ for op_mode in op_mode_list do
     inst_pypy.install
   end
 
-  unless list_of_progs.include?(op_mode)
+  if !list_of_progs.include?(op_mode)
     puts "Looks like #{op_mode} has not implemented yet!"
     flag_wrong_pkg_given = true
     wrong_pkgs.append(op_mode)

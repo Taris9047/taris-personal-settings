@@ -68,6 +68,7 @@ class DepResolve
         not_flat_dep_list.append(pk)
       end
     end
+    not_flat_dep_list = not_flat_dep_list.uniq
     if !not_flat_dep_list.empty?
       return self.__make_dep_list(not_flat_dep_list)+dep_list
     else
