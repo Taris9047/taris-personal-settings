@@ -18,6 +18,87 @@ def display_help():
     print("Usage: make_xml_bkg.py <image_folder>")
     print("provide -h or --help option to show this message.")
 
+#
+# Implementing normal ring list
+#
+class Node(object):
+    def __init__(self, value):
+        self.next = None
+        self.value = value
+
+    def Get():
+        return self.value
+
+    def Set(stuff):
+        self.value = stuff
+
+    def Next():
+        return self.next
+
+    def SetNext(node):
+        self.next = node
+
+class RList(object):
+    def __init__(self):
+        self.head = None
+        self.size = 0
+
+    def find_last(self):
+        if self.head == None:
+            return None
+
+        tmp_node = self.head
+        while True:
+            if tmp_node.Next() == self.head:
+                return tmp_node
+            else:
+                tmp_node = tmp_node.Next()
+
+    def find_target(self, target):
+        if self.head == None:
+            raise ValueError("Oh crap, the list is empty!!")
+
+        tmp = self.head
+        sz = self.size
+        while sz:
+            if tmp.value == target:
+                return tmp
+            else:
+                tmp = tmp.next
+            sz -= 1
+        raise ValueError("Given value cannot be found!")
+
+    def Append(self, value):
+        if self.head == None:
+            self.head = Node(value)
+            self.head.next = self.head
+        else:
+            tmp_node = self.find_last()
+            tmp_node.next = Node(value)
+            tmp_node = tmp_node.next
+            tmp_node.next = self.head
+        self.size += 1
+
+    def GetByIndex(self, index):
+        if index == 0 or index % self.size == 0:
+            return self.head.Get()
+
+        tmp = self.head
+        if 0 <= index and index < self.size:
+            ind = index
+        elif index < 0:
+            ind = index
+            while True:
+                ind = self.size + ind
+                if ind >= 0:
+                    break
+        elif index >= self.size:
+            ind = index % self.size
+
+        while ind:
+            tmp = tmp.next
+            ind -= 1
+        return tmp.Get()
 
 #
 # The XML Background maker
@@ -120,6 +201,14 @@ if __name__ == "__main__":
             display_help()
             sys.exit(0)
 
+        outf_name = def_outf_name
+        if '-o' in sys.argv:
+            ind_o = sys.argv.index('-o')
+            if sys.argv.size <= ind_o + 1:
+                print("Input file is needed!")
+                sys.exit(-1)
+            output_file = sys.argv[ind_o+1]
+
         image_dir = os.path.realpath(sys.argv[1])
 
         if not os.path.exists(image_dir):
@@ -129,4 +218,4 @@ if __name__ == "__main__":
     print("Image directory has been set:")
     print(image_dir)
 
-    mxb = MakeXMLBackground(image_dir)
+    mxb = MakeXMLBackground(image_dir, outf_name=output_file)
