@@ -1,13 +1,13 @@
 #!/bin/bash
 USR_DIR=$HOME
-CURRENT_DIR=`pwd -P`
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd -P )"
 echo "Target directory: ${USR_DIR}"
 echo "Source directory: ${CURRENT_DIR}"
 
 # OS Detection
 function lowercase()
 {
-    echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+  echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
 }
 
 PLATFORM='none'
@@ -43,10 +43,18 @@ done
 echo "Installing NVIM config file"
 NVIM_CONF_HOME=$USR_DIR/.config/nvim
 if [ ! -d $NVIM_CONF_HOME ]; then
-	echo "NVIM config dir not found, making one."
-	mkdir -p $NVIM_CONF_HOME
+  echo "NVIM config dir not found, making one."
+  mkdir -p $NVIM_CONF_HOME
 fi
 ln -sfv $CURRENT_DIR/dotfiles/init.vim.nvim $NVIM_CONF_HOME/init.vim
+
+# Starship
+echo "Installing starship config file"
+STARSHIP_CONF_FILE=$USR_DIR/.config/starship.toml
+if [ ! -f $STARSHIP_CONF_FILE ]; then
+  echo "starship config file not found, linking one!"
+  ln -sfv $CURRENT_DIR/dotfiles/starship.toml $STARSHIP_CONF_FILE
+fi
 
 # Some Handy dirs and Symbolic links
 GOOGLE_DRIVE=$HOME/".google-drive"
