@@ -28,7 +28,7 @@ $dependency_table = {
 # class dependency resolve
 # Simply put, re-orders the installation list according to the dependency table.
 class DepResolve
-  def initialize(install_list, pkginfo_dir)
+  def initialize(install_list, pkginfo_dir, force_install=false)
 
     if install_list.empty?
       puts "No install list given! Exiting"
@@ -42,9 +42,19 @@ class DepResolve
       @Installed_pkg_list = []
     end
 
+    @force_install = force_install
+
     @Inst_list = install_list
+    @Inst_list = @Inst_list.uniq
+    if !@force_install and !@Installed_pkg_list.empty?
+      for ipkg in @Installed_pkg_list
+        @Inst_list.delete(ipkg)
+      end
+    end
+
     @dep_list = self.__make_dep_list(@Inst_list)
     @Inst_list = @dep_list+@Inst_list
+    @Inst_list = @Inst_list.uniq
 
   end
 
@@ -58,7 +68,7 @@ class DepResolve
       dep_list += p_dep
     end
     dep_list = dep_list.uniq
-    unless @Installed_pkg_list.empty?
+    if !@Installed_pkg_list.empty?
       for ipkg in @Installed_pkg_list
         dep_list.delete(ipkg)
       end
