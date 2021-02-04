@@ -62,6 +62,7 @@ Ubuntu_packages=( \
   "ruby-dev" \
   "git-lfs" \
   "tree" \
+  "screen" \
   "libzmq3-dev" \
   "libtool-bin" \
   "dos2unix" \
