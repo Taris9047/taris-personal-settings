@@ -114,6 +114,14 @@ if [ -d $HOME/.cargo ]; then
   source $HOME/.cargo/env
 fi
 
+# Golang
+export GOROOT=$HOMEBREW/opt/go
+export GOPATH=$HOMEBREW/opt/go/bin
+if [ -d $GOROOT ]; then
+  echo "Golang has been found at $GOROOT"
+  export PATH=$GOROOT/bin:$PATH
+fi
+
 # Exa
 if [ -x "$(command -v exa)" ]; then
   echo "exa found! using it instead of ls"
@@ -230,7 +238,6 @@ if [ -x "$(command -v jq)" ]; then
 fi
 
 # starship
-
 if [ -x "$(command -v starship)" ]; then
   echo "Starship shell extension found! Let's start it!"
   if [[ "$(echo $0)" == *bash ]]; then
