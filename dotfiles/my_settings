@@ -12,6 +12,13 @@ ONE_DRIVE=$HOME/.onedrive
 # Default texlive base path
 texlive_base_path=$HOME/.texlive
 
+# Unicode Symbols
+check_symbol="\033[1;32m\u2713\033[0m"
+right_arrow_symbol="\033[1;37m\u2192\033[0m"
+
+# Line Delay
+line_delay=0.12
+
 # Basic aliases
 alias ls='ls -p -F -h --color=auto --show-control-chars'
 alias ll='ls -la'
@@ -60,16 +67,6 @@ delete_recursive ()
   done
 }
 
-# VNC stuff
-if [ -x "$(command -v vncserver)" ]; then
-  echo "** VNC server found! **"
-  echo " To start: vncstart"
-  echo " To end: vnckill"
-  echo ""
-  alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
-  alias vnckill="vncserver -kill :1"
-fi
-
 # Get Linux distro. info.
 ARCH=$(uname -m)
 KERNEL=$(uname -r)
@@ -88,28 +85,24 @@ fi
 # The homebrew path!!
 if [ -d $HBREW_PATH ]; then
   export HOMEBREW=$HBREW_PATH
-  echo "HOMEBREW directory is $HOMEBREW"
+  printf "${check_symbol} HOMEBREW directory is $HOMEBREW\n"
+  sleep ${line_delay}
   export PATH=$HOMEBREW/bin:$HOMEBREW/opt/bin:/opt/bin/:$PATH
 fi
 
 # Setting for JRE
 JAVA_HOME=/opt/java
 if [ -d $JAVA_HOME ]; then
-  echo "Java (Possibly Oracle) found at $JAVAHOME"
+  printf "${check_symbol} Java (Possibly Oracle) found at $JAVAHOME\n"
+  sleep ${line_delay}
   export PATH=$JAVA_HOME/bin:$PATH
   export CLASSPATH=$JAVA_HOME/lib
 fi
 
-# Javafx
-JAVAFX_HOME=/opt/javafx
-if [ -d $JAVAFX_HOME ]; then
-  echo "JavaFX found!"
-  export JAVAFX_HOME=/opt/javafx/lib
-fi
-
 # Rust
 if [ -d $HOME/.cargo ]; then
-  echo "Cargo directory detected at $HOME/.cargo"
+  printf "${check_symbol} Cargo directory detected at $HOME/.cargo\n"
+  sleep ${line_delay}
   # export PATH=$HOME/.cargo/bin:$PATH
   source $HOME/.cargo/env
 fi
@@ -118,13 +111,24 @@ fi
 export GOROOT=$HOMEBREW/opt/go
 export GOPATH=$HOMEBREW/opt/go/bin
 if [ -d $GOROOT ]; then
-  echo "Golang has been found at $GOROOT"
+  printf "${check_symbol} Golang has been found at $GOROOT\n"
   export PATH=$GOROOT/bin:$PATH
+fi
+
+# VNC stuff
+if [ -x "$(command -v vncserver)" ]; then
+  echo "*** VNC server found! ***"
+  echo " To start: vncstart"
+  echo " To end: vnckill"
+  echo ""
+  alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+  alias vnckill="vncserver -kill :1"
 fi
 
 # Exa
 if [ -x "$(command -v exa)" ]; then
-  echo "exa found! using it instead of ls"
+  printf "${check_symbol} exa found! using it instead of ls\n"
+  sleep ${line_delay}
   alias ls='exa -hF'
   alias ll='exa -lahF'
   alias l='exa -hF'
@@ -132,7 +136,8 @@ fi
 
 # Lsd
 if [ -x "$(command -v lsd)" ]; then
-  echo "lsd found! using it instead of ls or exa"
+  printf "${check_symbol} lsd found! using it instead of ls or exa\n"
+  sleep ${line_delay}
   alias ls='lsd -hFX'
   alias ll='lsd -lahFX'
   alias l='lsd -hFX'
@@ -140,13 +145,46 @@ fi
 
 # Bat
 if [ -x "$(command -v bat)" ]; then
-  echo "Bat found! using it instead of cat"
+  printf "${check_symbol} bat found! using it instead of cat\n"
+  sleep ${line_delay}
   alias cat='bat'
+fi
+
+# Rip
+trash_location="$HOME/.local/share/Trash/files/"
+if [ -x "$(command -v rip)" ]; then
+  printf "${check_symbol} rip, rm-improved found!\n  ${right_arrow_symbol} Setting up graveyard at $trash_location\n"
+  sleep ${line_delay}
+  alias rip="rip --graveyard $trash_location"
+fi
+
+# bpytop
+if [ -x "$(command -v $HOMEBREW/bin/pip3)" ]; then
+  if [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
+    printf "${check_symbol} Locally installed bpytop found!\n"
+    sleep ${line_delay}
+    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
+  fi
+fi
+
+# zoxide
+if [ -x "$(command -v zoxide)" ]; then
+  printf "${check_symbol} zoxide found! activating it!\n"
+  sleep ${line_delay}
+  if [[ "$(echo $0)" == *bash ]]; then
+    eval "$(zoxide init bash)"
+  elif [[ "$(echo $0)" == *zsh ]]; then
+    eval "$(zoxide init zsh)"
+  else
+    eval "$(zoxide init posix --hook prompt)"
+  fi
+  alias cd='z'
 fi
 
 # Neovim
 if [ -x "$(command -v nvim)" ]; then
-  echo "Neovim found! replacing vim!"
+  printf "${check_symbol} Neovim found! replacing vim!\n"
+  sleep ${line_delay}
   alias vim="nvim"
   alias vi="nvim"
 fi
@@ -157,31 +195,16 @@ texlive_arch=x86_64-linux
 texlive_bin_dir=$texlive_base_path/$texlive_year/bin/$texlive_arch/
 texlive_bin_dir_woyear=$texlive_base_path/bin/$texlive_arch/
 if [ -d $texlive_bin_dir ]; then
-  echo "Texlive found at $texlive_bin_dir directory!! Adding to path!"
+  printf "${check_symbol} Texlive found at $texlive_bin_dir directory!!\n"
   export PATH=$texlive_bin_dir:$PATH
 elif [ -d $texlive_bin_dir_woyear ]; then
-  echo "Texlive found at $texlive_bin_dir_woyear directory!! Adding to path!"
+  printf "${check_symbol} Texlive found at $texlive_bin_dir_woyear directory!!\n"
   export PATH=$texlive_bin_dir_woyear:$PATH
-fi
-
-# Rip
-trash_location="$HOME/.local/share/Trash/files/"
-if [ -x "$(command -v rip)" ]; then
-  echo "rip, rm-improved found! Setting up graveyard at $trash_location"
-  alias rip="rip --graveyard $trash_location"
-fi
-
-# bpytop
-if [ -x "$(command -v $HOMEBREW/bin/pip3)" ]; then
-  if [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
-    echo "Locally installed bpytop found!"
-    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
-  fi
 fi
 
 # pypy
 if [ -x "$(command -v $HOMEBREW/opt/pypy/bin/pypy3)" ]; then
-  echo "pypy3 found in $HOMEBREW/opt/pypy/bin/pypy3 !! Extending PATH!"
+  printf "${check_symbol} pypy3 found in $HOMEBREW/opt/pypy/bin/pypy3!!\n"
   export PATH=$HOMEBREW/opt/pypy/bin:$PATH
 fi
 
@@ -193,7 +216,8 @@ run_iview ()
 }
 if [ -x "$(command -v wine)" ]; then
   if [ -f "$iview64_path" ]; then
-    echo "Irfanview found!! at $iview64_path !!"
+    printf "${check_symbol} Irfanview found!!\n"
+    printf "  ${right_arrow_symbol} Usage: iview <files>\n"
     alias iview=run_iview
   fi
 fi
@@ -205,41 +229,44 @@ fi
 if [ -x "$(command -v rclone)" ]; then
 
   if [ ! -d $GOOGLE_DRIVE ]; then
-    echo "Google drive mount point not found! making one.."
+    printf "${check_symbol} Google drive mount point not found! making one..\n"
     mkdir -pv $GOOGLE_DRIVE
   fi
 
   if mountpoint -q $GOOGLE_DRIVE; then
-    echo "Google Drive already mounted at $GOOGLE_DRIVE"
+    printf "${check_symbol} Google Drive already mounted at $GOOGLE_DRIVE\n"
+    sleep ${line_delay}
   else
-    echo "Mounting Google Drive to $GOOGLE_DRIVE"
+    printf "${check_symbol} Mounting Google Drive to $GOOGLE_DRIVE\n"
     rclone mount google-drive: $GOOGLE_DRIVE &
     sleep 2
   fi
 
   if [ ! -d $ONE_DRIVE ]; then
-    echo "MS One Drive mount point not found! making one.."
+    printf "${check_symbol} MS One Drive mount point not found! making one...\n"
     mkdir -pv $ONE_DRIVE
   fi
 
   if mountpoint -q $ONE_DRIVE; then
-    echo "MS One Drive already mounted at $ONE_DRIVE"
+    printf "${check_symbol} MS One Drive already mounted at $ONE_DRIVE\n"
+    sleep ${line_delay}
   else
-    echo "Mounting MS One Drive to $ONE_DRIVE"
+    printf "${check_symbol} Mounting MS One Drive to $ONE_DRIVE\n"
     rclone mount onedrive: $ONE_DRIVE &
     sleep 2
   fi
 fi
 
 # Geolocation
-if [ -x "$(command -v jq)" ]; then
-  echo "jq found, we can use geolocation alias as: geoloc"
-  alias geoloc="curl -s https://ipvigilante.com/$(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
-fi
+# if [ -x "$(command -v jq)" ]; then
+#   echo "jq found, we can use geolocation alias as: geoloc"
+#   alias geoloc="curl -s https://ipvigilante.com/$(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
+# fi
 
 # starship
 if [ -x "$(command -v starship)" ]; then
-  echo "Starship shell extension found! Let's start it!"
+  printf "${check_symbol} Starship shell extension found! Let's start it!\n"
+  sleep ${line_delay}
   if [[ "$(echo $0)" == *bash ]]; then
     eval "$(starship init bash)"
   elif [[ "$(echo $0)" == *zsh ]]; then
@@ -247,15 +274,8 @@ if [ -x "$(command -v starship)" ]; then
   fi
 fi
 
-# zoxide
-if [ -x "$(command -v zoxide)" ]; then
-  echo "zoxide found! activating it!"
-  if [[ "$(echo $0)" == *bash ]]; then
-    eval "$(zoxide init bash)"
-  elif [[ "$(echo $0)" == *zsh ]]; then
-    eval "$(zoxide init zsh)"
-  else
-    eval "$(zoxide init posix --hook prompt)"
-  fi
-  alias cd='z'
+clear
+
+if [ -x "$(command -v neofetch)" ]; then 
+  neofetch
 fi
