@@ -201,10 +201,13 @@ cd $GZDOOM_BUILD && \
   -DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" \
   -DCMAKE_MODULE_LINKER_FLAGS="$LDFLAGS" \
   -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS" \
+  -DWITH_ASAN=ON \
+  -DWITH_UBSAN=ON \
   -DZMUSIC_INCLULDE_DIR="$PREFIX/include" \
   -DZMUSIC_LIBRARIES="$PREFIX/lib/libzmusic.so" \
   && make -j $MJOBS && \
-  cp -vf ./gzdoom $PREFIX/bin/
+  cp -vf ./gzdoom $PREFIX/bin/ && \
+  cp -vf ./*.pk3 $PREFIX/bin
 
 echo "**************************************"
 echo " GZDoom compilation done!             "
