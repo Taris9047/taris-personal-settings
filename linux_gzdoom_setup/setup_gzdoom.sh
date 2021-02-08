@@ -1,11 +1,14 @@
 #!/bin/bash
 
+# Install location
+PREFIX="$HOME/.local"
+
 # Work dirs
 CWD=`pwd -P`
 WORKSPACE="$CWD/workspace"
 SOURCE="$CWD/src"
-PREFIX="$HOME/.local"
 
+# Default compiler settings
 CC=$(command -v gcc)
 CXX=$(command -v g++)
 LDFLAGS="-Wl,-rpath=$PREFIX/lib"
@@ -56,7 +59,18 @@ case "$1" in
     exit 0
     ;;
   "--build")
-    
+    echo "Using GCC Toolset..."
+    ;;
+  "--with-clang")
+    CC=$(command -v clang)
+    CXX=$(command -v clang++)
+    if [ -x $CC ] && [ -x $CXX ]; then
+      echo "Using Clang Toolset"
+    else
+      CC=$(command -v gcc)
+      CXX=$(command -v g++)
+      echo "Clang toolset was not found! Reverting back to GCC Toolset."
+    fi
     ;;
   *)
     echo "Usage: $0"
@@ -107,18 +121,18 @@ array_to_string ()
 }
 
 Ubuntu_packages=(g++ make cmake libsdl2-dev git zlib1g-dev \
-    libbz2-dev libjpeg-dev libfluidsynth-dev libgme-dev libopenal-dev \
-    libmpg123-dev libsndfile1-dev libgtk-3-dev timidity nasm \
-    libgl1-mesa-dev tar libsdl1.2-dev libglew-dev)
+  libbz2-dev libjpeg-dev libfluidsynth-dev libgme-dev libopenal-dev \
+  libmpg123-dev libsndfile1-dev libgtk-3-dev timidity nasm \
+  libgl1-mesa-dev tar libsdl1.2-dev libglew-dev)
 
 Fedora_packages=(gcc-c++ make cmake SDL2-devel git zlib-devel bzip2-devel \
-    libjpeg-turbo-devel fluidsynth-devel game-music-emu-devel openal-soft-devel \
-    libmpg123-devel libsndfile-devel gtk3-devel timidity++ nasm \
-    mesa-libGL-devel tar SDL-devel glew-devel)
+  libjpeg-turbo-devel fluidsynth-devel game-music-emu-devel openal-soft-devel \
+  libmpg123-devel libsndfile-devel gtk3-devel timidity++ nasm \
+  mesa-libGL-devel tar SDL-devel glew-devel)
 
 Arch_packages=(gcc make cmake sdl2 git zlib bzip2 libjpeg-turbo \
-    fluidsynth libgme openal mpg123 libsndfile gtk3 timidity++ nasm \
-    mesa glu tar sdl glew)
+  fluidsynth libgme openal mpg123 libsndfile gtk3 timidity++ nasm \
+  mesa glu tar sdl glew)
 
 if [ "$MODE" == "Ubuntu" ]; then
   sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y install $( array_to_string "${Ubuntu_packages[@]}" )
@@ -201,11 +215,13 @@ cd $GZDOOM_BUILD && \
   -DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" \
   -DCMAKE_MODULE_LINKER_FLAGS="$LDFLAGS" \
   -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS" \
-  -DWITH_ASAN=ON \
-  -DWITH_UBSAN=ON \
   -DZMUSIC_INCLULDE_DIR="$PREFIX/include" \
   -DZMUSIC_LIBRARIES="$PREFIX/lib/libzmusic.so" \
-  && make -j $MJOBS && make install
+  && make -j $MJOBS
+if [ ! -w $PREFIX ]; then
+  cd $GZDOOM_BUILD && sudo make install
+else
+  cd $GZDOOM_BUILD && make install
 
 echo "**************************************"
 echo " GZDoom compilation done!             "
