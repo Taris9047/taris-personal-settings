@@ -205,9 +205,7 @@ cd $GZDOOM_BUILD && \
   -DWITH_UBSAN=ON \
   -DZMUSIC_INCLULDE_DIR="$PREFIX/include" \
   -DZMUSIC_LIBRARIES="$PREFIX/lib/libzmusic.so" \
-  && make -j $MJOBS && \
-  cp -vf ./gzdoom $PREFIX/bin/ && \
-  cp -vf ./*.pk3 $PREFIX/bin
+  && make -j $MJOBS && make install
 
 echo "**************************************"
 echo " GZDoom compilation done!             "
