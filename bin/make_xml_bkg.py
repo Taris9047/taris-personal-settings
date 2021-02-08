@@ -18,6 +18,7 @@ def display_help():
     print("Usage: make_xml_bkg.py <image_folder>")
     print("provide -h or --help option to show this message.")
 
+
 #
 # Implementing normal ring list
 #
@@ -26,25 +27,21 @@ class Node(object):
         self.next = None
         self.value = value
 
-    def Get():
+    def Get(self):
         return self.value
 
-    def Set(stuff):
+    def Set(self, stuff):
         self.value = stuff
 
-    def Next():
-        return self.next
-
-    def SetNext(node):
-        self.next = node
 
 class RList(object):
     def __init__(self):
         self.head = None
+        self.cursor = self.head
         self.size = 0
 
     def find_last(self):
-        if self.head == None:
+        if self.head is None:
             return None
 
         tmp_node = self.head
@@ -55,13 +52,14 @@ class RList(object):
                 tmp_node = tmp_node.Next()
 
     def find_target(self, target):
-        if self.head == None:
+        if self.head is None:
             raise ValueError("Oh crap, the list is empty!!")
 
         tmp = self.head
         sz = self.size
         while sz:
             if tmp.value == target:
+                self.cursor = tmp
                 return tmp
             else:
                 tmp = tmp.next
@@ -69,9 +67,10 @@ class RList(object):
         raise ValueError("Given value cannot be found!")
 
     def Append(self, value):
-        if self.head == None:
+        if self.head is None:
             self.head = Node(value)
             self.head.next = self.head
+            self.cursor = self.head
         else:
             tmp_node = self.find_last()
             tmp_node.next = Node(value)
@@ -98,7 +97,13 @@ class RList(object):
         while ind:
             tmp = tmp.next
             ind -= 1
+
+        self.cursor = tmp
         return tmp.Get()
+
+    def Next(self):
+        self.cursor = self.cursor.next
+
 
 #
 # The XML Background maker
@@ -132,8 +137,8 @@ class MakeXMLBackground(object):
         print("XML Generation Completed!!")
 
         if verbose:
-        	print(self.xml_file_string)
-        	exit(0)
+            print(self.xml_file_string)
+            exit(0)
 
         self.__save_to_file()
 
@@ -143,50 +148,50 @@ class MakeXMLBackground(object):
                 self.img_list.append(file_path)
 
     def __make_xml(self):
-    	xml_tree = ET.Element('background')
-    	st_time = ET.SubElement(xml_tree, 'starttime')
-    	yr = ET.SubElement(st_time, 'year')
-    	yr.text = "2009"
-    	mon = ET.SubElement(st_time, 'month')
-    	mon.text = "08"
-    	day = ET.SubElement(st_time, 'day')
-    	day.text = "04"
-    	hh = ET.SubElement(st_time, 'hour')
-    	hh.text = "00"
-    	mm = ET.SubElement(st_time, 'minute')
-    	mm.text = "00"
-    	sec = ET.SubElement(st_time, 'second')
-    	sec.text = "00"
+        xml_tree = ET.Element('background')
+        st_time = ET.SubElement(xml_tree, 'starttime')
+        yr = ET.SubElement(st_time, 'year')
+        yr.text = "2009"
+        mon = ET.SubElement(st_time, 'month')
+        mon.text = "08"
+        day = ET.SubElement(st_time, 'day')
+        day.text = "04"
+        hh = ET.SubElement(st_time, 'hour')
+        hh.text = "00"
+        mm = ET.SubElement(st_time, 'minute')
+        mm.text = "00"
+        sec = ET.SubElement(st_time, 'second')
+        sec.text = "00"
 
-    	# Now adding the transition crap
-    	for i, img in enumerate(self.img_list):
-    		if i == len(self.img_list)-1:
-    			img_next = self.img_list[0]
-    		else:
-    			img_next = self.img_list[i+1]
+        # Now adding the transition crap
+        for i, img in enumerate(self.img_list):
+            if i == len(self.img_list)-1:
+                img_next = self.img_list[0]
+            else:
+                img_next = self.img_list[i+1]
 
-    		static = ET.SubElement(xml_tree, 'static')
-    		dur = ET.SubElement(static, 'duration')
-    		dur.text = "{:.1f}".format(self.slideshow_setting[0])
-    		file = ET.SubElement(static, 'file')
-    		file.text = img
+            static = ET.SubElement(xml_tree, 'static')
+            dur = ET.SubElement(static, 'duration')
+            dur.text = "{:.1f}".format(self.slideshow_setting[0])
+            file = ET.SubElement(static, 'file')
+            file.text = img
 
-    		tran = ET.SubElement(xml_tree, 'transition')
-    		tran.text = "{:.1f}".format(self.slideshow_setting[1])
-    		fr = ET.SubElement(tran, 'from')
-    		fr.text = img
-    		to_ = ET.SubElement(tran, 'to')
-    		to_.text = img_next
+            tran = ET.SubElement(xml_tree, 'transition')
+            tran.text = "{:.1f}".format(self.slideshow_setting[1])
+            fr = ET.SubElement(tran, 'from')
+            fr.text = img
+            to_ = ET.SubElement(tran, 'to')
+            to_.text = img_next
 
-    	self.xml_file_string = \
-    		mdom.parseString(ET.tostring(xml_tree)).toprettyxml()
+        self.xml_file_string = \
+            mdom.parseString(ET.tostring(xml_tree)).toprettyxml()
 
     def __save_to_file(self):
-    	with open(self.outf_name, 'w') as fp:
-    		fp.write(self.xml_file_string)
+        with open(self.outf_name, 'w') as fp:
+            fp.write(self.xml_file_string)
 
-    	print("Dynamic Background XML saved at...")
-    	print(os.path.realpath(self.outf_name))
+        print("Dynamic Background XML saved at...")
+        print(os.path.realpath(self.outf_name))
 
 
 #
@@ -196,18 +201,18 @@ if __name__ == "__main__":
     # Default image directory is where you are at.
     image_dir = os.getcwd()
 
+    outfile_name = def_outf_name
     if len(sys.argv) > 1:
         if '-h' in sys.argv or '--help' in sys.argv:
             display_help()
             sys.exit(0)
 
-        outf_name = def_outf_name
         if '-o' in sys.argv:
             ind_o = sys.argv.index('-o')
             if sys.argv.size <= ind_o + 1:
                 print("Input file is needed!")
                 sys.exit(-1)
-            output_file = sys.argv[ind_o+1]
+            outfile_name = sys.argv[ind_o+1]
 
         image_dir = os.path.realpath(sys.argv[1])
 
@@ -218,4 +223,4 @@ if __name__ == "__main__":
     print("Image directory has been set:")
     print(image_dir)
 
-    mxb = MakeXMLBackground(image_dir, outf_name=output_file)
+    mxb = MakeXMLBackground(image_dir, outf_name=outfile_name)
