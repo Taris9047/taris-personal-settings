@@ -168,7 +168,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
   MJOBS=$(sysctl -n machdep.cpu.thread_count)
   CONFIGURE_OPTIONS+=("--enable-videotoolbox")
 else
-    MJOBS=4
+  MJOBS=4
 fi
 echo ">> Number of jobs set for $MJOBS"
 
@@ -197,7 +197,8 @@ if [ ! -f $WORKSPACE/ZMusic.lck ]; then
     -DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" \
     -DCMAKE_MODULE_LINKER_FLAGS="$LDFLAGS" \
     -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS" \
-    cp -vfr ./zdl $PREFIX/bin/
+    && make -j $MJOBS \
+    && make install
   touch $WORKSPACE/ZMusic.lck
 else
   echo "ZMusic.lck found! Skipping."
@@ -253,12 +254,8 @@ if [ ! -f $WORKSPACE/zdl.lck ]; then
     -DCMAKE_CXX_COMPILER="$(command -v g++)" \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" \
-    && make -j $MJOBS
-  if [ ! -w $PREFIX ]; then
-    cd $ZDL_BUILD && sudo make install
-  else
-    cd $ZDL_BUILD && make install
-  fi
+    && make -j $MJOBS && \
+    cp -vfr ./zdl $PREFIX/bin/
   touch $WORKSPACE/zdl.lck
 else
   echo "zdl.lck found! skipping!"

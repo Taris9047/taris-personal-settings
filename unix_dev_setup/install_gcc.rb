@@ -14,7 +14,7 @@ class InstGCC < InstallStuff
 
     super('gcc', prefix, work_dirs, verbose_mode=verbose_mode)
 
-    @source_url = SRC_URL['gcc']
+    @source_url = SRC_URL[@pkgname]
 
     @conf_options = [
       "--enable-languages=c,c++,fortran,objc,obj-c++",
@@ -58,6 +58,7 @@ class InstGCC < InstallStuff
       return 0
     end
 
+    puts "Downloading src from #{@source_url}"
     dl = Download.new(@source_url, @src_dir)
     source_file = dl.GetPath()
     fp = FNParser.new(source_file)
@@ -100,8 +101,8 @@ class InstGCC < InstallStuff
       "&&",
       File.realpath(extracted_src_dir)+"/configure",
       opts.join(" "),
-      "&& make -j",@Processors.to_s,"bootstrap",
-      "&& make -j",@Processors.to_s,
+      "&& make -j", @Processors.to_s, "bootstrap",
+      "&& make -j", @Processors.to_s,
       inst_cmd
     ]
 
@@ -122,7 +123,7 @@ class InstGCCCuda < InstGCC
     super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
 
     @pkgname = 'cudacc'
-    @source_url = SRC_URL['cudacc']
+    @source_url = SRC_URL[@pkgname]
 
     @conf_options = [
       "--program-suffix=-cuda",
@@ -157,7 +158,6 @@ end # class InstGCCCuda
 
 
 class InstGCCOld < InstGCC
-
 
   def initialize (prefix='/usr/local', os_type='Ubuntu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
 
