@@ -45,7 +45,7 @@ execute () {
   if [ $? -ne 0 ]; then
     echo "$OUTPUT"
     echo ""
-    echo "Failed to Execute $*" >&2
+    echo " Failed to Execute $*" >&2
     exit 1
   fi
 }
@@ -75,6 +75,7 @@ case "$1" in
   *)
     echo "Usage: $0"
     echo "  --build: start building stuff."
+    echo "  --with-clang: build with clang. Except ZDL."
     echo "  --cleanup: remove all source files and build artifacts."
     echo "  --help: show this message."
     echo ""
@@ -82,6 +83,14 @@ case "$1" in
     ;;
 esac
 
+# LOGO
+echo "***************************************************"
+echo "*                                                 *"
+echo "* GZDoom hombrew script for Linux.                *"
+echo "* Only tested on Ubuntu 20.04 based distro.       *"
+echo "*                                                 *"
+echo "***************************************************"
+echo ""
 
 # Installing prereqs.
 echo "***************************************************"
@@ -123,16 +132,16 @@ array_to_string ()
 Ubuntu_packages=(g++ make cmake libsdl2-dev git zlib1g-dev \
   libbz2-dev libjpeg-dev libfluidsynth-dev libgme-dev libopenal-dev \
   libmpg123-dev libsndfile1-dev libgtk-3-dev timidity nasm \
-  libgl1-mesa-dev tar libsdl1.2-dev libglew-dev)
+  libgl1-mesa-dev tar libsdl1.2-dev libglew-dev qtbase5-dev)
 
 Fedora_packages=(gcc-c++ make cmake SDL2-devel git zlib-devel bzip2-devel \
   libjpeg-turbo-devel fluidsynth-devel game-music-emu-devel openal-soft-devel \
   libmpg123-devel libsndfile-devel gtk3-devel timidity++ nasm \
-  mesa-libGL-devel tar SDL-devel glew-devel)
+  mesa-libGL-devel tar SDL-devel glew-devel qt5-qtbase qt5-qtbase-devel)
 
 Arch_packages=(gcc make cmake sdl2 git zlib bzip2 libjpeg-turbo \
   fluidsynth libgme openal mpg123 libsndfile gtk3 timidity++ nasm \
-  mesa glu tar sdl glew)
+  mesa glu tar sdl glew qt5-base qt5-tools)
 
 if [ "$MODE" == "Ubuntu" ]; then
   sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y install $( array_to_string "${Ubuntu_packages[@]}" )
@@ -171,61 +180,95 @@ echo ""
 echo ">>>>> Working on ZMusic"
 echo ""
 
-ZMUSIC_SRC="$SOURCE/ZMusic"
-ZMUSIC_BUILD="$WORKSPACE/ZMusic"
-execute cd $SOURCE && git clone https://github.com/coelckers/ZMusic.git $ZMUSIC_SRC
-
-if [ -d $ZMUSIC_BUILD ]; then
+ZMUSIC_SRC="$SOURCE/ZMusic-src"
+ZMUSIC_BUILD="$WORKSPACE/ZMusic-build"
+if [ ! -f $WORKSPACE/ZMusic.lck ]; then
+  execute cd $SOURCE && git clone https://github.com/coelckers/ZMusic.git $ZMUSIC_SRC
   remove_dir $ZMUSIC_BUILD
+  make_dir $ZMUSIC_BUILD
+  cd $ZMUSIC_BUILD && \
+    cmake $ZMUSIC_SRC \
+    -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+    -DCMAKE_C_COMPILER="$CC" \
+    -DCMAKE_CXX_COMPILER="$CXX" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_FLAGS="$CFLAGS" \
+    -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
+    -DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" \
+    -DCMAKE_MODULE_LINKER_FLAGS="$LDFLAGS" \
+    -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS" \
+    cp -vfr ./zdl $PREFIX/bin/
+  touch $WORKSPACE/ZMusic.lck
+else
+  echo "ZMusic.lck found! Skipping."
 fi
-make_dir $ZMUSIC_BUILD
-
-cd $ZMUSIC_BUILD && \
-  cmake $ZMUSIC_SRC \
-  -DCMAKE_INSTALL_PREFIX="$PREFIX" \
-  -DCMAKE_C_COMPILER="$CC" \
-  -DCMAKE_CXX_COMPILER="$CXX" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_C_FLAGS="$CFLAGS" \
-  -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
-  -DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" \
-  -DCMAKE_MODULE_LINKER_FLAGS="$LDFLAGS" \
-  -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS" \
-   && make -j $MJOBS && make install
 
 # Then the GZDoom itself!
 echo ""
 echo ">>>>> Working on GZDoom!!"
 echo ""
 
-GZDOOM_SRC="$SOURCE/gzdoom"
-GZDOOM_BUILD="$WORKSPACE/gzdoom"
-cd $SOURCE && git clone git://github.com/coelckers/gzdoom.git $GZDOOM_SRC
-cd $GZDOOM_SRC && git config --local --add remote.origin.fetch +refs/tags/*:refs/tags/* && git pull
-remove_dir $GZDOOM_BUILD
-make_dir $GZDOOM_BUILD
-cd $GZDOOM_BUILD && \
-  cmake $GZDOOM_SRC \
-  -DCMAKE_INSTALL_PREFIX="$PREFIX" \
-  -DCMAKE_C_COMPILER="$CC" \
-  -DCMAKE_CXX_COMPILER="$CXX" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_C_FLAGS="$CFLAGS" \
-  -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
-  -DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" \
-  -DCMAKE_MODULE_LINKER_FLAGS="$LDFLAGS" \
-  -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS" \
-  -DZMUSIC_INCLULDE_DIR="$PREFIX/include" \
-  -DZMUSIC_LIBRARIES="$PREFIX/lib/libzmusic.so" \
-  && make -j $MJOBS
-if [ ! -w $PREFIX ]; then
-  cd $GZDOOM_BUILD && sudo make install
+GZDOOM_SRC="$SOURCE/gzdoom-src"
+GZDOOM_BUILD="$WORKSPACE/gzdoom-build"
+if [ ! -f $WORKSPACE/gzdoom.lck ]; then
+  cd $SOURCE && git clone git://github.com/coelckers/gzdoom.git $GZDOOM_SRC
+  cd $GZDOOM_SRC && git config --local --add remote.origin.fetch +refs/tags/*:refs/tags/* && git pull
+  remove_dir $GZDOOM_BUILD
+  make_dir $GZDOOM_BUILD
+  cd $GZDOOM_BUILD && \
+    cmake $GZDOOM_SRC \
+    -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+    -DCMAKE_C_COMPILER="$CC" \
+    -DCMAKE_CXX_COMPILER="$CXX" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_FLAGS="$CFLAGS" \
+    -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
+    -DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" \
+    -DCMAKE_MODULE_LINKER_FLAGS="$LDFLAGS" \
+    -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS" \
+    -DZMUSIC_INCLULDE_DIR="$PREFIX/include" \
+    -DZMUSIC_LIBRARIES="$PREFIX/lib/libzmusic.so" \
+    && make -j $MJOBS
+  if [ ! -w $PREFIX ]; then
+    cd $GZDOOM_BUILD && sudo make install
+  else
+    cd $GZDOOM_BUILD && make install
+  fi
+  touch $WORKSPACE/gzdoom.lck
 else
-  cd $GZDOOM_BUILD && make install
+  echo "gzdoom.lck found! skipping..."
+fi
 
-echo "**************************************"
-echo " GZDoom compilation done!             "
-echo " Prepare some front-end program (ZDL) "
-echo " to run any mod properly!             "
-echo "**************************************"
+# Working on ZDL
+ZDL_SRC="$SOURCE/zdl-src"
+ZDL_BUILD="$WORKSPACE/zdl-build"
+if [ ! -f $WORKSPACE/zdl.lck ]; then
+  cd $SOURCE && git clone https://github.com/qbasicer/qzdl.git $ZDL_SRC
+  remove_dir $ZDL_BUILD
+  make_dir $ZDL_BUILD
+  cd $ZDL_BUILD && \
+    cmake $ZDL_SRC \
+    -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+    -DCMAKE_C_COMPILER="$(command -v gcc)" \
+    -DCMAKE_CXX_COMPILER="$(command -v g++)" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" \
+    && make -j $MJOBS
+  if [ ! -w $PREFIX ]; then
+    cd $ZDL_BUILD && sudo make install
+  else
+    cd $ZDL_BUILD && make install
+  fi
+  touch $WORKSPACE/zdl.lck
+else
+  echo "zdl.lck found! skipping!"
+fi
+
+echo "***************************************************"
+echo "*                                                 *"
+echo "* GZDoom/ZDL(Qt) compilation done!                *"
+echo "*                                                 *"
+echo "* Have fun setting them up!!!!!                   *"
+echo "*                                                 *"
+echo "***************************************************"
 echo ""
