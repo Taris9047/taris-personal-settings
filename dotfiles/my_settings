@@ -164,6 +164,8 @@ if [ -x "$(command -v $HOMEBREW/bin/pip3)" ]; then
     printf "${check_symbol} Locally installed bpytop found!\n"
     sleep ${line_delay}
     alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
+	alias htop=bpytop
+	alias top=bpytop
   fi
 fi
 
