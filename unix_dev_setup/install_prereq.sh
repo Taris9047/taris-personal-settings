@@ -4,12 +4,19 @@
 # TODO: Need to populate proper package list for Fedora and Arch
 #
 
-DISTRO="$(lsb_release -is)"
-if [ -z $DISTRO ]; then
-  echo "Cannot determine distro. of current OS."
-  echo "Exiting..."
-  exit 0
+if [ -x "$(command -v lsb_release)" ]; then
+  DISTRO="$(lsb_release -is)"
+  if [ -z $DISTRO ]; then
+    echo "Cannot determine distro. of current OS."
+    echo "Exiting..."
+    exit 0
+  fi
+else
+  IN=$(grep '^NAME' /etc/os-release)
+  arrIN=(${IN//=/ })
+  DISTRO=${arrIN[1]}
 fi
+
 
 # Some Distro information
 Ubuntu_base=("Ubuntu" "Linuxmint")
@@ -107,7 +114,7 @@ Fedora_packages=( \
   "tk-devel" \
   "bzip2-libs" \
   "openblas" \
-  "cblas" \
+  "blas" \
   "lapack" \
   "zlib" \
   "emacs" \
