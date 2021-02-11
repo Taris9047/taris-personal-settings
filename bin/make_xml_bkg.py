@@ -209,8 +209,8 @@ if __name__ == "__main__":
 
         if '-o' in sys.argv:
             ind_o = sys.argv.index('-o')
-            if sys.argv.size <= ind_o + 1:
-                print("Input file is needed!")
+            if len(sys.argv) <= ind_o + 1:
+                print("Output filename with full path is needed!")
                 sys.exit(-1)
             outfile_name = sys.argv[ind_o+1]
 

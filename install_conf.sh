@@ -1,5 +1,6 @@
 #!/bin/bash
 USR_DIR=$HOME
+HOMEBREW=$HOME/.local
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd -P )"
 echo "Target directory: ${USR_DIR}"
 echo "Source directory: ${CURRENT_DIR}"

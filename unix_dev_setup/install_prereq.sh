@@ -133,6 +133,8 @@ Fedora_packages=( \
   "wget" \
   "curl" \
   "valgrind" \
+  "valgrind-devel" \
+  "vim" \
   "neovim" \
   "screen" \
   "ninja-build" \

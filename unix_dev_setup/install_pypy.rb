@@ -13,7 +13,7 @@ require './src_urls.rb'
 require 'open3'
 
 $pypy_modules = [
-  'numpy', 'scipy', 'matplotlib', 'mercurial',
+  'numpy', 'scipy', 'matplotlib',
   'pycparser', 'sympy', 'nose'
 ]
 
