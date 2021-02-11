@@ -113,16 +113,29 @@ Fedora_packages=( \
   "cmake" \
   "tk-devel" \
   "bzip2-libs" \
+  "libffi-devel" \
+  "numactl-devel" \
+  "xz-devel" \
+  "expat-devel" \
   "openblas" \
   "blas" \
   "lapack" \
+  "sqlite" \
+  "sqlite-devel" \
+  "sqlite-tcl" \
   "zlib" \
+  "zlib-devel" \
   "emacs" \
   "subversion" \
   "git" \
+  "git-lfs" \
+  "doxygen" \
   "wget" \
   "curl" \
   "valgrind" \
+  "neovim" \
+  "screen" \
+  "ninja-build" \
   "neofetch" \
   )
 
