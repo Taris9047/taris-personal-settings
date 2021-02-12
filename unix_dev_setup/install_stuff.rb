@@ -120,15 +120,15 @@ class InstallStuff
   def __run_verbose( env, cmds, opts )
     o = []
     e = []
-    Open3.popen3( env, cmds ) do |stdin, stdout, stderr, wait_thr|
+    Open3.popen2e( env, cmds ) do |stdin, stdout_err, wait_thr|
       Thread.new do
-        stdout.each do |l|
+        stdout_err.each do |l|
           puts l
-          stdout.flush
+          stdout_err.flush
           o.append(l)
         end
-        stderr.each {|l| e.append(l)}
       end
+      stdin.close
       wait_thr.value
     end
 
