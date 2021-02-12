@@ -39,7 +39,9 @@ list_of_progs = [
   'golang',
 ]
 
-list_of_all = list_of_progs - ['pypy3', 'clang']
+$not_so_stable_pkgs = ['pypy3', 'clang']
+
+list_of_all = list_of_progs - $not_so_stable_pkgs
 
 aliases = {
   'gcc-old' => 'gccold',
@@ -61,9 +63,21 @@ $permitted_list += $opt_list
 
 # Help message
 def show_help
-  puts "Usage: ./unix_dev_setup.rb <params>"
+  puts "Usage: ./unix_dev_setup.rb <params_or_installable_pkgs>"
   puts "<params> can be:"
+  puts $opt_list.join(', ')
+  puts " --use-clang: Some packages can be built with clang."
+  puts " -v,--verbose: Make it loud!"
+  puts " --purge: deletes everything before installing any package including pkginfo dir."
+  puts " --clean: deletes working dirs before installing any package"
+  puts " clean: deletes working dirs"
+  puts " purge: purges all the working dirs including pkginfo dir."
+  puts " --version: displays version info."
+  puts "<installable_pkgs> can be:"
   puts $permitted_list.join(', ')
+  puts "Some packages are not very stable at the moment:"
+  puts $not_so_stable_pkgs.join(', ')
+  puts "More packages are coming!! Stay tuned!!"
 end
 
 # Included clang back into the list. Now it compiles fine!
