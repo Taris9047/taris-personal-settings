@@ -118,7 +118,9 @@ Fedora_packages=( \
   "xz-devel" \
   "expat-devel" \
   "openblas" \
+  "openblas-devel" \
   "blas" \
+  "blas-devel" \
   "lapack" \
   "sqlite" \
   "sqlite-devel" \
@@ -131,6 +133,7 @@ Fedora_packages=( \
   "libXft-devel" \
   "libXext-devel" \
   "libXt-devel" \
+  "openssl" \
   "openssl-devel" \
   "redhat-lsb-core" \
   "gcc-gfortran" \
