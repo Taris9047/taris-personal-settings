@@ -39,6 +39,8 @@ list_of_progs = [
   'golang',
 ]
 
+list_of_all = list_of_progs - ['pypy3', 'clang']
+
 aliases = {
   'gcc-old' => 'gccold',
   'gcc-cuda' => 'cudacc',
@@ -50,10 +52,12 @@ aliases = {
   'root' => 'ROOT',
   'MPICH' => 'mpich',
   'go' => 'golang',
+  'all' => list_of_all,
 }
 
 $permitted_list = list_of_progs + aliases.keys
-$permitted_list += ['--use-clang', 'prereq', '-v', '--verbose', 'purge', '--purge', 'clean', '--clean', '--version']
+$opt_list = ['--use-clang', 'prereq', '-v', '--verbose', 'purge', '--purge', 'clean', '--clean', '--version']
+$permitted_list += $opt_list
 
 # Help message
 def show_help
@@ -64,33 +68,27 @@ end
 
 # Included clang back into the list. Now it compiles fine!
 # --enable-default-pie was the key!
-exclude_for_all = [ 'pypy3' ]
-
 flag_wrong_pkg_given = false
 wrong_pkgs = []
 
-all_install_list = list_of_progs
-for excl in exclude_for_all
-  all_install_list.delete(excl)
-end
 # Setting up operatnion mode
-op_mode = nil
+op_mode_list = []
 if ARGV.empty?
-  op_mode_list = all_install_list
-elsif ARGV.include?('all')
-  op_mode_list = all_install_list
-  op_mode_list.delete('all')
+  op_mode_list = list_of_all
 else
   op_mode_list = ARGV
 end
 
 # Cleaning up op_mode_list with aliases
-alias_keys = aliases.keys
-for k in alias_keys
+for k in aliases.keys
   if op_mode_list.include?(k)
-    ind = op_mode_list.index(k)
-    op_mode_list[ind] = aliases[k]
-    puts "Package #{k} was an alias of #{aliases[k]}. Refined the list."
+    if aliases[k].instance_of? String
+      ind_of_k = op_mode_list.index(k)
+      op_mode_list[ind_of_k] = aliases[k]
+    elsif aliases[k].instance_of? Array
+      op_mode_list.delete(k)
+      op_mode_list += aliases[k]
+    end
   end
 end
 
@@ -123,12 +121,12 @@ end
 require 'fileutils'
 
 work_dir_path = "./build"
-puts work_dir_path
 unless File.directory?(work_dir_path)
   puts work_dir_path+" not found, making one..."
   FileUtils.mkdir_p(work_dir_path)
 end
 work_dir = File.realpath(work_dir_path)
+puts "Working directory will be: #{work_dir}"
 
 source_dir_path = "./src"
 unless File.directory?(source_dir_path)
@@ -136,6 +134,7 @@ unless File.directory?(source_dir_path)
   FileUtils.mkdir_p(source_dir_path)
 end
 source_dir = File.realpath(source_dir_path)
+puts "Source directory will be: #{source_dir}"
 
 pkginfo_dir_path = "./pkginfo"
 unless File.directory?(pkginfo_dir_path)
@@ -143,6 +142,7 @@ unless File.directory?(pkginfo_dir_path)
   FileUtils.mkdir_p(pkginfo_dir_path)
 end
 pkginfo_dir = File.realpath(pkginfo_dir_path)
+puts "Package information directory will be: #{pkginfo_dir}"
 
 work_dirs = [work_dir, source_dir, pkginfo_dir]
 
@@ -161,6 +161,7 @@ puts ""
 #
 clang_mode = false
 if op_mode_list.include?('--use-clang')
+  puts "Clang mode turned on. Some packages will be compiled with system llvm-clang."
   clang_mode = true
   op_mode_list.delete('--use-clang')
 end

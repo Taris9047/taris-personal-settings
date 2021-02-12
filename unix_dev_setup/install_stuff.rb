@@ -107,12 +107,14 @@ class InstallStuff
     fp.close
     # puts "Log file for #{@pkgname} has been saved at #{log_file_name}"
 
-    # unless s.success?
-    #   puts "*** Execution ended up with an error!! ***"
-    #   puts e
-    #   # TODO: Implement some error handling stuff
-    #   exit(-1)
-    # end
+    if !s.success?
+      puts "Execution ended with error!"
+      puts "ENV=#{env}"
+      puts "Command=#{cmds}"
+      puts ""
+      puts "Check #{log_file} for details..."
+      exit(-1)
+    end
 
     return 0
   end
@@ -120,6 +122,7 @@ class InstallStuff
   def __run_verbose( env, cmds, opts )
     o = []
     e = []
+    s = NIL
     Open3.popen2e( env, cmds ) do |stdin, stdout_err, wait_thr|
       Thread.new do
         stdout_err.each do |l|
@@ -129,7 +132,7 @@ class InstallStuff
         end
       end
       stdin.close
-      wait_thr.value
+      s = wait_thr.value
     end
 
     log_file_name = @pkgname+'.log'
@@ -145,14 +148,15 @@ class InstallStuff
     end
     fp.puts(o.join("\n"))
     fp.close
-    # puts "Log file for #{@pkgname} has been saved at #{log_file_name}"
 
-    # unless e.empty?
-    #   puts "*** Execution ended up with an error!! ***"
-    #   puts e.join("\n")
-    #   # TODO: Implement some error handling stuff
-    #   exit(-1)
-    # end
+    if !s.success?
+      puts "Execution ended with error!"
+      puts "ENV=#{env}"
+      puts "Command=#{cmds}"
+      puts ""
+      puts "Check #{log_file} for details..."
+      exit(-1)
+    end
 
     return 0
   end

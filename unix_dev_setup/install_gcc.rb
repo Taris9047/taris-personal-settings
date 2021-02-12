@@ -38,6 +38,7 @@ class InstGCC < InstallStuff
 
     @os_type=os_type
     @need_sudo=need_sudo
+    @verbose = verbose_mode
 
   end
 
@@ -178,6 +179,7 @@ class InstGCCCuda < InstGCC
     }
 
     @need_sudo=need_sudo
+    @verbose = verbose_mode
 
   end
 
@@ -219,6 +221,7 @@ class InstGCCOld < InstGCC
     }
 
     @need_sudo=need_sudo
+    @verbose = verbose_mode
 
   end
 
