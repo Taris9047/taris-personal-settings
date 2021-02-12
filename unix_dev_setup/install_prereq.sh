@@ -111,6 +111,9 @@ Fedora_packages=( \
   "ruby" \
   "ruby-devel" \
   "cmake" \
+  "cmake-gui" \
+  "libuuid" \
+  "libuuid-devel" \
   "tk-devel" \
   "bzip2-libs" \
   "libffi-devel" \

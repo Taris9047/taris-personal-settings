@@ -42,9 +42,9 @@ class InstROOT < InstallStuff
     self.Run( "mkdir -p "+@build_dir )
 
     if @need_sudo
-      inst_cmd = "sudo ninja install"
+      inst_cmd = "sudo make install"
     else
-      inst_cmd = "ninja install"
+      inst_cmd = "make install"
     end
 
     # Setting up compilers
@@ -57,30 +57,27 @@ class InstROOT < InstallStuff
     inst_prefix_opt = [ "-DCMAKE_INSTALL_PREFIX:PATH=#{@prefix}" ]
 
     cmake_opts = [
-      "-Wno-dev",
-      "-G Ninja",
       "-DCMAKE_BUILD_TYPE=Release",
       "-DLLVM_BUILD_TYPE=Release",
-      "-Dopengl=ON",
-      "-Drpath=ON"
+      "-DPython3_EXECUTABLE=#{@prefix}/bin/python3",
     ]
 
     config_cmd = [
-    	"cd",
-    	@build_dir,
-    	"&&",
-    	"cmake",
+      "cd",
+      @build_dir,
+      "&&",
+      "cmake",
       @src_dir,
-    	inst_prefix_opt,
+      inst_prefix_opt,
       cmake_opts.join(' '),
-    	comp_settings.join(' '),
+      comp_settings.join(' '),
     ]
 
     compile_cmd = [
       "cd",
       @build_dir,
       "&&",
-      "ninja",
+      "make -j #{@Processors}",
       "&&",
       inst_cmd
     ]
