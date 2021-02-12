@@ -10,6 +10,12 @@ def_prefix = File.join(home_dir, "/.local")
 # def_prefix = File.join("/usr/local")
 def_system = "Linux"
 
+# Version
+version = ['1', '0', '0']
+
+# title
+title = "Unix Development Environment setup"
+
 # Verbose mode? Default: false
 verbose = false
 
@@ -46,6 +52,16 @@ aliases = {
   'go' => 'golang',
 }
 
+$permitted_list = list_of_progs + aliases.keys
+$permitted_list += ['--use-clang', 'prereq', '-v', '--verbose', 'purge', '--purge', 'clean', '--clean', '--version']
+
+# Help message
+def show_help
+  puts "Usage: ./unix_dev_setup.rb <params>"
+  puts "<params> can be:"
+  puts $permitted_list.join(', ')
+end
+
 # Included clang back into the list. Now it compiles fine!
 # --enable-default-pie was the key!
 exclude_for_all = [ 'pypy3' ]
@@ -78,12 +94,17 @@ for k in alias_keys
   end
 end
 
+if op_mode_list.include?('--version')
+  puts "(UDE set) #{title} Ver. #{version.join('.')}"
+  exit(0)
+end
+
 # Main title banner
 puts "******************************************"
-puts "***                                    ***"
-puts "*** Unix development environment setup ***"
-puts "***                                    ***"
-puts "***                                    ***"
+puts "                                    "
+puts " #{title}"
+puts " Version (#{version.join('.')})"
+puts "                                   "
 puts "******************************************"
 
 # Handling Verbose mode
@@ -186,6 +207,14 @@ if op_mode_list.include?('prereq')
   puts "========================================================="
   puts ""
   exit(0)
+end
+
+# When some stupid parameter was given...
+for o in op_mode_list
+  if !$permitted_list.include?(o)
+    show_help
+    exit(0)
+  end
 end
 
 # Resolving dependencies
