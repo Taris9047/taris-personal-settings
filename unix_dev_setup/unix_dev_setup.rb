@@ -64,6 +64,7 @@ $permitted_list += $opt_list
 # Help message
 def show_help
   puts "Usage: ./unix_dev_setup.rb <params_or_installable_pkgs>"
+  puts ""
   puts "<params> can be:"
   puts $opt_list.join(', ')
   puts " --use-clang: Some packages can be built with clang."
@@ -73,10 +74,13 @@ def show_help
   puts " clean: deletes working dirs"
   puts " purge: purges all the working dirs including pkginfo dir."
   puts " --version: displays version info."
+  puts ""
   puts "<installable_pkgs> can be:"
-  puts $permitted_list.join(', ')
+  puts ($permitted_list-$opt_list).join(', ')
+  puts ""
   puts "Some packages are not very stable at the moment:"
   puts $not_so_stable_pkgs.join(', ')
+  puts ""
   puts "More packages are coming!! Stay tuned!!"
 end
 
