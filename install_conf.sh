@@ -22,12 +22,11 @@ function set_os_type ()
   elif [[ "$UNAMESTR" == *"darwin"* ]]; then
     PLATFORM="darwin"
   fi
-  echo $PLATFORM
+  echo "Setting platform as: $PLATFORM"
 }
 
 # Set OS Type
 set_os_type
-echo "Setting platform as: $PLATFORM"
 
 # Config Files
 CONF_LIST=("vim" "vimrc" "emacs" "gitignore" "gitconfig" "gdbinit")
@@ -90,36 +89,41 @@ done
 
 
 echo ""
-echo "**** Note ****"
+echo "**** Installing shell environments ****"
 # Importing bash settings
 DOTFILESDIR=$CURRENT_DIR"/dotfiles"
 LINUXBASHFILE="$DOTFILESDIR"/bashrc_linux
 LINUXZSHFILE="$DOTFILESDIR"/zshrc_linux
 DARWINBASHFILE="$DOTFILESDIR"/bash_profile_osx
 DARWINZSHFILE="$DOTFILESDIR"/zshrc_osx
-SHELL_TYPE="$(echo $0)"
+SHELL_TYPE="$(echo $SHELL)"
 
 # Now install the shell environments!!
 if [[ "$PLATFORM" == "linux" ]]; then
-  if [[ "$SHELL_TYPE" == "bash" ]]; then
-    echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
-    echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
-  elif [[ "$SHELL_TYPE" == "zsh" ]]; then
-    echo "Appending $HOME/.zshrc with $LINUXZSHFILE"
-    echo "source $LINUXZSHFILE" >> "$HOME/.zshrc"
-  elif [[ "$PLATFORM" == "cygwin" ]]; then
-    echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
-    echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
-  elif [[ "$PLATFORM" == "darwin" ]]; then
-    if [[ "$SHELL_TYPE" == "bash" ]]; then
-      echo "Appending $HOME/.bash_profile with $DARWINBASHFILE"
-      echo "source $DARWINBASHFILE" >> "$HOME/.bash_profile"
-    elif [[ "$SHELL_TYPE" == "zsh" ]]; then
-      touch "$HOME/.zshrc"
-      echo "source $DARWINBASHFILE" >> "$HOME/.zshrc"
-      echo "Appending $HOME/.zshrc with $DARWINZSHFILE"
-    fi
+  if [ ! -f $HOME/.bashrc ]; then
+    touch $HOME/.bashrc
   fi
+  echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
+  echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
+  if [ ! -f $HOME/.zshrc ]; then
+	touch "$HOME/.zshrc"
+  fi
+  echo "Appending $HOME/.zshrc with $LINUXZSHFILE"
+  echo "source $LINUXZSHFILE" >> "$HOME/.zshrc"
+elif [[ "$PLATFORM" == "cygwin" ]]; then 
+  echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
+  echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
+elif [[ "$PLATFORM" == "darwin" ]]; then
+  if [ ! -f $HOME/.bash_profile ]; then
+    touch $HOME/.bash_profile
+  fi
+  echo "Appending $HOME/.bash_profile with $DARWINBASHFILE"
+  echo "source $DARWINBASHFILE" >> "$HOME/.bash_profile"
+  if [ ! -f $HOME/.zshrc ]; then
+    touch "$HOME/.zshrc"
+  fi
+  echo "source $DARWINBASHFILE" >> "$HOME/.zshrc"
+  echo "Appending $HOME/.zshrc with $DARWINZSHFILE"
 fi
 
 echo ""
