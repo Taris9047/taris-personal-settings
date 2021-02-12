@@ -125,6 +125,27 @@ Fedora_packages=( \
   "sqlite-tcl" \
   "zlib" \
   "zlib-devel" \
+  "binutils" \
+  "libX11-devel" \
+  "libXpm-devel" \
+  "libXft-devel" \
+  "libXext-devel" \
+  "openssl-devel" \
+  "redhat-lsb-core" \
+  "gcc-gfortran" \
+  "pcre-devel" \
+  "mesa-libGL-devel" \
+  "mesa-libGLU-devel" \
+  "glew-devel" \
+  "ftgl-devel" \
+  "mysql-devel" \
+  "fftw-devel" \
+  "cfitsio-devel" \
+  "graphviz-devel" \
+  "avahi-compat-libdns_sd-devel" \
+  "openldap-devel" \
+  "libxml2-devel" \
+  "gsl-devel" \
   "emacs" \
   "subversion" \
   "git" \
