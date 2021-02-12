@@ -45,6 +45,16 @@ class InstGCC < InstallStuff
     @pkginfo_file=File.join(@pkginfo_dir, @pkgname+'.info')
 
     self.GetSrcVer
+    if @pkgname == 'gcc'
+      o, e, s = Open3.capture3('echo $(/usr/bin/gcc --version)')
+      ver_str = o.split(' ')[2]
+      ver_system_gcc = Version.new(ver_str)
+      if ver_system_gcc >= @ver_source
+        puts "Looks like system gcc is new enough! Skipping!"
+        self.WriteInfo_system(ver_system_gcc)
+        return 0
+      end
+    end
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
@@ -111,6 +121,27 @@ class InstGCC < InstallStuff
     self.Run( @env, cmd.join(" ") )
 
     self.WriteInfo
+  end
+
+  def WriteInfo_system(ver_system_gcc)
+    puts "Writing package info for #{@pkgname}..."
+    fp = File.open(@pkginfo_file, 'w')
+    env_str = @env.map{|k,v| "{k}={v}".gsub('{k}', k).gsub('{v}', v)}.join("\n")
+
+    o, e, s = Open3.capture3('echo $(gcc -v)')
+    conf_options_str = o
+
+    fnp = FNParser.new(@source_url)
+    compile_info_json = {
+      "Package Name" => @pkgname,
+      "Source file URL" => 'system_package_manager',
+      "Version" => ver_system_gcc.split('.'),
+      "Config options" => conf_options_str,
+      "Env Variables" => 'system_package_manager',
+    }
+    fp.write(compile_info_json.to_json)
+    # fp.puts(compile_info.join("\n"))
+    fp.close
   end
 
 end # class InstGCC
