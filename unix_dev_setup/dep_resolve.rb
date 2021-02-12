@@ -61,10 +61,7 @@ class DepResolve
   def __make_dep_list (inst_list)
     dep_list = []
     for pkg in inst_list
-      p_dep = []
-      unless $dependency_table[pkg].empty?
-        p_dep = $dependency_table[pkg]+p_dep
-      end
+      p_dep = $dependency_table[pkg]
       dep_list += p_dep
     end
     dep_list = dep_list.uniq

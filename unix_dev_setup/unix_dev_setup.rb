@@ -82,7 +82,7 @@ end
 puts "******************************************"
 puts "***                                    ***"
 puts "*** Unix development environment setup ***"
-puts "*** Currently... only works on Ubuntu. ***"
+puts "***                                    ***"
 puts "***                                    ***"
 puts "******************************************"
 
@@ -96,6 +96,7 @@ if op_mode_list.include?('-v') or op_mode_list.include?('--verbose')
   op_mode_list.delete('-v')
   op_mode_list.delete('--verbose')
 end
+
 
 # Working directories
 require 'fileutils'

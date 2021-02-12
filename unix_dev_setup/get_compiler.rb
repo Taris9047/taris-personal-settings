@@ -47,10 +47,18 @@ class GetCompiler
     end
 
     if File.directory?(cc_path)
-      @CC = File.realpath(File.join(cc_path, c_compiler))
+      if File.file?(File.join(cc_path, c_compiler))
+        @CC = File.realpath(File.join(cc_path, c_compiler))
+      else
+        @CC = File.join(@fallback_compiler_path, 'gcc')
+      end
     end
     if File.directory?(cxx_path)
-      @CXX = File.realpath(File.join(cxx_path, cxx_compiler))
+      if File.file?(File.join(cxx_path, cxx_compiler))
+        @CXX = File.realpath(File.join(cc_path, cxx_compiler))
+      else
+        @CXX = File.join(@fallback_compiler_path, 'g++')
+      end
     end
 
     unless File.file?(@CC)
