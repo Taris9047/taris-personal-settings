@@ -51,7 +51,7 @@ class InstGCC < InstallStuff
       ver_system_gcc = Version.new(ver_str)
       if ver_system_gcc >= @ver_source
         puts "Looks like system gcc is new enough! Skipping!"
-        self.WriteInfo_system(ver_system_gcc)
+        self.WriteInfo_system(ver_system_gcc.to_s)
         return 0
       end
     end

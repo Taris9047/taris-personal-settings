@@ -130,6 +130,7 @@ Fedora_packages=( \
   "libXpm-devel" \
   "libXft-devel" \
   "libXext-devel" \
+  "libXt-devel" \
   "openssl-devel" \
   "redhat-lsb-core" \
   "gcc-gfortran" \
