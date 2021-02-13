@@ -110,7 +110,7 @@ class InstClang < InstallStuff
     ]
 
     puts "Configuring with cmake"
-    system( config_cmd.join(' ') )
+    self.Run( config_cmd.join(' ') )
 
     # Fetching version info.
     ver_text = ''
@@ -131,7 +131,7 @@ class InstClang < InstallStuff
     # self.Run( cmd.join(" ") )
 
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    system( compile_cmd.join(' ') )
+    self.Run( compile_cmd.join(' ') )
 
     @conf_options = [inst_prefix_opt]+cmake_opts+comp_settings
 
