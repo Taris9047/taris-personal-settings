@@ -1,0 +1,10 @@
+1. Need to install aom.
+ >> Just install it from dnf: sudo dnf -y install aom
+
+2. Perl module FindBin is missing.
+ >> Fedora might probably missing perl package entirely.
+ >> Try to install FindBin by calling perl package manager: cpan.
+ >> Then install all the packages to run cpan.
+ >> After running cpan, type install FindBin
+
+
