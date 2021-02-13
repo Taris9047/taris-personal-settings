@@ -209,7 +209,7 @@ install_prereq_Ubuntu ()
   pkgs=$( array_to_string "${Ubuntu_packages[@]}")
   gems=$( array_to_string "${Ruby_gems[@]}")
   sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y install $pkgs
-  sudo gem install $gems
+  sudo /usr/bin/gem install $gems
 }
 
 install_prereq_Fedora ()
@@ -218,7 +218,7 @@ install_prereq_Fedora ()
   gems=$( array_to_string "${Ruby_gems[@]}")
   sudo dnf groupinstall "Development Tools" "Development Libraries"
   sudo dnf -y update && sudo dnf -y upgrade && sudo dnf -y install $pkgs
-  sudo gem install $gems
+  sudo /usr/bin/gem install $gems
 }
 
 install_prereq_Arch ()
@@ -226,7 +226,7 @@ install_prereq_Arch ()
   pkgs=$( array_to_string "${Arch_packages[@]}" )
   gems=$( array_to_string "${Ruby_gems[@]}")
   sudo pacman -Syyu $pkgs
-  sudo gem install $gems
+  sudo /usr/bin/gem install $gems
 }
 
 
