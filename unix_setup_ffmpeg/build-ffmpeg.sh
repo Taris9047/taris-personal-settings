@@ -16,6 +16,8 @@ CXXFLAGS=$CFLAGS
 COMPILER_SET="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\" "
 COMPILER_SET_Z="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS_Z\" "
 
+NVCC_VER_THRSH="8.0.0"
+
 CONFIGURE_OPTIONS=()
 
 INSTALL_FOLDER="$HOME/.local/bin"
@@ -165,7 +167,66 @@ cleanup () {
   echo ""
 }
 
+# Adopted from 
+#
+# https://stackoverflow.com/a/4025065
+#
+# case $? in
+#   0) op='=';;
+#   1) op='>';;
+#   2) op='<';;
+# esac
 
+vercomp () {
+    if [[ $1 == $2 ]]
+    then
+        return 0
+    fi
+    local IFS=.
+    local i ver1=($1) ver2=($2)
+    # fill empty fields in ver1 with zeros
+    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
+    do
+        ver1[i]=0
+    done
+    for ((i=0; i<${#ver1[@]}; i++))
+    do
+        if [[ -z ${ver2[i]} ]]
+        then
+            # fill empty fields in ver2 with zeros
+            ver2[i]=0
+        fi
+        if ((10#${ver1[i]} > 10#${ver2[i]}))
+        then
+            return 1
+        fi
+        if ((10#${ver1[i]} < 10#${ver2[i]}))
+        then
+            return 2
+        fi
+    done
+    return 0
+}
+
+get_nvcc_ver () {
+  if [ -v $(command -v nvcc) ]; then
+    nvcc_ver_txt=$(nvcc --version | grep 'release')
+    read -a nvcc_ver_ary <<< "$nvcc_ver_txt"
+    nvcc_ver=${${nvcc_ver_txt[-1]}:1}
+    echo "$nvcc_ver"
+  else
+    echo "0.0.0"
+  fi
+}
+
+nvcc_ver_chk () {
+  vercomp $(get_nvcc_ver) $NVCC_VER_THRSH
+  case $? in
+    0) echo 'Pass';;
+    1) echo 'Pass';;
+    2) echo 'Fail';;
+  esac
+}
 
 echo "ffmpeg-build-script v$VERSION"
 echo "========================="
@@ -564,33 +625,18 @@ fi
 
 ## NVCC crap
 if command -v nvcc > /dev/null ; then
-  if build "nv-codec"; then
-    download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n10.0.26.0/nv-codec-headers-10.0.26.0.tar.gz" "nv-codec-headers-10.0.26.0.tar.gz"
-    cd "$PACKAGES"/nv-codec-headers-10.0.26.0 || exit
-    sed -i  "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-10.0.26.0/Makefile
-    execute make install
-    build_done "nv-codec"
+  if "$(nvcc_ver_chk)" == "Pass" ; then
+    if build "nv-codec"; then
+      download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n10.0.26.0/nv-codec-headers-10.0.26.0.tar.gz" "nv-codec-headers-10.0.26.0.tar.gz"
+      cd "$PACKAGES"/nv-codec-headers-10.0.26.0 || exit
+      sed -i  "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-10.0.26.0/Makefile       execute make install
+      build_done "nv-codec"
+    fi
+    CFLAGS="$CFLAGS -I/usr/local/cuda/include"
+    LDFLAGS="$LDFLAGS -L/usr/local/cuda/lib64"
+    # CONFIGURE_OPTIONS+=("--nvccflags=-gencode arch=compute_52,code=sm_52")
+    CONFIGURE_OPTIONS+=("--enable-cuda-nvcc" "--enable-cuvid" "--enable-nvenc" "--enable-libnpp" "--enable-cuda-llvm")
   fi
-  CFLAGS+=" -I/usr/local/cuda/include"
-  LDFLAGS+=" -L/usr/local/cuda/lib64"
-  CONFIGURE_OPTIONS+=("--enable-cuda-nvcc" "--enable-cuvid" "--enable-nvenc" "--enable-libnpp" "--enable-cuda-llvm")
-  # https://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/
-  CONFIGURE_OPTIONS+=("--nvccflags=-gencode arch=compute_52,code=sm_52")
-fi
-
-CFLAGS="$CFLAGS -I$WORKSPACE/include"
-LDFLAGS="$LDFLAGS -L$WORKSPACE/lib"
-if command -v nvcc > /dev/null ; then
-  if build "nv-codec"; then
-    download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n10.0.26.0/nv-codec-headers-10.0.26.0.tar.gz" "nv-codec-headers-10.0.26.0.tar.gz"
-    cd "$PACKAGES"/nv-codec-headers-10.0.26.0 || exit
-    sed -i  "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-10.0.26.0/Makefile
-    execute make install
-    build_done "nv-codec"
-  fi
-  CFLAGS="$CFLAGS -I/usr/local/cuda/include"
-  LDFLAGS="$LDFLAGS -L/usr/local/cuda/lib64"
-  CONFIGURE_OPTIONS+=("--enable-cuda-nvcc" "--enable-cuvid" "--enable-nvenc" "--enable-libnpp" "--enable-cuda-llvm")
 fi
 
 build "ffmpeg"
@@ -600,7 +646,8 @@ git clone https://github.com/FFmpeg/FFmpeg.git "$PACKAGES"/FFMpeg
 cd "$PACKAGES"/FFMpeg/ || exit
 # shellcheck disable=SC2086
 
-NVCC_ORIG_TXT="$(cat <<-EOF
+if command -v nvcc > /dev/null ; then
+  NVCC_ORIG_TXT="$(cat <<-EOF
 if enabled cuda_nvcc; then
     nvcc_default="nvcc"
     nvccflags_default="-gencode arch=compute_30,code=sm_30 -O2"
@@ -611,9 +658,9 @@ else
 fi
 EOF
 )"
-NVCC_ORIG_TXT=${NVCC_ORIG_TXT//$'\n'/\\n}
+  NVCC_ORIG_TXT=${NVCC_ORIG_TXT//$'\n'/\\n}
 
-NVCC_FIXED_TXT="$(cat <<-EOF
+  NVCC_FIXED_TXT="$(cat <<-EOF
 if enabled cuda_nvcc; then
     nvcc_default="nvcc"
     nvccflags_default="-gencode arch=compute_52,code=sm_52 -O2"
@@ -624,9 +671,21 @@ else
 fi
 EOF
 )"
-NVCC_FIXED_TXT=${NVCC_FIXED_TXT//$'\n'/\\n}
+  NVCC_FIXED_TXT=${NVCC_FIXED_TXT//$'\n'/\\n}
 
-sed -z "s/${NVCC_ORIG_TXT}/${NVCC_FIXED_TXT}/g" -i ./configure
+  nvcc_version=$(get_nvcc_ver)
+  vercomp "10.0.0" $nvcc_version
+  case $? in
+    0)
+      sed -z "s/${NVCC_ORIG_TXT}/${NVCC_FIXED_TXT}/g" -i ./configure
+      ;;
+    1)
+      ;;
+    2)
+      sed -z "s/${NVCC_ORIG_TXT}/${NVCC_FIXED_TXT}/g" -i ./configure
+      ;;
+  esac
+fi
 
 PATH="$WORKSPACE/bin:$PATH" \
 PKG_CONFIG_PATH="$WORKSPACE/lib/pkgconfig" \
