@@ -118,10 +118,10 @@ end
 
 # Main title banner
 puts "******************************************"
-puts "                                    "
+puts ""
 puts " #{title}"
 puts " Version (#{version.join('.')})"
-puts "                                   "
+puts ""
 puts "******************************************"
 
 # Handling Verbose mode

@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
 #
-# TODO: Need to populate proper package list for Fedora and Arch
+# TODO: Need to populate proper package list for other distros.
+# There are tons of strange distros!!
 #
 
 if [ -x "$(command -v lsb_release)" ]; then
@@ -19,6 +20,7 @@ fi
 
 
 # Some Distro information
+Debian_base=("Debian GNU/Linux")
 Ubuntu_base=("Ubuntu" "Linuxmint")
 Fedora_base=("Fedora" "openSUSE project")
 Arch_base=("ArchLinux" "ManjaroLinux")
@@ -29,6 +31,8 @@ MODE=''
 
 if [[ " ${Ubuntu_base[@]} " =~ " ${DISTRO} " ]]; then
   MODE="Ubuntu"
+elif [[ " ${Debian_base[@]} " =~ " ${DISTRO} " ]]; then
+  MODE="Debian"
 elif [[ " ${Fedora_base[@]} " =~ " ${DISTRO} " ]]; then
   MODE="Fedora"
 elif [[ " ${Arch_base[@]} " =~ " ${DISTRO} " ]]; then
@@ -36,6 +40,76 @@ elif [[ " ${Arch_base[@]} " =~ " ${DISTRO} " ]]; then
 fi
 
 echo "Current linux distribution seems $MODE based one."
+
+Debian_packages=(
+  "build-essential"  \
+  "flex" \
+  "bison" \
+  "zlib1g" \
+  "zlib1g-dev" \
+  "openssl" \
+  "libssl-dev" \
+  "libsqlite3-dev" \
+  "libncursesw5-dev" \
+  "libreadline-dev" \
+  "libssl-dev" \
+  "libgdbm-dev" \
+  "libc6-dev" \
+  "libsqlite3-dev" \
+  "tk-dev" \
+  "libbz2-dev" \
+  "libicu-dev" \
+  "libffi-dev" \
+  "autotools-dev" \
+  "python3-dev" \
+  "libncurses5-dev" \
+  "libxml2-dev" \
+  "libedit-dev" \
+  "swig" \
+  "doxygen" \
+  "graphviz" \
+  "xz-utils" \
+  "ruby" \
+  "ruby-dev" \
+  "git-lfs" \
+  "tree" \
+  "screen" \
+  "libzmq3-dev" \
+  "libtool-bin" \
+  "dos2unix" \
+  "liblzma-dev" \
+  "lzma" \
+  "pkg-config" \
+  "libbz2-dev" \
+  "libncurses5-dev" \
+  "libexpat1-dev" \
+  "libgdbm-dev" \
+  "tk-dev" \
+  "libgc-dev" \
+  "libnuma-dev" \
+  "python-cffi" \
+  "libopenblas-dev" \
+  "libx11-dev" \
+  "libxpm-dev" \
+  "libxft-dev" \
+  "libxext-dev" \
+  "libpng-dev" \
+  "libjpeg-dev" \
+  "valgrind" \
+  "cmake" \
+  "cmake-gui" \
+  "ninja-build" \
+  "autoconf" \
+  "automake" \
+  "vim" \
+  "emacs" \
+  "ttf-bitstream-vera" \
+  "subversion" \
+  "git" \
+  "wget" \
+  "curl" \
+  "neofetch" \
+)
 
 Ubuntu_packages=( \
   "build-essential"  \
@@ -204,6 +278,14 @@ array_to_string ()
   echo ${arr[*]}
 }
 
+install_prereq_Debian ()
+{
+  pkgs=$( array_to_string "${Debian_packages[@]}")
+  gems=$( array_to_string "${Ruby_gems[@]}")
+  sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y install $pkgs
+  sudo /usr/bin/gem install $gems
+}
+
 install_prereq_Ubuntu ()
 {
   pkgs=$( array_to_string "${Ubuntu_packages[@]}")
@@ -232,6 +314,8 @@ install_prereq_Arch ()
 
 if [[ "$MODE" == "Ubuntu" ]]; then
   install_prereq_Ubuntu
+elif [[ "$MODE" == "Debian" ]]; then
+  install_prereq_Debian
 elif [[ "$MODE" == "Fedora" ]]; then
   install_prereq_Fedora
 elif [[ "$MODE" == "Arch" ]]; then

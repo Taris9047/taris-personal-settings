@@ -163,16 +163,16 @@ class InstallStuff
     if args[0].class == Hash
       env = args[0]
       cmds = args[1]
-      opts = Array(args[2...])
+      opts = Array(args[2..-1])
     elsif args[0].class == Array
       env = {}
       cmds = args[0].join(' ')
-      opts = Array(args[1...])
+      opts = Array(args[1..-1])
     elsif args[0].class == String
       env = {}
       cmds = args[0]
       if args.length > 1
-        opts = Array(args[1...])
+        opts = Array(args[1..-1])
       else
         opts = []
       end
