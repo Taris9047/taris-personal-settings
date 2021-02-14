@@ -50,7 +50,7 @@ make_dir () {
 
 remove_dir () {
   if [ -d "$1" ]; then
-    rm -r "$1"
+    rm -rfv "$1"
   fi
 }
 
@@ -475,7 +475,6 @@ if build "xvidcore"; then
   fi
 
   CONFIGURE_OPTIONS+=("--enable-libxvid")
-
   build_done "xvidcore"
 fi
 
@@ -690,7 +689,7 @@ fi
 PATH="$WORKSPACE/bin:$PATH" \
 PKG_CONFIG_PATH="$WORKSPACE/lib/pkgconfig" \
 env "$COMPILER_SET" ./configure \
-    "${CONFIGURE_OPTIONS[@]}" \
+  --prefix="${WORKSPACE}" \
   --disable-debug \
   --disable-doc \
   --disable-ffplay \
@@ -706,9 +705,7 @@ env "$COMPILER_SET" ./configure \
   --extra-libs="${EXTRALIBS}" \
   --pkgconfigdir="$WORKSPACE/lib/pkgconfig" \
   --pkg-config-flags="--static" \
-  --prefix="${WORKSPACE}"
-
-
+  "${CONFIGURE_OPTIONS[@]}"
 execute make -j $MJOBS
 execute make install
 
