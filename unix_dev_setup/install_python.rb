@@ -138,14 +138,20 @@ class InstPython2 < InstallStuff
     inst_pip_cmds = [
       pip_inst_sudo,
       File.join(@prefix, "bin/python"+major.to_s+"."+minor.to_s),
-      "-mensurepip",
-      "&&",
-      pip_inst_sudo,
-      "mv -fv",
-      File.join(@prefix,"bin/pip"),
-      File.join(@prefix,"bin/pip"+major.to_s)
+      "-mensurepip"
     ]
-    self.Run( inst_pip_cmds.join(" ") )
+    # Changed to system instead of self.Run due to deprecation error message.
+    system( inst_pip_cmds.join(" ") )
+    pip_post_install_cmd = []
+    if File.exists?(File.join(@prefix,"bin/pip"))
+      pip_post_install_cmd = [
+        pip_inst_sudo,
+        'mv -fv',
+        File.join(@prefix,"bin/pip"),
+        File.join(@prefix,"bin/pip"+major.to_s)
+      ]
+    end
+    system( pip_post_install_cmd.join(" ") )
 
     inst_module_cmds = [
       pip_inst_sudo,
