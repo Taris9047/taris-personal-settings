@@ -70,10 +70,6 @@ class InstClang < InstallStuff
     comp_settings = gc.get_cmake_settings
     @env = gc.get_env_settings
 
-    # Some last minute changes.
-    #comp_settings[0] = '-DCMAKE_C_COMPILER=gcc-old'
-    #comp_settings[1] = '-DCMAKE_CXX_COMPILER=g++-old'
-
     # Setting up install prefix
     inst_prefix_opt = [ "-DCMAKE_INSTALL_PREFIX:PATH=#{@prefix}" ]
 
