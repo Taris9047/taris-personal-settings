@@ -22,6 +22,6 @@ source "$SCRIPTPATH/my_settings"
 
 # For old stuffs
 if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Linux"* ]]; then
-  echo "Also loading some stuffs for Old stable distros."
-  source "$SCRIPTPATH/RHEL_settings"
+  echo '--> type LoadRHELSettings to set up environment to compile install eveything!'
+  alias LoadRHELSettings='source "$SCRIPTPATH/RHEL_settings"'
 fi
