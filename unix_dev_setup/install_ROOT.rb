@@ -51,7 +51,9 @@ class InstROOT < InstallStuff
     compiler_path = File.join(@prefix, 'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
     comp_settings = gc.get_cmake_settings
-    @env = gc.get_env_settings
+    # @env = gc.get_env_settings
+	# @env = { "LD_LIBRARY_PATH" => "-Wl,-rpath=#{@prefix}/lib -Wl,-rpath=#{@prefix}/lib64" }
+	@env = {}
 
     # Setting up install prefix
     inst_prefix_opt = [ "-DCMAKE_INSTALL_PREFIX:PATH=#{@prefix}" ]
@@ -63,8 +65,7 @@ class InstROOT < InstallStuff
       "-DCMAKE_BUILD_TYPE=Release",
       "-DLLVM_BUILD_TYPE=Release",
       "-DPYTHON_EXECUTABLE=#{@prefix}/bin/python#{py_ver[0]}",
-      "-DPYTHON_INCLUDE_DIR=#{@prefix}/include/python#{py_ver[0]}.#{py_ver[1]}",
-      "-DPYTHON_LIBRARY=#{@prefix}/lib/"
+	  "-Drpath=ON",
     ]
 
     config_cmd = [
@@ -88,12 +89,12 @@ class InstROOT < InstallStuff
     ]
 
     puts "Configuring with cmake"
-    self.Run( config_cmd.join(' ') )
+    self.Run( @env, config_cmd.join(' ') )
 
     @Version = $root_version
 
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    self.Run( compile_cmd.join(' ') )
+    self.Run( @env, compile_cmd.join(' ') )
 
     @conf_options = [inst_prefix_opt]+cmake_opts+comp_settings
 
