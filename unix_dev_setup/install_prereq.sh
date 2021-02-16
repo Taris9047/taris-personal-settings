@@ -3,6 +3,13 @@
 #
 # TODO: Need to populate proper package list for other distros.
 # There are tons of strange distros!!
+# --> Ubuntu 20.04, Debian, Fedora (F33), CentOS (8) are ok now.
+#
+
+#
+# Note on open3: Ruby 2.5.. which comes with CentOS/RHEL cannot support
+# newer 0.1.1 version. So, 0.1.0 will be installed on those systems.
+# Let's hope they can work with my codes without too much problem.
 #
 
 CWD=`pwd -P`
@@ -293,6 +300,11 @@ Ruby_gems=( \
   "rsense" \
   "open3" \
   "json" )
+  
+Ruby_gems_RHEL=(
+  "rsense" \
+  "json" \
+)
 
 array_to_string ()
 {
@@ -322,11 +334,15 @@ install_prereq_Fedora ()
 {
   pkgs=$( array_to_string "${Fedora_packages[@]}" )
   add_pkgs=()
-  gems=$( array_to_string "${Ruby_gems[@]}")
+  gems=()
   # Fedora
   if [ "$DISTRO" == "Fedora" ]; then
     sudo dnf -y groupinstall "Development Tools" "Development Libraries"
     add_pkgs=$( array_to_string "${Fedora_additional_packages[@]}" )
+    gems=$( array_to_string "${Ruby_gems[@]}")
+    sudo dnf -y update && sudo dnf -y upgrade
+    sudo dnf -y install $pkgs $add_pkgs
+    sudo /usr/bin/gem install $gems
   # In case CentOS or RHEL
   else
     sudo dnf -y install dnf-plugins-core
@@ -334,10 +350,13 @@ install_prereq_Fedora ()
     sudo dnf config-manager --set-enabled powertools
     sudo dnf -y groupinstall "Development Tools" "Additional Development"
     add_pkgs=$( array_to_string "${RHEL_additional_packages[@]}" )
+    gems=$( array_to_string "${Ruby_gems_RHEL[@]}")
+    sudo dnf -y update && sudo dnf -y upgrade
+    sudo dnf -y install $pkgs $add_pkgs
+    sudo /usr/bin/gem install $gems
+    sudo /usr/bin/gem install open3 -v 0.1.0
   fi 
-  sudo dnf -y update && sudo dnf -y upgrade
-  sudo dnf -y install $pkgs $add_pkgs
-  sudo /usr/bin/gem install $gems
+  
 }
 
 install_prereq_Arch ()
