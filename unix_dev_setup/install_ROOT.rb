@@ -56,10 +56,15 @@ class InstROOT < InstallStuff
     # Setting up install prefix
     inst_prefix_opt = [ "-DCMAKE_INSTALL_PREFIX:PATH=#{@prefix}" ]
 
+    py_src = SRC_URL['python3']
+    fnp = FNParser.new(py_src)
+    py_ver = fnp.version
     cmake_opts = [
       "-DCMAKE_BUILD_TYPE=Release",
       "-DLLVM_BUILD_TYPE=Release",
-      "-DPython3_EXECUTABLE=#{@prefix}/bin/python3",
+      "-DPYTHON_EXECUTABLE=#{@prefix}/bin/python#{py_ver[0]}",
+	    "-DPYTHON_INCLUDE_DIR=#{@prefix}/include/python#{py_ver[0]}.#{py_ver[1]}",
+	    "-DPYTHON_LIBRARY=#{@prefix}/lib/python#{py_ver[0]}.#{py_ver[1]}"
     ]
 
     config_cmd = [
