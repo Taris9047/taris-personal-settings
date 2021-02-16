@@ -5,6 +5,9 @@
 # There are tons of strange distros!!
 #
 
+CWD=`pwd -P`
+TMP_PKG_DIR=$CWD/pkg_dir
+
 if [ -x "$(command -v lsb_release)" ]; then
   DISTRO="$(lsb_release -is)"
   if [ -z $DISTRO ]; then
@@ -14,15 +17,19 @@ if [ -x "$(command -v lsb_release)" ]; then
   fi
 else
   IN=$(grep '^NAME' /etc/os-release)
-  arrIN=(${IN//=/ })
-  DISTRO=${arrIN[1]}
+  DISTRO=$(echo $IN | tr -d "\"" | tr -d "NAME=")
+fi
+
+# Update this line for RHEL.. later..
+if [ "$DISTRO" == "CentOS Linux" ]; then
+  mkdir -pv $TMP_PKG_DIR
 fi
 
 
 # Some Distro information
 Debian_base=("Debian GNU/Linux")
 Ubuntu_base=("Ubuntu" "Linuxmint")
-Fedora_base=("Fedora" "openSUSE project")
+Fedora_base=("Fedora" "CentOS Linux")
 Arch_base=("ArchLinux" "ManjaroLinux")
 
 # Supported modes
@@ -182,6 +189,7 @@ Ubuntu_packages=( \
   )
 
 Fedora_packages=( \
+  "wget" \
   "ruby" \
   "ruby-devel" \
   "cmake" \
@@ -195,13 +203,10 @@ Fedora_packages=( \
   "xz-devel" \
   "expat-devel" \
   "openblas" \
-  "openblas-devel" \
   "blas" \
-  "blas-devel" \
   "lapack" \
   "sqlite" \
   "sqlite-devel" \
-  "sqlite-tcl" \
   "zlib" \
   "zlib-devel" \
   "binutils" \
@@ -217,13 +222,9 @@ Fedora_packages=( \
   "pcre-devel" \
   "mesa-libGL-devel" \
   "mesa-libGLU-devel" \
-  "glew-devel" \
   "ftgl-devel" \
-  "mysql-devel" \
   "fftw-devel" \
   "cfitsio-devel" \
-  "graphviz-devel" \
-  "avahi-compat-libdns_sd-devel" \
   "openldap-devel" \
   "libxml2-devel" \
   "gsl-devel" \
@@ -231,7 +232,6 @@ Fedora_packages=( \
   "subversion" \
   "git" \
   "git-lfs" \
-  "doxygen" \
   "wget" \
   "curl" \
   "valgrind" \
@@ -239,8 +239,30 @@ Fedora_packages=( \
   "vim" \
   "neovim" \
   "screen" \
-  "ninja-build" \
   "neofetch" \
+  )
+
+# Well, apparently, there were some package differences 
+# between Fedora and CentOS/RHEL...
+Fedora_additional_packages=( \
+  "openblas-devel" \
+  "blas-devel" \
+  "mysql-devel" \
+  "glew-devel" \
+  "graphviz-devel" \
+  "avahi-compat-libdns_sd-devel" \
+  "doxygen" \
+  "ninja-build" \
+  )
+# Many of them aren't really 
+RHEL_additional_packages=( \
+  "openblas-devel" \
+  "blas-devel" \
+  "glew-devel" \
+  "graphviz-devel" \
+  "avahi-compat-libdns_sd-devel" \
+  "doxygen" \
+  "ninja-build" \
   )
 
 Arch_packages=( \
@@ -278,28 +300,43 @@ array_to_string ()
   echo ${arr[*]}
 }
 
-install_prereq_Debian ()
-{
-  pkgs=$( array_to_string "${Debian_packages[@]}")
-  gems=$( array_to_string "${Ruby_gems[@]}")
-  sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y install $pkgs
-  sudo /usr/bin/gem install $gems
-}
-
 install_prereq_Ubuntu ()
 {
   pkgs=$( array_to_string "${Ubuntu_packages[@]}")
   gems=$( array_to_string "${Ruby_gems[@]}")
-  sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y install $pkgs
+  sudo apt-get -y update && sudo apt-get -y upgrade
+  sudo apt-get -y install $pkgs
   sudo /usr/bin/gem install $gems
+}
+
+install_prereq_Debian ()
+{
+  install_prereq_Ubuntu
+#  pkgs=$( array_to_string "${Debian_packages[@]}")
+#  gems=$( array_to_string "${Ruby_gems[@]}")
+#  sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y install $pkgs
+#  sudo /usr/bin/gem install $gems
 }
 
 install_prereq_Fedora ()
 {
   pkgs=$( array_to_string "${Fedora_packages[@]}" )
+  add_pkgs=()
   gems=$( array_to_string "${Ruby_gems[@]}")
-  sudo dnf groupinstall "Development Tools" "Development Libraries"
-  sudo dnf -y update && sudo dnf -y upgrade && sudo dnf -y install $pkgs
+  # Fedora
+  if [ "$DISTRO" == "Fedora" ]; then
+    sudo dnf -y groupinstall "Development Tools" "Development Libraries"
+    add_pkgs=$( array_to_string "${Fedora_additional_packages[@]}" )
+  # In case CentOS or RHEL
+  else
+    sudo dnf -y install dnf-plugins-core
+    sudo dnf -y install epel-release
+    sudo dnf config-manager --set-enabled powertools
+    sudo dnf -y groupinstall "Development Tools" "Additional Development"
+    add_pkgs=$( array_to_string "${RHEL_additional_packages[@]}" )
+  fi 
+  sudo dnf -y update && sudo dnf -y upgrade
+  sudo dnf -y install $pkgs $add_pkgs
   sudo /usr/bin/gem install $gems
 }
 
@@ -350,4 +387,9 @@ if [[ "$MODE" == "Arch" ]]; then
   echo ""
   echo ">> Cheap way to finish all the installation in Arch based distros:"
   echo "sudo pacman -Syyu ruby lua python python-pip python2 python2-pip pypy3 clang nodejs npm boost cmake tk sqlite"
+fi
+
+# Cleanup my mess.
+if [ -d $TMP_PKG_DIR ]; then
+  rm -rf $TMP_PKG_DIR
 fi
