@@ -63,8 +63,8 @@ class InstROOT < InstallStuff
       "-DCMAKE_BUILD_TYPE=Release",
       "-DLLVM_BUILD_TYPE=Release",
       "-DPYTHON_EXECUTABLE=#{@prefix}/bin/python#{py_ver[0]}",
-	    "-DPYTHON_INCLUDE_DIR=#{@prefix}/include/python#{py_ver[0]}.#{py_ver[1]}",
-	    "-DPYTHON_LIBRARY=#{@prefix}/lib/python#{py_ver[0]}.#{py_ver[1]}"
+	  "-DPYTHON_INCLUDE_DIR=#{@prefix}/include/python#{py_ver[0]}.#{py_ver[1]}",
+	  "-DPYTHON_LIBRARY=#{@prefix}/lib/"
     ]
 
     config_cmd = [

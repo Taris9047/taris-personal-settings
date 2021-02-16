@@ -12,9 +12,6 @@
 # Let's hope they can work with my codes without too much problem.
 #
 
-CWD=`pwd -P`
-TMP_PKG_DIR=$CWD/pkg_dir
-
 if [ -x "$(command -v lsb_release)" ]; then
   DISTRO="$(lsb_release -is)"
   if [ -z $DISTRO ]; then
@@ -27,16 +24,10 @@ else
   DISTRO=$(echo $IN | tr -d "\"" | tr -d "NAME=")
 fi
 
-# Update this line for RHEL.. later..
-if [ "$DISTRO" == "CentOS Linux" ]; then
-  mkdir -pv $TMP_PKG_DIR
-fi
-
-
 # Some Distro information
 Debian_base=("Debian GNU/Linux")
 Ubuntu_base=("Ubuntu" "Linuxmint")
-Fedora_base=("Fedora" "CentOS Linux")
+Fedora_base=("Fedora" "CentOS Linux" "Red Hat Enterprise Linux")
 Arch_base=("ArchLinux" "ManjaroLinux")
 
 # Supported modes
@@ -55,7 +46,7 @@ fi
 
 echo "Current linux distribution seems $MODE based one."
 
-Debian_packages=(
+Debian_packages=( \
   "build-essential"  \
   "flex" \
   "bison" \
@@ -301,10 +292,9 @@ Ruby_gems=( \
   "open3" \
   "json" )
   
-Ruby_gems_RHEL=(
+Ruby_gems_RHEL=( \
   "rsense" \
-  "json" \
-)
+  "json" )
 
 array_to_string ()
 {
@@ -336,7 +326,7 @@ install_prereq_Fedora ()
   add_pkgs=()
   gems=()
   # Fedora
-  if [ "$DISTRO" == "Fedora" ]; then
+  if [ "$DISTRO" == *"Fedora"* ]; then
     sudo dnf -y groupinstall "Development Tools" "Development Libraries"
     add_pkgs=$( array_to_string "${Fedora_additional_packages[@]}" )
     gems=$( array_to_string "${Ruby_gems[@]}")
@@ -408,7 +398,3 @@ if [[ "$MODE" == "Arch" ]]; then
   echo "sudo pacman -Syyu ruby lua python python-pip python2 python2-pip pypy3 clang nodejs npm boost cmake tk sqlite"
 fi
 
-# Cleanup my mess.
-if [ -d $TMP_PKG_DIR ]; then
-  rm -rf $TMP_PKG_DIR
-fi
