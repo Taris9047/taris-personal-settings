@@ -6,11 +6,12 @@ require 'open-uri'
 
 class Download
 
-  def initialize(url='', destination='./', source_ctl='', mode='direct')
+  def initialize(url='', destination='./', source_ctl='', mode='direct', srouce_ctl_opts='')
     @URL = url
     @DEST = File.realpath(destination)
     @source_ctl = source_ctl.downcase
     @dn_mode = mode.downcase
+    @src_ctl_opts = srouce_ctl_opts
 
     unless @URL
       raise "No valid URL given!!"
@@ -50,7 +51,7 @@ class Download
 
   def git_clone
     puts "Cloning from #{@URL} into #{@DEST}"
-    system( "cd #{@DEST} && git clone #{@URL}" )
+    system( "cd #{@DEST} && git #{@src_ctl_opts} clone #{@URL}" )
   end
 
   def GetPath

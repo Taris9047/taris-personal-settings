@@ -9,7 +9,7 @@ require './get_compiler.rb'
 require './install_stuff.rb'
 require './src_urls.rb'
 
-$root_version = ["6", "21", "01"]
+$root_version = ["6", "22", "00-patches"]
 
 
 class InstROOT < InstallStuff
@@ -27,8 +27,8 @@ class InstROOT < InstallStuff
     puts ""
 
     @src_url = SRC_URL['ROOT']
-
-    dn = Download.new(@src_url, destination=@src_dir, source_ctl='git')
+    branch_opts = '--branch v#{$root_version[0]}-#{$root_version[1]}-#{$root_version[2]}'
+    dn = Download.new(@src_url, destination=@src_dir, source_ctl='git', srouce_ctl_opts=branch_opts)
     @src_dir = dn.GetPath
 
     # Let's build!!
@@ -63,8 +63,8 @@ class InstROOT < InstallStuff
       "-DCMAKE_BUILD_TYPE=Release",
       "-DLLVM_BUILD_TYPE=Release",
       "-DPYTHON_EXECUTABLE=#{@prefix}/bin/python#{py_ver[0]}",
-	  "-DPYTHON_INCLUDE_DIR=#{@prefix}/include/python#{py_ver[0]}.#{py_ver[1]}",
-	  "-DPYTHON_LIBRARY=#{@prefix}/lib/"
+      "-DPYTHON_INCLUDE_DIR=#{@prefix}/include/python#{py_ver[0]}.#{py_ver[1]}",
+      "-DPYTHON_LIBRARY=#{@prefix}/lib/"
     ]
 
     config_cmd = [
