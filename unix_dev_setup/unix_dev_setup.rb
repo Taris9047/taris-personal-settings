@@ -39,7 +39,7 @@ list_of_progs = [
   'golang',
 ]
 
-$not_so_stable_pkgs = ['pypy3', 'clang']
+$not_so_stable_pkgs = ['pypy3', 'clang', 'ROOT']
 $not_so_needed_pkgs = ['gccold', 'cudacc']
 
 list_of_all = list_of_progs - $not_so_stable_pkgs - $not_so_needed_pkgs
