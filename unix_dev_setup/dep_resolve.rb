@@ -23,6 +23,7 @@ $dependency_table = {
   "mpich" => [ 'gcc' ],
   "hydra" => [ 'mpich' ],
   "golang" => [],
+  "julia" => [],
 }
 
 # class dependency resolve
