@@ -38,12 +38,12 @@ class InstRust < InstallStuff
     puts ""
 
     rustup_cmd = File.join(ENV["HOME"], '.cargo/bin/rustup')
+    cargo_cmd = File.join(ENV["HOME"], '.cargo/bin/cargo')
     unless File.file?( rustup_cmd )
       # Installing the rust
       self.Run( $rust_inst_cmd, @pkgname )
 
       # path for cargo
-      cargo_cmd = File.join(ENV["HOME"], '.cargo/bin/cargo')
       for pkg in @rust_utils_to_install do
         puts("Installing "+pkg)
         self.Run( [cargo_cmd, 'install', pkg].join(' ') )
@@ -51,13 +51,14 @@ class InstRust < InstallStuff
     else
       puts "Looks like the Rust is already installed!. Attempting to update"
       puts "Running rustup update"
-      self.Run( ["rustup update"] )
+	  self.Run( ["source ~/.cargo/env && #{rustup_cmd} update"] )
       puts "Updating cargo packages"
-      self.Run( ["cargo install-update -a"] )
+	  self.Run( ["source ~/.cargo/env && #{cargo_cmd} install-update -a"] )
       puts "Done working on Rust!"      
     end
     
-    stdo, stde, stat = Open3.capture3("rustc --version")
+	rustc_cmd = File.join(ENV["HOME"], '.cargo/bin/rustc')
+	stdo, stde, stat = Open3.capture3("source ~/.cargo/env && #{rustc_cmd} --version")
     ver = stdo.split(" ")[1].split(".")
     @@Version_Info = ver
 
