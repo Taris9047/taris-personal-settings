@@ -21,8 +21,11 @@ if [ -x "$(command -v lsb_release)" ]; then
   fi
 else
   IN=$(grep '^NAME' /etc/os-release)
-  DISTRO=$(echo $IN | tr -d "\"" | tr -d "NAME=")
+  DISTRO=$(echo $IN | tr -d "\"" | sed -E 's/NAME=//')
 fi
+
+echo "Detecting distro..."
+echo "... Looks like your distro is: $DISTRO"
 
 # Some Distro information
 Debian_base=("Debian GNU/Linux")
@@ -326,7 +329,7 @@ install_prereq_Fedora ()
   add_pkgs=()
   gems=()
   # Fedora
-  if [ "$DISTRO" == *"Fedora"* ]; then
+  if [[ "$DISTRO" == *"Fedora"* ]]; then
     sudo dnf -y groupinstall "Development Tools" "Development Libraries"
     add_pkgs=$( array_to_string "${Fedora_additional_packages[@]}" )
     gems=$( array_to_string "${Ruby_gems[@]}")
@@ -336,8 +339,15 @@ install_prereq_Fedora ()
   # In case CentOS or RHEL
   else
     sudo dnf -y install dnf-plugins-core
-    sudo dnf -y install epel-release
-    sudo dnf config-manager --set-enabled powertools
+    if [[ "$DISTRO" == *"CentOS Linux"* ]]; then
+      echo "Installing CentOS repos."
+      sudo dnf -y install epel-release
+      sudo dnf config-manager --set-enabled powertools
+    elif [[ "$DISTRO" == *"Red Hat Enterprise Linux"* ]]; then
+      echo "Working with RHEL8 repos.."
+      sudo subscription-manager repos --enable "codeready-builder-for-rhel-8-$(arch)-rpms"
+      sudo dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+    fi
     sudo dnf -y groupinstall "Development Tools" "Additional Development"
     add_pkgs=$( array_to_string "${RHEL_additional_packages[@]}" )
     gems=$( array_to_string "${Ruby_gems_RHEL[@]}")
