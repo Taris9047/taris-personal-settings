@@ -49,5 +49,8 @@
 
   # GoLang
   "golang-bootstrap": "https://dl.google.com/go/go1.4-bootstrap-20171003.tar.gz",
-  "golang": "https://go.googlesource.com/go"
+  "golang": "https://go.googlesource.com/go",
+
+  # Julia
+  "julia": "https://github.com/JuliaLang/julia.git"
 }

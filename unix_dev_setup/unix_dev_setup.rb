@@ -11,10 +11,10 @@ def_prefix = File.join(home_dir, "/.local")
 def_system = "Linux"
 
 # Version
-version = ['1', '0', '0']
+$version = ['1', '0', '0']
 
 # title
-title = "Unix Development Environment setup"
+$title = "Unix Development Environment setup"
 
 # Verbose mode? Default: false
 verbose = false
@@ -37,9 +37,10 @@ list_of_progs = [
   'mpich',
   'hydra',
   'golang',
+  'julia',
 ]
 
-$not_so_stable_pkgs = ['pypy3', 'clang', 'ROOT']
+$not_so_stable_pkgs = ['pypy3', 'clang', 'ROOT', 'julia']
 $not_so_needed_pkgs = ['gccold', 'cudacc']
 
 list_of_all = list_of_progs - $not_so_stable_pkgs - $not_so_needed_pkgs
@@ -62,27 +63,41 @@ $permitted_list = list_of_progs + aliases.keys
 $opt_list = ['--use-clang', 'prereq', '-v', '--verbose', 'purge', '--purge', 'clean', '--clean', '--version']
 $permitted_list += $opt_list
 
+# Main title banner
+def main_title
+puts "******************************************"
+puts ""
+puts " #{$title}"
+puts " Version (#{$version.join('.')})"
+puts ""
+puts "******************************************"
+end
 # Help message
 def show_help
-  puts "Usage: ./unix_dev_setup.rb <params_or_installable_pkgs>"
-  puts ""
-  puts "<params> can be:"
-  puts $opt_list.join(', ')
-  puts " --use-clang: Some packages can be built with clang."
-  puts " -v,--verbose: Make it loud!"
-  puts " --purge: deletes everything before installing any package including pkginfo dir."
-  puts " --clean: deletes working dirs before installing any package"
-  puts " clean: deletes working dirs"
-  puts " purge: purges all the working dirs including pkginfo dir."
-  puts " --version: displays version info."
-  puts ""
-  puts "<installable_pkgs> can be:"
-  puts ($permitted_list-$opt_list).join(', ')
-  puts ""
-  puts "Some packages are not very stable at the moment:"
-  puts $not_so_stable_pkgs.join(', ')
-  puts ""
-  puts "More packages are coming!! Stay tuned!!"
+  main_title
+  hlp = %{
+Usage: ./unix_dev_setup.rb <params_or_installable_pkgs>
+
+<params> can be:
+$opt_list.join(', ')
+ --use-clang: Some packages can be built with clang.
+ -v,--verbose: Make it loud!
+ --version: displays version info.
+ --purge: deletes everything before installing any package including pkginfo dir.
+ --clean: deletes working dirs before installing any package
+ clean: deletes working dirs
+ purge: purges all the working dirs including pkginfo dir.
+ 
+<installable_pkgs> can be:
+ #{($permitted_list-$opt_list).join(', ')}
+ 
+Some packages are not very stable at the moment:
+ #{$not_so_stable_pkgs.join(', ')}
+ 
+More packages are coming!! Stay tuned!!
+  }
+  puts hlp
+  exit(0)
 end
 
 # Included clang back into the list. Now it compiles fine!
@@ -112,17 +127,13 @@ for k in aliases.keys
 end
 
 if op_mode_list.include?('--version')
-  puts "(UDE set) #{title} Ver. #{version.join('.')}"
+  puts "(UDE set) #{title} Ver. #{$version.join('.')}"
   exit(0)
 end
 
-# Main title banner
-puts "******************************************"
-puts ""
-puts " #{title}"
-puts " Version (#{version.join('.')})"
-puts ""
-puts "******************************************"
+if op_mode_list.include?('--help')
+  show_help
+end
 
 # Handling Verbose mode
 if op_mode_list.include?('-v') or op_mode_list.include?('--verbose')
@@ -360,6 +371,12 @@ for op_mode in op_mode_list do
   if op_mode == 'golang'
     require "./install_golang.rb"
     inst = InstGolang.new(prefix_dir, work_dirs, need_sudo)
+    inst.install
+  end
+
+  if op_mode == 'julia'
+    require "./install_julia.rb"
+    inst = InstJulia.new(prefix_dir, work_dirs, need_sudo)
     inst.install
   end
 

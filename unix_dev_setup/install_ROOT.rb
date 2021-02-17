@@ -9,7 +9,7 @@ require './get_compiler.rb'
 require './install_stuff.rb'
 require './src_urls.rb'
 
-$root_version = ["6", "22", "00-patches"]
+$root_version = ["6", "22", "06"]
 
 
 class InstROOT < InstallStuff
