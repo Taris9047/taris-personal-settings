@@ -30,6 +30,7 @@ list_of_progs = [
   'ruby',
   'ruby3',
   'node',
+  'node-lts',
   'clang',
   'rust',
   'pypy3',
@@ -41,7 +42,7 @@ list_of_progs = [
 ]
 
 $not_so_stable_pkgs = ['pypy3', 'clang', 'ROOT', 'julia']
-$not_so_needed_pkgs = ['gccold', 'cudacc']
+$not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts']
 
 list_of_all = list_of_progs - $not_so_stable_pkgs - $not_so_needed_pkgs
 
@@ -56,6 +57,9 @@ aliases = {
   'root' => 'ROOT',
   'MPICH' => 'mpich',
   'go' => 'golang',
+  'nodejs' => 'node',
+  'nodejslts' => 'node-lts',
+  'node.js' => 'node',
   'all' => list_of_all,
 }
 
@@ -79,7 +83,7 @@ def show_help
 Usage: ./unix_dev_setup.rb <params_or_installable_pkgs>
 
 <params> can be:
-$opt_list.join(', ')
+ #{$opt_list.join(', ')}
  --use-clang: Some packages can be built with clang.
  -v,--verbose: Make it loud!
  --version: displays version info.
@@ -90,7 +94,10 @@ $opt_list.join(', ')
  
 <installable_pkgs> can be:
  #{($permitted_list-$opt_list).join(', ')}
- 
+
+ --> Note that node-lts replaces node and vice versa.
+ --> Default installation is node(latest version)
+
 Some packages are not very stable at the moment:
  #{$not_so_stable_pkgs.join(', ')}
  
@@ -349,10 +356,15 @@ for op_mode in op_mode_list do
     inst_lua.install
   end
 
-
   if op_mode == 'node'
     require "./install_node.rb"
     inst = InstNode.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
+  end
+
+  if op_mode == 'node-lts'
+    require "./install_node.rb"
+    inst = InstNodeLTS.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
   end
 

@@ -26,6 +26,9 @@ class InstJulia < InstallStuff
     puts ""
     puts "Working on #{@pkgname} (#{@golang_ver})!!"
     puts ""
+    puts "Unfortunately, building julia isn't so stable!"
+    puts "If it fails, it fails!"
+    puts ""
 
     puts "Installing Julia"
     if !File.directory?(@target_dir)

@@ -3,6 +3,7 @@
   --> OS X, we may not need do do too much. They have homebrew!
   --> Fedora and Manjaro may not need this kind of crap anyway. They provide state-of-art packages anyway. But then they aren't really optimized for current machine.
   ----> Thus, we may need some benchmarking session.
+  --> Done with Cent OS and RHEL.
 
 >> Some automatic update checking system? Many open source projects implement rss feed to notify newer versions.
  -> At least version checking has been implemented.

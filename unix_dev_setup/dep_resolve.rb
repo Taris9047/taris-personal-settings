@@ -17,6 +17,7 @@ $dependency_table = {
   "ruby" => [ 'gcc' ],
   "ruby3" => [ 'gcc' ],
   "node" => [ 'gcc' ],
+  "node-lts" => [ 'gcc' ],
   "rust" => [],
   "clang" => [],
   "boost" => [ 'gcc' ],
