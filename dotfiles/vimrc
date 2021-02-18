@@ -151,13 +151,13 @@ endif
 
 " Setting up font
 if has("gui_running")
-    if g:os == "Darwin"
+    if has("gui_macvim")
         colorscheme monrovia
-        set guifont=Fira\ Mono:h14
-    elseif g:os == "Linux"
-        set guifont=Fira\ Mono\ 12
-    elseif g:os == "Windows"
-        set guifont=Fira_Mono:h12:cANSI
+        set guifont=DroidSansMono\ Nerd\ Font\ Mono\ Book:h14
+    elseif has("guil_gtk2")
+        set guifont=DroidSansMono\ Nerd\ Font\ Mono\ Book\ 10
+    elseif has("gui_win32")
+        set guifont=DroidSansMono\ Nerd\ Font\ Mono\ Book:h12:cANSI
     endif
 endif
 
