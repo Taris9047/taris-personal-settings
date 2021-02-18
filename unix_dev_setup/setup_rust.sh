@@ -12,8 +12,8 @@ fi
 inst_cargo_pkgs ()
 {
   pkgs="exa bat rm-improved diskonaut lsd cargo-update starship tokei fd-find procs du-dust ripgrep hyperfine eureka ddh gitui ytop grex zoxide nu"
-  cargo install $pkgs
-  cargo install-update -a
+  $HOME/.cargo/bin/cargo install $pkgs
+  $HOME/.cargo/bin/cargo install-update -a
 }
 
 if [ -d $HOME/.cargo ]; then

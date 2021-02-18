@@ -1,6 +1,13 @@
 #!/usr/bin/env ruby
 
+require './download.rb'
+require './fname_parser.rb'
+require './get_compiler.rb'
+require './install_stuff.rb'
+require './src_urls.rb'
+
 require 'open3'
+require 'json'
 
 # Install order changer.
 
@@ -50,15 +57,30 @@ class DepResolve
     @Inst_list = @Inst_list.uniq
     if !@force_install and !@Installed_pkg_list.empty?
       for ipkg in @Installed_pkg_list
-        @Inst_list.delete(ipkg)
-      end
+
+        # Checking version for installed/database package info.
+        src_url = SRC_URL[ipkg]
+        fnp = FNParser.new(src_url)
+        src_ver = Version.new(fnp.version())
+
+        fp = File.open(File.join(pkginfo_dir, ipkg+'.info'), 'r')
+        ipkg_txt = fp.read.strip
+        ipkg_info = JSON.parse(ipkg_txt)
+        ipkg_ver = Version.new(ipkg_info["Version"].join('.'))
+
+        if src_ver <= ipkg_ver
+          # puts "Looks like #{ipkg} Version (#{ipkg_ver.to_s} is new enough. Skipping it.)"
+          @Inst_list.delete(ipkg)
+        end
+
+      end # for
     end
 
     @dep_list = self.__make_dep_list(@Inst_list)
     @Inst_list = @dep_list+@Inst_list
     @Inst_list = @Inst_list.uniq
 
-  end
+  end # initialize
 
   def __make_dep_list (inst_list)
     dep_list = []
@@ -86,7 +108,7 @@ class DepResolve
     else
       return dep_list
     end
-  end
+  end # def __make_dep_list
 
   def GetDepList
     return @dep_list
@@ -111,4 +133,5 @@ class DepResolve
       return @Inst_list.join(" ")
     end
   end
-end
+
+end # class DepResolve

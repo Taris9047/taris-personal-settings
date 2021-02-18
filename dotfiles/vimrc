@@ -24,9 +24,9 @@ set hi=100
 set viminfo='20,\"50
 set ruler
 "set expandtab
-"set softtabstop=4
-set tabstop=4
-set shiftwidth=4
+set softtabstop=2
+set tabstop=2
+set shiftwidth=2
 set incsearch
 if has('mouse')
    set mouse=a

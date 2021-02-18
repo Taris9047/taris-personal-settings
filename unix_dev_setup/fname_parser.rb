@@ -1,11 +1,16 @@
 #!/usr/bin/env ruby
 
+#
 # Version handlig stuffs
 # Referenced: https://stackoverflow.com/questions/2051229/how-to-compare-versions-in-ruby/2051427#2051427
 #
 class Version < Array
   def initialize(s)
-    super( s.split('.').map{ |e| e.delete(',').delete('v').delete('V').to_i } )
+    if s.instance_of? String
+      super( s.split('.').map{ |e| e.delete(',').delete('v').delete('V').to_i } )
+    elsif s.instance_of? Array
+      super( s.map{ |e| e.delete(',').delete('v').delete('V').to_i } )
+    end
   end
 
   # Version comparison operators
@@ -88,6 +93,7 @@ class FNParser
     if @@bname.include?'_'
       # In case of boost
       delim = '_'
+
       tmp = @@bname.split(delim)
       ver_split = tmp[1..-1]
     else
