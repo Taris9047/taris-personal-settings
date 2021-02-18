@@ -210,6 +210,12 @@ if [ -x "$(command -v $HOMEBREW/opt/pypy/bin/pypy3)" ]; then
   export PATH=$HOMEBREW/opt/pypy/bin:$PATH
 fi
 
+# Node.JS update tool n
+if [ -x "$(command -v n)" ]; then
+  echo "${check_symbol} n found!, Setting up N_PREFIX environment variable."
+  export N_PREFIX=$(command -v n | sed -E 's/\/bin\/n//')
+fi
+
 # IrfanView
 iview64_path=$HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe
 run_iview ()

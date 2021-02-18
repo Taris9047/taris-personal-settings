@@ -84,6 +84,10 @@ class InstNode < InstallStuff
 
     self.WriteInfo
 
+    puts "Let's install package manger!"
+    self.Run( 'npm install -g n' )
+    puts "Now you can use 'n' to manage Node.JS versions!"
+
   end # install
 
 end # class InstNode
