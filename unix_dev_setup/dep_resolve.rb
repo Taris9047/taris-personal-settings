@@ -52,6 +52,7 @@ class DepResolve
     end
 
     @force_install = force_install
+    @pkginfo_dir = pkginfo_dir
 
     @Inst_list = install_list
     @Inst_list = @Inst_list.uniq
@@ -66,7 +67,7 @@ class DepResolve
 
   def ver_chk_src_lte_ipkg(ipkg)
     src_url = SRC_URL[ipkg]
-    src_type = SRC_TYPE[ipkg_name]
+    src_type = SRC_TYPE[ipkg]
     
     # If the src is some repository, they must have newer version
     # than me, anyways.
@@ -77,7 +78,7 @@ class DepResolve
     fnp = FNParser.new(src_url)
     src_ver = Version.new(fnp.version())
 
-    fp = File.open(File.join(pkginfo_dir, ipkg+'.info'), 'r')
+    fp = File.open(File.join(@pkginfo_dir, ipkg+'.info'), 'r')
     ipkg_txt = fp.read.strip
     ipkg_info = JSON.parse(ipkg_txt)
     ipkg_ver = Version.new(ipkg_info["Version"].join('.'))
@@ -97,7 +98,7 @@ class DepResolve
   #
   def remove_installed_pkg(pkgs)
 
-    if @Installed_pkg_list.epmty?
+    if @Installed_pkg_list.empty?
       return pkgs
     end
 
@@ -110,11 +111,10 @@ class DepResolve
     for ipkg in pkgs
 
       if @Installed_pkg_list.include? ipkg
-        src_type = SRC_TYPE[ipkg]
-        if !src_type == 'tarball'
+        unless SRC_TYPE[ipkg] == 'tarball'
           next
         end
-
+        
         if self.ver_chk_src_lte_ipkg(ipkg)
           next
         end
