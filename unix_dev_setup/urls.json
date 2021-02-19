@@ -1,57 +1,129 @@
 {
   # GCC
-  "gcc": "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz",
-  "cudacc": "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz",
-  "gccold": "https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz",
+  "gcc": {
+    "url": "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz",
+    "type": "tarball"
+  },
+  "cudacc": {
+    "url": "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz",
+    "type": "tarball"
+  },
+  "gccold": {
+    "url": "https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz",
+    "type": "tarball"
+  },
 
   # Lua
-  "lua": "https://www.lua.org/ftp/lua-5.4.0.tar.gz",
+  "lua": { 
+    "url": "https://www.lua.org/ftp/lua-5.4.0.tar.gz",
+    "type": "tarball"
+  },
 
   # Ruby
-  "ruby": "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz",
+  "ruby": {
+    "url": "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz",
+    "type": "tarball"
+  },
 
   # Ruby3
-  "ruby3": "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.0.tar.gz",
+  "ruby3": {
+    "url": "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.0.tar.gz",
+    "type": "tarball"
+  },
 
   # Python stuffs
-  "get_pip": "https://bootstrap.pypa.io/get-pip.py",
-  "python2": "https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz",
-  "python3": "https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz",
+  "get_pip": {
+    "url": "https://bootstrap.pypa.io/get-pip.py",
+    "type": "python"
+  },
+  "python2": {
+    "url": "https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz",
+    "type": "tarball"
+  },
+  "python3": {
+    "url": "https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz",
+    "type": "tarball"
+  },
 
   # PyPy repository
-  "pypy3": "https://foss.heptapod.net/pypy/pypy",
+  "pypy3": {
+    "url": "https://foss.heptapod.net/pypy/pypy",
+    "type": "mercurial"
+  },
 
   # Node.JS
-  "node": "https://nodejs.org/dist/v15.8.0/node-v15.8.0.tar.gz",
-  "node-lts": "https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz",
+  "node": {
+    "url": "https://nodejs.org/dist/v15.8.0/node-v15.8.0.tar.gz",
+    "type": "tarball"
+  },
+  "node-lts": {
+    "url": "https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz",
+    "type": "tarball"
+  },
 
   # Boost
-  "boost": "https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.bz2",
+  "boost": {
+    "url": "https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.bz2",
+    "type": "tarball"
+  },
 
   # LLVM-Clang
-  "llvm": "https://github.com/llvm/llvm-project.git",
+  "llvm": {
+    "url": "https://github.com/llvm/llvm-project.git",
+    "type": "git"
+  },
 
   # Rust
-  "rust": "https://static.rust-lang.org/dist/rustc-1.46.0-src.tar.gz",
+  "rust": {
+    "url": "https://static.rust-lang.org/dist/rustc-1.46.0-src.tar.gz",
+    "type": "tarball"
+  },
 
   # ROOT
-  "ROOT": "https://github.com/root-project/root.git",
+  "ROOT": {
+    "url": "https://github.com/root-project/root.git",
+    "type": "git"
+  },
 
   # Julia
-  "julia": "https://github.com/JuliaLang/julia/releases/download/v1.5.2/julia-1.5.2-full.tar.gz",
+  "julia": {
+    "url": "https://github.com/JuliaLang/julia/releases/download/v1.5.2/julia-1.5.2-full.tar.gz",
+    "type": "tarball"
+  },
 
   # Haskell
-  "ghc": "https://downloads.haskell.org/~ghc/8.10.2/ghc-8.10.2-src.tar.xz",
-  "cabal-install": "http://hackage.haskell.org/package/cabal-install-3.2.0.0/cabal-install-3.2.0.0.tar.gz",
+  "ghc": {
+    "url": "https://downloads.haskell.org/~ghc/8.10.2/ghc-8.10.2-src.tar.xz",
+    "type": "tarball"
+  },
+  "cabal-install": {
+    "url": "http://hackage.haskell.org/package/cabal-install-3.2.0.0/cabal-install-3.2.0.0.tar.gz",
+    "type": "tarball"
+  },
 
   # MPICH
-  "mpich": "http://www.mpich.org/static/downloads/3.4.1/mpich-3.4.1.tar.gz",
-  "hydra": "http://www.mpich.org/static/downloads/3.4.1/hydra-3.4.1.tar.gz",
+  "mpich": {
+    "url": "http://www.mpich.org/static/downloads/3.4.1/mpich-3.4.1.tar.gz",
+    "type": "tarball"
+  },
+  "hydra": {
+    "url": "http://www.mpich.org/static/downloads/3.4.1/hydra-3.4.1.tar.gz",
+    "type": "tarball"
+  },
 
   # GoLang
-  "golang-bootstrap": "https://dl.google.com/go/go1.4-bootstrap-20171003.tar.gz",
-  "golang": "https://go.googlesource.com/go",
+  "golang-bootstrap": {
+    "url": "https://dl.google.com/go/go1.4-bootstrap-20171003.tar.gz",
+    "type": "tarball"
+  },
+  "golang": {
+    "url": "https://go.googlesource.com/go",
+    "type": "git"
+  },
 
   # Julia
-  "julia": "https://github.com/JuliaLang/julia.git"
+  "julia": {
+    "url": "https://github.com/JuliaLang/julia.git",
+    "type": "git"
+  }
 }

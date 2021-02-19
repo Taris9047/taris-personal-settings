@@ -44,9 +44,19 @@ class ParseHjson
   end
 
   def Get(pkg_name)
-    return @URL_DB[pkg_name]
+    return @URL_DB[pkg_name]["url"]
   end
+
+  def GetType(pkg_name)
+    return @URL_DB[pkg_name]["type"]
+  end
+
+  def GetInfo(pkg_name)
+    return [ @URL_DB[pkg_name]["url"], @URL_DB[pkg_name]["type"] ]
+  end
+
 end # class ParseHjson
+
 
 module SRC_URL
 
@@ -56,4 +66,24 @@ module SRC_URL
   end
 
   module_function :[]
-end # class URL_DB
+end # module SRC_URL
+
+module SRC_TYPE
+
+  def [](pkg_name)
+    json_parse = ParseHjson.new()
+    return json_parse.GetType(pkg_name)
+  end
+
+  module_function :[]
+end # module SRC_TYPE
+
+module SRC_INFO
+
+  def [](pkg_name)
+    json_parse = ParseHjson.new()
+    return json_parse.GetInfo(pkg_name)
+  end
+
+  module_function :[]
+end # module SRC_INFO

@@ -57,14 +57,15 @@ class DepResolve
     @Inst_list = @Inst_list.uniq
     if !@force_install and !@Installed_pkg_list.empty?
       for ipkg in @Installed_pkg_list
-        # Some edge case
-        if ipkg == 'golang'
+        # Checking version for installed/database package info.
+        src_url = SRC_URL[ipkg]
+        src_type = SRC_TYPE[ipkg]
+
+        # Skip version checking stuff if the url is not tarball.
+        if !src_type == 'tarball'
           @Inst_list.delete(ipkg)
           next
         end
-
-        # Checking version for installed/database package info.
-        src_url = SRC_URL[ipkg]
 
         fnp = FNParser.new(src_url)
         src_ver = Version.new(fnp.version())
