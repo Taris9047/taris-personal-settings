@@ -26,6 +26,7 @@ class InstROOT < InstallStuff
     puts "Working on ROOT!! (git)"
     puts ""
 
+    @prefix = File.join(@prefix, '/.opt/ROOT')
     @src_url = SRC_URL['ROOT']
     branch_opts = '--branch v#{$root_version[0]}-#{$root_version[1]}-#{$root_version[2]}'
     dn = Download.new(@src_url, destination=@src_dir, source_ctl='git', srouce_ctl_opts=branch_opts)

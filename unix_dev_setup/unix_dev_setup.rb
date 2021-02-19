@@ -207,6 +207,7 @@ end
 if op_mode_list.include?('purge')
   puts "Purging everything!!!"
   system( 'rm -rf '+work_dirs.join(' ') )
+  system( "rm -rf #{prefix_dir}/bin #{prefix_dir}/lib* #{prefix_dir}/include #{prefix_dir}/opt #{prefix_dir}/.opt" )
   op_mode_list.delete('purge')
   puts "Cleaned up everything!!"
   exit(0)
