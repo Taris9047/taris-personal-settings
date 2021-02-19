@@ -119,7 +119,7 @@ class InstallStuff
   def __run_verbose( env, cmds, opts )
     o = []
     e = []
-    s = NIL
+    s = ''
     Open3.popen2e( env, cmds ) do |stdin, stdout_err, wait_thr|
       Thread.new do
         stdout_err.each do |l|
