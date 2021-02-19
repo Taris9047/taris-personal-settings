@@ -111,6 +111,13 @@ class DepResolve
     for ipkg in pkgs
 
       if @Installed_pkg_list.include? ipkg
+        # Golang is kind of fixed version case. But its explicit version
+        # Isn't on the src file. So, skipping it if it's already installed.
+        if ipkg == 'golang'
+          marked_for_del.append('golang')
+          next
+        end
+
         unless SRC_TYPE[ipkg] == 'tarball'
           next
         end

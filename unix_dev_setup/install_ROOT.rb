@@ -26,7 +26,7 @@ class InstROOT < InstallStuff
     puts "Working on ROOT!! (git)"
     puts ""
 
-    @prefix = File.join(@prefix, '/.opt/ROOT')
+    @root_prefix = File.join(@prefix, '/.opt/ROOT')
     if !File.directory? File.join(@prefix, '/.opt')
       self.Run('mkdir -pv '+File.join(@prefix, '/.opt'))
       self.Run('ln -sfv '+File.join(@prefix, '/.opt')+' '+File.join(@prefix, '/opt'))
@@ -56,12 +56,10 @@ class InstROOT < InstallStuff
     compiler_path = File.join(@prefix, 'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
     comp_settings = gc.get_cmake_settings
-    # @env = gc.get_env_settings
-	# @env = { "LD_LIBRARY_PATH" => "-Wl,-rpath=#{@prefix}/lib -Wl,-rpath=#{@prefix}/lib64" }
-	@env = {}
+    @env = gc.get_env_settings
 
     # Setting up install prefix
-    inst_prefix_opt = [ "-DCMAKE_INSTALL_PREFIX:PATH=#{@prefix}" ]
+    inst_prefix_opt = [ "-DCMAKE_INSTALL_PREFIX:PATH=#{@root_prefix}" ]
 
     py_src = SRC_URL['python3']
     fnp = FNParser.new(py_src)
@@ -70,7 +68,7 @@ class InstROOT < InstallStuff
       "-DCMAKE_BUILD_TYPE=Release",
       "-DLLVM_BUILD_TYPE=Release",
       "-DPYTHON_EXECUTABLE=#{@prefix}/bin/python#{py_ver[0]}",
-	  "-Drpath=ON",
+	    "-Drpath=ON",
     ]
 
     config_cmd = [

@@ -19,7 +19,7 @@ $pypy_modules = [
 
 $pypy3_ver = '3.7'
 $platform = 'x86_64'
-$pypy_prefix_dir = '/opt'
+$pypy_prefix_dir = '/.opt'
 
 class InstPyPy3 < InstallStuff
 
@@ -46,7 +46,7 @@ class InstPyPy3 < InstallStuff
     puts "*** If it fails, it fails!"
 
     puts "Cloning PyPy source from mercurial repo."
-    system( "cd #{@src_dir} && hg clone #{@source_url} pypy && cd ./pypy && hg update py#{@pypy3_ver}" )
+    self.Run( "cd #{@src_dir} && hg clone #{@source_url} pypy && cd ./pypy && hg update py#{@pypy3_ver}" )
     pypy_src_dir = File.join(@src_dir, 'pypy')
 
     puts "Working on rpython interpretation with system python2"
@@ -56,7 +56,7 @@ class InstPyPy3 < InstallStuff
 
     puts ""
     puts "Let's start the interpretation job. It will take pretty long time!"
-    system("cd #{pypy_src_dir}/pypy/goal && python2 ../../rpython/bin/rpython --opt=2 && PYTHONPATH=../.. ./pypy3-c ../../lib_pypy/pypy_tools/build_cffi_imports.py")
+    self.Run("cd #{pypy_src_dir}/pypy/goal && python2 ../../rpython/bin/rpython --opt=2 && PYTHONPATH=../.. ./pypy3-c ../../lib_pypy/pypy_tools/build_cffi_imports.py")
 
     puts "Ok, let's package them!"
     so, se, stat = Open3.capture3("cd #{pypy_src_dir}/pypy/tool/release && python2 ./package.py --archive-name=pypy-#{@pypy3_ver}-#{@platform}")

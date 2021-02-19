@@ -16,7 +16,7 @@ class InstJulia < InstallStuff
   def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
     super('julia', prefix, work_dirs, verbose_mode=verbose_mode)
     @source_url = SRC_URL[@pkgname]
-    @target_dir = File.join(@prefix, '/opt')
+    @target_dir = File.join(@prefix, '/.opt')
     @Version = $julia_version
     @golang_ver = @Version.join('.')
     @need_sudo = need_sudo

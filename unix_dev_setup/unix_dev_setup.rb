@@ -206,7 +206,7 @@ end
 # Some edge cases... cleaning and installing prereq
 if op_mode_list.include?('purge')
   puts "Purging everything!!!"
-  system( 'rm -rf '+work_dirs.join(' ') )
+  system( "rm -rf #{work_dirs.join(' ')}" )
   system( "rm -rf #{prefix_dir}/bin #{prefix_dir}/lib* #{prefix_dir}/include #{prefix_dir}/opt #{prefix_dir}/.opt" )
   op_mode_list.delete('purge')
   puts "Cleaned up everything!!"
@@ -276,6 +276,18 @@ puts ""
 
 # Checking if the destination directory is writable or not.
 need_sudo = !File.writable?(prefix_dir)
+
+# TODO: Change class init arguemnt to hash based one.
+inst_args = {
+  "pkgname" => '',
+  "prefix" => prefix_dir,
+  "system_arch" => def_system,
+  "work_dirs" => work_dirs,
+  "need_sudo" => need_sudo,
+  "verbose_mode" => verbose,
+  "ver_check" => true,
+  "use_clang" => clang_mode,
+}
 
 # The main installation loop
 for op_mode in op_mode_list do
@@ -377,19 +389,19 @@ for op_mode in op_mode_list do
 
   if op_mode == 'pypy3'
     require "./install_pypy.rb"
-    inst = InstPyPy3.new(prefix_dir, work_dirs, need_sudo)
+    inst = InstPyPy3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
   end
 
   if op_mode == 'golang'
     require "./install_golang.rb"
-    inst = InstGolang.new(prefix_dir, work_dirs, need_sudo)
+    inst = InstGolang.new(prefix, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
   end
 
   if op_mode == 'julia'
     require "./install_julia.rb"
-    inst = InstJulia.new(prefix_dir, work_dirs, need_sudo)
+    inst = InstJulia.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
   end
 

@@ -27,16 +27,16 @@ class InstGolang < InstallStuff
     puts ""
 
     puts "Bootstraping!!"
-    system( "cd #{@src_dir} && wget #{@bootstrap_url} -O ./golang-bootstrap.tgz" )
-    system( "cd #{@src_dir} && tar xvf ./golang-bootstrap.tgz")
-    system( {"CGO_ENABLED" => "0"}, "cd #{@src_dir}/go/src && ./make.bash")
+    self.Run( "cd #{@src_dir} && wget #{@bootstrap_url} -O ./golang-bootstrap.tgz" )
+    self.Run( "cd #{@src_dir} && tar xvf ./golang-bootstrap.tgz")
+    self.Run( {"CGO_ENABLED" => "0"}, "cd #{@src_dir}/go/src && ./make.bash")
 
     bootstrap_dir = File.join(@src_dir, "/go")
-    go_dir = File.join(@prefix, '/opt/go')
+    go_dir = File.join(@prefix, '/.opt/go')
 
     puts "Let's build Golang version (#{@golang_ver})"
-    system( "cd #{@src_dir} && git clone #{@source_url} #{go_dir} && cd #{go_dir} && git checkout go#{@golang_ver}" )
-    system( {"GOROOT_BOOTSTRAP" => bootstrap_dir}, "cd #{go_dir}/src && ./all.bash" )
+    self.Run( "cd #{@src_dir} && git clone #{@source_url} #{go_dir} && cd #{go_dir} && git checkout go#{@golang_ver}" )
+    self.Run( {"GOROOT_BOOTSTRAP" => bootstrap_dir}, "cd #{go_dir}/src && ./all.bash" )
 
     self.WriteInfo
 
