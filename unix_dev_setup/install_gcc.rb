@@ -6,6 +6,27 @@ require './fname_parser.rb'
 require './install_stuff.rb'
 require './src_urls.rb'
 
+$gcc_conf_options = [
+  "--enable-languages=c,c++,fortran,objc,obj-c++",
+  "--enable-shared",
+  "--enable-default-pie",
+  "--enable-linker-build-id",
+  "--enable-threads=posix",
+  "--enable-plugin",
+  "--enable-nls",
+  "--enable-clocale=gnu",
+  "--with-target-system-zlib=auto",
+  "--with-system-zlib",
+  "--with-default-libstdcxx-abi=new",
+  "--enable-gnu-unique-object",
+  "--enable-objc-gc=auto",
+  "--disable-multilib",
+  "--build=x86_64-linux-gnu",
+  "--host=x86_64-linux-gnu",
+  "--target=x86_64-linux-gnu",
+]
+
+
 class InstGCC < InstallStuff
 
   def initialize (
@@ -16,17 +37,7 @@ class InstGCC < InstallStuff
 
     @source_url = SRC_URL[@pkgname]
 
-    @conf_options = [
-      "--enable-languages=c,c++,fortran,objc,obj-c++",
-      "--enable-shared",
-      "--enable-default-pie",
-      "--enable-linker-build-id",
-      "--enable-threads=posix",
-      "--enable-plugin",
-      "--with-system-zlib",
-      "--disable-multilib",
-      "--build=x86_64-linux-gnu",
-    ]
+    @conf_options = $gcc_conf_options
 
     @env = {
       "CC" => "gcc",
@@ -157,18 +168,9 @@ class InstGCCCuda < InstGCC
     @pkgname = 'cudacc'
     @source_url = SRC_URL[@pkgname]
 
-    @conf_options = [
-      "--program-suffix=-cuda",
-      "--enable-languages=c,c++,fortran,objc,obj-c++",
-      "--enable-shared",
-      "--enable-default-pie",
-      "--enable-linker-build-id",
-      "--enable-threads=posix",
-      "--enable-plugin",
-      "--with-system-zlib",
-      "--disable-multilib",
-      "--build=x86_64-linux-gnu",
-    ]
+    @conf_options = \
+      $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++",] \
+      + ["--program-suffix=-cuda"]
 
     @env = {
       "CC" => "gcc",
@@ -199,18 +201,9 @@ class InstGCCOld < InstGCC
     @pkgname = 'gccold'
     @source_url = SRC_URL[@pkgname]
 
-    @conf_options = [
-      "--program-suffix=-old",
-      "--enable-languages=c,c++,fortran,objc,obj-c++",
-      "--enable-shared",
-      "--enable-default-pie",
-      "--enable-linker-build-id",
-      "--enable-threads=posix",
-      "--enable-plugin",
-      "--with-system-zlib",
-      "--disable-multilib",
-      "--build=x86_64-linux-gnu",
-    ]
+    @conf_options = \
+      $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
+      + ["--program-suffix=-old"]
 
     @env = {
       "CC" => "gcc",

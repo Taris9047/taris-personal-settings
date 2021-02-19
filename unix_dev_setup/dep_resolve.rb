@@ -56,38 +56,77 @@ class DepResolve
     @Inst_list = install_list
     @Inst_list = @Inst_list.uniq
     if !@force_install and !@Installed_pkg_list.empty?
-      for ipkg in @Installed_pkg_list
-        # Checking version for installed/database package info.
-        src_url = SRC_URL[ipkg]
-        src_type = SRC_TYPE[ipkg]
-
-        # Skip version checking stuff if the url is not tarball.
-        if !src_type == 'tarball'
-          @Inst_list.delete(ipkg)
-          next
-        end
-
-        fnp = FNParser.new(src_url)
-        src_ver = Version.new(fnp.version())
-
-        fp = File.open(File.join(pkginfo_dir, ipkg+'.info'), 'r')
-        ipkg_txt = fp.read.strip
-        ipkg_info = JSON.parse(ipkg_txt)
-        ipkg_ver = Version.new(ipkg_info["Version"].join('.'))
-
-        if src_ver <= ipkg_ver
-          # puts "Looks like #{ipkg} Version (#{ipkg_ver.to_s} is new enough. Skipping it.)"
-          @Inst_list.delete(ipkg)
-        end
-
-      end # for
+      @Inst_list = self.remove_installed_pkg(@Inst_list)
     end
 
     @dep_list = self.__make_dep_list(@Inst_list)
-    @Inst_list = @dep_list+@Inst_list
-    @Inst_list = @Inst_list.uniq
+    @Inst_list = (@dep_list+@Inst_list).uniq
 
   end # initialize
+
+  def ver_chk_src_lte_ipkg(ipkg)
+    src_url = SRC_URL[ipkg]
+    src_type = SRC_TYPE[ipkg_name]
+    
+    # If the src is some repository, they must have newer version
+    # than me, anyways.
+    if !src_type == 'tarball'
+      return false
+    end
+
+    fnp = FNParser.new(src_url)
+    src_ver = Version.new(fnp.version())
+
+    fp = File.open(File.join(pkginfo_dir, ipkg+'.info'), 'r')
+    ipkg_txt = fp.read.strip
+    ipkg_info = JSON.parse(ipkg_txt)
+    ipkg_ver = Version.new(ipkg_info["Version"].join('.'))
+
+    if src_ver <= ipkg_ver
+      return true
+    else
+      return false
+    end
+  end # def ver_chk_src_lte_ipkg(ipkg)
+
+  # Removes package from Installed_pkg_list for re-installation.
+  # --> if the package url is based on repo, it will always be
+  # removed for freshness.
+  # --> Basically, if someone updated url.json, the package will
+  # be removed for re-installation with newer version.
+  #
+  def remove_installed_pkg(pkgs)
+
+    if @Installed_pkg_list.epmty?
+      return pkgs
+    end
+
+    if pkgs.empty?
+      return pkgs
+    end
+
+    marked_for_del = []
+    pkgs = pkgs.uniq
+    for ipkg in pkgs
+
+      if @Installed_pkg_list.include? ipkg
+        src_type = SRC_TYPE[ipkg]
+        if !src_type == 'tarball'
+          next
+        end
+
+        if self.ver_chk_src_lte_ipkg(ipkg)
+          next
+        end
+
+        marked_for_del.append(ipkg)
+      end
+    
+    end # for
+
+    pkgs -= marked_for_del
+    return pkgs
+  end # def remove_installed_pkg(ipkg)
 
   def __make_dep_list (inst_list)
     dep_list = []
@@ -96,11 +135,7 @@ class DepResolve
       dep_list += p_dep
     end
     dep_list = dep_list.uniq
-    if !@Installed_pkg_list.empty?
-      for ipkg in @Installed_pkg_list
-        dep_list.delete(ipkg)
-      end
-    end
+    dep_list = self.remove_installed_pkg(dep_list)
 
     # Checking out dependency list
     not_flat_dep_list = []
@@ -111,9 +146,9 @@ class DepResolve
     end
     not_flat_dep_list = not_flat_dep_list.uniq
     if !not_flat_dep_list.empty?
-      return self.__make_dep_list(not_flat_dep_list)+dep_list
+      return (self.__make_dep_list(not_flat_dep_list)+dep_list).uniq
     else
-      return dep_list
+      return dep_list.uniq
     end
   end # def __make_dep_list
 
