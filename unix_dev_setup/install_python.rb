@@ -66,8 +66,8 @@ class InstPython2 < InstallStuff
     gc = GetCompiler.new(
       cc_path=compiler_path, 
       cxx_path=compiler_path, 
-      cflags='', 
-      cxxflags='',
+      cflags='-fno-semantic-interposition', 
+      cxxflags='-fno-semantic-interposition',
       clang=@clang_mode)
     @CompilerSettings = gc.get_settings
     @env = gc.get_env_settings
@@ -189,8 +189,8 @@ class InstPython3 < InstallStuff
     gc = GetCompiler.new(
       cc_path=compiler_path, 
       cxx_path=compiler_path, 
-      cflags='', 
-      cxxflags='',
+      cflags='-fno-semantic-interposition', 
+      cxxflags='-fno-semantic-interposition',
       clang=@clang_mode)
     @CompilerSettings = gc.get_settings
     @env = gc.get_env_settings

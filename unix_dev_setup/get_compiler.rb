@@ -2,8 +2,11 @@
 
 # Let's set up compiler here
 
-$cflags = "-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe"
-$cxxflags = "-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe"
+#$cflags = "-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe"
+#$cxxflags = "-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe"
+
+$cflags = "-O3 -march=native -fomit-frame-pointer -pipe"
+$cxxflags = $cflags
 
 $rpath = "-Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib"
 
@@ -21,9 +24,9 @@ class GetCompiler
 
     @CC_PATH = @fallback_compiler_path
     @CXX_PATH = @fallback_compiler_path
-    @CFLAGS = $cflags
+    @CFLAGS = [$cflags, cflags].join(' ')
     @RPATH = "-Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib"
-    @CXXFLAGS = $cxxflags
+    @CXXFLAGS = [$cxxflags, cxxflags].join(' ')
     @CC = File.join(@CC_PATH, 'gcc')
     @CXX = File.join(@CXX_PATH, 'g++')
 
@@ -36,6 +39,13 @@ class GetCompiler
     if clang
       c_compiler = 'clang'
       cxx_compiler = 'clang++'
+      # Clang already has -fno-semantic-interposition
+      if @CFLAGS.include? '-fno-semantic-interposition'
+        @CFLAGS.slice! '-fno-semantic-interposition'
+      end
+      if @CXXFLAGS.include? '-fno-semantic-interposition'
+        @CXXFLAGS.slice! '-fno-semantic-interposition'
+      end  
     else
       c_compiler = 'gcc'
       cxx_compiler = 'g++'
@@ -68,11 +78,6 @@ class GetCompiler
     unless File.file?(@CXX)
       raise "CXX Compiler not found!!"
       exit(-1)
-    end
-
-    unless cflags == ''
-      @CFLAGS = cflags
-      @CXXFLAGS = cxxflags
     end
 
     puts "So, we're going to use those settings..."
