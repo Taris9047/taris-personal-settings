@@ -29,7 +29,7 @@ class InstROOT < InstallStuff
     @prefix = File.join(@prefix, '/.opt/ROOT')
     if !File.directory? File.join(@prefix, '/.opt')
       self.Run('mkdir -pv '+File.join(@prefix, '/.opt'))
-      self.run('ln -sfv '+File.join(@prefix, '/.opt')+' '+File.join(@prefix, '/opt'))
+      self.Run('ln -sfv '+File.join(@prefix, '/.opt')+' '+File.join(@prefix, '/opt'))
     end
     @src_url = SRC_URL['ROOT']
     branch_opts = '--branch v#{$root_version[0]}-#{$root_version[1]}-#{$root_version[2]}'
