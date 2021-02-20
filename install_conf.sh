@@ -29,7 +29,7 @@ function set_os_type ()
 set_os_type
 
 # Config Files
-CONF_LIST=("vim" "vimrc" "emacs" "gitignore" "gitconfig" "gdbinit")
+CONF_LIST=("vim" "vimrc" "emacs" "gitignore" "gitconfig" "gdbinit" "Xresources")
 DOT="."
 echo ""
 for conf_file in ${CONF_LIST[*]}

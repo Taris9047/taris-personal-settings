@@ -19,7 +19,7 @@ $rust_utils_to_install = [
   "cargo-update", "starship", "tokei", "fd-find", "procs",
   "du-dust", "ripgrep", "hyperfine", "ytop", "grex", "zoxide",
   "gitui", "eureka", "ddh",
-  "nu"
+  "nu", "broot"
 ]
 
 # The command installs rust with default option.

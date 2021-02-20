@@ -1,5 +1,34 @@
 #!/bin/sh
 
+rust_pkgs = ( \
+  exa \
+  bat \
+  rm-improved \
+  diskonaut \
+  lsd \
+  cargo-update \
+  starship \
+  tokei \
+  fd-find \
+  procs \
+  du-dust \
+  ripgrep \
+  hyperfine \
+  eureka \
+  ddh \
+  gitui \
+  ytop \
+  grex \
+  zoxide \
+  nu \
+  broot )
+
+array_to_string ()
+{
+  arr=("$@")
+  echo ${arr[*]}
+}
+
 if [ -x "$(command -v cargo)" ]; then
   rustup update
   cargo install-update -a
@@ -11,9 +40,8 @@ fi
 
 inst_cargo_pkgs ()
 {
-  pkgs="exa bat rm-improved diskonaut lsd cargo-update starship tokei fd-find procs du-dust ripgrep hyperfine eureka ddh gitui ytop grex zoxide nu"
-  $HOME/.cargo/bin/cargo install $pkgs
-  $HOME/.cargo/bin/cargo install-update -a
+  $HOME/.cargo/bin/cargo install $( array_to_string "${rust_pkgs[@]}" )
+  # $HOME/.cargo/bin/cargo install-update -a
 }
 
 if [ -d $HOME/.cargo ]; then

@@ -1,5 +1,54 @@
 #!/bin/bash
 
+# Some settings adopted from Derek Taylor (DistroTube)
+#
+# https://gitlab.com/dwt1/dotfiles/-/blob/master/.bashrc
+#
+export TERM="xterm-256color"
+export HISTCONTROL=ignoredups:erasedups
+export EDITOR="nvim"
+export VISUAL="subl"
+
+### CHANGE TITLE OF TERMINALS
+case ${TERM} in
+  xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
+        ;;
+  screen*)
+    PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
+    ;;
+esac
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+### ARCHIVE EXTRACTION
+# usage: ex <file>
+ex ()
+{
+  if [ -f $1 ] ; then
+    case $1 in
+      *.tar.bz2)   tar xjf $1   ;;
+      *.tar.gz)    tar xzf $1   ;;
+      *.bz2)       bunzip2 $1   ;;
+      *.rar)       unrar x $1   ;;
+      *.gz)        gunzip $1    ;;
+      *.tar)       tar xf $1    ;;
+      *.tbz2)      tar xjf $1   ;;
+      *.tgz)       tar xzf $1   ;;
+      *.zip)       unzip $1     ;;
+      *.Z)         uncompress $1;;
+      *.7z)        7z x $1      ;;
+      *.deb)       ar x $1      ;;
+      *.tar.xz)    tar xf $1    ;;
+      *.tar.zst)   unzstd $1    ;;      
+      *)           echo "'$1' cannot be extracted via ex()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
 # Default Homebrew Path
 HBREW_PATH=$HOME/.local
 
@@ -23,13 +72,47 @@ line_delay=0.12
 alias ls='ls -p -F -h --color=auto --show-control-chars'
 alias ll='ls -la'
 alias l='ls -p -F -h --color=auto --show-control-chars'
+alias l.='ls -a | grep "^\."'
 alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
-alias grep='grep --color'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
 alias df='df -h'
 alias rsync='rsync -azvh --info=progress2'
 alias sudo='sudo -H'
+alias free='free -m'
+
+#
+# A few more aliases
+#
+alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
+alias dnfup='sudo dnf -y update'
+## get top process eating memory
+alias psmem='ps auxf | sort -nr -k 4'
+alias psmem10='ps auxf | sort -nr -k 4 | head -10'
+## get top process eating cpu ##
+alias pscpu='ps auxf | sort -nr -k 3'
+alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
+# gpg encryption
+# verify signature for isos
+alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
+# receive the key of a developer
+alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
+
+# switch between shells
+alias tobash="sudo chsh $USER -s /bin/bash && echo 'Now log out.'"
+if [ -x /bin/zsh ]; then
+  alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
+fi
+if [ -x /bin/fish ]; then
+ alias tofish="sudo chsh $USER -s /bin/fish && echo 'Now log out.'"
+fi
+
+# Termbin
+alias tb="nc termbin.com 9999"
+
 
 # Delete certain files recursively!!
 delete_recursive ()
@@ -129,9 +212,11 @@ fi
 if [ -x "$(command -v exa)" ]; then
   printf "${check_symbol} exa found! using it instead of ls\n"
   sleep ${line_delay}
-  alias ls='exa -hF'
-  alias ll='exa -lahF'
-  alias l='exa -hF'
+  alias ls='exa -hF --color=always --group-directories-first'
+  alias ll='exa -lahF --color=always --group-directories-first'
+  alias l='exa -hF --color=always --group-directories-first'
+  alias lt='exa -aT --color=always --group-directories-first'
+  alias l.='exa -a | egrep "^\."'
 fi
 
 # Lsd
@@ -207,12 +292,14 @@ fi
 # pypy
 if [ -x "$(command -v $HOMEBREW/opt/pypy/bin/pypy3)" ]; then
   printf "${check_symbol} pypy3 found in $HOMEBREW/opt/pypy/bin/pypy3!!\n"
+  sleep ${line_delay}
   export PATH=$HOMEBREW/opt/pypy/bin:$PATH
 fi
 
 # Node.JS update tool n
 if [ -x "$(command -v n)" ]; then
   printf "${check_symbol} n found!, Setting up N_PREFIX environment variable.\n"
+  sleep ${line_delay}
   export N_PREFIX=$(command -v n | sed -E 's/\/bin\/n//')
 fi
 
@@ -227,7 +314,26 @@ if [ -x "$(command -v wine)" ]; then
     printf "${check_symbol} Irfanview found!!\n"
     printf "  ${right_arrow_symbol} Usage: iview <files>\n"
     alias iview=run_iview
+    sleep ${line_delay}
   fi
+fi
+
+#
+# youtube-dl stuff
+#
+if [ -x $(command -v youtube-dl) ]; then
+  printf "${check_symbol} youtube-dl found! setting up yta(ytv)-* commands.\n"
+  alias yta-help="echo 'yta-aac yta-best yta-flac yta-m4a yta-mp3 yta-opus yta-vorbis yta-wav ytv-best'"
+  alias yta-aac="youtube-dl --extract-audio --audio-format aac "
+  alias yta-best="youtube-dl --extract-audio --audio-format best "
+  alias yta-flac="youtube-dl --extract-audio --audio-format flac "
+  alias yta-m4a="youtube-dl --extract-audio --audio-format m4a "
+  alias yta-mp3="youtube-dl --extract-audio --audio-format mp3 "
+  alias yta-opus="youtube-dl --extract-audio --audio-format opus "
+  alias yta-vorbis="youtube-dl --extract-audio --audio-format vorbis "
+  alias yta-wav="youtube-dl --extract-audio --audio-format wav "
+  alias ytv-best="youtube-dl -f bestvideo+bestaudio "
+  sleep ${line_delay}
 fi
 
 # Rclone
@@ -265,11 +371,23 @@ if [ -x "$(command -v rclone)" ]; then
   fi
 fi
 
+# ROOT
+if [ -x "$(command -v $HOMEBREW/.opt/ROOT/bin/root)" ]; then
+  printf "${check_symbol} ROOT Found! Applying its shell env.\n"
+  source $HOMEBREW/.opt/ROOT/bin/thisroot.sh
+fi
+
 # Geolocation
 # if [ -x "$(command -v jq)" ]; then
 #   echo "jq found, we can use geolocation alias as: geoloc"
 #   alias geoloc="curl -s https://ipvigilante.com/$(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
 # fi
+
+### BASH INSULTER ###
+if [ -f /etc/bash.command-not-found ]; then
+    . /etc/bash.command-not-found
+fi
+
 
 # starship
 if [ -x "$(command -v starship)" ]; then
@@ -284,12 +402,10 @@ fi
 
 clear
 
-# ROOT
-if [ -x "$(command -v $HOMEBREW/.opt/ROOT/bin/root)" ]; then
-	printf "${check_symbol} ROOT Found! Applying its shell env.\n"
-	source $HOMEBREW/.opt/ROOT/thisroot.sh
-fi
-
-if [ -x "$(command -v neofetch)" ]; then 
-  neofetch
+if [ -x $(command -v colorscript) ]; then
+  colorscript random
+else
+  if [ -x "$(command -v neofetch)" ]; then 
+    neofetch
+  fi
 fi
