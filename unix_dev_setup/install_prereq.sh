@@ -30,7 +30,6 @@ Arch_base=("ArchLinux" "ManjaroLinux")
 # Supported modes
 # "Ubuntu" "Fedora" "Arch"
 MODE=''
-
 if [[ " ${Ubuntu_base[@]} " =~ " ${DISTRO} " ]]; then
   MODE="Ubuntu"
 elif [[ " ${Debian_base[@]} " =~ " ${DISTRO} " ]]; then
@@ -277,7 +276,7 @@ Arch_packages=( \
   "ruby" \
   "ruby-irb" \
   "openblas" \
-  "lapack" "cblas" \
+  "lapack" \
   "mercurial" \
   "subversion" \
   "neofetch" \
@@ -399,19 +398,4 @@ echo "|                                        |"
 echo "| Hopefully, it compiles everything fine.|"
 echo "=========================================="
 echo ""
-
-if [[ "$MODE" == "Arch" ]]; then
-  echo "=========================================="
-  echo "| Note on Arch based Linux!!             |"
-  echo "|                                        |"
-  echo "| Arch based distros do not usually      |"
-  echo "| provide -dev packages.                 |"
-  echo "| Thus, we may need to rather use ABS or |"
-  echo "| just use package version rather than   |"
-  echo "| compiling everything!!                 |"
-  echo "=========================================="
-  echo ""
-  echo ">> Cheap way to finish all the installation in Arch based distros:"
-  echo "sudo pacman -Syyu ruby lua python python-pip python2 python2-pip pypy3 clang nodejs npm boost cmake tk sqlite"
-fi
 

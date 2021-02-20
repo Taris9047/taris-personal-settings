@@ -6,7 +6,11 @@ require 'open-uri'
 
 class Download
 
-  def initialize(url='', destination='./', source_ctl='', mode='direct', srouce_ctl_opts='')
+  def initialize(
+    url='', destination='./', 
+    source_ctl='', mode='direct', 
+    srouce_ctl_opts='')
+    
     @URL = url
     @DEST = File.realpath(destination)
     @source_ctl = source_ctl.downcase
