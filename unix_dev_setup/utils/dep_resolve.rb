@@ -1,10 +1,9 @@
 #!/usr/bin/env ruby
 
-require './download.rb'
-require './fname_parser.rb'
-require './get_compiler.rb'
-require './install_stuff.rb'
-require './src_urls.rb'
+require_relative './download.rb'
+require_relative './fname_parser.rb'
+require_relative './get_compiler.rb'
+require_relative './src_urls.rb'
 
 require 'open3'
 require 'json'

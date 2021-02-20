@@ -8,7 +8,7 @@
 # Also, the .info file will not contain any useful info. since every installation
 # step is handled by the install system.
 
-require './install_stuff.rb'
+require_relative './install_stuff.rb'
 
 require 'json'
 require 'open3'

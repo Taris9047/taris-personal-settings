@@ -27,8 +27,9 @@ $def_db_json_name = 'urls.json'
 require 'json'
 
 class ParseHjson
-  def initialize(json_path='./')
-    real_f_name = File.join(json_path, $def_db_json_name)
+  def initialize(json_path='../data/')
+    @json_path = File.join(File.dirname(__FILE__), json_path)
+    real_f_name = File.join(@json_path, $def_db_json_name)
     @json_data = File.readlines(real_f_name)
     @cleaned_up_data = []
     for line in @json_data

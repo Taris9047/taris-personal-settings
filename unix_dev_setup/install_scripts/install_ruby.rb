@@ -1,27 +1,43 @@
 #!/usr/bin/env ruby
 
-# this will handle Hydra-MPICH's runner front end?
+# this will handle Ruby
 
-require './download.rb'
-require './fname_parser.rb'
-require './get_compiler.rb'
-require './install_stuff.rb'
-require './src_urls.rb'
+require_relative '../utils/utils.rb'
+require_relative './install_stuff.rb'
 
-class InstHydra < InstallStuff
+$gems_to_install = [
+    "rsense",
+    "rails",
+    "bundler",
+    "open3",
+    "json",
+    "hjson",
+  ]
+
+class InstRuby < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('hydra', prefix, work_dirs, verbose_mode=verbose_mode)
+    super('ruby', prefix, work_dirs, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
 
-    # mpich build options
-    @conf_options = []
+    # Ruby modules to install
+    @ruby_gems = $gems_to_install
+
+    # Ruby build options
+    @conf_options = [
+      "--enable-shared"
+    ]
     @need_sudo = need_sudo
 
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')
-    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
+    gc = GetCompiler.new(
+      cc_path=compiler_path, 
+      cxx_path=compiler_path, 
+      cflags='-fno-semantic-interposition', 
+      cxxflags='-fno-semantic-interposition',
+      clang=false)
     @env = gc.get_env_settings
 
   end
@@ -83,6 +99,16 @@ class InstHydra < InstallStuff
 
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.Run( @env, cmds.join(" ") )
+
+    inst_module_cmds = [
+      mod_sudo,
+      File.join(@prefix,"bin/gem"),
+      "install",
+      @ruby_gems.join(" ")
+    ]
+
+    puts "Installing additional gems..."
+    self.Run( inst_module_cmds.join(" ") )
 
     self.WriteInfo
   end

@@ -2,11 +2,11 @@
 
 # Installs Lua
 
-require './download.rb'
-require './fname_parser.rb'
-require './get_compiler.rb'
+require '../utils/download.rb'
+require '../utils/fname_parser.rb'
+require '../utils/get_compiler.rb'
+require '../utils/src_urls.rb'
 require './install_stuff.rb'
-require './src_urls.rb'
 
 class InstLua < InstallStuff
 

@@ -6,8 +6,7 @@ require 'etc'
 require 'open3'
 require 'json'
 
-require './fname_parser.rb'
-require './get_compiler.rb'
+require_relative '../utils/utils.rb'
 
 class InstallStuff
 

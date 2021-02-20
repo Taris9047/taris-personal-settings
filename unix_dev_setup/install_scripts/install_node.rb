@@ -2,11 +2,8 @@
 
 # this will handle Node.js with NPM
 
-require './download.rb'
-require './fname_parser.rb'
-require './get_compiler.rb'
-require './install_stuff.rb'
-require './src_urls.rb'
+require_relative '../utils/utils.rb'
+require_relative './install_stuff.rb'
 
 $conf_options = [
   "--shared-zlib"

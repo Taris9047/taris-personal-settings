@@ -3,13 +3,7 @@
 #
 # TODO: Need to populate proper package list for other distros.
 # There are tons of strange distros!!
-# --> Ubuntu 20.04, Debian, Fedora (F33), CentOS (8) are ok now.
-#
-
-#
-# Note on open3: Ruby 2.5.. which comes with CentOS/RHEL cannot support
-# newer 0.1.1 version. So, 0.1.0 will be installed on those systems.
-# Let's hope they can work with my codes without too much problem.
+# --> Ubuntu 20.04, Debian, Fedora (F33), CentOS (8), RHEL (8) are ok now.
 #
 
 if [ -x "$(command -v lsb_release)" ]; then
@@ -21,7 +15,7 @@ if [ -x "$(command -v lsb_release)" ]; then
   fi
 else
   IN=$(grep '^NAME' /etc/os-release)
-  DISTRO=$(echo $IN | tr -d "\"" | sed -E 's/NAME=//')
+  DISTRO=$(echo $IN | sed -E 's/\"//g' | sed -E 's/NAME=//')
 fi
 
 echo "Detecting distro..."
@@ -294,7 +288,12 @@ Ruby_gems=( \
   "rsense" \
   "open3" \
   "json" )
-  
+
+#
+# Note on open3: Ruby 2.5.. which comes with CentOS/RHEL cannot support
+# newer 0.1.1 version. So, 0.1.0 will be installed on those systems.
+# Let's hope they can work with my codes without too much problem.
+#
 Ruby_gems_RHEL=( \
   "rsense" \
   "json" )
@@ -362,21 +361,29 @@ install_prereq_Fedora ()
 install_prereq_Arch ()
 {
   pkgs=$( array_to_string "${Arch_packages[@]}" )
-  gems=$( array_to_string "${Ruby_gems[@]}")
-  sudo pacman -Syyu $pkgs
+  gems=$( array_to_string "${Ruby_gems[@]}" )
+  sudo pacman -Syyu --noconfirm $pkgs
   sudo /usr/bin/gem install $gems
 }
 
-
-if [[ "$MODE" == "Ubuntu" ]]; then
-  install_prereq_Ubuntu
-elif [[ "$MODE" == "Debian" ]]; then
-  install_prereq_Debian
-elif [[ "$MODE" == "Fedora" ]]; then
-  install_prereq_Fedora
-elif [[ "$MODE" == "Arch" ]]; then
-  install_prereq_Arch
-fi
+case ${MODE} in
+  
+  "Ubuntu")
+    install_prereq_Ubuntu
+    ;;
+  "Debian")
+    install_prereq_Debian
+    ;;
+  "Fedora")
+    install_prereq_Fedora
+    ;;
+  "Arch")
+    install_prereq_Arch
+    ;;
+  *)
+    echo "${MODE} is not supported now."
+    exit 1
+esac
 
 # Putting up some system info!
 if [ -x "$(command -v neofetch)" ]; then

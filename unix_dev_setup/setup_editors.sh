@@ -125,7 +125,6 @@ install_vscode_fedora ()
 
 
 # Let's really install them!
-
 case ${MODE} in
   "Fedora")
     install_subl_fedora

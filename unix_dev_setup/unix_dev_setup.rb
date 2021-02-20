@@ -165,7 +165,7 @@ end
 work_dir = File.realpath(work_dir_path)
 puts "Working directory will be: #{work_dir}"
 
-source_dir_path = "./src"
+source_dir_path = "./downloads"
 unless File.directory?(source_dir_path)
   puts source_dir_path+" not found, making one..."
   FileUtils.mkdir_p(source_dir_path)
@@ -257,7 +257,7 @@ for o in op_mode_list
 end
 
 # Resolving dependencies
-require './dep_resolve.rb'
+require './utils/utils.rb'
 puts "Checking dependency for #{op_mode_list.join(" ")}"
 dep_resolve = DepResolve.new(op_mode_list, pkginfo_dir_path)
 op_mode_list = dep_resolve.GetInstList()
@@ -289,149 +289,140 @@ inst_args = {
   "use_clang" => clang_mode,
 }
 
+# Remove default python cmd
+def remove_def_python_cmd
+  puts "Removing 'python' command to preserve system native python..."
+  sudo_cmd = ''
+  if need_sudo
+    sudo_cmd = "sudo"
+  end
+  del_python_cmd = [
+      sudo_cmd,
+      "rm -rfv",
+      File.join(prefix_dir, "bin/python"),
+      File.join(prefix_dir, "bin/ipython")
+  ]
+  system( del_python_cmd.join(" ") )
+end
+
 # The main installation loop
 for op_mode in op_mode_list do
-  if op_mode == 'gcc'
-    require "./install_gcc.rb"
+  case op_mode
+
+  # Gcc stuffs
+  when 'gcc'
+    require "./install_scripts/install_gcc.rb"
     inst = InstGCC.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
-  if op_mode == 'cudacc'
-    require "./install_gcc.rb"
+  when 'cudacc'
+    require "./install_scripts/install_gcc.rb"
     inst = InstGCCCuda.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
-  if op_mode == 'gccold'
-    require "./install_gcc.rb"
+  when 'gccold'
+    require "./install_scripts/install_gcc.rb"
     inst = InstGCCOld.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
 
-  if op_mode == 'clang'
-    require "./install_clang.rb"
+  when 'clang'
+    require "./install_scripts/install_clang.rb"
     # puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
     sleep(2)
     inst = InstClang.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
 
-  # Then Python stuffs
-  if op_mode.include?'python'
-    require "./install_python.rb"
-    if op_mode.include?'2'
-      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
-      inst_python2.install
-    elsif op_mode.include?'3'
-      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
-      inst_python3.install
-    else
-      inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
-      inst_python2.install
-      inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
-      inst_python3.install
-    end
+  # Python stuffs
+  when 'python'
+    require "./install_scripts/install_python.rb"
+    inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+    inst_python2.install
+    inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+    inst_python3.install
+    remove_def_python_cmd
+  when 'python2'
+    require "./install_scripts/install_python.rb"
+    inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+    inst_python2.install
+    remove_def_python_cmd
+  when 'python3'
+    require "./install_scripts/install_python.rb"
+    inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+    inst_python3.install
+    remove_def_python_cmd
 
-    puts "Removing 'python' command to preserve system native python..."
-    sudo_cmd = ''
-    if need_sudo
-      sudo_cmd = "sudo"
-    end
-    del_python_cmd = [
-        sudo_cmd,
-        "rm -rfv",
-        File.join(prefix_dir, "bin/python"),
-        File.join(prefix_dir, "bin/ipython")
-    ]
-    system( del_python_cmd.join(" ") )
-  end
-
-  if op_mode == 'boost'
-    require "./install_boost.rb"
+  when 'boost'
+    require "./install_scripts/install_boost.rb"
     inst = InstBoost.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
 
-  if op_mode == 'lua'
-    require "./install_lua.rb"
+  when 'lua'
+    require "./install_scripts/install_lua.rb"
     inst = InstLua.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
 
-  if op_mode == 'ruby'
-    require "./install_ruby.rb"
+  when 'ruby'
+    require "./install_scripts/install_ruby.rb"
     inst = InstRuby.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
-
-  if op_mode == 'ruby3'
-    require "./install_ruby3.rb"
+  
+  when 'ruby3'
+    require "./install_scripts/install_ruby3.rb"
     inst_lua = InstRuby3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst_lua.install
-  end
-
-  if op_mode == 'node'
-    require "./install_node.rb"
+  
+  # Node stuffs
+  when 'node'
+    require "./install_scripts/install_node.rb"
     inst = InstNode.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
-
-  if op_mode == 'node-lts'
-    require "./install_node.rb"
+  when 'node-lts'
+    require "./install_scripts/install_node.rb"
     inst = InstNodeLTS.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
 
-  if op_mode == 'rust'
-    require "./install_rust.rb"
+  when 'rust'
+    require "./install_scripts/install_rust.rb"
     inst = InstRust.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
 
-  if op_mode == 'pypy3'
-    require "./install_pypy.rb"
+  when 'pypy3'
+    require "./install_scripts/install_pypy.rb"
     inst = InstPyPy3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
 
-  if op_mode == 'golang'
-    require "./install_golang.rb"
+  when 'golang'
+    require "./install_scripts/install_golang.rb"
     inst = InstGolang.new(prefix, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
 
-  if op_mode == 'julia'
-    require "./install_julia.rb"
+  when 'julia'
+    require "./install_scripts/install_julia.rb"
     inst = InstJulia.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
 
-  if op_mode == 'ROOT'
-    require "./install_ROOT.rb"
+  when 'ROOT'
+    require "./install_scripts/install_ROOT.rb"
     inst = InstROOT.new(prefix_dir, 'x86_64', work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
 
-  if op_mode == 'mpich'
-    require "./install_mpich.rb"
+  # MPICH stuffs
+  when 'mpich'
+    require "./install_scripts/install_mpich.rb"
     inst = InstMPICH.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
-
-  if op_mode == 'hydra'
-    require "./install_hydra.rb"
+  when 'hydra'
+    require "./install_scripts/install_hydra.rb"
     inst = InstHydra.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  end
 
-  if !list_of_progs.include?(op_mode)
+  else
     puts "Looks like #{op_mode} has not implemented yet!"
     flag_wrong_pkg_given = true
     wrong_pkgs.append(op_mode)
     puts "Passing #{op_mode} for now..."
     puts ""
-  end
+  end # case op_mode
 
-end
+end # for op_mode in op_mode_list do
 
 if flag_wrong_pkg_given
   puts ""
