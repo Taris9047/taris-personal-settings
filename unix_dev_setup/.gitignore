@@ -1,3 +1,6 @@
-src
+downloads
 build
 pkginfo
+workspace
+workspace/build
+workspace/downloads

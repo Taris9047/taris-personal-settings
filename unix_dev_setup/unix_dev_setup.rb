@@ -157,7 +157,7 @@ end
 # Working directories
 require 'fileutils'
 
-work_dir_path = "./build"
+work_dir_path = "./workspace/build"
 unless File.directory?(work_dir_path)
   puts work_dir_path+" not found, making one..."
   FileUtils.mkdir_p(work_dir_path)
@@ -165,7 +165,7 @@ end
 work_dir = File.realpath(work_dir_path)
 puts "Working directory will be: #{work_dir}"
 
-source_dir_path = "./downloads"
+source_dir_path = "./workspace/downloads"
 unless File.directory?(source_dir_path)
   puts source_dir_path+" not found, making one..."
   FileUtils.mkdir_p(source_dir_path)
@@ -188,9 +188,9 @@ unless File.directory?(prefix_dir_path)
   puts prefix_dir_path+" not found, making one..."
   FileUtils.mkdir_p(prefix_dir_path)
 end
-prefix_dir = File.realpath(prefix_dir_path)
+$prefix_dir = File.realpath(prefix_dir_path)
 puts "Prefix confirmed! Everything will be installed at..."
-puts prefix_dir
+puts $prefix_dir
 puts ""
 
 # Use clang as compiler
@@ -207,7 +207,7 @@ end
 if op_mode_list.include?('purge')
   puts "Purging everything!!!"
   system( "rm -rf #{work_dirs.join(' ')}" )
-  system( "rm -rf #{prefix_dir}/bin #{prefix_dir}/lib* #{prefix_dir}/include #{prefix_dir}/opt #{prefix_dir}/.opt" )
+  system( "rm -rf #{$prefix_dir}/bin #{$prefix_dir}/lib* #{$prefix_dir}/include #{$prefix_dir}/opt #{$prefix_dir}/.opt" )
   op_mode_list.delete('purge')
   puts "Cleaned up everything!!"
   exit(0)
@@ -275,12 +275,12 @@ puts dep_resolve.PrintInstList()
 puts ""
 
 # Checking if the destination directory is writable or not.
-need_sudo = !File.writable?(prefix_dir)
+need_sudo = !File.writable?($prefix_dir)
 
 # TODO: Change class init arguemnt to hash based one.
 inst_args = {
   "pkgname" => '',
-  "prefix" => prefix_dir,
+  "prefix" => $prefix_dir,
   "system_arch" => def_system,
   "work_dirs" => work_dirs,
   "need_sudo" => need_sudo,
@@ -293,14 +293,14 @@ inst_args = {
 def remove_def_python_cmd
   puts "Removing 'python' command to preserve system native python..."
   sudo_cmd = ''
-  if need_sudo
+  if !File.writable?($prefix_dir)
     sudo_cmd = "sudo"
   end
   del_python_cmd = [
       sudo_cmd,
       "rm -rfv",
-      File.join(prefix_dir, "bin/python"),
-      File.join(prefix_dir, "bin/ipython")
+      File.join($prefix_dir, "bin/python"),
+      File.join($prefix_dir, "bin/ipython")
   ]
   system( del_python_cmd.join(" ") )
 end
@@ -312,106 +312,106 @@ for op_mode in op_mode_list do
   # Gcc stuffs
   when 'gcc'
     require "./install_scripts/install_gcc.rb"
-    inst = InstGCC.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstGCC.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
   when 'cudacc'
     require "./install_scripts/install_gcc.rb"
-    inst = InstGCCCuda.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstGCCCuda.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
   when 'gccold'
     require "./install_scripts/install_gcc.rb"
-    inst = InstGCCOld.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstGCCOld.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   when 'clang'
     require "./install_scripts/install_clang.rb"
     # puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
     sleep(2)
-    inst = InstClang.new(prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstClang.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   # Python stuffs
   when 'python'
     require "./install_scripts/install_python.rb"
-    inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+    inst_python2 = InstPython2.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
     inst_python2.install
-    inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+    inst_python3 = InstPython3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
     inst_python3.install
     remove_def_python_cmd
   when 'python2'
     require "./install_scripts/install_python.rb"
-    inst_python2 = InstPython2.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+    inst_python2 = InstPython2.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
     inst_python2.install
     remove_def_python_cmd
   when 'python3'
     require "./install_scripts/install_python.rb"
-    inst_python3 = InstPython3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+    inst_python3 = InstPython3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
     inst_python3.install
     remove_def_python_cmd
 
   when 'boost'
     require "./install_scripts/install_boost.rb"
-    inst = InstBoost.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstBoost.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   when 'lua'
     require "./install_scripts/install_lua.rb"
-    inst = InstLua.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstLua.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   when 'ruby'
     require "./install_scripts/install_ruby.rb"
-    inst = InstRuby.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstRuby.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
   
   when 'ruby3'
     require "./install_scripts/install_ruby3.rb"
-    inst_lua = InstRuby3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst_lua = InstRuby3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst_lua.install
   
   # Node stuffs
   when 'node'
     require "./install_scripts/install_node.rb"
-    inst = InstNode.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstNode.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
   when 'node-lts'
     require "./install_scripts/install_node.rb"
-    inst = InstNodeLTS.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstNodeLTS.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   when 'rust'
     require "./install_scripts/install_rust.rb"
-    inst = InstRust.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstRust.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   when 'pypy3'
     require "./install_scripts/install_pypy.rb"
-    inst = InstPyPy3.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstPyPy3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   when 'golang'
     require "./install_scripts/install_golang.rb"
-    inst = InstGolang.new(prefix, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstGolang.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   when 'julia'
     require "./install_scripts/install_julia.rb"
-    inst = InstJulia.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstJulia.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   when 'ROOT'
     require "./install_scripts/install_ROOT.rb"
-    inst = InstROOT.new(prefix_dir, 'x86_64', work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstROOT.new($prefix_dir, 'x86_64', work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   # MPICH stuffs
   when 'mpich'
     require "./install_scripts/install_mpich.rb"
-    inst = InstMPICH.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstMPICH.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
   when 'hydra'
     require "./install_scripts/install_hydra.rb"
-    inst = InstHydra.new(prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstHydra.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   else
