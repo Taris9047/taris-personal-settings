@@ -402,7 +402,7 @@ fi
 
 clear
 
-if [ -x $(command -v colorscript) ]; then
+if [ -x "$(command -v colorscript)" ]; then
   colorscript random
 else
   if [ -x "$(command -v neofetch)" ]; then 

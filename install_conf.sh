@@ -55,6 +55,10 @@ if [ ! -f $STARSHIP_CONF_FILE ]; then
   echo "starship config file not found, linking one!"
   ln -sfv $CURRENT_DIR/dotfiles/starship.toml $STARSHIP_CONF_FILE
 fi
+echo "Installing Alacritty config file"
+ALACRITTY_CONF_FILE=$USR_DIR/.config/alacritty.yml
+ln -sfv $CURRENT_DIR/dotfiles/alacritty.yml $ALACRITTY_CONF_FILE
+
 
 # Some Handy dirs and Symbolic links
 GOOGLE_DRIVE=$HOME/".google-drive"
