@@ -8,7 +8,7 @@ require 'json'
 
 require_relative '../utils/utils.rb'
 
-class InstallStuff
+class InstallStuff < RunConsole
 
   @souce_url = 'https://some_site.net.org/some_url-0.0.0'
   @conf_options = []
@@ -24,7 +24,7 @@ class InstallStuff
   @pkginfo_dir=''
   @pkginfo_file=''
 
-  def initialize(pkgname, prefix, work_dirs=[], ver_check=true, verbose_mode)
+  def initialize(pkgname, prefix, work_dirs=[], ver_check=true, verbose_mode=false)
 
     @pkgname=pkgname
     @prefix=File.realpath(prefix)
@@ -32,6 +32,7 @@ class InstallStuff
     @pkginfo_file = File.join(@pkginfo_dir, "#{@pkgname}.info" )
     @check_ver = ver_check
     @verbose = verbose_mode
+    super(@verbose, @pkginfo_dir, "#{@pkgname}.log")
 
     # Setting up processors
     @Processors = Etc.nprocessors
@@ -85,105 +86,105 @@ class InstallStuff
     return false
   end # VerCheck
 
-  def __run_quiet( env, cmds, opts )
-    o, e, s = Open3.capture3( env, cmds )
+  # def __run_quiet( env, cmds, opts )
+  #   o, e, s = Open3.capture3( env, cmds )
 
-    log_file_name = @pkgname+'.log'
-    if opts.length() >= 1
-      log_file_name = opts[0]+'.log'
-    end
+  #   log_file_name = @pkgname+'.log'
+  #   if opts.length() >= 1
+  #     log_file_name = opts[0]+'.log'
+  #   end
 
-    log_file = File.join(@pkginfo_dir, log_file_name)
-    unless File.file?(log_file)
-      fp = File.open(log_file, 'w')
-    else
-      fp = File.open(log_file, 'a')
-    end
-    fp.puts(o)
-    fp.close
-    # puts "Log file for #{@pkgname} has been saved at #{log_file_name}"
+  #   log_file = File.join(@pkginfo_dir, log_file_name)
+  #   unless File.file?(log_file)
+  #     fp = File.open(log_file, 'w')
+  #   else
+  #     fp = File.open(log_file, 'a')
+  #   end
+  #   fp.puts(o)
+  #   fp.close
+  #   # puts "Log file for #{@pkgname} has been saved at #{log_file_name}"
 
-    if !s.success?
-      puts "Execution ended with error!"
-      puts "ENV=#{env}"
-      puts "Command=#{cmds}"
-      puts ""
-      puts "Check #{log_file} for details..."
-      exit(-1)
-    end
+  #   if !s.success?
+  #     puts "Execution ended with error!"
+  #     puts "ENV=#{env}"
+  #     puts "Command=#{cmds}"
+  #     puts ""
+  #     puts "Check #{log_file} for details..."
+  #     exit(-1)
+  #   end
 
-    return 0
-  end
+  #   return 0
+  # end
 
-  def __run_verbose( env, cmds, opts )
-    o = []
-    e = []
-    s = ''
-    Open3.popen2e( env, cmds ) do |stdin, stdout_err, wait_thr|
-      Thread.new do
-        stdout_err.each do |l|
-          puts l
-          stdout_err.flush
-          o.append(l)
-        end
-      end
-      stdin.close
-      s = wait_thr.value
-    end
+  # def __run_verbose( env, cmds, opts )
+  #   o = []
+  #   e = []
+  #   s = ''
+  #   Open3.popen2e( env, cmds ) do |stdin, stdout_err, wait_thr|
+  #     Thread.new do
+  #       stdout_err.each do |l|
+  #         puts l
+  #         stdout_err.flush
+  #         o.append(l)
+  #       end
+  #     end
+  #     stdin.close
+  #     s = wait_thr.value
+  #   end
 
-    log_file_name = @pkgname+'.log'
-    if opts.length() >= 1
-      log_file_name = opts[0]+'.log'
-    end
+  #   log_file_name = @pkgname+'.log'
+  #   if opts.length() >= 1
+  #     log_file_name = opts[0]+'.log'
+  #   end
 
-    log_file = File.join(@pkginfo_dir, log_file_name)
-    unless File.file?(log_file)
-      fp = File.open(log_file, 'w')
-    else
-      fp = File.open(log_file, 'a')
-    end
-    fp.puts(o.join("\n"))
-    fp.close
+  #   log_file = File.join(@pkginfo_dir, log_file_name)
+  #   unless File.file?(log_file)
+  #     fp = File.open(log_file, 'w')
+  #   else
+  #     fp = File.open(log_file, 'a')
+  #   end
+  #   fp.puts(o.join("\n"))
+  #   fp.close
 
-    if !s.success?
-      puts "Execution ended with error!"
-      puts "ENV=#{env}"
-      puts "Command=#{cmds}"
-      puts ""
-      puts "Check #{log_file} for details..."
-      exit(-1)
-    end
+  #   if !s.success?
+  #     puts "Execution ended with error!"
+  #     puts "ENV=#{env}"
+  #     puts "Command=#{cmds}"
+  #     puts ""
+  #     puts "Check #{log_file} for details..."
+  #     exit(-1)
+  #   end
 
-    return 0
-  end
+  #   return 0
+  # end
 
-  def Run(*args)
+  # def Run(*args)
 
-    if args[0].class == Hash
-      env = args[0]
-      cmds = args[1]
-      opts = Array(args[2..-1])
-    elsif args[0].class == Array
-      env = {}
-      cmds = args[0].join(' ')
-      opts = Array(args[1..-1])
-    elsif args[0].class == String
-      env = {}
-      cmds = args[0]
-      if args.length > 1
-        opts = Array(args[1..-1])
-      else
-        opts = []
-      end
-    end
+  #   if args[0].class == Hash
+  #     env = args[0]
+  #     cmds = args[1]
+  #     opts = Array(args[2..-1])
+  #   elsif args[0].class == Array
+  #     env = {}
+  #     cmds = args[0].join(' ')
+  #     opts = Array(args[1..-1])
+  #   elsif args[0].class == String
+  #     env = {}
+  #     cmds = args[0]
+  #     if args.length > 1
+  #       opts = Array(args[1..-1])
+  #     else
+  #       opts = []
+  #     end
+  #   end
 
-    if @verbose
-      self.__run_verbose(env, cmds, opts)
-    else
-      self.__run_quiet(env, cmds, opts)
-    end
+  #   if @verbose
+  #     self.__run_verbose(env, cmds, opts)
+  #   else
+  #     self.__run_quiet(env, cmds, opts)
+  #   end
 
-  end
+  # end
 
   def WriteInfo
     puts "Writing package info for #{@pkgname}..."

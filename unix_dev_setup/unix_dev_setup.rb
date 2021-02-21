@@ -67,6 +67,9 @@ $permitted_list = list_of_progs + aliases.keys
 $opt_list = ['--use-clang', 'prereq', '-v', '--verbose', 'purge', '--purge', 'clean', '--clean', '--version']
 $permitted_list += $opt_list
 
+require_relative './utils/run_console.rb'
+Con = RunConsole.new()
+
 # Main title banner
 def main_title
 puts "******************************************"
@@ -206,8 +209,8 @@ end
 # Some edge cases... cleaning and installing prereq
 if op_mode_list.include?('purge')
   puts "Purging everything!!!"
-  system( "rm -rf #{work_dirs.join(' ')}" )
-  system( "rm -rf #{$prefix_dir}/bin #{$prefix_dir}/lib* #{$prefix_dir}/include #{$prefix_dir}/opt #{$prefix_dir}/.opt" )
+  Con.Run( "rm -rf #{work_dirs.join(' ')}" )
+  Con.Run( "rm -rf #{$prefix_dir}/bin #{$prefix_dir}/lib* #{$prefix_dir}/include #{$prefix_dir}/opt #{$prefix_dir}/.opt" )
   op_mode_list.delete('purge')
   puts "Cleaned up everything!!"
   exit(0)
@@ -215,7 +218,7 @@ end
 
 if op_mode_list.include?('--purge')
   puts "Performing purge install..."
-  system( 'rm -rf '+work_dirs.join(' ') )
+  Con.Run( 'rm -rf '+work_dirs.join(' ') )
   puts "Deleted every build stuff!!"
   op_mode_list.delete('--purge')
 end
@@ -223,7 +226,7 @@ end
 
 if op_mode_list.include?('clean')
   puts "Cleaning up source files and build dirs..."
-  system( "rm -rf #{work_dir} #{source_dir}" )
+  Con.Run( "rm -rf #{work_dir} #{source_dir}" )
   puts "Cleaned up source files to save space!!"
   op_mode_list.delete('clean')
   exit(0)
@@ -232,7 +235,7 @@ end
 if op_mode_list.include?('--clean')
   puts "Performing clean install..."
   puts "Cleaning up source files and build dirs..."
-  system( "rm -rf #{work_dir} #{source_dir}" )
+  Con.Run( "rm -rf #{work_dir} #{source_dir}" )
   puts "Cleaned up source files to save space!!"
   op_mode_list.delete('--clean')
 end

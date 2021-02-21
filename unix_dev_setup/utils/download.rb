@@ -4,13 +4,14 @@
 
 require 'open-uri'
 
-class Download
+class Download < RunConsole
 
   def initialize(
     url='', destination='./', 
     source_ctl='', mode='direct', 
     srouce_ctl_opts='')
     
+    super()
     @URL = url
     @DEST = File.realpath(destination)
     @source_ctl = source_ctl.downcase

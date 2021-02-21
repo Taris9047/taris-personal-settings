@@ -15,13 +15,12 @@ class InstJulia < InstallStuff
     @source_url = SRC_URL[@pkgname]
     @target_dir = File.join(@prefix, '/.opt')
     @Version = $julia_version
-    @golang_ver = @Version.join('.')
     @need_sudo = need_sudo
   end
 
   def install
     puts ""
-    puts "Working on #{@pkgname} (#{@golang_ver})!!"
+    puts "Working on #{@pkgname} (#{$julia_version.join('.')})!!"
     puts ""
     puts "Unfortunately, building julia isn't so stable!"
     puts "If it fails, it fails!"
@@ -35,13 +34,21 @@ class InstJulia < InstallStuff
         self.Run( "sudo mkdir -pv #{@target_dir}" )
       end
     end
-    self.Run( "cd #{@target_dir} && git clone #{@source_url} ./julia-src" )
     @src_dir = File.join(@target_dir, '/julia-src')
+    if File.directory?(@src_dir)
+      puts "Julia src directory found! Deleting it!"
+      self.Run( "rm -rf #{@src_dir}")
+    end
+    self.Run( "cd #{@target_dir} && git clone #{@source_url} #{@src_dir}" )
     self.Run( "cd #{@src_dir} && git checkout v#{@Version.join('.')} && make" )
     julia_bin = File.join(@src_dir, 'julia')
 
     puts "Compilation finished! Linking executable!"
-    self.Run( "ln -sfv #{julia_bin} #{@prefix}/bin/julia" )
+    julia_bin = File.join(@prefix, '/bin')
+    if !File.directory?(julia_bin)
+      self.Run("mkdir -pv #{julia_bin}")
+    end
+    self.Run( "ln -sfv #{julia_bin} #{File.join(julia_bin, 'julia')}" )
 
     self.WriteInfo
 
@@ -58,4 +65,4 @@ class InstJulia < InstallStuff
     fp.close
   end
 
-end # class InstGolang
+end # class InstJulia

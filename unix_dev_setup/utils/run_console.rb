@@ -1,0 +1,135 @@
+#!/usr/bin/env ruby
+
+require 'open3'
+require 'securerandom'
+require 'fileutils'
+
+class RunConsole
+
+  def initialize(verbose=true, logf_dir='', logf_name='')
+    @Verbose = verbose
+    if logf_dir.empty?
+      curr_dir=File.expand_path(File.dirname(__FILE__))
+      @logf_dir = File.join(curr_dir, 'logs')
+    else
+      @logf_dir = logf_dir
+    end
+    if !File.directory?(@logf_dir)
+      FileUtils.mkdir_p(@logf_dir)
+    end
+
+    if logf_name.empty?
+      @log_file_name = ''
+    else
+      @log_file_name = File.join(@logf_dir, logf_name)
+    end
+
+    # if logf_name
+    #   @log_file_name = File.join(@logf_dir, logf_name)
+    # else
+    #   tmp_name = [SecureRandom.hex(10), '.log'].join('')
+    #   @log_file_name = File.join(@logf_dir, tmp_name)
+    # end
+  end
+
+  def __run_quiet( env, cmds, opts )
+    o, e, s = Open3.capture3( env, cmds )
+
+    unless @log_file_name.empty?
+      unless File.file?(@log_file_name)
+        fp = File.open(@log_file_name, 'w')
+      else
+        fp = File.open(@log_file_name, 'a')
+      end
+    end
+      
+    fp.puts(o)
+    fp.close
+    
+    if !s.success?
+      puts "Execution ended with error!"
+      puts "ENV=#{env}"
+      puts "Command=#{cmds}"
+      puts ""
+      unless @log_file_name.empty?
+        puts "Check #{@log_file_name} for details..."
+      end
+      exit(-1)
+    end
+
+    return 0
+  end
+
+  def __run_verbose( env, cmds, opts )
+    o = []
+    e = []
+    s = ''
+    Open3.popen2e( env, cmds ) do |stdin, stdout_err, wait_thr|
+      Thread.new do
+        stdout_err.each do |l|
+          puts l
+          stdout_err.flush
+          o.append(l)
+        end
+      end
+      stdin.close
+      s = wait_thr.value
+    end
+
+    if opts.length() >= 1
+      @log_file_name = File.join(@logf_dir, [opts[0], '.log'].join(''))
+    end
+
+    unless @log_file_name.empty?
+      unless File.file?(@log_file_name)
+        fp = File.open(@log_file_name, 'w')
+      else
+        fp = File.open(@log_file_name, 'a')
+      end
+      fp.puts(o.join("\n"))
+      fp.close
+    end
+
+    if !s.success?
+      puts "Execution ended with error!"
+      puts "ENV=#{env}"
+      puts "Command=#{cmds}"
+      puts ""
+      unless @log_file_name.empty?
+        puts "Check #{@log_file_name} for details..."
+      end
+      exit(-1)
+    end
+
+    return 0
+  end
+
+  def Run(*args)
+
+    if args[0].class == Hash
+      env = args[0]
+      cmds = args[1]
+      opts = Array(args[2..-1])
+    elsif args[0].class == Array
+      env = {}
+      cmds = args[0].join(' ')
+      opts = Array(args[1..-1])
+    elsif args[0].class == String
+      env = {}
+      cmds = args[0]
+      if args.length > 1
+        opts = Array(args[1..-1])
+      else
+        opts = []
+      end
+    end
+
+    if @Verbose
+      self.__run_verbose(env, cmds, opts)
+    else
+      self.__run_quiet(env, cmds, opts)
+    end
+
+  end
+
+end
