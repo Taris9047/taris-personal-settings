@@ -191,8 +191,8 @@ if [ -d $HOME/.cargo ]; then
 fi
 
 # Golang
-export GOROOT=$HOMEBREW/opt/go
-export GOPATH=$HOMEBREW/opt/go/bin
+export GOROOT=$HOMEBREW/.opt/go
+export GOPATH=$HOMEBREW/.opt/go/bin
 if [ -d $GOROOT ]; then
   printf "${check_symbol} Golang has been found at $GOROOT\n"
   export PATH=$GOROOT/bin:$PATH
@@ -223,9 +223,12 @@ fi
 if [ -x "$(command -v lsd)" ]; then
   printf "${check_symbol} lsd found! using it instead of ls or exa\n"
   sleep ${line_delay}
-  alias ls='lsd -hFX'
-  alias ll='lsd -lahFX'
-  alias l='lsd -hFX'
+  alias ls='lsd -hF --color=always --group-dirs=first'
+  alias ll='lsd -lahF --color=always --group-dirs=first'
+  alias lld='lsd -lahF --color=always --group-dirs=first --total-size'
+  alias l='lsd -hF --color=auto --group-dirs=first'
+	alias lt='lsd -a --tree --color=always --group-dirs=first'
+	alias l.='lsd -a | egrep "^\."'
 fi
 
 # Bat

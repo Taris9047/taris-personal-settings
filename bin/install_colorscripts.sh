@@ -1,14 +1,15 @@
 #!/bin/bash
 
-git clone https://gitlab.com/dwt1/shell-color-scripts.git
-cd shell-color-scripts 
-rm -rf /opt/shell-color-scripts || return 1
-sudo mkdir -p /opt/shell-color-scripts/colorscripts || return 1
-sudo cp -rf colorscripts/* /opt/shell-color-scripts/colorscripts
-sudo cp colorscript.sh /usr/bin/colorscript
-rm -rf ./shell-color-scripts || return 1
+git clone https://gitlab.com/dwt1/shell-color-scripts.git ./shell-color-scripts
+cd ./shell-color-scripts && \
+  sudo rm -rf /opt/shell-color-scripts && \
+  sudo mkdir -pv /opt/shell-color-scripts/colorscripts && \
+  sudo cp -rvf colorscripts/* /opt/shell-color-scripts/colorscripts && \
+  sudo cp -rvf colorscript.sh /usr/bin/colorscript
 
 # optional for zsh completion
-if [ -x $(command -v zsh) ]; then
-  sudo cp zsh_completion/_colorscript /usr/share/zsh/site-functions
+if [ -x "$(command -v zsh)" ]; then
+  sudo cp -rfv zsh_completion/_colorscript /usr/share/zsh/site-functions
 fi
+
+cd ../ && rm -rfv ./shell-color-scripts
