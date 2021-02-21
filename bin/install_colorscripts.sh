@@ -1,5 +1,8 @@
 #!/bin/bash
 
+if [ -d ./shell-color-scripts ]; then
+  rm -rf ./shell-color-scripts
+fi
 git clone https://gitlab.com/dwt1/shell-color-scripts.git ./shell-color-scripts
 cd ./shell-color-scripts && \
   sudo rm -rf /opt/shell-color-scripts && \

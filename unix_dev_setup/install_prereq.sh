@@ -279,6 +279,7 @@ Arch_packages=( \
   "lapack" \
   "mercurial" \
   "subversion" \
+	"unicode-emoji" \
   "neofetch" \
   )
 
