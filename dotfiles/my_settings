@@ -400,10 +400,6 @@ fi
 
 clear
 
-if [ -x "$(command -v colorscript)" ]; then
-  colorscript random
-else
-  if [ -x "$(command -v neofetch)" ]; then 
-    neofetch
-  fi
+if [ -x "$(command -v neofetch)" ]; then 
+	neofetch
 fi
