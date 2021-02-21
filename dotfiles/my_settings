@@ -89,6 +89,7 @@ alias free='free -m'
 #
 alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
 alias dnfup='sudo dnf -y update'
+alias pmyy='sudo pacman -Syyu'
 ## get top process eating memory
 alias psmem='ps auxf | sort -nr -k 4'
 alias psmem10='ps auxf | sort -nr -k 4 | head -10'
@@ -385,12 +386,6 @@ fi
 #   echo "jq found, we can use geolocation alias as: geoloc"
 #   alias geoloc="curl -s https://ipvigilante.com/$(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
 # fi
-
-### BASH INSULTER ###
-if [ -f /etc/bash.command-not-found ]; then
-    . /etc/bash.command-not-found
-fi
-
 
 # starship
 if [ -x "$(command -v starship)" ]; then
