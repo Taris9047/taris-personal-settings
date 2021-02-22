@@ -9,7 +9,7 @@ class RunConsole
   def initialize(verbose=true, logf_dir='', logf_name='')
     @Verbose = verbose
     if logf_dir.empty?
-      curr_dir=File.realpath(File.dirname(__FILE__))
+      curr_dir=File.expand_path(File.dirname(__FILE__))
       @logf_dir = File.join(curr_dir, '../logs')
     else
       @logf_dir = logf_dir
@@ -18,13 +18,19 @@ class RunConsole
       FileUtils.mkdir_p(@logf_dir)
     end
 
-    if logf_name.empty?
-      @log_file_name = ''
-    else
-      @log_file_name = File.join(@logf_dir, logf_name)
-    end
+    # if logf_name.empty?
+    #   @log_file_name = ''
+    # else
+      # unless logf_name.end_with?'.log'
+      #   logf_name = [logf_name, '.log'].join('')
+      # end
+    #   @log_file_name = File.join(@logf_dir, logf_name)
+    # end
 
     unless logf_name.empty?
+      unless logf_name.end_with?'.log'
+        logf_name = [logf_name, '.log'].join('')
+      end
       @log_file_name = File.join(@logf_dir, logf_name)
     else
       tmp_name = [SecureRandom.hex(10), '.log'].join('')

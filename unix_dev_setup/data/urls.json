@@ -53,7 +53,7 @@
 
   # Node.JS
   "node": {
-    "url": "https://nodejs.org/dist/v15.8.0/node-v15.8.0.tar.gz",
+    "url": "https://nodejs.org/dist/v15.9.0/node-v15.9.0.tar.gz",
     "type": "tarball"
   },
   "node-lts": {

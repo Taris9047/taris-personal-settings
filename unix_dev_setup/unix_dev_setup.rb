@@ -23,7 +23,7 @@ def_prefix = File.join(home_dir, "/.local")
 def_system = 'x86_64-linux-gnu'
 
 # Getting CWD
-current_dir = File.realpath(File.dirname(__FILE__))
+current_dir = File.expand_path(File.dirname(__FILE__))
 
 # Version
 $version = ['1', '0', '1']
