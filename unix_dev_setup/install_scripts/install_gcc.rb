@@ -24,8 +24,8 @@ $gcc_conf_options = [
   "--build={target_arch}",
   "--host={target_arch}",
   "--target={target_arch}",
-  "--libexecdir={prefix}/lib",
-  "--libdir={prefix}/lib"
+  # "--libexecdir={prefix}/lib",
+  # "--libdir={prefix}/lib"
 ]
 
 
@@ -55,10 +55,9 @@ class InstGCC < InstallStuff
 
   end
 
-  def install
+  def do_install
     @pkginfo_file=File.join(@pkginfo_dir, @pkgname+'.info')
 
-    self.GetSrcVer
     if @pkgname == 'gcc'
       o, e, s = Open3.capture3('echo $(/usr/bin/gcc --version)')
       ver_system_gcc = Version.new(o.split(' ')[2])
@@ -196,7 +195,7 @@ class InstGCCCuda < InstGCC
 
   end
 
-  def install
+  def do_install
     super
   end
 
@@ -229,7 +228,7 @@ class InstGCCOld < InstGCC
 
   end
 
-  def install
+  def do_install
     super
   end
 

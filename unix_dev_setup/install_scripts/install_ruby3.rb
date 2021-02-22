@@ -45,15 +45,10 @@ class InstRuby3 < InstallStuff
 
   end
 
-  def install
-    self.GetSrcVer
+  def do_install
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
-
-    if self.CheckInfo
-      return 0
-    end
 
     dl = Download.new(@source_url, @src_dir)
     src_tarball_path = dl.GetPath

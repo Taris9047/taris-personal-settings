@@ -23,7 +23,7 @@ class InstallStuff < RunConsole
   @src_dir=''
   @pkginfo_dir=''
   @pkginfo_file=''
-  @run_install=true
+  @run_install=''
 
   def initialize(pkgname, prefix, work_dirs=[], ver_check=true, verbose_mode=false)
 
@@ -34,6 +34,7 @@ class InstallStuff < RunConsole
     @check_ver = ver_check
     @verbose = verbose_mode
     super(@verbose, @pkginfo_dir, "#{@pkgname}.log")
+    @run_install = true
 
     # Setting up processors
     @Processors = Etc.nprocessors
@@ -41,46 +42,29 @@ class InstallStuff < RunConsole
   end # initialize
 
   def install
-    if @run_install
+    self.SetURL
+    if @run_install == true
       self.do_install
     end
   end
 
   def SetURL
     @source_url = SRC_URL[@pkgname]
-    if SRC_TYPE[@pkgname] == "tarball"
-      self.GetSrcVer
-    else
-      @ver_source = '0.0.0'
-    end
-
+    @ver_source = SRC_VER[@pkgname]
     # Version Checking
-    if @check_ver == true
-      if File.file?(@pkginfo_file)
-        if self.VerCheck()
-          @run_install = false
-        else
-      end
+    if File.file?(@pkginfo_file) and self.VerCheck()
+      @run_install = false
     end
-
-  end
-
-  def GetSrcVer
-    fnp_dummy = FNParser.new(@source_url)
-    @ver_source = Version.new(fnp_dummy.version().join('.'))
   end
 
   def VerCheck
     # Checking if newer version has rolled out
     if @check_ver
       # Do the version checking
+      @ver_source = SRC_VER[@pkgname]
       if File.file?(@pkginfo_file)
-        pkf = File.read(@pkginfo_file)
-        data_hash = JSON.parse(pkf)
+        data_hash = JSON.parse(File.read(@pkginfo_file))
         @ver_current = Version.new(data_hash['Version'].join('.'))
-        self.GetSrcVer
-        # fnp_dummy = FNParser.new(@source_url)
-        # @ver_source = Version.new(fnp_dummy.version().join('.'))
         if (@ver_current >= @ver_source)
           puts "===================================================="
           puts "It seems Current version of #{@pkgname} is not so behind!"
@@ -113,106 +97,6 @@ class InstallStuff < RunConsole
     return false
   end # VerCheck
 
-  # def __run_quiet( env, cmds, opts )
-  #   o, e, s = Open3.capture3( env, cmds )
-
-  #   log_file_name = @pkgname+'.log'
-  #   if opts.length() >= 1
-  #     log_file_name = opts[0]+'.log'
-  #   end
-
-  #   log_file = File.join(@pkginfo_dir, log_file_name)
-  #   unless File.file?(log_file)
-  #     fp = File.open(log_file, 'w')
-  #   else
-  #     fp = File.open(log_file, 'a')
-  #   end
-  #   fp.puts(o)
-  #   fp.close
-  #   # puts "Log file for #{@pkgname} has been saved at #{log_file_name}"
-
-  #   if !s.success?
-  #     puts "Execution ended with error!"
-  #     puts "ENV=#{env}"
-  #     puts "Command=#{cmds}"
-  #     puts ""
-  #     puts "Check #{log_file} for details..."
-  #     exit(-1)
-  #   end
-
-  #   return 0
-  # end
-
-  # def __run_verbose( env, cmds, opts )
-  #   o = []
-  #   e = []
-  #   s = ''
-  #   Open3.popen2e( env, cmds ) do |stdin, stdout_err, wait_thr|
-  #     Thread.new do
-  #       stdout_err.each do |l|
-  #         puts l
-  #         stdout_err.flush
-  #         o.append(l)
-  #       end
-  #     end
-  #     stdin.close
-  #     s = wait_thr.value
-  #   end
-
-  #   log_file_name = @pkgname+'.log'
-  #   if opts.length() >= 1
-  #     log_file_name = opts[0]+'.log'
-  #   end
-
-  #   log_file = File.join(@pkginfo_dir, log_file_name)
-  #   unless File.file?(log_file)
-  #     fp = File.open(log_file, 'w')
-  #   else
-  #     fp = File.open(log_file, 'a')
-  #   end
-  #   fp.puts(o.join("\n"))
-  #   fp.close
-
-  #   if !s.success?
-  #     puts "Execution ended with error!"
-  #     puts "ENV=#{env}"
-  #     puts "Command=#{cmds}"
-  #     puts ""
-  #     puts "Check #{log_file} for details..."
-  #     exit(-1)
-  #   end
-
-  #   return 0
-  # end
-
-  # def Run(*args)
-
-  #   if args[0].class == Hash
-  #     env = args[0]
-  #     cmds = args[1]
-  #     opts = Array(args[2..-1])
-  #   elsif args[0].class == Array
-  #     env = {}
-  #     cmds = args[0].join(' ')
-  #     opts = Array(args[1..-1])
-  #   elsif args[0].class == String
-  #     env = {}
-  #     cmds = args[0]
-  #     if args.length > 1
-  #       opts = Array(args[1..-1])
-  #     else
-  #       opts = []
-  #     end
-  #   end
-
-  #   if @verbose
-  #     self.__run_verbose(env, cmds, opts)
-  #   else
-  #     self.__run_quiet(env, cmds, opts)
-  #   end
-
-  # end
-
   def WriteInfo
     puts "Writing package info for #{@pkgname}..."
     fp = File.open(@pkginfo_file, 'w')
@@ -239,11 +123,5 @@ class InstallStuff < RunConsole
     fp.write(compile_info_json.to_json)
     # fp.puts(compile_info.join("\n"))
     fp.close
-  end
-
-  def CheckInfo
-    if File.file?(@pkginfo_file)
-      return VerCheck()
-    end
   end
 end # class InstallStuff

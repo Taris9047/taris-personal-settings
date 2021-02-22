@@ -18,7 +18,7 @@ class GetCompiler
     cxx_path='/usr/bin', 
     cflags='', 
     cxxflags='', 
-    clang=false, suffix='', env_path='')
+    clang=false, suffix='', env_path='', verbose=false)
 
     @fallback_compiler_path = '/usr/bin/'
 
@@ -29,6 +29,8 @@ class GetCompiler
     @CXXFLAGS = [$cxxflags, cxxflags].join(' ')
     @CC = File.join(@CC_PATH, 'gcc')
     @CXX = File.join(@CXX_PATH, 'g++')
+
+    @verbose = verbose
 
     r_path = '/usr/local'
     if env_path == ''
@@ -80,12 +82,14 @@ class GetCompiler
       exit(-1)
     end
 
-    puts "So, we're going to use those settings..."
-    puts "C compiler: #{@CC}"
-    puts "C++ compiler: #{@CXX}"
-    puts "C flags: #{@CFLAGS}"
-    puts "CXX flags: #{@CXXFLAGS}"
-    puts "LL flags: #{@RPATH}"
+    if @verbose
+      puts "So, we're going to use those settings..."
+      puts "C compiler: #{@CC}"
+      puts "C++ compiler: #{@CXX}"
+      puts "C flags: #{@CFLAGS}"
+      puts "CXX flags: #{@CXXFLAGS}"
+      puts "LL flags: #{@RPATH}"
+    end
 
   end
 

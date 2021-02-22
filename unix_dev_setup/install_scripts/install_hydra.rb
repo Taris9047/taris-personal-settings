@@ -23,8 +23,7 @@ class InstHydra < InstallStuff
 
   end
 
-  def install
-    self.GetSrcVer
+  def do_install
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""

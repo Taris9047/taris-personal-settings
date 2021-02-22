@@ -18,7 +18,7 @@ class InstGolang < InstallStuff
     @golang_ver = @Version.join('.')
   end
 
-  def install
+  def do_install
     puts ""
     puts "Working on #{@pkgname} (#{@golang_ver})!!"
     puts ""

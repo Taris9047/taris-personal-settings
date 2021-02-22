@@ -54,9 +54,6 @@ class InstPython2 < InstallStuff
 
     @need_sudo = need_sudo
 
-    # Checking up version
-    VerCheck()
-
     # Setting up compilers
     @clang_mode = use_clang
     compiler_path = File.join(prefix, 'bin')
@@ -71,16 +68,11 @@ class InstPython2 < InstallStuff
 
   end
 
-  def install
+  def do_install
 
-    self.GetSrcVer
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
-
-    if self.CheckInfo
-      return 0
-    end
 
     dl = Download.new(@source_url, @src_dir)
     # src_tarball_path = dl.GetPath
@@ -193,16 +185,11 @@ class InstPython3 < InstallStuff
     @env = gc.get_env_settings
   end
 
-  def install
+  def do_install
 
-    self.GetSrcVer
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
-
-    if self.CheckInfo
-      return 0
-    end
 
     dl = Download.new(@source_url, @src_dir)
     src_tarball_path = dl.GetPath

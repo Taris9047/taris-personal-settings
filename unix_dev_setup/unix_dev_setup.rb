@@ -387,7 +387,6 @@ op_mode_list.each do |op_mode|
     require "./install_scripts/install_ruby.rb"
     inst = InstRuby.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  
   when 'ruby3'
     require "./install_scripts/install_ruby3.rb"
     inst_lua = InstRuby3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)

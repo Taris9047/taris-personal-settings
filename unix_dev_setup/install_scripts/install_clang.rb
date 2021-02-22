@@ -23,13 +23,11 @@ class InstClang < InstallStuff
 
   end
 
-  def install
+  def do_install
     
     puts ""
     puts "Working on LLVM-Clang!! (git)"
     puts ""
-
-    self.SrcURL(SRC_URL[@pkgname])
 
     dn = Download.new(@src_url, destination=@src_dir, source_ctl='git')
     @src_dir = dn.GetPath

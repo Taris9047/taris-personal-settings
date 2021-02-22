@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require_relative './fname_parser.rb'
+
 # URL database interfacing part...
 # --> JSON would be suffice, right?
 #
@@ -89,3 +91,23 @@ module SRC_INFO
 
   module_function :[]
 end # module SRC_INFO
+
+module SRC_VER
+
+  def [](pkg_name)
+    if pkg_name == 'golang'
+      return 'git'
+    end
+
+    if SRC_TYPE[pkg_name] == "tarball"
+      fnp = FNParser.new(SRC_URL[pkg_name])
+      src_ver = Version.new(fnp.version().join('.'))
+    else
+      src_ver = Version.new(SRC_TYPE[pkg_type])
+    end
+
+    return src_ver
+  end
+
+  module_function :[]
+end # module SRC_TYPE

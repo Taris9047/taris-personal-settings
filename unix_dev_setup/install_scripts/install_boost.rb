@@ -28,7 +28,7 @@ class InstBoost < InstallStuff
     @env = gc.get_env_settings
   end
 
-  def install
+  def do_install
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""

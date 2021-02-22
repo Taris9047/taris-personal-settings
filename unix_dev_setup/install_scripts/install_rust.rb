@@ -32,7 +32,7 @@ class InstRust < InstallStuff
     @rust_utils_to_install = $rust_utils_to_install
   end
 
-  def install
+  def do_install
     puts ""
     puts "Working on #{@pkgname}!!"
     puts ""

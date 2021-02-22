@@ -18,7 +18,7 @@ class InstJulia < InstallStuff
     @need_sudo = need_sudo
   end
 
-  def install
+  def do_install
     puts ""
     puts "Working on #{@pkgname} (#{$julia_version.join('.')})!!"
     puts ""

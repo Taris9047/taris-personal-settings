@@ -17,10 +17,10 @@ class InstROOT < InstallStuff
 
   end
 
-  def install
+  def do_install
 
     puts ""
-    puts "Working on ROOT!! (git)"
+    puts "Working on #{@pkgname}!! (git)"
     puts ""
 
     @root_prefix = File.join(@prefix, '/.opt/ROOT')

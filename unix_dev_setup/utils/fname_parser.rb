@@ -5,11 +5,19 @@
 # Referenced: https://stackoverflow.com/questions/2051229/how-to-compare-versions-in-ruby/2051427#2051427
 #
 class Version < Array
+  @ver_string = ''
   def initialize(s)
     if s.instance_of? String
-      super( s.split('.').map{ |e| e.delete(',').delete('v').delete('V').to_i } )
+      begin
+        super( s.split('.').map{ |e| e.delete(',').delete('v').delete('V').to_i } )
+        @ver_string = self.join('.')
+      rescue
+        super([0,0,0])
+        @ver_string = s
+      end
     elsif s.instance_of? Array
       super( s.map{ |e| e.delete(',').delete('v').delete('V').to_i } )
+      @ver_string = self.join('.')
     end
   end
 
@@ -32,7 +40,7 @@ class Version < Array
 
   # Returning the version info. from integer array to ...
   def to_s
-    return self.join('.')
+    return self.map{ |e| e.to_s }.join('.')
   end
 
   def to_sA
