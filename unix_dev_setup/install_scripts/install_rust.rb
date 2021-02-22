@@ -28,7 +28,7 @@ $rust_inst_cmd = "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 class InstRust < InstallStuff
 
   def initialize(prefix='', work_dirs=[], need_sudo=false, verbose_mode=false)
-    super('rust', prefix=ENV["HOME"], work_dirs, verbose_mode=verbose_mode)
+    super('rust', prefix=ENV["HOME"], work_dirs, ver_check=true, verbose_mode=verbose_mode)
     @rust_utils_to_install = $rust_utils_to_install
   end
 

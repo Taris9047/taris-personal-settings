@@ -32,7 +32,7 @@ class InstGCC < InstallStuff
       prefix='/usr/local', os_type='Ubuntu',
       work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
 
-    super('gcc', prefix, work_dirs, verbose_mode=verbose_mode)
+    super('gcc', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
 

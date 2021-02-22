@@ -11,7 +11,7 @@ $julia_version = ["1", "3", "0"]
 class InstJulia < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('julia', prefix, work_dirs, verbose_mode=verbose_mode)
+    super('julia', prefix, work_dirs, ver_check=false, verbose_mode=verbose_mode)
     @source_url = SRC_URL[@pkgname]
     @target_dir = File.join(@prefix, '/.opt')
     @Version = $julia_version

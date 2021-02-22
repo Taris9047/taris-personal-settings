@@ -9,7 +9,7 @@ class RunConsole
   def initialize(verbose=true, logf_dir='', logf_name='')
     @Verbose = verbose
     if logf_dir.empty?
-      curr_dir=File.expand_path(File.dirname(__FILE__))
+      curr_dir=File.realpath(File.dirname(__FILE__))
       @logf_dir = File.join(curr_dir, 'logs')
     else
       @logf_dir = logf_dir

@@ -17,7 +17,7 @@ $gems_to_install = [
 class InstRuby < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('ruby', prefix, work_dirs, verbose_mode=verbose_mode)
+    super('ruby', prefix, work_dirs,ver_check=true, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
 

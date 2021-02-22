@@ -8,7 +8,7 @@ require_relative './install_stuff.rb'
 class InstLua < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('lua', prefix, work_dirs, verbose_mode=verbose_mode)
+    super('lua', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
     @need_sudo = need_sudo
 
     @source_url = SRC_URL[@pkgname]

@@ -9,15 +9,23 @@ home_dir = ENV["HOME"]
 def_prefix = File.join(home_dir, "/.local")
 # def_prefix = File.join("/usr/local")
 def_system = "Linux"
+current_dir = File.realpath(File.dirname(__FILE__))
 
 # Version
-$version = ['1', '0', '0']
+$version = ['1', '0', '1']
 
 # title
 $title = "Unix Development Environment setup"
 
 # Verbose mode? Default: false
 verbose = false
+
+# Directories
+work_dir_root = File.join(current_dir, 'workspace')
+work_dir_path = File.join(work_dir_root, 'build')
+source_dir_path = File.join(work_dir_root, 'download')
+pkginfo_dir_path = File.join(current_dir, 'pkginfo')
+
 
 list_of_progs = [
   'gcc',
@@ -42,7 +50,7 @@ list_of_progs = [
 ]
 
 $not_so_stable_pkgs = ['pypy3', 'clang', 'ROOT', 'julia']
-$not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts']
+$not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts', 'ruby3']
 
 list_of_all = list_of_progs - $not_so_stable_pkgs - $not_so_needed_pkgs
 
@@ -157,45 +165,6 @@ if op_mode_list.include?('-v') or op_mode_list.include?('--verbose')
 end
 
 
-# Working directories
-require 'fileutils'
-
-work_dir_path = "./workspace/build"
-unless File.directory?(work_dir_path)
-  puts work_dir_path+" not found, making one..."
-  FileUtils.mkdir_p(work_dir_path)
-end
-work_dir = File.realpath(work_dir_path)
-puts "Working directory will be: #{work_dir}"
-
-source_dir_path = "./workspace/downloads"
-unless File.directory?(source_dir_path)
-  puts source_dir_path+" not found, making one..."
-  FileUtils.mkdir_p(source_dir_path)
-end
-source_dir = File.realpath(source_dir_path)
-puts "Source directory will be: #{source_dir}"
-
-pkginfo_dir_path = "./pkginfo"
-unless File.directory?(pkginfo_dir_path)
-  puts pkginfo_dir_path+" not found, making one..."
-  FileUtils.mkdir_p(pkginfo_dir_path)
-end
-pkginfo_dir = File.realpath(pkginfo_dir_path)
-puts "Package information directory will be: #{pkginfo_dir}"
-
-work_dirs = [work_dir, source_dir, pkginfo_dir]
-
-prefix_dir_path = def_prefix
-unless File.directory?(prefix_dir_path)
-  puts prefix_dir_path+" not found, making one..."
-  FileUtils.mkdir_p(prefix_dir_path)
-end
-$prefix_dir = File.realpath(prefix_dir_path)
-puts "Prefix confirmed! Everything will be installed at..."
-puts $prefix_dir
-puts ""
-
 # Use clang as compiler
 # Currently, only Python accepts those stuff.
 #
@@ -209,8 +178,9 @@ end
 # Some edge cases... cleaning and installing prereq
 if op_mode_list.include?('purge')
   puts "Purging everything!!!"
-  Con.Run( "rm -rf #{work_dirs.join(' ')}" )
-  Con.Run( "rm -rf #{$prefix_dir}/bin #{$prefix_dir}/lib* #{$prefix_dir}/include #{$prefix_dir}/opt #{$prefix_dir}/.opt" )
+  # Con.Run( "rm -rf #{work_dirs.join(' ')}" )
+  Con.Run( "rm -rf #{work_dir_root}" )
+  Con.Run( "rm -rf #{$prefix_dir}/bin #{$prefix_dir}/lib* #{$prefix_dir}/include #{$prefix_dir}/opt #{$prefix_dir}/.opt #{$prefix_dir}/man #{$prefix_dir}/etc #{$prefix_dir}/state" )
   op_mode_list.delete('purge')
   puts "Cleaned up everything!!"
   exit(0)
@@ -239,6 +209,43 @@ if op_mode_list.include?('--clean')
   puts "Cleaned up source files to save space!!"
   op_mode_list.delete('--clean')
 end
+
+# Working directories
+require 'fileutils'
+
+unless File.directory?(work_dir_path)
+  puts work_dir_path+" not found, making one..."
+  FileUtils.mkdir_p(work_dir_path)
+end
+work_dir = File.realpath(work_dir_path)
+puts "Working directory will be: #{work_dir}"
+
+unless File.directory?(source_dir_path)
+  puts source_dir_path+" not found, making one..."
+  FileUtils.mkdir_p(source_dir_path)
+end
+source_dir = File.realpath(source_dir_path)
+puts "Source directory will be: #{source_dir}"
+
+unless File.directory?(pkginfo_dir_path)
+  puts pkginfo_dir_path+" not found, making one..."
+  FileUtils.mkdir_p(pkginfo_dir_path)
+end
+pkginfo_dir = File.realpath(pkginfo_dir_path)
+puts "Package information directory will be: #{pkginfo_dir}"
+
+work_dirs = [work_dir, source_dir, pkginfo_dir]
+
+prefix_dir_path = def_prefix
+unless File.directory?(prefix_dir_path)
+  puts prefix_dir_path+" not found, making one..."
+  FileUtils.mkdir_p(prefix_dir_path)
+end
+$prefix_dir = File.realpath(prefix_dir_path)
+puts "Prefix confirmed! Everything will be installed at..."
+puts $prefix_dir
+puts ""
+
 
 if op_mode_list.include?('prereq')
   puts ""

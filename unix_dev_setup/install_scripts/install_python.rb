@@ -41,7 +41,7 @@ $py3_conf_options = [
 class InstPython2 < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false, use_clang=false)
-    super('python2', prefix, work_dirs, verbose_mode=verbose_mode)
+    super('python2', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
     @get_pip_url = SRC_URL['get_pip']
@@ -167,7 +167,7 @@ end # class InstPython2
 class InstPython3 < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false, use_clang=false)
-    super('python3', prefix, work_dirs, verbose_mode=verbose_mode)
+    super('python3', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
     @get_pip_url = SRC_URL['get_pip']

@@ -21,7 +21,7 @@ $pypy_prefix_dir = '/.opt'
 class InstPyPy3 < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('pypy3', prefix, work_dirs, verbose_mode=verbose_mode)
+    super('pypy3', prefix, work_dirs, ver_check=false, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
     @get_pip_url = SRC_URL['get_pip']

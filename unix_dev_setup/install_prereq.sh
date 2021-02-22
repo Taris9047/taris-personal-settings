@@ -52,6 +52,7 @@ Debian_packages=( \
   "libssl-dev" \
   "libsqlite3-dev" \
   "libncursesw5-dev" \
+	"libyaml-dev" \
   "libreadline-dev" \
   "libssl-dev" \
   "libgdbm-dev" \
@@ -112,75 +113,7 @@ Debian_packages=( \
   "neofetch" \
 )
 
-Ubuntu_packages=( \
-  "build-essential"  \
-  "flex" \
-  "bison" \
-  "zlib1g" \
-  "zlib1g-dev" \
-  "openssl" \
-  "libssl-dev" \
-  "libsqlite3-dev" \
-  "libncursesw5-dev" \
-  "libreadline-dev" \
-  "libssl-dev" \
-  "libgdbm-dev" \
-  "libc6-dev" \
-  "libsqlite3-dev" \
-  "tk-dev" \
-  "libbz2-dev" \
-  "libicu-dev" \
-  "libffi-dev" \
-  "autotools-dev" \
-  "python3-dev" \
-  "libncurses5-dev" \
-  "libxml2-dev" \
-  "libedit-dev" \
-  "swig" \
-  "doxygen" \
-  "graphviz" \
-  "xz-utils" \
-  "ruby" \
-  "ruby-dev" \
-  "git-lfs" \
-  "tree" \
-  "screen" \
-  "libzmq3-dev" \
-  "libtool-bin" \
-  "dos2unix" \
-  "liblzma-dev" \
-  "lzma" \
-  "pkg-config" \
-  "libbz2-dev" \
-  "libncurses5-dev" \
-  "libexpat1-dev" \
-  "libgdbm-dev" \
-  "tk-dev" \
-  "libgc-dev" \
-  "libnuma-dev" \
-  "python-cffi" \
-  "libopenblas-dev" \
-  "libx11-dev" \
-  "libxpm-dev" \
-  "libxft-dev" \
-  "libxext-dev" \
-  "libpng-dev" \
-  "libjpeg-dev" \
-  "valgrind" \
-  "cmake" \
-  "cmake-gui" \
-  "ninja-build" \
-  "autoconf" \
-  "automake" \
-  "vim" \
-  "emacs" \
-  "ttf-bitstream-vera" \
-  "subversion" \
-  "git" \
-  "wget" \
-  "curl" \
-  "neofetch" \
-  )
+Ubuntu_packages=${Debian_packages[@]}
 
 Fedora_packages=( \
   "wget" \
