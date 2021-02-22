@@ -19,7 +19,7 @@ class InstBoost < InstallStuff
 
     @need_sudo = need_sudo
 
-    @source_url = SRC_URL[@pkgname]
+    self.SrcURL(SRC_URL[@pkgname])
     @b2_opts = $b2_opts
 
     # Setting up compilers
@@ -29,14 +29,9 @@ class InstBoost < InstallStuff
   end
 
   def install
-    self.GetSrcVer
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
-
-    if self.CheckInfo
-      return
-    end
 
     puts "Downloading the source from #{@source_url}"
     dl = Download.new(@source_url, @src_dir)

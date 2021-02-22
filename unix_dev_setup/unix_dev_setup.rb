@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+# TODO: Gotta make it with 'class'
+# --> Too much stuff happening here!
+#
+
 # Note that installing old gcc (gcccuda) is disabled due to libc 2.26 issue.
 # In fact, we need to apply patch to adopt old gcc source codes to
 # follow up the newest changes in libc 2.26
@@ -8,7 +12,17 @@
 home_dir = ENV["HOME"]
 def_prefix = File.join(home_dir, "/.local")
 # def_prefix = File.join("/usr/local")
-def_system = "Linux"
+
+#
+# This could be
+# i686-linux-gnu
+# some arm type etc.
+# --> Only applies to gcc.
+# We are not building any cross-compilation stuff yet.
+#
+def_system = 'x86_64-linux-gnu'
+
+# Getting CWD
 current_dir = File.realpath(File.dirname(__FILE__))
 
 # Version
@@ -259,7 +273,7 @@ if op_mode_list.include?('prereq')
 end
 
 # When some stupid parameter was given...
-for o in op_mode_list
+op_mode_list.each do |o|
   if !$permitted_list.include?(o)
     show_help
     exit(0)
@@ -316,7 +330,7 @@ def remove_def_python_cmd
 end
 
 # The main installation loop
-for op_mode in op_mode_list do
+op_mode_list.each do |op_mode|
   case op_mode
 
   # Gcc stuffs
@@ -443,7 +457,7 @@ if flag_wrong_pkg_given
   puts ""
   puts "Available modules are..."
   puts ""
-  for pkg in list_of_progs
+  list_of_progs.each do |pkg|
     puts pkg
   end
 end

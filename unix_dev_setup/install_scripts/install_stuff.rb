@@ -23,6 +23,7 @@ class InstallStuff < RunConsole
   @src_dir=''
   @pkginfo_dir=''
   @pkginfo_file=''
+  @run_install=true
 
   def initialize(pkgname, prefix, work_dirs=[], ver_check=true, verbose_mode=false)
 
@@ -36,7 +37,33 @@ class InstallStuff < RunConsole
 
     # Setting up processors
     @Processors = Etc.nprocessors
+
   end # initialize
+
+  def install
+    if @run_install
+      self.do_install
+    end
+  end
+
+  def SetURL
+    @source_url = SRC_URL[@pkgname]
+    if SRC_TYPE[@pkgname] == "tarball"
+      self.GetSrcVer
+    else
+      @ver_source = '0.0.0'
+    end
+
+    # Version Checking
+    if @check_ver == true
+      if File.file?(@pkginfo_file)
+        if self.VerCheck()
+          @run_install = false
+        else
+      end
+    end
+
+  end
 
   def GetSrcVer
     fnp_dummy = FNParser.new(@source_url)

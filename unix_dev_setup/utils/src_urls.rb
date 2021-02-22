@@ -32,9 +32,10 @@ class ParseHjson
     real_f_name = File.join(@json_path, $def_db_json_name)
     @json_data = File.readlines(real_f_name)
     @cleaned_up_data = []
-    for line in @json_data
+    @json_data.each do |line|
       unless line.include?('#')
-        cleaned_up_line = line.delete("\n").delete("\r").delete(' ')
+        cleaned_up_line = line.delete("\n").delete("\r").gsub(/( |(".*?"))/, "\\2")
+
         if cleaned_up_line.size > 0
           @cleaned_up_data.push(cleaned_up_line)
         end

@@ -103,7 +103,8 @@ install_vscode_ubuntu ()
     sudo apt-get -y install apt-transport-https
     sudo apt-get -y update
     sudo apt-get -y install code # or code-insiders
-  else
+		rm -rf ./packages.microsoft.gpg
+	else
     echo '>>> Updating VSCode ... '
     sudo apt-get -y update && sudo apt-get -y upgrade
   fi

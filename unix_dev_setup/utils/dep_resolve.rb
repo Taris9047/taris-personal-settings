@@ -107,8 +107,8 @@ class DepResolve
 
     marked_for_del = []
     pkgs = pkgs.uniq
-    for ipkg in pkgs
 
+    pkgs.each do |ipkg|
       if @Installed_pkg_list.include? ipkg
         # Golang is kind of fixed version case. But its explicit version
         # Isn't on the src file. So, skipping it if it's already installed.
@@ -136,7 +136,7 @@ class DepResolve
 
   def __make_dep_list (inst_list)
     dep_list = []
-    for pkg in inst_list
+    inst_list.each do |pkg|
       p_dep = $dependency_table[pkg]
       dep_list += p_dep
     end
@@ -145,7 +145,7 @@ class DepResolve
 
     # Checking out dependency list
     not_flat_dep_list = []
-    for pk in dep_list
+    dep_list.each do |pk|
       if !$dependency_table[pk].empty?
         not_flat_dep_list.append(pk)
       end

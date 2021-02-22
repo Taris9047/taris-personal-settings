@@ -29,10 +29,6 @@ class InstHydra < InstallStuff
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
 
-    if self.CheckInfo
-      return 0
-    end
-
     dl = Download.new(@source_url, @src_dir)
     src_tarball_path = dl.GetPath
 

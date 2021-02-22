@@ -20,16 +20,19 @@ $gcc_conf_options = [
   "--enable-gnu-unique-object",
   "--enable-objc-gc=auto",
   "--disable-multilib",
-  "--build=x86_64-linux-gnu",
-  "--host=x86_64-linux-gnu",
-  "--target=x86_64-linux-gnu",
+  "--disable-werror",
+  "--build={target_arch}",
+  "--host={target_arch}",
+  "--target={target_arch}",
+  "--libexecdir={prefix}/lib",
+  "--libdir={prefix}/lib"
 ]
 
 
 class InstGCC < InstallStuff
 
   def initialize (
-      prefix='/usr/local', os_type='Ubuntu',
+      prefix='/usr/local', os_type='x86_64-linux-gnu',
       work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
 
     super('gcc', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
@@ -58,8 +61,7 @@ class InstGCC < InstallStuff
     self.GetSrcVer
     if @pkgname == 'gcc'
       o, e, s = Open3.capture3('echo $(/usr/bin/gcc --version)')
-      ver_str = o.split(' ')[2]
-      ver_system_gcc = Version.new(ver_str)
+      ver_system_gcc = Version.new(o.split(' ')[2])
       if ver_system_gcc >= @ver_source
         puts "Looks like system gcc is new enough! Skipping!"
         self.WriteInfo_system(ver_system_gcc.to_s)
@@ -70,9 +72,21 @@ class InstGCC < InstallStuff
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
 
-    if self.CheckInfo
-      return 0
+    # Replace '{prefix}' on configure parameters.
+    @conf_options.each_with_index do |co, ind|
+      if co.include?'{prefix}'
+        @conf_options[ind] = co.gsub('{prefix}', @prefix)
+      end
+      if co.include?'{target_arch}'
+        @conf_options[ind] = co.gsub('{target_arch}', @os_type)
+      end
     end
+    @env.each do |key, flag|
+      if flag.indclude? '{prefix}'
+        @env[key] = flag.gsub('{prefix}', @prefix)
+      end
+    end
+
 
     if File.file?(@pkginfo_file)
       puts "Oh, it seems gcc was already installed!! Skipping!!"
@@ -112,8 +126,6 @@ class InstGCC < InstallStuff
     else
       inst_cmd = "&& make install"
     end
-
-    @env['LDFLAGS'] = @env['LDFLAGS'].gsub('{prefix}', @prefix)
 
     opts = ["--prefix="+@prefix]+@conf_options
     cmd = [

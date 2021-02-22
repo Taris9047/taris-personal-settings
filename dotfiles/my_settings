@@ -381,6 +381,12 @@ if [ -x "$(command -v $HOMEBREW/.opt/ROOT/bin/root)" ]; then
   source $HOMEBREW/.opt/ROOT/bin/thisroot.sh
 fi
 
+# Doom-Emacs
+if [ -d "$HOME/.emacs.d/bin" ]; then
+	printf "${ckeck_symbol} Doomemacs found! Adding to path!\n"
+	export PATH=$HOME/.emacs.d/bin:$PATH
+fi
+
 # Geolocation
 # if [ -x "$(command -v jq)" ]; then
 #   echo "jq found, we can use geolocation alias as: geoloc"
