@@ -130,7 +130,6 @@ Fedora_packages=( \
   "xz-devel" \
   "expat-devel" \
   "openblas" \
-  "blas" \
   "lapack" \
   "sqlite" \
   "sqlite-devel" \
@@ -194,9 +193,19 @@ RHEL_additional_packages=( \
 
 Arch_packages=( \
   "base-devel" \
+  "gcc-fortran" \
+  "libffi" \
   "flex" \
+  "tk" \
   "bison" \
+  "zlib" \
+  "bzip2" \
+  "cfitsio" \
+  "expat" \
+  "pcre" \
   "git" \
+  "git-lfs" \
+  "doxygen" \
   "wget" \
   "curl" \
   "vim" \
@@ -204,15 +213,35 @@ Arch_packages=( \
   "emacs" \
   "valgrind" \
   "swig" \
+  "sqlite" \
+  "mariadb" \
   "cmake" \
   "pkgconf" \
+  "xz" \
+  "p7zip" \
   "ruby" \
   "ruby-irb" \
   "openblas" \
+  "gsl" \
+  "ftgl" \
+  "fftw" \
+  "openssl" \
+  "openldap" \
+  "numactl" \
+  "glew" \
+  "graphviz" \
+  "libxml2" \
+  "libx11" \
+  "libxpm" \
+  "libxft" \
+  "libxext" \
+  "libxt" \
+  "screen" \
   "lapack" \
   "mercurial" \
   "subversion" \
 	"unicode-emoji" \
+  "ninja" \
   "neofetch" \
   )
 
