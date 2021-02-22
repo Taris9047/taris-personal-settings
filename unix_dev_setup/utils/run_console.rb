@@ -8,14 +8,16 @@ class RunConsole
 
   def initialize(verbose=true, logf_dir='', logf_name='')
     @Verbose = verbose
+    @def_env = { "CLICOLOR" => "1", "CLICOLOR_FORCE" => "1" }
+
     if logf_dir.empty?
       curr_dir=File.expand_path(File.dirname(__FILE__))
-      @logf_dir = File.join(curr_dir, '../logs')
+      @logf_dir = File.join(curr_dir, '../workspace/log')
     else
       @logf_dir = logf_dir
-    end
-    if !File.directory?(@logf_dir)
-      FileUtils.mkdir_p(@logf_dir)
+      if !File.directory?(@logf_dir)
+        FileUtils.mkdir_p(@logf_dir)
+      end
     end
 
     # if logf_name.empty?
@@ -51,16 +53,9 @@ class RunConsole
       
     fp.puts(o)
     fp.close
-    
+
     if !s.success?
-      puts "Execution ended with error!"
-      puts "ENV=#{env}"
-      puts "Command=#{cmds}"
-      puts ""
-      unless @log_file_name.empty?
-        puts "Check #{@log_file_name} for details..."
-      end
-      exit(-1)
+      self.WhenCrapHappens(env, cmds)
     end
 
     return 0
@@ -70,7 +65,9 @@ class RunConsole
     o = []
     e = []
     s = ''
-    Open3.popen2e( env, cmds ) do |stdin, stdout_err, wait_thr|
+
+    cli_color_env = @def_env
+    Open3.popen2e( cli_color_env.merge(env), cmds ) do |stdin, stdout_err, wait_thr|
       Thread.new do
         stdout_err.each do |l|
           puts l
@@ -97,21 +94,24 @@ class RunConsole
     end
 
     if !s.success?
-      puts "Execution ended with error!"
-      puts "ENV=#{env}"
-      puts "Command=#{cmds}"
-      puts ""
-      unless @log_file_name.empty?
-        puts "Check #{@log_file_name} for details..."
-      end
-      exit(-1)
+      self.WhenCrapHappens(env, cmds)
     end
 
     return 0
   end
 
-  def Run(*args)
+  def WhenCrapHappens(env, cmds)
+    puts "*** Execution ended with error!"
+    puts " ENV=#{env}"
+    puts " Command=#{cmds}"
+    puts ""
+    unless @log_file_name.empty?
+      puts "Check #{@log_file_name} for details..."
+    end
+    exit(-1)
+  end
 
+  def Run(*args)
     if args[0].class == Hash
       env = args[0]
       cmds = args[1]

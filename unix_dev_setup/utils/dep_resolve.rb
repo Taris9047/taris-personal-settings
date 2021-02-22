@@ -25,12 +25,13 @@ $dependency_table = {
   "node" => [ 'gcc' ],
   "node-lts" => [ 'gcc' ],
   "rust" => [],
-  "clang" => [],
+  "clang" => [ 'cmake' ],
   "boost" => [ 'gcc' ],
   "mpich" => [ 'gcc' ],
   "hydra" => [ 'mpich' ],
   "golang" => [],
   "julia" => [],
+  "cmake" => [],
 }
 
 # class dependency resolve

@@ -67,6 +67,7 @@ class InstGCC < InstallStuff
         return 0
       end
     end
+
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""

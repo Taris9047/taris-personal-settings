@@ -13,6 +13,12 @@
     "type": "tarball"
   },
 
+  # cmake
+  "cmake": {
+    "url": "https://github.com/Kitware/CMake/releases/download/v3.19.5/cmake-3.19.5.tar.gz",
+    "type": "tarball"
+  },
+
   # Lua
   "lua": { 
     "url": "https://www.lua.org/ftp/lua-5.4.0.tar.gz",

@@ -103,7 +103,7 @@ module SRC_VER
       fnp = FNParser.new(SRC_URL[pkg_name])
       src_ver = Version.new(fnp.version().join('.'))
     else
-      src_ver = Version.new(SRC_TYPE[pkg_type])
+      src_ver = Version.new(SRC_TYPE[pkg_name])
     end
 
     return src_ver

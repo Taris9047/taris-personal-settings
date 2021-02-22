@@ -348,6 +348,11 @@ op_mode_list.each do |op_mode|
     inst = InstGCCOld.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
+  when 'cmake'
+    require "./install_scripts/install_cmake.rb"
+    inst = InstCmake.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
+
   when 'clang'
     require "./install_scripts/install_clang.rb"
     # puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"

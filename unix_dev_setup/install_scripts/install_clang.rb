@@ -6,7 +6,6 @@ require 'open3'
 require_relative '../utils/utils.rb'
 require_relative './install_stuff.rb'
 
-
 $projects_to_enable = [
   'clang',
   'compiler-rt',
@@ -18,18 +17,17 @@ $projects_to_enable = [
 class InstClang < InstallStuff
 
   def initialize(prefix, def_system, work_dirs, need_sudo, verbose_mode=false)
-    super('clang', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
+    super('clang', prefix, work_dirs, ver_check=false, verbose_mode=verbose_mode)
     @def_system = def_system
-
+    @pkgname='llvm'
   end
 
   def do_install
-    
     puts ""
     puts "Working on LLVM-Clang!! (git)"
     puts ""
 
-    dn = Download.new(@src_url, destination=@src_dir, source_ctl='git')
+    dn = Download.new(@source_url, destination=@src_dir, source_ctl='git')
     @src_dir = dn.GetPath
 
     # Let's build!!
