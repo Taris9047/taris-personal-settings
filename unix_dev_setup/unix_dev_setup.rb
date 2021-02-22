@@ -39,6 +39,7 @@ work_dir_root = File.join(current_dir, 'workspace')
 work_dir_path = File.join(work_dir_root, 'build')
 source_dir_path = File.join(work_dir_root, 'download')
 pkginfo_dir_path = File.join(current_dir, 'pkginfo')
+work_dir_log = File.join(work_dir_root, 'log')
 
 
 list_of_progs = [
@@ -90,7 +91,7 @@ $opt_list = ['--use-clang', 'prereq', '-v', '--verbose', 'purge', '--purge', 'cl
 $permitted_list += $opt_list
 
 require_relative './utils/run_console.rb'
-Con = RunConsole.new()
+Con = RunConsole.new(verbose=true, logf_dir=work_dir_log)
 
 # Main title banner
 def main_title

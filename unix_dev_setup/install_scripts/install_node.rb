@@ -9,6 +9,11 @@ $conf_options = [
   "--shared-zlib"
 ]
 
+$npm_global_pkgs = [
+  "n",
+  "yarn",
+]
+
 class InstNode < InstallStuff
 
   def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
@@ -76,9 +81,9 @@ class InstNode < InstallStuff
 
     self.WriteInfo
 
-    puts "Let's install package manger!"
-    self.Run( 'npm install -g n' )
-    puts "Now you can use 'n' to manage Node.JS versions!"
+    puts "Let's install additional packages!"
+    npm_cmd = File.join(@prefix,'bin/npm')
+    self.Run( "#{npm_cmd} install -g #{$npm_global_pkgs.join(' ')}" )
 
   end # install
 
@@ -156,6 +161,10 @@ class InstNodeLTS < InstallStuff
       inst_cmd
     ]
     self.Run( @env, cmds.join(" ") )
+
+    puts "Let's install additional packages!"
+    npm_cmd = File.join(@prefix,'bin/npm')
+    self.Run( "#{npm_cmd} install -g #{$npm_global_pkgs.join(' ')}" )
 
     self.WriteInfo
 

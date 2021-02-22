@@ -1,6 +1,14 @@
 downloads
 build
 pkginfo
+log
+logs
+.log
+.logs
 workspace
 workspace/build
 workspace/downloads
+workspace/log
+workspace/logs
+workspace/.log
+workspace/.logs

@@ -10,7 +10,7 @@ class RunConsole
     @Verbose = verbose
     if logf_dir.empty?
       curr_dir=File.realpath(File.dirname(__FILE__))
-      @logf_dir = File.join(curr_dir, 'logs')
+      @logf_dir = File.join(curr_dir, '../logs')
     else
       @logf_dir = logf_dir
     end
@@ -24,12 +24,12 @@ class RunConsole
       @log_file_name = File.join(@logf_dir, logf_name)
     end
 
-    # if logf_name
-    #   @log_file_name = File.join(@logf_dir, logf_name)
-    # else
-    #   tmp_name = [SecureRandom.hex(10), '.log'].join('')
-    #   @log_file_name = File.join(@logf_dir, tmp_name)
-    # end
+    unless logf_name.empty?
+      @log_file_name = File.join(@logf_dir, logf_name)
+    else
+      tmp_name = [SecureRandom.hex(10), '.log'].join('')
+      @log_file_name = File.join(@logf_dir, tmp_name)
+    end
   end
 
   def __run_quiet( env, cmds, opts )
