@@ -40,11 +40,20 @@ class Download < RunConsole
   end
 
   def direct_download
+    if File.exists? @outf_path
+      puts "File seems to be already downloaded!"
+      return 0
+    end
     dn = URI.open(@URL)
     IO.copy_stream( dn, @outf_path )
   end
 
   def wget_download
+    if File.exists? @outf_path
+      puts "File seems to be already downloaded!"
+      return 0
+    end
+
     wget_cmd = [
       "wget",
       @URL,
@@ -55,6 +64,10 @@ class Download < RunConsole
   end
 
   def git_clone
+    if File.exists? @outf_path
+      puts "Repository seems to be already downloaded!"
+      return 0
+    end
     puts "Cloning from #{@URL} into #{@DEST}"
     system( "cd #{@DEST} && git #{@src_ctl_opts} clone #{@URL}" )
   end

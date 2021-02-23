@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'etc'
+require 'fileutils'
 
 require_relative '../utils/utils.rb'
 require_relative './install_stuff.rb'
@@ -53,6 +54,14 @@ class InstGCC < InstallStuff
     @need_sudo=need_sudo
     @verbose = verbose_mode
 
+  end
+
+  def get_env_str
+    envstr = []
+    @env.keys.each do |k|
+      envstr += ["#{k}=\"#{@env[k]}\""]
+    end
+    return envstr.join(' ')
   end
 
   def do_install
@@ -127,15 +136,9 @@ class InstGCC < InstallStuff
       inst_cmd = "&& make install"
     end
 
-    opts = ["--prefix="+@prefix] \
-      +[ \
-        "CC=\"#{@env["CC"]}\"", \
-        "CXX=\"#{@env["CXX"]}\"", \
-        "CFLAGS=\"#{@env["CFLAGS"]}\"", \
-        "CXXFLAGS=\"#{@env["CXXFLAGS"]}\"" \
-      ] \
-      +@conf_options
+    opts = ["--prefix="+@prefix]+@conf_options
     cmd = [
+      self.get_env_str,
       "cd",
       File.realpath(bld_dir),
       "&&",
@@ -187,7 +190,8 @@ class InstGCC8 < InstGCC
     @source_url = SRC_URL[@pkgname]
 
     @conf_options = \
-      $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++",] \
+      $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
+      + ["--enable-languages=c,c++"] \
       + ["--program-suffix=-8"]
 
     @env = {
@@ -221,6 +225,7 @@ class InstGCC9 < InstGCC
 
     @conf_options = \
       $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
+      + ["--enable-languages=c,c++"] \
       + ["--program-suffix=-9"]
 
     @env = {
@@ -252,16 +257,23 @@ class InstGCC4 < InstGCC
     @pkgname = 'gcc4'
     @source_url = SRC_URL[@pkgname]
 
-    @conf_options = \
-      $gcc_conf_options \
-      - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
-      + ["--program-suffix=-4"]
+    @conf_options = [ 
+      "--enable-bootstrap", 
+      "--enable-shared", 
+      "--enable-threads=posix",       
+      "--enable-checking=release", 
+      "--with-system-zlib", 
+      "--enable-__exa_atexit", 
+      "--disable-libunwind-exceptions", 
+      "--enable-gnu-unique-object", 
+      "--enable-languages=fortran,c,c++", 
+      "--program-suffix=-4" ]
 
     @env = {
-      "CC" => "gcc",
-      "CXX" => "g++",
-      "CFLAGS" => "-std=gnu89 -O3 -march=native -fomit-frame-pointer -pipe",
-      "CXXFLAGS" => "-std=gnu90 -O3 -march=native -fomit-frame-pointer -pipe",
+      "CC" => "gcc -w ",
+      "CXX" => "g++ -w ",
+      "CFLAGS" => " -w -O2 -fgnu89-inline -fomit-frame-pointer -pipe",
+      "CXXFLAGS" => " -w -O2 -fomit-frame-pointer -pipe",
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
     }
 
@@ -271,7 +283,102 @@ class InstGCC4 < InstGCC
   end
 
   def do_install
-    super
+    @pkginfo_file=File.join(@pkginfo_dir, @pkgname+'.info')
+
+    puts ""
+    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
+    puts ""
+
+    # Replace '{prefix}' on configure parameters.
+    @conf_options.each_with_index do |co, ind|
+      if co.include?'{prefix}'
+        @conf_options[ind] = co.gsub('{prefix}', @prefix)
+      end
+      if co.include?'{target_arch}'
+        @conf_options[ind] = co.gsub('{target_arch}', @os_type)
+      end
+    end
+    @env.each do |key, flag|
+      if flag.include? '{prefix}'
+        @env[key] = flag.gsub('{prefix}', @prefix)
+      end
+    end
+
+    if File.file?(@pkginfo_file)
+      puts "Oh, it seems gcc was already installed!! Skipping!!"
+      return 0
+    end
+
+    puts "Downloading src from #{@source_url}"
+    dl = Download.new(@source_url, @src_dir)
+    source_file = dl.GetPath()
+    fp = FNParser.new(source_file)
+    src_tarball_fname, src_tarball_bname = fp.name
+
+    extracted_src_dir = File.join(@build_dir, src_tarball_bname)
+    bld_dir = extracted_src_dir+"-build"
+
+    if Dir.exists?(extracted_src_dir) == true
+      puts "Extracted folder has been found. Using it!" 
+      # puts "Extracted folder has been found!! Removing it!"
+      # FileUtils.rm_rf(extracted_src_dir)
+    else
+      puts "Extracting..."
+      self.Run( "tar xf "+source_file+" -C "+@build_dir)  
+    end
+    
+    # Downloading prerequisites
+    puts extracted_src_dir
+    self.Run( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
+
+    # Need to patch a file.
+    puts ""
+    puts "Patching bugged files..."
+    arches = [
+      "aarch64", "alpha", "bfin", "i386", "pa", "sh", "tilepro", "xtensa"
+    ]
+    patch_cmd = []
+    arches.each do |ar|
+      patch_cmd += [
+        "wget \"https://gcc.gnu.org/git/?p=gcc.git;a=blob_plain;f=libgcc/config/#{ar}/linux-unwind.h\" -O #{extracted_src_dir}/libgcc/config/#{ar}/linux-unwind.h"  ]
+    end
+    self.Run( patch_cmd.join(' && ') )
+
+    # Let's build!!
+    if Dir.exists?(bld_dir) == false
+      puts "Build dir missing... making one..."
+    else
+      puts "Build dir exists, cleaning up before work!!"
+      self.Run( "rm -rf "+bld_dir )
+    end
+    self.Run( "mkdir -p "+bld_dir )
+
+    if @need_sudo
+      inst_cmd = "&& sudo make install"
+    else
+      inst_cmd = "&& make install"
+    end
+
+    opts = ["--prefix="+@prefix]+@conf_options
+    cmd = [
+      self.get_env_str,
+      "cd",
+      File.realpath(bld_dir),
+      "&&",
+      File.realpath(extracted_src_dir)+"/configure",
+      self.get_env_str,
+      opts.join(" "),
+      "&& make -j", @Processors.to_s, "bootstrap",
+      "&& make -j", @Processors.to_s,
+      inst_cmd
+    ]
+
+    # Ok let's rock!
+    puts "Compiling (with #{@Processors} processors) and Installing ..."
+    self.Run( @env, cmd.join(" ") )
+
+    self.WriteInfo
+
   end
 
 end # class InstGCCOld

@@ -103,12 +103,14 @@ class RunConsole
   end
 
   def WhenCrapHappens(env, cmds)
-    puts "*** Execution ended with error!"
-    puts " ENV="
+    puts "*** Execution ended with error! ***"
+    puts " ENV:"
     env.keys.each do |k|
       puts " #{k}=#{env[k]},"
     end
-    puts " Command=#{cmds}"
+    puts ""
+    puts " Command:"
+    puts " #{cmds}"
     puts ""
     unless @log_file_name.empty?
       puts "Check #{@log_file_name} for details..."

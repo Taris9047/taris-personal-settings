@@ -104,6 +104,10 @@ class GetCompiler
     return [cc_env, cxx_env, cflags_env, cxxflags_env, ldflags_env]
   end
 
+  def get_env_str
+    return self.get_settings.join(' ')
+  end
+
   def get_env_settings
     return {
       'CC' => @CC,
