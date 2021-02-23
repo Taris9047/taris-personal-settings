@@ -4,6 +4,8 @@
 # --> Too much stuff happening here!
 #
 
+require 'fileutils'
+
 # Note that installing old gcc (gcccuda) is disabled due to libc 2.26 issue.
 # In fact, we need to apply patch to adopt old gcc source codes to
 # follow up the newest changes in libc 2.26
@@ -40,12 +42,12 @@ work_dir_path = File.join(work_dir_root, 'build')
 source_dir_path = File.join(work_dir_root, 'download')
 pkginfo_dir_path = File.join(current_dir, 'pkginfo')
 work_dir_log = File.join(work_dir_root, 'log')
-
+prefix_dir_path = def_prefix
 
 list_of_progs = [
   'gcc',
-  'cudacc',
-  'gccold',
+  'gcc9',
+  'gcc8',
   'python2',
   'python3',
   'boost',
@@ -70,8 +72,8 @@ $not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts', 'ruby3']
 list_of_all = list_of_progs - $not_so_stable_pkgs - $not_so_needed_pkgs
 
 aliases = {
-  'gcc-old' => 'gccold',
-  'gcc-cuda' => 'cudacc',
+  'gcc-old' => 'gcc9',
+  'gcc-cuda' => 'gcc8',
   'python' => 'python3',
   'Boost' => 'boost',
   'ruby2' => 'ruby',
@@ -193,9 +195,15 @@ end
 # Some edge cases... cleaning and installing prereq
 if op_mode_list.include?('purge')
   puts "Purging everything!!!"
-  # Con.Run( "rm -rf #{work_dirs.join(' ')}" )
-  Con.Run( "rm -rf #{work_dir_root}" )
-  Con.Run( "rm -rf #{$prefix_dir}/bin #{$prefix_dir}/lib* #{$prefix_dir}/include #{$prefix_dir}/opt #{$prefix_dir}/.opt #{$prefix_dir}/man #{$prefix_dir}/etc #{$prefix_dir}/state" )
+  # system( "rm -rf #{work_dirs.join(' ')}" )
+  FileUtils.rm_rf("#{work_dir_root}" )
+  prefix_kill_list = [
+    "bin", "lib", "lib64", "libexec", "include",
+    "opt", ".opt", "man", "etc", "state",
+  ]
+  prefix_kill_list.each do |k|
+    FileUtils.rm_rf(File.join(prefix_dir_path, k))
+  end
   op_mode_list.delete('purge')
   puts "Cleaned up everything!!"
   exit(0)
@@ -226,7 +234,6 @@ if op_mode_list.include?('--clean')
 end
 
 # Working directories
-require 'fileutils'
 
 unless File.directory?(work_dir_path)
   puts work_dir_path+" not found, making one..."
@@ -251,7 +258,6 @@ puts "Package information directory will be: #{pkginfo_dir}"
 
 work_dirs = [work_dir, source_dir, pkginfo_dir]
 
-prefix_dir_path = def_prefix
 unless File.directory?(prefix_dir_path)
   puts prefix_dir_path+" not found, making one..."
   FileUtils.mkdir_p(prefix_dir_path)
@@ -339,13 +345,13 @@ op_mode_list.each do |op_mode|
     require "./install_scripts/install_gcc.rb"
     inst = InstGCC.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  when 'cudacc'
+  when 'gcc8'
     require "./install_scripts/install_gcc.rb"
-    inst = InstGCCCuda.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstGCC8.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
-  when 'gccold'
+  when 'gcc9'
     require "./install_scripts/install_gcc.rb"
-    inst = InstGCCOld.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    inst = InstGCC9.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
 
   when 'cmake'

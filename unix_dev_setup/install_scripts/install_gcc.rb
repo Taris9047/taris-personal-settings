@@ -170,18 +170,18 @@ class InstGCC < InstallStuff
 end # class InstGCC
 
 
-class InstGCCCuda < InstGCC
+class InstGCC8 < InstGCC
 
   def initialize (prefix='/usr/local', os_type='Ubuntu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
 
     super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
 
-    @pkgname = 'cudacc'
+    @pkgname = 'gcc8'
     @source_url = SRC_URL[@pkgname]
 
     @conf_options = \
       $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++",] \
-      + ["--program-suffix=-cuda"]
+      + ["--program-suffix=-8"]
 
     @env = {
       "CC" => "gcc",
@@ -203,18 +203,18 @@ class InstGCCCuda < InstGCC
 end # class InstGCCCuda
 
 
-class InstGCCOld < InstGCC
+class InstGCC9 < InstGCC
 
   def initialize (prefix='/usr/local', os_type='Ubuntu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
 
     super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
 
-    @pkgname = 'gccold'
+    @pkgname = 'gcc9'
     @source_url = SRC_URL[@pkgname]
 
     @conf_options = \
       $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
-      + ["--program-suffix=-old"]
+      + ["--program-suffix=-9"]
 
     @env = {
       "CC" => "gcc",

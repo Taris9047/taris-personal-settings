@@ -13,8 +13,8 @@ require 'json'
 # Dependency table. -- It seems simple now...
 $dependency_table = {
   "gcc" => [],
-  "gccold" => [],
-  "cudacc" => [],
+  "gcc9" => [],
+  "gcc8" => [],
   "python2" => [ 'gcc' ],
   "python3" => [ 'gcc' ],
   "lua" => [ 'gcc' ],
