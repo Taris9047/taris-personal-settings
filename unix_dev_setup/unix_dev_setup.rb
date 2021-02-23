@@ -214,7 +214,7 @@ if op_mode_list.include?('purge')
     FileUtils.rm_rf(File.join(prefix_dir_path, k))
   end
   op_mode_list.delete('purge')
-  puts "Cleaned up everything!!"
+  puts "Purged everything!! Now you are free of cruds."
   exit(0)
 end
 
@@ -228,7 +228,7 @@ end
 
 if op_mode_list.include?('clean')
   puts "Cleaning up source files and build dirs..."
-  Con.Run( "rm -rf #{work_dir} #{source_dir}" )
+  FileUtils.rm_rf(work_dir_root)
   puts "Cleaned up source files to save space!!"
   op_mode_list.delete('clean')
   exit(0)
@@ -237,7 +237,7 @@ end
 if op_mode_list.include?('--clean')
   puts "Performing clean install..."
   puts "Cleaning up source files and build dirs..."
-  Con.Run( "rm -rf #{work_dir} #{source_dir}" )
+  FileUtils.rm_rf(work_dir_root)
   puts "Cleaned up source files to save space!!"
   op_mode_list.delete('--clean')
 end

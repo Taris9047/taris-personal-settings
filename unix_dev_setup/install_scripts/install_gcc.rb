@@ -82,7 +82,7 @@ class InstGCC < InstallStuff
       end
     end
     @env.each do |key, flag|
-      if flag.indclude? '{prefix}'
+      if flag.include? '{prefix}'
         @env[key] = flag.gsub('{prefix}', @prefix)
       end
     end
