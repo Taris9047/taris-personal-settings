@@ -127,7 +127,14 @@ class InstGCC < InstallStuff
       inst_cmd = "&& make install"
     end
 
-    opts = ["--prefix="+@prefix]+@conf_options
+    opts = ["--prefix="+@prefix] \
+      +[ \
+        "CC=\"#{@env["CC"]}\"", \
+        "CXX=\"#{@env["CXX"]}\"", \
+        "CFLAGS=\"#{@env["CFLAGS"]}\"", \
+        "CXXFLAGS=\"#{@env["CXXFLAGS"]}\"" \
+      ] \
+      +@conf_options
     cmd = [
       "cd",
       File.realpath(bld_dir),
@@ -253,8 +260,8 @@ class InstGCC4 < InstGCC
     @env = {
       "CC" => "gcc",
       "CXX" => "g++",
-      "CFLAGS" => "-O3 -march=native -fomit-frame-pointer -pipe",
-      "CXXFLAGS" => "-O3 -march=native -fomit-frame-pointer -pipe",
+      "CFLAGS" => "-std=gnu89 -O3 -march=native -fomit-frame-pointer -pipe",
+      "CXXFLAGS" => "-std=gnu90 -O3 -march=native -fomit-frame-pointer -pipe",
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
     }
 
