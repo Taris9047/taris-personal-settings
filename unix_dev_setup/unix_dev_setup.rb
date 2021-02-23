@@ -90,9 +90,10 @@ aliases = {
 
 $permitted_list = list_of_progs + aliases.keys
 $opt_list = [
-  '--use-clang', 'prereq', '-v', '--verbose', 
-  'purge', '--purge', 'clean', '--clean', '--version', 
-  '--use-system-gcc', '-sgcc'
+  '--use-clang', 'prereq', '-v', '--verbose',
+  'purge', '--purge', 'clean', '--clean', '--version',
+  '--use-system-gcc', '-sgcc',
+  '--force', '-f',
 ]
 $permitted_list += $opt_list
 
@@ -122,9 +123,10 @@ Usage: ./unix_dev_setup.rb <params_or_installable_pkgs>
  --purge: deletes everything before installing any package including pkginfo dir.
  --clean: deletes working dirs before installing any package
  -sgcc,--use-system-gcc: uses system gcc instead of state-of-art one.
+ -f,--force: ignores dependency check and install packages.
  clean: deletes working dirs
  purge: purges all the working dirs including pkginfo dir.
- 
+
 <installable_pkgs> can be:
  #{($permitted_list-$opt_list).join(', ')}
 
@@ -133,7 +135,7 @@ Usage: ./unix_dev_setup.rb <params_or_installable_pkgs>
 
 Some packages are not very stable at the moment:
  #{$not_so_stable_pkgs.join(', ')}
- 
+
 More packages are coming!! Stay tuned!!
   }
   puts hlp
@@ -239,15 +241,22 @@ if op_mode_list.include?('--clean')
 end
 
 use_system_gcc = false
-if op_mode_list.include?('--use-system-gcc') or op_mode_list.include?('sgcc')
+if op_mode_list.include?('--use-system-gcc') or op_mode_list.include?('-sgcc')
   puts "Using system gcc!! i.e. /usr/bin/gcc"
   use_system_gcc = true
-  op_mode_list.delete('--use-system-gcc').delete('-sgcc')
+  op_mode_list.delete('--use-system-gcc')
+  op_mode_list.delete('-sgcc')
 end
 
+force_install_mode = false
+if op_mode_list.include?('--force') or op_mode_list.include('-f')
+  puts "Foce install mode!"
+  force_install_mode = true
+  op_mode_list.delete('--force')
+  op_mode_list.delete('-f')
+end
 
 # Working directories
-
 unless File.directory?(work_dir_path)
   puts work_dir_path+" not found, making one..."
   FileUtils.mkdir_p(work_dir_path)
@@ -304,7 +313,7 @@ end
 require './utils/utils.rb'
 puts "Checking dependency for #{op_mode_list.join(" ")}"
 dep_resolve = DepResolve.new(
-  op_mode_list, pkginfo_dir_path, use_system_gcc)
+  op_mode_list, pkginfo_dir_path, force_install_mode, use_system_gcc)
 op_mode_list = dep_resolve.GetInstList()
 
 # List packages to install
@@ -417,7 +426,7 @@ op_mode_list.each do |op_mode|
     require "./install_scripts/install_ruby3.rb"
     inst_lua = InstRuby3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
     inst_lua.install
-  
+
   # Node stuffs
   when 'node'
     require "./install_scripts/install_node.rb"

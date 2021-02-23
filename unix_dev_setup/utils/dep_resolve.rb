@@ -37,9 +37,9 @@ $dependency_table = {
 # class dependency resolve
 # Simply put, re-orders the installation list according to the dependency table.
 class DepResolve
-  def initialize(install_list, pkginfo_dir, force_install=false, system_gcc=false)
-
-    @use_system_gcc = system_gcc
+  def initialize(
+    install_list, pkginfo_dir,
+    force_install=false, system_gcc=false)
 
     if install_list.empty?
       puts "No install list given! Exiting"
@@ -53,6 +53,7 @@ class DepResolve
       @Installed_pkg_list = []
     end
 
+    @use_system_gcc = system_gcc
     @force_install = force_install
     @pkginfo_dir = pkginfo_dir
 
@@ -66,8 +67,8 @@ class DepResolve
     @Inst_list = (@dep_list+@Inst_list).uniq
 
     if @use_system_gcc
-      @dep_list = @dep_list.uniq.delete('gcc')
-      @Inst_list = @Inst_list.uniq.delete('gcc')
+      @dep_list.delete('gcc')
+      @Inst_list.delete('gcc')
     end
 
   end # initialize
@@ -75,7 +76,7 @@ class DepResolve
   def ver_chk_src_lte_ipkg(ipkg)
     src_url = SRC_URL[ipkg]
     src_type = SRC_TYPE[ipkg]
-    
+
     # If the src is some repository, they must have newer version
     # than me, anyways.
     if !src_type == 'tarball'
@@ -128,14 +129,14 @@ class DepResolve
         unless SRC_TYPE[ipkg] == 'tarball'
           next
         end
-        
+
         if self.ver_chk_src_lte_ipkg(ipkg)
           next
         end
 
         marked_for_del.append(ipkg)
       end
-    
+
     end # for
 
     pkgs -= marked_for_del
