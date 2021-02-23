@@ -15,6 +15,7 @@ $dependency_table = {
   "gcc" => [],
   "gcc9" => [],
   "gcc8" => [],
+  "gcc4" => [],
   "python2" => [ 'gcc' ],
   "python3" => [ 'gcc' ],
   "lua" => [ 'gcc' ],

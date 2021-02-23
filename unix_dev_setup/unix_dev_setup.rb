@@ -48,6 +48,7 @@ list_of_progs = [
   'gcc',
   'gcc9',
   'gcc8',
+  'gcc4',
   'python2',
   'python3',
   'boost',
