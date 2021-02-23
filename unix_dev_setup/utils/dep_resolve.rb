@@ -37,7 +37,9 @@ $dependency_table = {
 # class dependency resolve
 # Simply put, re-orders the installation list according to the dependency table.
 class DepResolve
-  def initialize(install_list, pkginfo_dir, force_install=false)
+  def initialize(install_list, pkginfo_dir, force_install=false, system_gcc=false)
+
+    @use_system_gcc = system_gcc
 
     if install_list.empty?
       puts "No install list given! Exiting"
@@ -62,6 +64,11 @@ class DepResolve
 
     @dep_list = self.__make_dep_list(@Inst_list)
     @Inst_list = (@dep_list+@Inst_list).uniq
+
+    if @use_system_gcc
+      @dep_list = @dep_list.uniq.delete('gcc')
+      @Inst_list = @Inst_list.uniq.delete('gcc')
+    end
 
   end # initialize
 

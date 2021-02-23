@@ -89,7 +89,11 @@ aliases = {
 }
 
 $permitted_list = list_of_progs + aliases.keys
-$opt_list = ['--use-clang', 'prereq', '-v', '--verbose', 'purge', '--purge', 'clean', '--clean', '--version']
+$opt_list = [
+  '--use-clang', 'prereq', '-v', '--verbose', 
+  'purge', '--purge', 'clean', '--clean', '--version', 
+  '--use-system-gcc', '-sgcc'
+]
 $permitted_list += $opt_list
 
 require_relative './utils/run_console.rb'
@@ -117,6 +121,7 @@ Usage: ./unix_dev_setup.rb <params_or_installable_pkgs>
  --version: displays version info.
  --purge: deletes everything before installing any package including pkginfo dir.
  --clean: deletes working dirs before installing any package
+ -sgcc,--use-system-gcc: uses system gcc instead of state-of-art one.
  clean: deletes working dirs
  purge: purges all the working dirs including pkginfo dir.
  
@@ -233,6 +238,14 @@ if op_mode_list.include?('--clean')
   op_mode_list.delete('--clean')
 end
 
+use_system_gcc = false
+if op_mode_list.include?('--use-system-gcc') or op_mode_list.include?('sgcc')
+  puts "Using system gcc!! i.e. /usr/bin/gcc"
+  use_system_gcc = true
+  op_mode_list.delete('--use-system-gcc').delete('-sgcc')
+end
+
+
 # Working directories
 
 unless File.directory?(work_dir_path)
@@ -290,7 +303,8 @@ end
 # Resolving dependencies
 require './utils/utils.rb'
 puts "Checking dependency for #{op_mode_list.join(" ")}"
-dep_resolve = DepResolve.new(op_mode_list, pkginfo_dir_path)
+dep_resolve = DepResolve.new(
+  op_mode_list, pkginfo_dir_path, use_system_gcc)
 op_mode_list = dep_resolve.GetInstList()
 
 # List packages to install

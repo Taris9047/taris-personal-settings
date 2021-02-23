@@ -18,6 +18,16 @@ class RunConsole
       if !File.directory?(@logf_dir)
         FileUtils.mkdir_p(@logf_dir)
       end
+
+      unless logf_name.empty?
+        unless logf_name.end_with?'.log'
+          logf_name = [logf_name, '.log'].join('')
+        end
+        @log_file_name = File.join(@logf_dir, logf_name)
+      else
+        tmp_name = [SecureRandom.hex(10), '.log'].join('')
+        @log_file_name = File.join(@logf_dir, tmp_name)
+      end
     end
 
     # if logf_name.empty?
@@ -29,15 +39,7 @@ class RunConsole
     #   @log_file_name = File.join(@logf_dir, logf_name)
     # end
 
-    unless logf_name.empty?
-      unless logf_name.end_with?'.log'
-        logf_name = [logf_name, '.log'].join('')
-      end
-      @log_file_name = File.join(@logf_dir, logf_name)
-    else
-      tmp_name = [SecureRandom.hex(10), '.log'].join('')
-      @log_file_name = File.join(@logf_dir, tmp_name)
-    end
+    
   end
 
   def __run_quiet( env, cmds, opts )
