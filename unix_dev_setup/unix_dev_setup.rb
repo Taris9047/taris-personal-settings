@@ -378,6 +378,10 @@ op_mode_list.each do |op_mode|
     require "./install_scripts/install_gcc.rb"
     inst = InstGCC9.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
     inst.install
+  when 'gcc4'
+    require "./install_scripts/install_gcc.rb"
+    inst = InstGCC4.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    inst.install
 
   when 'cmake'
     require "./install_scripts/install_cmake.rb"
