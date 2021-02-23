@@ -46,6 +46,7 @@ class DepResolve
       exit(0)
     end
 
+    # TODO: Update this part if package manager system changes...
     if File.directory? pkginfo_dir
       @Installed_pkg_list = \
         Dir.entries(pkginfo_dir).select { |f| f.include?('.info') }.map { |item| item.gsub('.info', '') }
@@ -57,8 +58,7 @@ class DepResolve
     @force_install = force_install
     @pkginfo_dir = pkginfo_dir
 
-    @Inst_list = install_list
-    @Inst_list = @Inst_list.uniq
+    @Inst_list = install_list.uniq
     if !@force_install and !@Installed_pkg_list.empty?
       @Inst_list = self.remove_installed_pkg(@Inst_list)
     end

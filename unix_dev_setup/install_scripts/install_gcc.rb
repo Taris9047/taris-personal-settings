@@ -172,7 +172,7 @@ end # class InstGCC
 
 class InstGCC8 < InstGCC
 
-  def initialize (prefix='/usr/local', os_type='Ubuntu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
+  def initialize (prefix='/usr/local', os_type='x86_64-linux-gnu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
 
     super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
 
@@ -200,12 +200,12 @@ class InstGCC8 < InstGCC
     super
   end
 
-end # class InstGCCCuda
+end # class InstGCC8
 
 
 class InstGCC9 < InstGCC
 
-  def initialize (prefix='/usr/local', os_type='Ubuntu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
+  def initialize (prefix='/usr/local', os_type='x86_64-linux-gnu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
 
     super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
 
@@ -215,6 +215,40 @@ class InstGCC9 < InstGCC
     @conf_options = \
       $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
       + ["--program-suffix=-9"]
+
+    @env = {
+      "CC" => "gcc",
+      "CXX" => "g++",
+      "CFLAGS" => "-O3 -march=native -fomit-frame-pointer -pipe",
+      "CXXFLAGS" => "-O3 -march=native -fomit-frame-pointer -pipe",
+      "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
+    }
+
+    @need_sudo=need_sudo
+    @verbose = verbose_mode
+
+  end
+
+  def do_install
+    super
+  end
+
+end # class InstGCC9
+
+# Gcc4.8.5 --> matching version for cuda 6.5 (MBP 2008)
+class InstGCC4 < InstGCC
+
+  def initialize (prefix='/usr/local', os_type='x86_64-linux-gnu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
+
+    super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
+
+    @pkgname = 'gcc4'
+    @source_url = SRC_URL[@pkgname]
+
+    @conf_options = \
+      $gcc_conf_options \
+      - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
+      + ["--program-suffix=-4"]
 
     @env = {
       "CC" => "gcc",

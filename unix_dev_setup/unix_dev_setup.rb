@@ -57,6 +57,7 @@ list_of_progs = [
   'node',
   'node-lts',
   'clang',
+  'cmake',
   'rust',
   'pypy3',
   'ROOT',

@@ -12,6 +12,10 @@
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz",
     "type": "tarball"
   },
+  "gcc4": {
+    "url": "https://ftp.gnu.org/gnu/gcc/gcc-4.8.5/gcc-4.8.5.tar.bz2",
+    "type": "tarball"
+  },
 
   # cmake
   "cmake": {
@@ -20,7 +24,7 @@
   },
 
   # Lua
-  "lua": { 
+  "lua": {
     "url": "https://www.lua.org/ftp/lua-5.4.0.tar.gz",
     "type": "tarball"
   },
