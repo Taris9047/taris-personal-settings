@@ -111,24 +111,24 @@ class InstGCC < InstallStuff
     extracted_src_dir = File.join(@build_dir, src_tarball_bname)
     bld_dir = extracted_src_dir+"-build"
 
-    if Dir.exists?(extracted_src_dir) == true
-      puts "Extracted folder has been found!!"
+    if Dir.exists?(extracted_src_dir)
+      puts "Extracted folder has been found. Using it!" 
     else
       puts "Extracting..."
-      self.Run( "tar xf "+source_file+" -C "+@build_dir)
+      self.Run( "tar xf "+source_file+" -C "+@build_dir)  
     end
 
     # Downloading prerequisites
     self.Run( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
 
     # Let's build!!
-    if Dir.exists?(bld_dir) == false
+    unless Dir.exists?(bld_dir)
       puts "Build dir missing... making one..."
     else
       puts "Build dir exists, cleaning up before work!!"
-      self.Run( "rm -rf "+bld_dir )
+      FileUtils.rm_rf( bld_dir )
     end
-    self.Run( "mkdir -p "+bld_dir )
+    FileUtils.mkdir_p( bld_dir )
 
     if @need_sudo
       inst_cmd = "&& sudo make install"
@@ -270,8 +270,8 @@ class InstGCC4 < InstGCC
       "--program-suffix=-4" ]
 
     @env = {
-      "CC" => "gcc -w ",
-      "CXX" => "g++ -w ",
+      "CC" => "gcc -w -fgnu89-inline -std=gnu11",
+      "CXX" => "g++ -w -std=gnu++11",
       "CFLAGS" => " -w -O2 -fgnu89-inline -fomit-frame-pointer -pipe",
       "CXXFLAGS" => " -w -O2 -fomit-frame-pointer -pipe",
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
@@ -318,10 +318,8 @@ class InstGCC4 < InstGCC
     extracted_src_dir = File.join(@build_dir, src_tarball_bname)
     bld_dir = extracted_src_dir+"-build"
 
-    if Dir.exists?(extracted_src_dir) == true
+    if Dir.exists?(extracted_src_dir)
       puts "Extracted folder has been found. Using it!" 
-      # puts "Extracted folder has been found!! Removing it!"
-      # FileUtils.rm_rf(extracted_src_dir)
     else
       puts "Extracting..."
       self.Run( "tar xf "+source_file+" -C "+@build_dir)  
@@ -345,13 +343,13 @@ class InstGCC4 < InstGCC
     self.Run( patch_cmd.join(' && ') )
 
     # Let's build!!
-    if Dir.exists?(bld_dir) == false
+    unless Dir.exists?(bld_dir)
       puts "Build dir missing... making one..."
     else
       puts "Build dir exists, cleaning up before work!!"
-      self.Run( "rm -rf "+bld_dir )
+      FileUtils.rm_rf( bld_dir )
     end
-    self.Run( "mkdir -p "+bld_dir )
+    FileUtils.mkdir_p( bld_dir )
 
     if @need_sudo
       inst_cmd = "&& sudo make install"
