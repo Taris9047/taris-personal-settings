@@ -35,6 +35,7 @@ class InstCmake < InstallStuff
       if least_cmake_ver <= preinstalled_cmake_ver
         puts "It seems preinstalled cmake is version (#{preinstalled_cmake_ver.to_s})"
         puts "No need to install cmake on this system!"
+        self.WriteInfo
         return 0
       end
     end

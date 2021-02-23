@@ -251,7 +251,7 @@ if op_mode_list.include?('--use-system-gcc') or op_mode_list.include?('-sgcc')
 end
 
 force_install_mode = false
-if op_mode_list.include?('--force') or op_mode_list.include('-f')
+if op_mode_list.include?('--force') or op_mode_list.include?('-f')
   puts "Foce install mode!"
   force_install_mode = true
   op_mode_list.delete('--force')
