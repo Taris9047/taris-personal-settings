@@ -99,9 +99,6 @@ $opt_list = [
 ]
 $permitted_list += $opt_list
 
-require_relative './utils/run_console.rb'
-Con = RunConsole.new(verbose=true, logf_dir=work_dir_log)
-
 # Main title banner
 def main_title
 puts "******************************************"
@@ -190,7 +187,6 @@ if op_mode_list.include?('-v') or op_mode_list.include?('--verbose')
   op_mode_list.delete('--verbose')
 end
 
-
 # Use clang as compiler
 # Currently, only Python accepts those stuff.
 #
@@ -257,6 +253,10 @@ if op_mode_list.include?('--force') or op_mode_list.include?('-f')
   op_mode_list.delete('--force')
   op_mode_list.delete('-f')
 end
+
+# Set up console
+require_relative './utils/run_console.rb'
+Con = RunConsole.new(verbose=verbose, logf_dir=work_dir_log)
 
 # Working directories
 unless File.directory?(work_dir_path)

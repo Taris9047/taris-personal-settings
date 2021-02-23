@@ -260,9 +260,9 @@ class InstGCC4 < InstGCC
     @conf_options = [ 
       "--enable-shared", 
       "--enable-threads=posix",       
-      "--enable-plugin",
+      "--disable-nls",
+      "--disable-multilib",
       "--enable-languages=c,c++", 
-      "--disable-werror",
       "--build={target_arch}",
       "--host={target_arch}",
       "--target={target_arch}",
@@ -274,7 +274,7 @@ class InstGCC4 < InstGCC
       "CFLAGS" => "-w -O2 -std=gnu89 -fgnu89-inline -fomit-frame-pointer -pipe",
       "CXXFLAGS" => "-w -O2 -std=gnu++98 -fomit-frame-pointer -pipe",
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
-      "LD_LIBRARY_PATH" => "/usr/lib/x86_64-linux-gnu:/usr/lib:{prefix}/lib:{prefix}/lib64",
+  #    "LD_LIBRARY_PATH" => "/usr/lib/x86_64-linux-gnu:/usr/lib:{prefix}/lib:{prefix}/lib64",
     }
 
     @need_sudo=need_sudo
@@ -356,20 +356,17 @@ class InstGCC4 < InstGCC
     FileUtils.mkdir_p( bld_dir )
 
     if @need_sudo
-      inst_cmd = "&& sudo make install"
+      inst_cmd = "sudo make install"
     else
-      inst_cmd = "&& make install"
+      inst_cmd = "make install"
     end
 
     opts = ["--prefix="+@prefix]+@conf_options
     cmd = [
       self.get_env_str,
-      "cd",
-      File.realpath(bld_dir),
-      "&&",
-      File.realpath(extracted_src_dir)+"/configure",
-      opts.join(" "),
-      "&& make -j", @Processors.to_s,
+      "cd #{File.realpath(bld_dir)}",
+      "#{File.join(File.realpath(extracted_src_dir), "configure")} #{opts.join(" ")}",
+      "make -j #{@Processors.to_s}",
       inst_cmd
     ]
 
@@ -384,7 +381,7 @@ class InstGCC4 < InstGCC
 
     # Ok let's rock!
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    self.Run( @env, cmd.join(" ") )
+    self.Run( @env, cmd.join(" && ") )
 
     self.WriteInfo
 

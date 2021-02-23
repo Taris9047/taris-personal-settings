@@ -38,7 +38,6 @@ class RunConsole
       # end
     #   @log_file_name = File.join(@logf_dir, logf_name)
     # end
-
     
   end
 
