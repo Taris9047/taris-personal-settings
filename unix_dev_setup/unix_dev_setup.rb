@@ -206,10 +206,10 @@ if op_mode_list.include?('purge')
   puts "Purging everything!!!"
   # system( "rm -rf #{work_dirs.join(' ')}" )
   FileUtils.rm_rf("#{work_dir_root}" )
-  prefix_kill_list = [
-    "bin", "lib", "lib64", "libexec", "include",
-    "opt", ".opt", "man", "etc", "state",
-  ]
+  prefix_kill_list = Dir.entries(prefix_dir_path)
+  prefix_kill_list -= [ ".", "..", "share" ]
+  prefix_kill_list += [ ".opt" ]
+  prefix_kill_list = prefix_kill_list.uniq
   prefix_kill_list.each do |k|
     FileUtils.rm_rf(File.join(prefix_dir_path, k))
   end

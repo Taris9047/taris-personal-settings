@@ -258,23 +258,23 @@ class InstGCC4 < InstGCC
     @source_url = SRC_URL[@pkgname]
 
     @conf_options = [ 
-      "--enable-bootstrap", 
       "--enable-shared", 
       "--enable-threads=posix",       
-      "--enable-checking=release", 
-      "--with-system-zlib", 
-      "--enable-__exa_atexit", 
-      "--disable-libunwind-exceptions", 
-      "--enable-gnu-unique-object", 
-      "--enable-languages=fortran,c,c++", 
+      "--enable-plugin",
+      "--enable-languages=c,c++", 
+      "--disable-werror",
+      "--build={target_arch}",
+      "--host={target_arch}",
+      "--target={target_arch}",
       "--program-suffix=-4" ]
 
     @env = {
-      "CC" => "gcc -w -fgnu89-inline -std=gnu11",
-      "CXX" => "g++ -w -std=gnu++11",
-      "CFLAGS" => " -w -O2 -fgnu89-inline -fomit-frame-pointer -pipe",
-      "CXXFLAGS" => " -w -O2 -fomit-frame-pointer -pipe",
+      "CC" => "gcc",
+      "CXX" => "g++",
+      "CFLAGS" => "-w -O2 -std=gnu89 -fgnu89-inline -fomit-frame-pointer -pipe",
+      "CXXFLAGS" => "-w -O2 -std=gnu++98 -fomit-frame-pointer -pipe",
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
+      "LD_LIBRARY_PATH" => "/usr/lib/x86_64-linux-gnu:/usr/lib:{prefix}/lib:{prefix}/lib64",
     }
 
     @need_sudo=need_sudo
@@ -332,14 +332,18 @@ class InstGCC4 < InstGCC
     # Need to patch a file.
     puts ""
     puts "Patching bugged files..."
+    puts ""
     arches = [
       "aarch64", "alpha", "bfin", "i386", "pa", "sh", "tilepro", "xtensa"
     ]
-    patch_cmd = []
-    arches.each do |ar|
-      patch_cmd += [
-        "wget \"https://gcc.gnu.org/git/?p=gcc.git;a=blob_plain;f=libgcc/config/#{ar}/linux-unwind.h\" -O #{extracted_src_dir}/libgcc/config/#{ar}/linux-unwind.h"  ]
-    end
+    patch_cmd = [
+      "sed -i -e 's/__attribute__/\\/\\/__attribute__/g' #{extracted_src_dir}/gcc/cp/cfns.h",
+      "sed -i 's/struct ucontext/ucontext_t/g' #{extracted_src_dir}/libgcc/config/i386/linux-unwind.h"
+    ]
+    # arches.each do |ar|
+    #   patch_cmd += [
+    #     "wget \"https://gcc.gnu.org/git/?p=gcc.git;a=blob_plain;f=libgcc/config/#{ar}/linux-unwind.h\" -O #{extracted_src_dir}/libgcc/config/#{ar}/linux-unwind.h"  ]
+    # end
     self.Run( patch_cmd.join(' && ') )
 
     # Let's build!!
@@ -364,12 +368,19 @@ class InstGCC4 < InstGCC
       File.realpath(bld_dir),
       "&&",
       File.realpath(extracted_src_dir)+"/configure",
-      self.get_env_str,
       opts.join(" "),
-      "&& make -j", @Processors.to_s, "bootstrap",
       "&& make -j", @Processors.to_s,
       inst_cmd
     ]
+
+    puts "*** This is totally deprecated software! ***"
+    puts "*** If it breaks, it breaks... ***"
+    puts "*** (This package was added solely due to old cuda: 6.5) ***"
+    puts ""
+    puts "*** If Ubuntu based one... try installing ***"
+    puts "    gcc-multilib libstdc++6:i386"
+    puts ""
+    sleep(2)
 
     # Ok let's rock!
     puts "Compiling (with #{@Processors} processors) and Installing ..."
