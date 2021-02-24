@@ -256,6 +256,7 @@ class InstGCC4 < InstGCC
 
     @pkgname = 'gcc4'
     @source_url = SRC_URL[@pkgname]
+    @prefix = File.join(@prefix, '.opt')
 
     @conf_options = [ 
       "--enable-shared", 
@@ -326,6 +327,10 @@ class InstGCC4 < InstGCC
       self.Run( "tar xf "+source_file+" -C "+@build_dir)  
     end
     
+    unless Dir.exists?(@prefix)
+      FileUtils.mkdir_p(@prefix)
+    end
+
     # Downloading prerequisites
     puts extracted_src_dir
     self.Run( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
