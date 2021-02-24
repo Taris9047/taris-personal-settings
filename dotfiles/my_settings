@@ -104,7 +104,7 @@ alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
 
 # Git commit and push
 gc () {
-	git commit -a -m "\"%1\"" && git push
+	git commit -a -m "\"$1\"" && git push
 }
 
 # switch between shells
