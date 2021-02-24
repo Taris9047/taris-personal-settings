@@ -259,6 +259,7 @@ class InstGCC4 < InstGCC
 
     @conf_options = [ 
       "--enable-shared", 
+      "--disable-boostrap",
       "--enable-threads=posix",       
       "--disable-nls",
       "--disable-multilib",
