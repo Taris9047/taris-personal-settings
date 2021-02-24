@@ -196,6 +196,20 @@ if [ -d $HOME/.cargo ]; then
   source $HOME/.cargo/env
 fi
 
+# Other gcc stuff
+if [ -d $HOMEBREW/.opt/gcc9 ]; then
+  printf "${check_symbol} Gcc9 found in the system!\n"
+  export PATH=$HOMEBREW/.opt/gcc9/bin
+fi
+if [ -d $HOMEBREW/.opt/gcc8 ]; then
+  printf "${check_symbol} Gcc9 found in the system!\n"
+  export PATH=$HOMEBREW/.opt/gcc8/bin
+fi
+if [ -d $HOMEBREW/.opt/gcc4 ]; then
+  printf "${check_symbol} Gcc9 found in the system!\n"
+  export PATH=$HOMEBREW/.opt/gcc4/bin
+fi
+
 # Golang
 export GOROOT=$HOMEBREW/.opt/go
 export GOPATH=$HOMEBREW/.opt/go/bin

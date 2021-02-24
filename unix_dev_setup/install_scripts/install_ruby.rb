@@ -13,6 +13,7 @@ $gems_to_install = [
     "open3",
     "json",
     "hjson",
+    "ruby-progressbar",
   ]
 
 class InstRuby < InstallStuff

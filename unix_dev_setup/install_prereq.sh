@@ -249,16 +249,19 @@ Arch_packages=( \
 Ruby_gems=( \
   "rsense" \
   "open3" \
-  "json" )
+  "json" \
+  "ruby-progressbar")
 
 #
 # Note on open3: Ruby 2.5.. which comes with CentOS/RHEL cannot support
 # newer 0.1.1 version. So, 0.1.0 will be installed on those systems.
 # Let's hope they can work with my codes without too much problem.
 #
-Ruby_gems_RHEL=( \
-  "rsense" \
-  "json" )
+adj_gems=('open3')
+for del in ${adj_gems[@]}
+do
+  Ruby_gems_RHEL=( "{Ruby_gems[@]/$del}" )
+done
 
 array_to_string ()
 {

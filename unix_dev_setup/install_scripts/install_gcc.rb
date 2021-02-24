@@ -13,20 +13,17 @@ $gcc_conf_options = [
   "--enable-linker-build-id",
   "--enable-threads=posix",
   "--enable-plugin",
-  "--enable-nls",
-  "--enable-clocale=gnu",
-  "--with-target-system-zlib=auto",
   "--with-system-zlib",
   "--with-default-libstdcxx-abi=new",
-  "--enable-gnu-unique-object",
   "--enable-objc-gc=auto",
-  "--disable-multilib",
+#  "--disable-multilib",
   "--disable-werror",
+  "--with-abi=m64",
   "--build={target_arch}",
   "--host={target_arch}",
   "--target={target_arch}",
-  # "--libexecdir={prefix}/lib",
-  # "--libdir={prefix}/lib"
+  "--libexecdir={prefix}/lib",
+  "--libdir={prefix}/lib",
 ]
 
 
@@ -45,8 +42,8 @@ class InstGCC < InstallStuff
     @env = {
       "CC" => "gcc",
       "CXX" => "g++",
-      "CFLAGS" => "-O3 -march=native -fomit-frame-pointer -pipe",
-      "CXXFLAGS" => "-O3 -march=native -fomit-frame-pointer -pipe",
+      "CFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
+      "CXXFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
     }
 
@@ -198,8 +195,8 @@ class InstGCC8 < InstGCC
     @env = {
       "CC" => "gcc",
       "CXX" => "g++",
-      "CFLAGS" => "-O3 -march=native -fomit-frame-pointer -pipe",
-      "CXXFLAGS" => "-O3 -march=native -fomit-frame-pointer -pipe",
+      "CFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
+      "CXXFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
     }
 
@@ -233,8 +230,8 @@ class InstGCC9 < InstGCC
     @env = {
       "CC" => "gcc",
       "CXX" => "g++",
-      "CFLAGS" => "-O3 -march=native -fomit-frame-pointer -pipe",
-      "CXXFLAGS" => "-O3 -march=native -fomit-frame-pointer -pipe",
+      "CFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
+      "CXXFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
     }
 
