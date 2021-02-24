@@ -188,6 +188,7 @@ class InstGCC8 < InstGCC
 
     @pkgname = 'gcc8'
     @source_url = SRC_URL[@pkgname]
+    @prefix = File.join(prefix, ".opt/#{@pkgname}")
 
     @conf_options = \
       $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
@@ -222,6 +223,7 @@ class InstGCC9 < InstGCC
 
     @pkgname = 'gcc9'
     @source_url = SRC_URL[@pkgname]
+    @prefix = File.join(prefix, ".opt/#{@pkgname}")
 
     @conf_options = \
       $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
@@ -256,15 +258,19 @@ class InstGCC4 < InstGCC
 
     @pkgname = 'gcc4'
     @source_url = SRC_URL[@pkgname]
-    @prefix = File.join(@prefix, '.opt')
+    # Separating this gcc installation.
+    @prefix = File.join(prefix, ".opt/#{@pkgname}")
 
     @conf_options = [ 
       "--enable-shared", 
       "--disable-boostrap",
       "--enable-threads=posix",       
       "--disable-nls",
+      "--enable-default-pie",
       "--disable-multilib",
-      "--enable-languages=c,c++", 
+      "--enable-languages=c,c++",
+      "--libdir={prefix}/lib",
+      "--libexecdir={prefix}/lib",
       "--build={target_arch}",
       "--host={target_arch}",
       "--target={target_arch}",

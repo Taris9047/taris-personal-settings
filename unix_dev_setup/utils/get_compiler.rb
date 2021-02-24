@@ -8,7 +8,7 @@
 $cflags = "-O3 -march=native -fomit-frame-pointer -pipe"
 $cxxflags = $cflags
 
-$rpath = "-Wl,-rpath=/usr/lib -Wl,-rpath=/usr/lib64 -Wl,-rpath=/usr/local/lib -Wl,-rpath=/usr/local/lib64 -Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib"
+$rpath = "-Wl,-rpath={env_path}/lib64 -Wl,-rpath={env_path}/lib"
 
 class GetCompiler
   attr_accessor :cc_path, :cxx_path, :cflags, :cxxflags, :clang, :suffix, :env_path
