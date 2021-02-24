@@ -3,6 +3,8 @@
 # Download url designated file to designated location
 
 require 'open-uri'
+require 'net/http'
+require 'ruby-progressbar'
 
 class Download < RunConsole
 
@@ -44,8 +46,27 @@ class Download < RunConsole
       puts "File seems to be already downloaded!"
       return 0
     end
-    dn = URI.open(@URL)
-    IO.copy_stream( dn, @outf_path )
+
+    pbar = ''
+    fname = @URL.split('/')[-1]
+    URI.open(@URL, "rb",
+      :content_length_proc => lambda {|t|
+        if t && 0 < t
+          pbar = ProgressBar.create(title: fname, total:t, progress_mark: '█'.encode('utf-8'))
+        end
+      },
+      :progress_proc => lambda {|s|
+        pbar.progress = s if pbar
+      }) do |page|
+      File.open("#{@outf_path}", "wb") do |f|
+        while chunk = page.read(1024)
+          f.write(chunk)
+        end
+      end
+    end
+
+    # dn = URI.open(@URL)
+    # IO.copy_stream( dn, @outf_path )
   end
 
   def wget_download

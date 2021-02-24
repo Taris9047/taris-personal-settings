@@ -57,6 +57,28 @@ class InstallStuff < RunConsole
     end
   end
 
+  def ShowInstallInfo
+    env_txt = ''
+    @env.each do |k, flag|
+      env_txt += "#{k}: #{flag}\n"
+    end
+    
+    info_txt = %{
+>> Installation Destination:
+#{@prefix}
+
+>> Config options
+--prefix=#{@prefix}
+#{@conf_options.join("\n")}
+
+>> Compiler options (env)
+#{env_txt}
+
+    }
+    puts info_txt
+    sleep(2.5)
+  end
+
   def VerCheck
     # Checking if newer version has rolled out
     if @check_ver

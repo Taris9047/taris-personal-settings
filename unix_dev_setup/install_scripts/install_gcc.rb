@@ -26,6 +26,13 @@ $gcc_conf_options = [
   "--libdir={prefix}/lib",
 ]
 
+$gcc_env = {
+  "CC" => "gcc",
+  "CXX" => "g++",
+  "CFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
+  "CXXFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
+  "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
+}
 
 class InstGCC < InstallStuff
 
@@ -36,16 +43,8 @@ class InstGCC < InstallStuff
     super('gcc', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
-
     @conf_options = $gcc_conf_options
-
-    @env = {
-      "CC" => "gcc",
-      "CXX" => "g++",
-      "CFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
-      "CXXFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
-      "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
-    }
+    @env = $gcc_env
 
     @os_type=os_type
     @need_sudo=need_sudo
@@ -59,6 +58,10 @@ class InstGCC < InstallStuff
       envstr += ["#{k}=\"#{@env[k]}\""]
     end
     return envstr.join(' ')
+  end
+
+  def install
+    self.do_install
   end
 
   def do_install
@@ -174,6 +177,10 @@ class InstGCC < InstallStuff
     fp.close
   end
 
+  def ShowInstallInfo
+    super
+  end
+
 end # class InstGCC
 
 
@@ -257,6 +264,7 @@ class InstGCC4 < InstGCC
     @source_url = SRC_URL[@pkgname]
     # Separating this gcc installation.
     @prefix = File.join(prefix, ".opt/#{@pkgname}")
+    @ver_source = SRC_VER[@pkgname]
 
     @conf_options = [ 
       "--enable-shared", 
@@ -279,11 +287,10 @@ class InstGCC4 < InstGCC
       "CFLAGS" => "-w -O2 -std=gnu89 -fgnu89-inline -fomit-frame-pointer -pipe",
       "CXXFLAGS" => "-w -O2 -std=gnu++11 -fomit-frame-pointer -pipe",
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
-  #    "LD_LIBRARY_PATH" => "/usr/lib/x86_64-linux-gnu:/usr/lib:{prefix}/lib:{prefix}/lib64",
     }
 
     @need_sudo=need_sudo
-    @verbose = verbose_mode
+    @verbose=verbose_mode
 
   end
 
@@ -293,6 +300,8 @@ class InstGCC4 < InstGCC
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
+
+    self.ShowInstallInfo
 
     # Replace '{prefix}' on configure parameters.
     @conf_options.each_with_index do |co, ind|
@@ -385,8 +394,10 @@ class InstGCC4 < InstGCC
     puts "*** If it breaks, it breaks... ***"
     puts "*** (This package was added solely due to old cuda: 6.5) ***"
     puts ""
-    puts "*** If Ubuntu based one... try installing ***"
-    puts "    gcc-multilib libstdc++6:i386"
+    puts "*** If it breaks, try installing ... ***"
+    puts " (Ubuntu) gcc-multilib libstdc++6:i386"
+    puts " (RHEL) libstdc++.i686"
+    puts "*** But don't expect to be 100\% successful. ***"
     puts ""
     sleep(2)
 
