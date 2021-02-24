@@ -65,8 +65,13 @@ end # class ParseHjson
 module SRC_URL
 
   def [](pkg_name)
-    json_parse = ParseHjson.new()
-    return json_parse.Get(pkg_name)
+    begin
+      json_parse = ParseHjson.new()
+      return json_parse.Get(pkg_name)
+    rescue
+      puts "Not a valid package name: \"#{pkg_name}\""
+      exit(-1)
+    end
   end
 
   module_function :[]
@@ -75,8 +80,13 @@ end # module SRC_URL
 module SRC_TYPE
 
   def [](pkg_name)
-    json_parse = ParseHjson.new()
-    return json_parse.GetType(pkg_name)
+    begin
+      json_parse = ParseHjson.new()
+      return json_parse.GetType(pkg_name)
+    rescue
+      puts "Not a valid package name: \"#{pkg_name}\""
+      exit(-1)
+    end
   end
 
   module_function :[]
@@ -85,8 +95,13 @@ end # module SRC_TYPE
 module SRC_INFO
 
   def [](pkg_name)
-    json_parse = ParseHjson.new()
-    return json_parse.GetInfo(pkg_name)
+    begin
+      json_parse = ParseHjson.new()
+      return json_parse.GetInfo(pkg_name)
+    rescue
+      puts "Not a valid package name: \"#{pkg_name}\""
+      exit(-1)
+    end
   end
 
   module_function :[]
@@ -95,18 +110,23 @@ end # module SRC_INFO
 module SRC_VER
 
   def [](pkg_name)
-    if pkg_name == 'golang'
-      return 'git'
-    end
+    begin
+      if pkg_name == 'golang'
+        return 'git'
+      end
 
-    if SRC_TYPE[pkg_name] == "tarball"
-      fnp = FNParser.new(SRC_URL[pkg_name])
-      src_ver = Version.new(fnp.version().join('.'))
-    else
-      src_ver = Version.new(SRC_TYPE[pkg_name])
-    end
+      if SRC_TYPE[pkg_name] == "tarball"
+        fnp = FNParser.new(SRC_URL[pkg_name])
+        src_ver = Version.new(fnp.version().join('.'))
+      else
+        src_ver = Version.new(SRC_TYPE[pkg_name])
+      end
 
-    return src_ver
+      return src_ver
+    rescue
+      puts "Not a valid package name: \"#{pkg_name}\""
+      exit(-1)
+    end
   end
 
   module_function :[]
