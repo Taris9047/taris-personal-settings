@@ -273,7 +273,7 @@ class InstGCC4 < InstGCC
       "CC" => "gcc",
       "CXX" => "g++",
       "CFLAGS" => "-w -O2 -std=gnu89 -fgnu89-inline -fomit-frame-pointer -pipe",
-      "CXXFLAGS" => "-w -O2 -std=gnu++98 -fomit-frame-pointer -pipe",
+      "CXXFLAGS" => "-w -O2 -std=gnu++11 -fomit-frame-pointer -pipe",
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
   #    "LD_LIBRARY_PATH" => "/usr/lib/x86_64-linux-gnu:/usr/lib:{prefix}/lib:{prefix}/lib64",
     }
@@ -334,12 +334,14 @@ class InstGCC4 < InstGCC
     puts ""
     puts "Patching bugged files..."
     puts ""
-    arches = [
-      "aarch64", "alpha", "bfin", "i386", "pa", "sh", "tilepro", "xtensa"
-    ]
+    # arches = [
+    #   "aarch64", "alpha", "bfin", "i386", "pa", "sh", "tilepro", "xtensa"
+    # ]
     patch_cmd = [
       "sed -i -e 's/__attribute__/\\/\\/__attribute__/g' #{extracted_src_dir}/gcc/cp/cfns.h",
-      "sed -i 's/struct ucontext/ucontext_t/g' #{extracted_src_dir}/libgcc/config/i386/linux-unwind.h"
+      "sed -i 's/struct ucontext/ucontext_t/g' #{extracted_src_dir}/libgcc/config/i386/linux-unwind.h",
+      "sed -i '/#include <pthread.h>/a #include <signal.h>' #{extracted_src_dir}/libsanitizer/asan/asan_linux.cc",
+      "sed -i 's/__res_state \\*statp = (__res_state\\*)state\\;/struct __res_state \\*statp = (struct __res_state\\*)state\\;/g' #{extracted_src_dir}/libsanitizer/tsan/tsan_platform_linux.cc",
     ]
     # arches.each do |ar|
     #   patch_cmd += [
