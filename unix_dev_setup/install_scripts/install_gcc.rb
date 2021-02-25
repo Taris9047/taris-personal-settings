@@ -61,7 +61,7 @@ class InstGCC < InstallStuff
   end
 
   def install
-    self.do_install
+    super
   end
 
   def do_install
@@ -119,6 +119,7 @@ class InstGCC < InstallStuff
     end
 
     # Downloading prerequisites
+    puts "Downloading prerequisites ... "
     self.Run( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
 
     # Let's build!!
