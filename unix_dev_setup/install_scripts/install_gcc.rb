@@ -350,7 +350,6 @@ class InstGCC4 < InstGCC
     # Need to patch a file.
     puts ""
     puts "Patching bugged files..."
-    puts ""
     # arches = [
     #   "aarch64", "alpha", "bfin", "i386", "pa", "sh", "tilepro", "xtensa"
     # ]

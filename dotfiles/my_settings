@@ -395,9 +395,10 @@ if [ -x "$(command -v rclone)" ]; then
 fi
 
 # ROOT
-if [ -x "$(command -v $HOMEBREW/.opt/ROOT/bin/root)" ]; then
+ROOT_DIR=$HOMEBREW/.opt/ROOT
+if [ -x "$(command -v $ROOT_DIR/bin/root)" ]; then
   printf "${check_symbol} ROOT Found! Applying its shell env.\n"
-  source $HOMEBREW/.opt/ROOT/bin/thisroot.sh
+  alias thisroot="$ROOT_DIR/bin/thisroot.sh"
 fi
 
 # Doom-Emacs

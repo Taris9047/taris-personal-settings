@@ -8,10 +8,13 @@ require_relative './install_stuff.rb'
 $gems_to_install = [
     "rsense",
     "rails",
+    "rake",
     "bundler",
     "open3",
     "json",
     "hjson",
+    "ruby-progressbar",
+    "tty-spinner",
   ]
 
 $pkg_name = 'ruby3'

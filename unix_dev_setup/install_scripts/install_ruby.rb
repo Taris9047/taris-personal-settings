@@ -14,6 +14,7 @@ $gems_to_install = [
     "json",
     "hjson",
     "ruby-progressbar",
+    "tty-spinner",
   ]
 
 class InstRuby < InstallStuff

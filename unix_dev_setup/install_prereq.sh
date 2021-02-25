@@ -250,7 +250,9 @@ Ruby_gems=( \
   "rsense" \
   "open3" \
   "json" \
-  "ruby-progressbar")
+  "ruby-progressbar" \
+  "tty-spinner" \
+  )
 
 #
 # Note on open3: Ruby 2.5.. which comes with CentOS/RHEL cannot support
