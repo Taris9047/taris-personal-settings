@@ -44,7 +44,8 @@ class RunConsole
   end
 
   def __run_quiet( env, cmds, opts )
-    spinner = TTY::Spinner.new("[Working] :title ... :spinner", title: @title, format: :bouncing_ball, hide_cursor: true)
+    spinner = TTY::Spinner.new("[Working] :title ... :spinner", format: :bouncing_ball, hide_cursor: true)
+    spinner.update(title: @title)
     spinner.auto_spin
     o, e, s = Open3.capture3( env, cmds )
     spinner.stop('(done!)')
