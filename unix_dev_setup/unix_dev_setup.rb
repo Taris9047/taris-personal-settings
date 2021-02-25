@@ -256,7 +256,8 @@ end
 
 # Set up console
 require_relative './utils/run_console.rb'
-Con = RunConsole.new(verbose=verbose, logf_dir=work_dir_log)
+Con = RunConsole.new(
+  verbose: verbose, logf_dir: work_dir_log)
 
 # Working directories
 unless File.directory?(work_dir_path)

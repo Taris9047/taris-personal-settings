@@ -7,9 +7,10 @@ require 'tty-spinner'
 
 class RunConsole
 
-  def initialize(verbose=true, logf_dir='', logf_name='')
+  def initialize(verbose: true, logf_dir: '', logf_name: '', title: '')
     @Verbose = verbose
     @def_env = { "CLICOLOR" => "1", "CLICOLOR_FORCE" => "1" }
+    @title = ''
 
     if logf_dir.empty?
       curr_dir=File.expand_path(File.dirname(__FILE__))
@@ -43,7 +44,7 @@ class RunConsole
   end
 
   def __run_quiet( env, cmds, opts )
-    spinner = TTY::Spinner.new("[Working] ... :spinner", format: :bouncing_ball, hide_cursor: true)
+    spinner = TTY::Spinner.new("[Working] :title ... :spinner", title: @title, format: :bouncing_ball, hide_cursor: true)
     spinner.auto_spin
     o, e, s = Open3.capture3( env, cmds )
     spinner.stop('(done!)')

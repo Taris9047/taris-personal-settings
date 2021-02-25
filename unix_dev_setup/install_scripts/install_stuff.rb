@@ -33,7 +33,10 @@ class InstallStuff < RunConsole
     @pkginfo_file = File.join(@pkginfo_dir, "#{@pkgname}.info" )
     @check_ver = ver_check
     @verbose = verbose_mode
-    super(@verbose, @pkginfo_dir, "#{@pkgname}.log")
+    super(
+      verbose: @verbose, 
+      logf_dir: @pkginfo_dir, 
+      logf_name: "#{@pkgname}.log")
     @run_install = true
 
     # Setting up processors
