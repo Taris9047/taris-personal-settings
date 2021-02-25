@@ -43,7 +43,7 @@ class RunConsole
   end
 
   def __run_quiet( env, cmds, opts )
-    spinner = TTY::Spinner.new("[Working] ... ", format: :bouncing_ball, success_mark: '+', hide_cursor: true)
+    spinner = TTY::Spinner.new("[Working] ... :spinner", format: :bouncing_ball, hide_cursor: true)
     spinner.auto_spin
     o, e, s = Open3.capture3( env, cmds )
     spinner.stop('(done!)')
@@ -55,7 +55,6 @@ class RunConsole
         fp = File.open(@log_file_name, 'a')
       end
     end
-      
     fp.puts(o)
     fp.close
 
