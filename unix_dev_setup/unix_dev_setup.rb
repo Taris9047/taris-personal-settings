@@ -5,6 +5,7 @@
 #
 
 require 'fileutils'
+require 'tty-spinner'
 
 # Note that installing old gcc (gcccuda) is disabled due to libc 2.26 issue.
 # In fact, we need to apply patch to adopt old gcc source codes to
@@ -200,8 +201,10 @@ end
 # Some edge cases... cleaning and installing prereq
 if op_mode_list.include?('purge')
   puts "Purging everything!!!"
-  # system( "rm -rf #{work_dirs.join(' ')}" )
-  FileUtils.rm_rf("#{work_dir_root}" )
+  spinner = TTY::Spinner.new("[Purging] ... ", format: :bouncing_ball)
+  spinner.auto_spin
+  FileUtils.rm_rf(work_dir_root)
+  FileUtils.rm_rf(pkginfo_dir)
   prefix_kill_list = Dir.entries(prefix_dir_path)
   prefix_kill_list -= [ ".", "..", "share" ]
   prefix_kill_list += [ ".opt" ]
@@ -210,13 +213,18 @@ if op_mode_list.include?('purge')
     FileUtils.rm_rf(File.join(prefix_dir_path, k))
   end
   op_mode_list.delete('purge')
+  spinner.stop
   puts "Purged everything!! Now you are free of cruds."
   exit(0)
 end
 
 if op_mode_list.include?('--purge')
+  spinner = TTY::Spinner.new("[Purging] .. ", format: :bouncing_ball)
   puts "Performing purge install..."
-  Con.Run( 'rm -rf '+work_dirs.join(' ') )
+  spinner.auto_spin
+  FileUtils.rm_rf(pkginfo_dir)
+  FileUtils.rm_rf(work_dir_root)
+  spinner.stop
   puts "Deleted every build stuff!!"
   op_mode_list.delete('--purge')
 end
@@ -224,7 +232,10 @@ end
 
 if op_mode_list.include?('clean')
   puts "Cleaning up source files and build dirs..."
+  spinner = TTY::Spinner.new("[Cleaning] ... ", format: :bouncing_ball)
+  spinner.auto_spin
   FileUtils.rm_rf(work_dir_root)
+  spinner.stop
   puts "Cleaned up source files to save space!!"
   op_mode_list.delete('clean')
   exit(0)
@@ -233,7 +244,10 @@ end
 if op_mode_list.include?('--clean')
   puts "Performing clean install..."
   puts "Cleaning up source files and build dirs..."
+  spinner = TTY::Spinner.new("[Cleaning] ... ", format: :bouncing_ball)
+  spinner.auto_spin
   FileUtils.rm_rf(work_dir_root)
+  spinner.stop
   puts "Cleaned up source files to save space!!"
   op_mode_list.delete('--clean')
 end
