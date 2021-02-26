@@ -201,10 +201,10 @@ end
 # Some edge cases... cleaning and installing prereq
 if op_mode_list.include?('purge')
   puts "Purging everything!!!"
-  spinner = TTY::Spinner.new("[Purging] ... ", format: :bouncing_ball)
+  spinner = TTY::Spinner.new("[Purging] ... :spinner", format: :bouncing_ball)
   spinner.auto_spin
   FileUtils.rm_rf(work_dir_root)
-  FileUtils.rm_rf(pkginfo_dir)
+  FileUtils.rm_rf(pkginfo_dir_path)
   prefix_kill_list = Dir.entries(prefix_dir_path)
   prefix_kill_list -= [ ".", "..", "share" ]
   prefix_kill_list += [ ".opt" ]
@@ -219,10 +219,10 @@ if op_mode_list.include?('purge')
 end
 
 if op_mode_list.include?('--purge')
-  spinner = TTY::Spinner.new("[Purging] .. ", format: :bouncing_ball)
+  spinner = TTY::Spinner.new("[Purging] .. :spinner", format: :bouncing_ball)
   puts "Performing purge install..."
   spinner.auto_spin
-  FileUtils.rm_rf(pkginfo_dir)
+  FileUtils.rm_rf(pkginfo_dir_path)
   FileUtils.rm_rf(work_dir_root)
   spinner.stop
   puts "Deleted every build stuff!!"
@@ -232,7 +232,7 @@ end
 
 if op_mode_list.include?('clean')
   puts "Cleaning up source files and build dirs..."
-  spinner = TTY::Spinner.new("[Cleaning] ... ", format: :bouncing_ball)
+  spinner = TTY::Spinner.new("[Cleaning] ... :spinner", format: :bouncing_ball)
   spinner.auto_spin
   FileUtils.rm_rf(work_dir_root)
   spinner.stop
@@ -244,7 +244,7 @@ end
 if op_mode_list.include?('--clean')
   puts "Performing clean install..."
   puts "Cleaning up source files and build dirs..."
-  spinner = TTY::Spinner.new("[Cleaning] ... ", format: :bouncing_ball)
+  spinner = TTY::Spinner.new("[Cleaning] ... :spinner", format: :bouncing_ball)
   spinner.auto_spin
   FileUtils.rm_rf(work_dir_root)
   spinner.stop
