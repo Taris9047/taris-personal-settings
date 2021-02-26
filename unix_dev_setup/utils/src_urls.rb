@@ -65,6 +65,10 @@ class ParseHjson
     return Array( @URL_DB.keys )
   end
 
+  def GetAltNames(pkg_name)
+    return @URL_DB[pkg_name]["alt-names"]
+  end
+
 end # class ParseHjson
 
 
@@ -158,3 +162,18 @@ module SRC_LIST
 
   module_function :[]
 end # mdoule SRC_LIST
+
+def ALIAS_TABLE
+  json_parse = ParseHjson.new()
+  pkg_list = json_parse.GetPkgList()
+  aliases_hash = {}
+  
+  pkg_list.each do |pkg|
+    alt_pkg_names = json_parse.GetAltNames(pkg)
+    alt_pkg_names.each do |apkg_n|
+      aliases_hash[apkg_n] = "pkg"
+    end 
+  end
+
+  return aliases_hash
+end # ALIAS_TABLE
