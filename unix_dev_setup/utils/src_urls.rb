@@ -30,12 +30,14 @@ require 'json'
 
 class ParseHjson
   def initialize(json_path='../data/')
+
+    # TODO: Gotta code this crap with more... parser like.
     @json_path = File.join(File.dirname(__FILE__), json_path)
     real_f_name = File.join(@json_path, $def_db_json_name)
     @json_data = File.readlines(real_f_name)
     @cleaned_up_data = []
     @json_data.each do |line|
-      unless line.include?('#')
+      unless line.include?('#') or line.include?('//')
         cleaned_up_line = line.delete("\n").delete("\r").gsub(/( |(".*?"))/, "\\2")
 
         if cleaned_up_line.size > 0
@@ -57,6 +59,10 @@ class ParseHjson
 
   def GetInfo(pkg_name)
     return [ @URL_DB[pkg_name]["url"], @URL_DB[pkg_name]["type"] ]
+  end
+
+  def GetPkgList()
+    return Array( @URL_DB.keys )
   end
 
 end # class ParseHjson
@@ -131,3 +137,24 @@ module SRC_VER
 
   module_function :[]
 end # module SRC_TYPE
+
+module SRC_LIST
+
+  def [](filter='')
+    json_parse = ParseHjson.new()
+    list = json_parse.GetPkgList()
+    filtered_list = []
+    unless filter.empty?
+      list.each do |pkg|
+        if filter in pkg
+          filtered_list.append(pkg)
+        end
+      end
+      return filtered_list
+    else
+      return list
+    end
+  end
+
+  module_function :[]
+end # mdoule SRC_LIST

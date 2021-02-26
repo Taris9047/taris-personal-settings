@@ -2,123 +2,127 @@
   # GCC
   "gcc": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["gcc-10"]
   },
   "gcc8": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["gcc-8"]
   },
   "gcc9": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["gcc-9"]
   },
   "gcc4": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-4.8.5/gcc-4.8.5.tar.bz2",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["gcc-4"]
   },
 
   # cmake
   "cmake": {
     "url": "https://github.com/Kitware/CMake/releases/download/v3.19.5/cmake-3.19.5.tar.gz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["CMake"]
   },
 
   # Lua
   "lua": {
     "url": "https://www.lua.org/ftp/lua-5.4.0.tar.gz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["Lua"]
   },
 
   # Ruby
   "ruby": {
     "url": "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["ruby2", "Ruby2"]
   },
 
   # Ruby3
   "ruby3": {
     "url": "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.0.tar.gz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["Ruby3"]
   },
 
   # Python stuffs
   "get_pip": {
     "url": "https://bootstrap.pypa.io/get-pip.py",
-    "type": "python"
+    "type": "python",
+    "alt-names": ["get-pip"]
   },
   "python2": {
     "url": "https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["Python2"]
   },
   "python3": {
     "url": "https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["Python3"]
   },
 
   # PyPy repository
   "pypy3": {
     "url": "https://foss.heptapod.net/pypy/pypy",
-    "type": "mercurial"
+    "type": "mercurial",
+    "alt-names": ["pypy", "PyPy"]
   },
 
   # Node.JS
   "node": {
     "url": "https://nodejs.org/dist/v15.9.0/node-v15.9.0.tar.gz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["Node.JS", "node.js", "nodejs"]
   },
   "node-lts": {
     "url": "https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["Node.JS-lts", "node.js-lts", "nodejs-lts"]
   },
 
   # Boost
   "boost": {
     "url": "https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.bz2",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["Boost"]
   },
 
   # LLVM-Clang
   "llvm": {
     "url": "https://github.com/llvm/llvm-project.git",
-    "type": "git"
+    "type": "git",
+    "alt-names": ["llvm-clang", "clang", "Clang", "LLVM-Clang"]
   },
 
   # Rust
   "rust": {
     "url": "https://static.rust-lang.org/dist/rustc-1.46.0-src.tar.gz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["Rust"]
   },
 
   # ROOT
   "ROOT": {
     "url": "https://github.com/root-project/root.git",
-    "type": "git"
-  },
-
-  # Julia
-  "julia": {
-    "url": "https://github.com/JuliaLang/julia/releases/download/v1.5.2/julia-1.5.2-full.tar.gz",
-    "type": "tarball"
-  },
-
-  # Haskell
-  "ghc": {
-    "url": "https://downloads.haskell.org/~ghc/8.10.2/ghc-8.10.2-src.tar.xz",
-    "type": "tarball"
-  },
-  "cabal-install": {
-    "url": "http://hackage.haskell.org/package/cabal-install-3.2.0.0/cabal-install-3.2.0.0.tar.gz",
-    "type": "tarball"
+    "type": "git",
+    "alt-names": ["root"]
   },
 
   # MPICH
   "mpich": {
     "url": "http://www.mpich.org/static/downloads/3.4.1/mpich-3.4.1.tar.gz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["MPICH"]
   },
   "hydra": {
     "url": "http://www.mpich.org/static/downloads/3.4.1/hydra-3.4.1.tar.gz",
-    "type": "tarball"
+    "type": "tarball",
+    "alt-names": ["Hydra"]
   },
 
   # GoLang
@@ -128,12 +132,14 @@
   },
   "golang": {
     "url": "https://go.googlesource.com/go",
-    "type": "git"
+    "type": "git",
+    "alt-names": ["go", "Golang"]
   },
 
   # Julia
   "julia": {
     "url": "https://github.com/JuliaLang/julia.git",
-    "type": "git"
+    "type": "git",
+    "alt-names": ["Julia"]
   }
 }

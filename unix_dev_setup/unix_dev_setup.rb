@@ -6,27 +6,11 @@
 
 require 'fileutils'
 require 'tty-spinner'
+require_relative './utils/utils.rb'
 
 # Note that installing old gcc (gcccuda) is disabled due to libc 2.26 issue.
 # In fact, we need to apply patch to adopt old gcc source codes to
 # follow up the newest changes in libc 2.26
-
-# Default parameters
-home_dir = ENV["HOME"]
-def_prefix = File.join(home_dir, "/.local")
-# def_prefix = File.join("/usr/local")
-
-#
-# This could be
-# i686-linux-gnu
-# some arm type etc.
-# --> Only applies to gcc.
-# We are not building any cross-compilation stuff yet.
-#
-def_system = 'x86_64-linux-gnu'
-
-# Getting CWD
-current_dir = File.expand_path(File.dirname(__FILE__))
 
 # Version
 $version = ['1', '0', '1']
@@ -34,62 +18,110 @@ $version = ['1', '0', '1']
 # title
 $title = "Unix Development Environment setup"
 
-# Verbose mode? Default: false
-verbose = false
+# $list_of_progs = [
+#   'gcc',
+#   'gcc9',
+#   'gcc8',
+#   'gcc4',
+#   'python2',
+#   'python3',
+#   'boost',
+#   'lua',
+#   'ruby',
+#   'ruby3',
+#   'node',
+#   'node-lts',
+#   'clang',
+#   'cmake',
+#   'rust',
+#   'pypy3',
+#   'ROOT',
+#   'mpich',
+#   'hydra',
+#   'golang',
+#   'julia',
+# ]
 
-# Directories
-work_dir_root = File.join(current_dir, 'workspace')
-work_dir_path = File.join(work_dir_root, 'build')
-source_dir_path = File.join(work_dir_root, 'download')
-pkginfo_dir_path = File.join(current_dir, 'pkginfo')
-work_dir_log = File.join(work_dir_root, 'log')
-prefix_dir_path = def_prefix
 
-list_of_progs = [
-  'gcc',
-  'gcc9',
-  'gcc8',
-  'gcc4',
-  'python2',
-  'python3',
-  'boost',
-  'lua',
-  'ruby',
-  'ruby3',
-  'node',
-  'node-lts',
-  'clang',
-  'cmake',
-  'rust',
-  'pypy3',
-  'ROOT',
-  'mpich',
-  'hydra',
-  'golang',
-  'julia',
-]
+class UnixDevSetup
 
-$not_so_stable_pkgs = ['pypy3', 'clang', 'ROOT', 'julia']
-$not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts', 'ruby3']
+  def initialize(op_mode_list = [])
 
-list_of_all = list_of_progs - $not_so_stable_pkgs - $not_so_needed_pkgs
+    # Default parameters
+    home_dir = ENV["HOME"]
+    def_prefix = File.join(home_dir, "/.local")
+    # def_prefix = File.join("/usr/local")
+    @list_of_progs = SRC_LIST[]
 
-aliases = {
-  'gcc-old' => 'gcc9',
-  'gcc-cuda' => 'gcc8',
-  'python' => 'python3',
-  'Boost' => 'boost',
-  'ruby2' => 'ruby',
-  'pypy' => 'pypy3',
-  'Rust' => 'rust',
-  'root' => 'ROOT',
-  'MPICH' => 'mpich',
-  'go' => 'golang',
-  'nodejs' => 'node',
-  'nodejslts' => 'node-lts',
-  'node.js' => 'node',
-  'all' => list_of_all,
-}
+
+    @not_so_stable_pkgs = ['pypy3', 'clang', 'ROOT', 'julia']
+    @not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts', 'ruby3']
+
+    @list_of_all = list_of_progs - $not_so_stable_pkgs - $not_so_needed_pkgs
+
+    @aliases = {
+      'gcc-old' => 'gcc9',
+      'gcc-cuda' => 'gcc8',
+      'python' => 'python3',
+      'Boost' => 'boost',
+      'ruby2' => 'ruby',
+      'pypy' => 'pypy3',
+      'Rust' => 'rust',
+      'root' => 'ROOT',
+      'MPICH' => 'mpich',
+      'go' => 'golang',
+      'nodejs' => 'node',
+      'nodejslts' => 'node-lts',
+      'node.js' => 'node',
+      'all' => @list_of_all,
+    }
+    
+
+    
+
+    # Default system ==> usually it's linux
+    # TODO: implement platform detection stuff here later.
+    @def_system = 'x86_64-linux-gnu'
+
+    # Getting CWD
+    @current_dir = File.expand_path(File.dirname(__FILE__))
+    
+    # Verbose mode? Default: false
+    @verbose = false
+
+    # Directories
+    @work_dir_root = File.join(@current_dir, 'workspace')
+    @work_dir_path = File.join(@work_dir_root, 'build')
+    @source_dir_path = File.join(@work_dir_root, 'download')
+    @pkginfo_dir_path = File.join(@current_dir, 'pkginfo')
+    @work_dir_log = File.join(@work_dir_root, 'log')
+    @prefix_dir_path = def_prefix
+
+    # Setting up operatnion mode
+    @op_mode_list = []
+    if ARGV.empty?
+      @op_mode_list = @list_of_all
+    else
+      @op_mode_list = ARGV
+    end
+
+  end # UnixDevSetup::initialize
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 $permitted_list = list_of_progs + aliases.keys
 $opt_list = [
@@ -102,12 +134,15 @@ $permitted_list += $opt_list
 
 # Main title banner
 def main_title
-puts "******************************************"
-puts ""
-puts " #{$title}"
-puts " Version (#{$version.join('.')})"
-puts ""
-puts "******************************************"
+  mt = %{
+******************************************
+
+ #{$title}"
+ Version (#{$version.join('.')})"
+
+******************************************
+  }
+  puts mt
 end
 # Help message
 def show_help
@@ -147,13 +182,6 @@ end
 flag_wrong_pkg_given = false
 wrong_pkgs = []
 
-# Setting up operatnion mode
-op_mode_list = []
-if ARGV.empty?
-  op_mode_list = list_of_all
-else
-  op_mode_list = ARGV
-end
 
 # Cleaning up op_mode_list with aliases
 for k in aliases.keys
@@ -270,8 +298,7 @@ end
 
 # Set up console
 require_relative './utils/run_console.rb'
-Con = RunConsole.new(
-  verbose: verbose, logf_dir: work_dir_log)
+Con = RunConsole.new(verbose: verbose, logf_dir: work_dir_log)
 
 # Working directories
 unless File.directory?(work_dir_path)
@@ -368,18 +395,17 @@ def remove_def_python_cmd
     sudo_cmd = "sudo"
   end
   del_python_cmd = [
-      sudo_cmd,
-      "rm -rfv",
-      File.join($prefix_dir, "bin/python"),
-      File.join($prefix_dir, "bin/ipython")
+    File.join($prefix_dir, "bin/python"),
+    File.join($prefix_dir, "bin/ipython")
   ]
-  system( del_python_cmd.join(" ") )
+  del_python_cmd.each do |c|
+    FileUtils.rm_rf(c)
+  end
 end
 
 # The main installation loop
 op_mode_list.each do |op_mode|
   case op_mode
-
   # Gcc stuffs
   when 'gcc'
     require "./install_scripts/install_gcc.rb"
@@ -516,6 +542,13 @@ if flag_wrong_pkg_given
     puts pkg
   end
 end
+
+
+
+end # UnisDevSetup
+
+params = ARGV
+dev = UnixDevSetup.new(params)
 
 puts ""
 puts "Jobs finished!!"
