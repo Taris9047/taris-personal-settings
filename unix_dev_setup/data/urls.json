@@ -211,5 +211,16 @@
     "dependency": ["gcc"],
     "script": "install_julia.rb",
     "class": "InstJulia"
+  },
+
+  # ngspice
+  "ngspice": {
+    "url": "https://sourceforge.net/projects/ngspice/files/ng-spice-rework/34/ngspice-34.tar.gz",
+    "type": "tarball",
+    "alt-names": ["spice", "NGSpice"],
+    "dependency": ["gcc"],
+    "script", "install_ngspice.rb",
+    "class": "InstNgspice"
   }
+
 }
