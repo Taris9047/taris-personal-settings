@@ -2,9 +2,12 @@
 
 # Installation script template class
 
+require 'find'
 require 'etc'
 require 'open3'
 require 'json'
+require 'fileutils'
+require 'tty-spinner'
 
 require_relative '../utils/utils.rb'
 
@@ -20,6 +23,7 @@ class InstallStuff < RunConsole
     @pkginfo_file = File.join(@pkginfo_dir, "#{@pkgname}.info" )
     @check_ver = ver_check
     @verbose = verbose_mode
+    @Installed_files = []
     super(
       verbose: @verbose, 
       logf_dir: @pkginfo_dir, 
@@ -154,6 +158,30 @@ class InstallStuff < RunConsole
     return nil
   end
 
+  # Collects the list of files installed
+  # TODO: make it faster. This is super brute force now...
+  def InstallFiles(build_dir, inst_cmd)
+    files_before_install = Find.find(@prefix).collect { |_| _ if !_.include?'__pycache__'  }
+
+    self.Run("cd #{File.join(build_dir)} && #{inst_cmd}")
+
+    files_after_install = Find.find(@prefix).collect { |_| _ if !_.include?'__pycache__'  }
+    
+    @Installed_files = files_after_install - files_before_install
+  end
+
+  def uninstall
+    puts "Uninstalling #{@pkgname} ... "
+    spinner = TTY::Spinner("[Uninstalling] ... :spinner", format: :bouncing_ball)
+    spinner.auto_rotate
+    @Installed_files.each do |file|
+      FileUtils.rm_rf(file)
+    end
+    FileUtils.rm_rf(@pkginfo_file)
+    spinner.stop
+    puts "#{@pkgname} uninstalled successfully!"
+  def
+
   def WriteInfo
     puts "Writing package info for #{@pkgname}..."
     fp = File.open(@pkginfo_file, 'w')
@@ -176,6 +204,7 @@ class InstallStuff < RunConsole
       "Version" => fnp.version(),
       "Config options" => conf_options_str,
       "Env Variables" => env_str,
+      "Installed Files" => @Installed_files,
     }
     fp.write(compile_info_json.to_json)
     # fp.puts(compile_info.join("\n"))
