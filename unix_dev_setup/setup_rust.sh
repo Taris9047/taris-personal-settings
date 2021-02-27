@@ -1,6 +1,6 @@
 #!/bin/sh
 
-rust_pkgs = ( \
+rust_pkgs=( \
   exa \
   bat \
   rm-improved \
