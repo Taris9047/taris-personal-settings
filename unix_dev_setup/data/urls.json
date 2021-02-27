@@ -219,7 +219,7 @@
     "type": "tarball",
     "alt-names": ["spice", "NGSpice"],
     "dependency": ["gcc"],
-    "script", "install_ngspice.rb",
+    "script": "install_ngspice.rb",
     "class": "InstNgspice"
   }
 
