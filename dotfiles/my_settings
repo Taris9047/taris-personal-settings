@@ -199,15 +199,15 @@ fi
 # Other gcc stuff
 if [ -d $HOMEBREW/.opt/gcc9 ]; then
   printf "${check_symbol} Gcc9 found in the system!\n"
-  export PATH=$HOMEBREW/.opt/gcc9/bin
+  export PATH=$HOMEBREW/.opt/gcc9/bin:$PATH
 fi
 if [ -d $HOMEBREW/.opt/gcc8 ]; then
   printf "${check_symbol} Gcc9 found in the system!\n"
-  export PATH=$HOMEBREW/.opt/gcc8/bin
+  export PATH=$HOMEBREW/.opt/gcc8/bin:$PATH
 fi
 if [ -d $HOMEBREW/.opt/gcc4 ]; then
   printf "${check_symbol} Gcc9 found in the system!\n"
-  export PATH=$HOMEBREW/.opt/gcc4/bin
+  export PATH=$HOMEBREW/.opt/gcc4/bin:$PATH
 fi
 
 # Golang
