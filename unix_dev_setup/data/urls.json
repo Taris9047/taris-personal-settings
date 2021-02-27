@@ -3,143 +3,167 @@
   "gcc": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz",
     "type": "tarball",
-    "alt-names": ["gcc-10"]
+    "alt-names": ["gcc-10"],
+    "dependency": []
   },
   "gcc8": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz",
     "type": "tarball",
-    "alt-names": ["gcc-8"]
+    "alt-names": ["gcc-8"],
+    "dependency": []
   },
   "gcc9": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz",
     "type": "tarball",
-    "alt-names": ["gcc-9"]
+    "alt-names": ["gcc-9"],
+    "dependency": []
   },
   "gcc4": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-4.8.5/gcc-4.8.5.tar.bz2",
     "type": "tarball",
-    "alt-names": ["gcc-4"]
+    "alt-names": ["gcc-4"],
+    "dependency": []
   },
 
   # cmake
   "cmake": {
     "url": "https://github.com/Kitware/CMake/releases/download/v3.19.5/cmake-3.19.5.tar.gz",
     "type": "tarball",
-    "alt-names": ["CMake"]
+    "alt-names": ["CMake"],
+    "dependency": []
   },
 
   # Lua
   "lua": {
     "url": "https://www.lua.org/ftp/lua-5.4.0.tar.gz",
     "type": "tarball",
-    "alt-names": ["Lua"]
+    "alt-names": ["Lua"],
+    "dependency": [ "gcc" ]
   },
 
   # Ruby
   "ruby": {
     "url": "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz",
     "type": "tarball",
-    "alt-names": ["ruby2", "Ruby2"]
+    "alt-names": ["ruby2", "Ruby2"],
+    "dependency": ["gcc", "node"]
   },
 
   # Ruby3
   "ruby3": {
     "url": "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.0.tar.gz",
     "type": "tarball",
-    "alt-names": ["Ruby3"]
+    "alt-names": ["Ruby3"],
+    "dependency": ["gcc"]
   },
 
   # Python stuffs
   "get_pip": {
     "url": "https://bootstrap.pypa.io/get-pip.py",
     "type": "python",
-    "alt-names": ["get-pip"]
+    "alt-names": ["get-pip"],
+    "dependency": ["python3"]
   },
   "python2": {
     "url": "https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz",
     "type": "tarball",
-    "alt-names": ["Python2"]
+    "alt-names": ["Python2"],
+    "dependency": ["gcc"]
   },
   "python3": {
     "url": "https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz",
     "type": "tarball",
-    "alt-names": ["Python3"]
+    "alt-names": ["Python3"],
+    "dependency": ["gcc"]
   },
 
   # PyPy repository
   "pypy3": {
     "url": "https://foss.heptapod.net/pypy/pypy",
     "type": "mercurial",
-    "alt-names": ["pypy", "PyPy"]
+    "alt-names": ["pypy", "PyPy"],
+    "dependency": ["python3", "python2"]
   },
 
   # Node.JS
   "node": {
     "url": "https://nodejs.org/dist/v15.9.0/node-v15.9.0.tar.gz",
     "type": "tarball",
-    "alt-names": ["Node.JS", "node.js", "nodejs"]
+    "alt-names": ["Node.JS", "node.js", "nodejs"],
+    "dependency": ["gcc"]
   },
   "node-lts": {
     "url": "https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz",
     "type": "tarball",
-    "alt-names": ["Node.JS-lts", "node.js-lts", "nodejs-lts"]
+    "alt-names": ["Node.JS-lts", "node.js-lts", "nodejs-lts"],
+    "dependency": ["gcc"]
   },
 
   # Boost
   "boost": {
     "url": "https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.bz2",
     "type": "tarball",
-    "alt-names": ["Boost"]
+    "alt-names": ["Boost"],
+    "dependency": ["gcc"]
   },
 
   # LLVM-Clang
   "llvm": {
     "url": "https://github.com/llvm/llvm-project.git",
     "type": "git",
-    "alt-names": ["llvm-clang", "clang", "Clang", "LLVM-Clang"]
+    "alt-names": ["llvm-clang", "clang", "Clang", "LLVM-Clang"],
+    "dependency": []
   },
 
   # Rust
   "rust": {
     "url": "https://static.rust-lang.org/dist/rustc-1.46.0-src.tar.gz",
     "type": "tarball",
-    "alt-names": ["Rust"]
+    "alt-names": ["Rust"],
+    "dependency": []
   },
 
   # ROOT
   "ROOT": {
     "url": "https://github.com/root-project/root.git",
     "type": "git",
-    "alt-names": ["root"]
+    "alt-names": ["root"],
+    "dependency": ["gcc", "python3"]
   },
 
   # MPICH
   "mpich": {
     "url": "http://www.mpich.org/static/downloads/3.4.1/mpich-3.4.1.tar.gz",
     "type": "tarball",
-    "alt-names": ["MPICH"]
+    "alt-names": ["MPICH"],
+    "dependency": ["gcc"]
   },
   "hydra": {
     "url": "http://www.mpich.org/static/downloads/3.4.1/hydra-3.4.1.tar.gz",
     "type": "tarball",
-    "alt-names": ["Hydra"]
+    "alt-names": ["Hydra"],
+    "dependency": ["gcc"]
   },
 
   # GoLang
   "golang-bootstrap": {
     "url": "https://dl.google.com/go/go1.4-bootstrap-20171003.tar.gz",
-    "type": "tarball-bin"
+    "type": "tarball-bin",
+    "alt-names": [],
+    "dependency": []
   },
   "golang": {
     "url": "https://go.googlesource.com/go",
     "type": "git",
-    "alt-names": ["go", "Golang"]
+    "alt-names": ["go", "Golang"],
+    "dependency": ["gcc"]
   },
 
   # Julia
   "julia": {
     "url": "https://github.com/JuliaLang/julia.git",
     "type": "git",
-    "alt-names": ["Julia"]
+    "alt-names": ["Julia"],
+    "dependency": ["gcc"]
   }
 }

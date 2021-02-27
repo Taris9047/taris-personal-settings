@@ -6,6 +6,8 @@ require 'open-uri'
 require 'net/http'
 require 'ruby-progressbar'
 
+require_relative './run_console.rb'
+
 class Download < RunConsole
 
   def initialize(

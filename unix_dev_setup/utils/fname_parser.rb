@@ -76,6 +76,12 @@ class FNParser
   # Initializer
   def initialize(fname_url)
 
+    if !fname_url
+      puts "FNParser: Wrong URL given!"
+      puts fname_url
+      exit(-1)
+    end
+
     @repo_addr = false
     if fname_url.include?('.git')
       @repo_addr = true

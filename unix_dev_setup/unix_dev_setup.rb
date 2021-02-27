@@ -38,7 +38,7 @@ class UnixDevSetup
       @list_of_progs - @not_so_stable_pkgs - @not_so_needed_pkgs \
       - ['get_pip']
 
-    @aliases = ALIAS_TABLE
+    @aliases = TABLES.ALIAS_TABLE
     @aliases['all'] = @list_of_all
 
     @permitted_list = @list_of_progs + @aliases.keys
@@ -75,9 +75,9 @@ class UnixDevSetup
     @flag_wrong_pkg_given = false
     @wrong_pkgs = []
     @op_mode_list.each do |opm|
-      if opm in @list_of_all
+      if @list_of_all.include? opm
         @pkgs_to_install.append(opm)
-      elsif opm in @aliases.keys
+      elsif @aliases.keys.include? opm
         @pkgs_to_install.append(@aliases[opm])
       else
         @wrong_pkgs.append(opm)
@@ -281,12 +281,12 @@ class UnixDevSetup
       puts "Cleaned up source files to save space!!"
     end
     
-    if @parameters.include?('--use-system-gcc') or op_mode_list.include?('-sgcc')
+    if @parameters.include?('--use-system-gcc') or @parameters.include?('-sgcc')
       puts "Using system gcc!! i.e. /usr/bin/gcc"
       @use_system_gcc = true
     end
 
-    if @parameters.include?('--force') or op_mode_list.include?('-f')
+    if @parameters.include?('--force') or @parameters.include?('-f')
       puts "Foce install mode!"
       @force_install_mode = true
     end
@@ -325,7 +325,7 @@ class UnixDevSetup
       FileUtils.mkdir_p(@pkginfo_dir_path)
     end
     @pkginfo_dir = File.realpath(@pkginfo_dir_path)
-    puts "Package information directory will be: #{pkginfo_dir}"
+    puts "Package information directory will be: #{@pkginfo_dir}"
 
     @work_dirs = [@work_dir, @source_dir, @pkginfo_dir]
 
@@ -488,8 +488,7 @@ class UnixDevSetup
 
 end # UnisDevSetup
 
-params = ARGV
-dev = UnixDevSetup.new(params)
+dev = UnixDevSetup.new(ARGV)
 
 puts ""
 puts "Jobs finished!!"
