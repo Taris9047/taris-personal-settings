@@ -62,6 +62,9 @@ class UnixDevSetup
     # Verbose mode? Default: false
     @verbose = false
 
+    # Show title
+    self.main_title
+
     # Directories
     @work_dir_root = File.join(@current_dir, 'workspace')
     @work_dir_path = File.join(@work_dir_root, 'build')
@@ -70,7 +73,6 @@ class UnixDevSetup
     @work_dir_log = File.join(@work_dir_root, 'log')
     @prefix_dir_path = def_prefix
     @def_inst_script_dir='./install_scripts'
-    self.__setup_work_dirs__
 
     # Setting up operatnion mode and package lists.
     @op_mode_list = op_mode_list
@@ -127,6 +129,9 @@ class UnixDevSetup
     puts dep_resolve.PrintInstList()
     puts ""
 
+    # Make or update workspace directories
+    self.__setup_work_dirs__
+
     # Checking if the destination directory is writable or not.
     @need_sudo = !File.writable?(@prefix_dir)
 
@@ -169,12 +174,12 @@ class UnixDevSetup
   # Main title banner
   def main_title
     mt = %{
-  ******************************************
+******************************************
 
   #{$title}"
   Version (#{$version.join('.')})"
 
-  ******************************************
+******************************************
     }
     puts mt
   end
@@ -273,6 +278,10 @@ class UnixDevSetup
       spinner = TTY::Spinner.new("[Cleaning] ... :spinner", format: :bouncing_ball)
       spinner.auto_spin
       FileUtils.rm_rf(@work_dir_root)
+      log_files = Dir[File.join(@pkginfo_dir_path, '*.log')]
+      log_files.each do |log_f|
+        FileUtils.rm_rf(log_f)
+      end
       spinner.stop
       puts "Cleaned up source files to save space!!"
       exit(0)
