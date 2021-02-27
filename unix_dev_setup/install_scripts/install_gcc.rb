@@ -227,7 +227,7 @@ class InstGCC9 < InstGCC
 
     @pkgname = 'gcc9'
     @source_url = SRC_URL[@pkgname]
-    @prefix = File.join(prefix, ".opt/#{@pkgname}")
+    @prefix = File.join(@prefix, ".opt/#{@pkgname}")
 
     @conf_options = \
       $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
