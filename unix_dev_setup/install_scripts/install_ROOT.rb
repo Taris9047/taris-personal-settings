@@ -33,7 +33,8 @@ class InstROOT < InstallStuff
     end
     @src_url = SRC_URL['ROOT']
     branch_opts = '--branch v#{$root_version[0]}-#{$root_version[1]}-#{$root_version[2]}'
-    dn = Download.new(@src_url, destination=@src_dir, source_ctl='git', srouce_ctl_opts=branch_opts)
+    dn = Download.new(
+      @src_url, destination=@src_dir, source_ctl='git', mode='git', source_ctl_opts=branch_opts)
     @src_dir = dn.GetPath
 
     # Let's build!!
