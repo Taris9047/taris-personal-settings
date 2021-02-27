@@ -4,6 +4,7 @@ require_relative '../utils/utils.rb'
 require_relative './install_stuff.rb'
 
 require 'open3'
+require 'fileutils'
 
 $julia_version = ["1", "3", "0"]
 
@@ -32,7 +33,7 @@ class InstJulia < InstallStuff
     puts "Installing Julia"
     if !File.directory?(@target_dir)
       if !need_sudo
-        self.Run( "mkdir -pv #{@target_dir}" )
+        FileUtils.mkdir_p("#{@target_dir}", verbose: true)
       else
         self.Run( "sudo mkdir -pv #{@target_dir}" )
       end
@@ -40,7 +41,7 @@ class InstJulia < InstallStuff
     @src_dir = File.join(@target_dir, '/julia-src')
     if File.directory?(@src_dir)
       puts "Julia src directory found! Deleting it!"
-      self.Run( "rm -rf #{@src_dir}")
+      FileUtils.rm_rf("#{@src_dir}")
     end
     self.Run( "cd #{@target_dir} && git clone #{@source_url} #{@src_dir}" )
     self.Run( "cd #{@src_dir} && git checkout v#{@Version.join('.')} && make" )
@@ -51,8 +52,8 @@ class InstJulia < InstallStuff
     if !File.directory?(julia_bin)
       self.Run("mkdir -pv #{julia_bin}")
     end
-    self.Run( "ln -sfv #{julia_bin} #{File.join(julia_bin, 'julia')}" )
-
+    FileUtils.ln_s "#{julia_bin}", "#{File.join(julia_bin, 'julia')}", force:true, verbose:true
+    
     self.WriteInfo
 
   end
