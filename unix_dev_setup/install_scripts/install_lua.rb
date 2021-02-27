@@ -7,14 +7,16 @@ require_relative './install_stuff.rb'
 
 class InstLua < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('lua', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
-    @need_sudo = need_sudo
-
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+    super(@pkgname, @prefix, @work_dirs, ver_check=true, verbose_mode=@verbose_mode)
+    
     @source_url = SRC_URL[@pkgname]
 
     # Setting up compilers
-    compiler_path = File.join(prefix,'bin')
+    compiler_path = File.join(@prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
     @CompilerSettings = gc.get_settings
     @env = gc.get_env_settings

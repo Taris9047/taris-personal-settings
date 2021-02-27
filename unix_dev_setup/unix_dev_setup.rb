@@ -348,132 +348,140 @@ class UnixDevSetup
 
   def install_pkgs
     # The main installation loop
-    @pkgs_to_install.each do |op_mode|
-      case op_mode
-      # Gcc stuffs
-      when 'gcc'
-        require "./install_scripts/install_gcc.rb"
-        inst = InstGCC.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+    @pkgs_to_install.each do |pkg|
+      pid = fork do
+        require "#{@def_inst_script_dir}/#{SRC_SCRIPT[pkg]}"
+        @inst_args["pkgname"] = pkg
+        inst = Object.const_get(SRC_CLASS[pkg]).new( @inst_args )
         inst.install
-      when 'gcc8'
-        require "./install_scripts/install_gcc.rb"
-        inst = InstGCC8.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
-      when 'gcc9'
-        require "./install_scripts/install_gcc.rb"
-        inst = InstGCC9.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
-      when 'gcc4'
-        require "./install_scripts/install_gcc.rb"
-        inst = InstGCC4.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
+      end
+      Process.wait
 
-      when 'cmake'
-        require "./install_scripts/install_cmake.rb"
-        inst = InstCmake.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
+      # case op_mode
+      # # Gcc stuffs
+      # when 'gcc'
+      #   require "./install_scripts/install_gcc.rb"
+      #   inst = InstGCC.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
+      # when 'gcc8'
+      #   require "./install_scripts/install_gcc.rb"
+      #   inst = InstGCC8.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
+      # when 'gcc9'
+      #   require "./install_scripts/install_gcc.rb"
+      #   inst = InstGCC9.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
+      # when 'gcc4'
+      #   require "./install_scripts/install_gcc.rb"
+      #   inst = InstGCC4.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
 
-      when 'clang'
-        require "./install_scripts/install_clang.rb"
-        # puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
-        sleep(2)
-        inst = InstClang.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
+      # when 'cmake'
+      #   require "./install_scripts/install_cmake.rb"
+      #   inst = InstCmake.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
 
-      # Python stuffs
-      when 'python'
-        require "./install_scripts/install_python.rb"
-        inst_python2 = InstPython2.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
-        inst_python2.install
-        inst_python3 = InstPython3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
-        inst_python3.install
-        remove_def_python_cmd
-      when 'python2'
-        require "./install_scripts/install_python.rb"
-        inst_python2 = InstPython2.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
-        inst_python2.install
-        remove_def_python_cmd
-      when 'python3'
-        require "./install_scripts/install_python.rb"
-        inst_python3 = InstPython3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
-        inst_python3.install
-        remove_def_python_cmd
+      # when 'clang'
+      #   require "./install_scripts/install_clang.rb"
+      #   # puts ">>>>> There is some discrepency with clang now... it might fail <<<<<"
+      #   sleep(2)
+      #   inst = InstClang.new($prefix_dir, def_system, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
 
-      when 'boost'
-        require "./install_scripts/install_boost.rb"
-        inst = InstBoost.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
+      # # Python stuffs
+      # when 'python'
+      #   require "./install_scripts/install_python.rb"
+      #   inst_python2 = InstPython2.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+      #   inst_python2.install
+      #   inst_python3 = InstPython3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+      #   inst_python3.install
+      #   remove_def_python_cmd
+      # when 'python2'
+      #   require "./install_scripts/install_python.rb"
+      #   inst_python2 = InstPython2.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+      #   inst_python2.install
+      #   remove_def_python_cmd
+      # when 'python3'
+      #   require "./install_scripts/install_python.rb"
+      #   inst_python3 = InstPython3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose, use_clang=clang_mode)
+      #   inst_python3.install
+      #   remove_def_python_cmd
 
-      when 'lua'
-        pid = fork do 
-          require "./install_scripts/install_lua.rb"
-          inst = InstLua.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-          inst.install
-        end
-        Process.wait
-      when 'ruby'
-        require "./install_scripts/install_ruby.rb"
-        inst = InstRuby.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
-      when 'ruby3'
-        require "./install_scripts/install_ruby3.rb"
-        inst_lua = InstRuby3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst_lua.install
+      # when 'boost'
+      #   require "./install_scripts/install_boost.rb"
+      #   inst = InstBoost.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
 
-      # Node stuffs
-      when 'node'
-        require "./install_scripts/install_node.rb"
-        inst = InstNode.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
-      when 'node-lts'
-        require "./install_scripts/install_node.rb"
-        inst = InstNodeLTS.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
+      # when 'lua'
+      #   pid = fork do 
+      #     require "./install_scripts/install_lua.rb"
+      #     inst = InstLua.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #     inst.install
+      #   end
+      #   Process.wait
+      # when 'ruby'
+      #   require "./install_scripts/install_ruby.rb"
+      #   inst = InstRuby.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
+      # when 'ruby3'
+      #   require "./install_scripts/install_ruby3.rb"
+      #   inst_lua = InstRuby3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst_lua.install
 
-      when 'rust'
-        require "./install_scripts/install_rust.rb"
-        inst = InstRust.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
+      # # Node stuffs
+      # when 'node'
+      #   require "./install_scripts/install_node.rb"
+      #   inst = InstNode.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
+      # when 'node-lts'
+      #   require "./install_scripts/install_node.rb"
+      #   inst = InstNodeLTS.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
 
-      when 'pypy3'
-        require "./install_scripts/install_pypy.rb"
-        inst = InstPyPy3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
+      # when 'rust'
+      #   require "./install_scripts/install_rust.rb"
+      #   inst = InstRust.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
 
-      when 'golang'
-        require "./install_scripts/install_golang.rb"
-        inst = InstGolang.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
+      # when 'pypy3'
+      #   require "./install_scripts/install_pypy.rb"
+      #   inst = InstPyPy3.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
 
-      when 'julia'
-        require "./install_scripts/install_julia.rb"
-        inst = InstJulia.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
+      # when 'golang'
+      #   require "./install_scripts/install_golang.rb"
+      #   inst = InstGolang.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
 
-      when 'ROOT'
-        require "./install_scripts/install_ROOT.rb"
-        inst = InstROOT.new($prefix_dir, 'x86_64', work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
+      # when 'julia'
+      #   require "./install_scripts/install_julia.rb"
+      #   inst = InstJulia.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
 
-      # MPICH stuffs
-      when 'mpich'
-        require "./install_scripts/install_mpich.rb"
-        inst = InstMPICH.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
-      when 'hydra'
-        require "./install_scripts/install_hydra.rb"
-        inst = InstHydra.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
+      # when 'ROOT'
+      #   require "./install_scripts/install_ROOT.rb"
+      #   inst = InstROOT.new($prefix_dir, 'x86_64', work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
 
-      else
-        puts "Looks like #{op_mode} has not implemented yet!"
-        flag_wrong_pkg_given = true
-        wrong_pkgs.append(op_mode)
-        puts "Passing #{op_mode} for now..."
-        puts ""
-      end # case op_mode
+      # # MPICH stuffs
+      # when 'mpich'
+      #   require "./install_scripts/install_mpich.rb"
+      #   inst = InstMPICH.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
+      # when 'hydra'
+      #   require "./install_scripts/install_hydra.rb"
+      #   inst = InstHydra.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+      #   inst.install
 
-    end # for op_mode in op_mode_list do
+      # else
+      #   puts "Looks like #{op_mode} has not implemented yet!"
+      #   flag_wrong_pkg_given = true
+      #   wrong_pkgs.append(op_mode)
+      #   puts "Passing #{op_mode} for now..."
+      #   puts ""
+      # end # case op_mode
+
+    end # @pkgs_to_install.each do |pkg|
 
     if @flag_wrong_pkg_given
       puts ""
