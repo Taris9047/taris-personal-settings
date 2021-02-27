@@ -9,6 +9,12 @@ export HISTCONTROL=ignoredups:erasedups
 export EDITOR="nvim"
 export VISUAL="subl"
 
+# For safety..
+addpath ()
+{
+  export PATH=$1:$PATH
+}
+
 ### CHANGE TITLE OF TERMINALS
 case ${TERM} in
   xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
@@ -176,7 +182,7 @@ if [ -d $HBREW_PATH ]; then
   export HOMEBREW=$HBREW_PATH
   printf "${check_symbol} HOMEBREW directory is $HOMEBREW\n"
   sleep ${line_delay}
-  export PATH=$HOMEBREW/bin:$HOMEBREW/opt/bin:/opt/bin/:$PATH
+  addpath "$HOMEBREW/bin:$HOMEBREW/opt/bin"
 fi
 
 # Setting for JRE
@@ -192,22 +198,21 @@ fi
 if [ -d $HOME/.cargo ]; then
   printf "${check_symbol} Cargo directory detected at $HOME/.cargo\n"
   sleep ${line_delay}
-  # export PATH=$HOME/.cargo/bin:$PATH
   source $HOME/.cargo/env
 fi
 
 # Other gcc stuff
 if [ -d $HOMEBREW/.opt/gcc9 ]; then
   printf "${check_symbol} Gcc9 found in the system!\n"
-  export PATH=$HOMEBREW/.opt/gcc9/bin:$PATH
+  addpath "$HOMEBREW/.opt/gcc9/bin"
 fi
 if [ -d $HOMEBREW/.opt/gcc8 ]; then
-  printf "${check_symbol} Gcc9 found in the system!\n"
-  export PATH=$HOMEBREW/.opt/gcc8/bin:$PATH
+  printf "${check_symbol} Gcc8 found in the system!\n"
+  addpath "$HOMEBREW/.opt/gcc8/bin"
 fi
 if [ -d $HOMEBREW/.opt/gcc4 ]; then
-  printf "${check_symbol} Gcc9 found in the system!\n"
-  export PATH=$HOMEBREW/.opt/gcc4/bin:$PATH
+  printf "${check_symbol} Gcc4 found in the system!\n"
+  addpath "$HOMEBREW/.opt/gcc4/bin"
 fi
 
 # Golang
@@ -215,7 +220,7 @@ export GOROOT=$HOMEBREW/.opt/go
 export GOPATH=$HOMEBREW/.opt/go/bin
 if [ -d $GOROOT ]; then
   printf "${check_symbol} Golang has been found at $GOROOT\n"
-  export PATH=$GOROOT/bin:$PATH
+  addpath "$GOROOT/bin"
 fi
 
 # VNC stuff
@@ -404,7 +409,7 @@ fi
 # Doom-Emacs
 if [ -d "$HOME/.emacs.d/bin" ]; then
 	printf "${ckeck_symbol} Doomemacs found! Adding to path!\n"
-	export PATH=$HOME/.emacs.d/bin:$PATH
+	addpath "$HOME/.emacs.d/bin"
 fi
 
 # Geolocation
