@@ -14,8 +14,12 @@ $b2_opts = [
 
 class InstBoost < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo, verbose_mode=false)
-    super('boost', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, ver_check=@ver_check, verbose_mode=@verbose_mode)
 
     @need_sudo = need_sudo
 

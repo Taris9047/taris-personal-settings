@@ -137,7 +137,7 @@ class UnixDevSetup
     @inst_args = {
       "pkgname" => '',
       "prefix" => @prefix_dir,
-      "system_arch" => @def_system,
+      "os_type" => @def_system,
       "work_dirs" => @work_dirs,
       "need_sudo" => @eed_sudo,
       "verbose_mode" => @verbose,

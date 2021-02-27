@@ -36,19 +36,17 @@ $gcc_env = {
 
 class InstGCC < InstallStuff
 
-  def initialize (
-      prefix='/usr/local', os_type='x86_64-linux-gnu',
-      work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
+  def initialize (args)
+      
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
 
-    super('gcc', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
+    super(@pkgname, @prefix, @work_dirs, ver_check=@ver_check, verbose_mode=@verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
     @conf_options = $gcc_conf_options
     @env = $gcc_env
-
-    @os_type=os_type
-    @need_sudo=need_sudo
-    @verbose = verbose_mode
 
   end
 
@@ -187,9 +185,11 @@ end # class InstGCC
 
 class InstGCC8 < InstGCC
 
-  def initialize (prefix='/usr/local', os_type='x86_64-linux-gnu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
-
-    super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
+  def initialize (args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+    super(args)
 
     @pkgname = 'gcc8'
     @source_url = SRC_URL[@pkgname]
@@ -222,9 +222,11 @@ end # class InstGCC8
 
 class InstGCC9 < InstGCC
 
-  def initialize (prefix='/usr/local', os_type='x86_64-linux-gnu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
-
-    super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
+  def initialize (args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+    super(args)
 
     @pkgname = 'gcc9'
     @source_url = SRC_URL[@pkgname]
@@ -257,9 +259,12 @@ end # class InstGCC9
 # Gcc4.8.5 --> matching version for cuda 6.5 (MBP 2008)
 class InstGCC4 < InstGCC
 
-  def initialize (prefix='/usr/local', os_type='x86_64-linux-gnu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
+  def initialize (args)
+        args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
 
-    super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
+    super(args)
 
     @pkgname = 'gcc4'
     @source_url = SRC_URL[@pkgname]

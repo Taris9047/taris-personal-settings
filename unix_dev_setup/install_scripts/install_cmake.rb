@@ -9,8 +9,12 @@ $least_cmake_ver = ['3', '13', '4']
 
 class InstCmake < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('cmake', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, ver_check=@ver_check, verbose_mode=@verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
 

@@ -16,8 +16,12 @@ $projects_to_enable = [
 
 class InstClang < InstallStuff
 
-  def initialize(prefix, def_system, work_dirs, need_sudo, verbose_mode=false)
-    super('clang', prefix, work_dirs, ver_check=false, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, ver_check=@ver_check, verbose_mode=@verbose_mode)
     @def_system = def_system
     @pkgname='llvm'
   end
