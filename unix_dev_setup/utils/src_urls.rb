@@ -57,8 +57,19 @@ class ParseHjson
     return @URL_DB[pkg_name]["type"]
   end
 
+  def GetScript(pkg_name)
+    return @URL_DB[pkg_name]["script"]
+  end
+
+  def GetClass(pkg_name)
+    return @URL_DB[pkg_name]["class"]
+  end
+
   def GetInfo(pkg_name)
-    return [ self.GetURL(pkg_name), self.GetType(pkg_name) ]
+    return [ 
+      self.GetURL(pkg_name), self.GetType(pkg_name),
+      self.GetScript(pkg_name), self.GetClass(pkg_name) 
+    ]
   end
 
   def GetPkgList()
@@ -105,6 +116,37 @@ module SRC_TYPE
 
   module_function :[]
 end # module SRC_TYPE
+
+module SRC_SCRIPT
+
+  def [](pkg_name)
+    begin
+      json_parse = ParseHjson.new()
+      return json_parse.GetScript(pkg_name)
+    rescue
+      puts "Not a valid package name: \"#{pkg_name}\""
+      exit(-1)
+    end
+  end
+
+  module_function :[]
+end # module SRC_SCRIPT
+
+module SRC_CLASS
+
+  def [](pkg_name)
+    begin
+      json_parse = ParseHjson.new()
+      return json_parse.GetClass(pkg_name)
+    rescue
+      puts "Not a valid package name: \"#{pkg_name}\""
+      exit(-1)
+    end
+  end
+
+  module_function :[]
+end # module SRC_CLASS
+
 
 module SRC_INFO
 

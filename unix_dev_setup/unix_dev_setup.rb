@@ -33,10 +33,12 @@ class UnixDevSetup
 
     @not_so_stable_pkgs = ['pypy3', 'clang', 'ROOT', 'julia']
     @not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts', 'ruby3']
+    @not_really_a_pkg = ['get_pip', 'golang-bootstrap']
 
     @list_of_all = \
-      @list_of_progs - @not_so_stable_pkgs - @not_so_needed_pkgs \
-      - ['get_pip']
+      @list_of_progs - @not_so_stable_pkgs \
+      - @not_so_needed_pkgs \
+      - @not_really_a_pkg 
 
     @aliases = TABLES.ALIAS_TABLE
     @aliases['all'] = @list_of_all
@@ -67,6 +69,7 @@ class UnixDevSetup
     @pkginfo_dir_path = File.join(@current_dir, 'pkginfo')
     @work_dir_log = File.join(@work_dir_root, 'log')
     @prefix_dir_path = def_prefix
+    @def_inst_script_dir='./install_scripts'
     self.__setup_work_dirs__
 
     # Setting up operatnion mode and package lists.
@@ -74,11 +77,14 @@ class UnixDevSetup
     @pkgs_to_install = []
     @flag_wrong_pkg_given = false
     @wrong_pkgs = []
+    @parameters = []
     @op_mode_list.each do |opm|
-      if @list_of_all.include? opm
+      if @list_of_all.include?(opm)
         @pkgs_to_install.append(opm)
-      elsif @aliases.keys.include? opm
+      elsif @aliases.keys.include?(opm)
         @pkgs_to_install.append(@aliases[opm])
+      elsif @opt_list.include?(opm)
+        @parameters.append(opm)
       else
         @wrong_pkgs.append(opm)
       end
@@ -86,7 +92,6 @@ class UnixDevSetup
     unless @wrong_pkgs.empty?
       @flag_wrong_pkg_given = true
     end
-    @parameters = @op_mode_list - @pkgs_to_install
     if @pkgs_to_install.empty?
       @pkgs_to_install = @list_of_all
     end
@@ -400,10 +405,12 @@ class UnixDevSetup
         inst.install
 
       when 'lua'
-        require "./install_scripts/install_lua.rb"
-        inst = InstLua.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
-        inst.install
-
+        pid = fork do 
+          require "./install_scripts/install_lua.rb"
+          inst = InstLua.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
+          inst.install
+        end
+        Process.wait
       when 'ruby'
         require "./install_scripts/install_ruby.rb"
         inst = InstRuby.new($prefix_dir, work_dirs, need_sudo, verbose_mode=verbose)
@@ -473,11 +480,11 @@ class UnixDevSetup
       puts "Looks like there were some pkgs weren't recognized!!"
       puts ""
       puts "Wrong pkgs:"
-      puts wrong_pkgs.join(" ")
+      puts @wrong_pkgs.join(" ")
       puts ""
       puts "Available modules are..."
       puts ""
-      list_of_progs.each do |pkg|
+      @list_of_progs.each do |pkg|
         puts pkg
       end
     end

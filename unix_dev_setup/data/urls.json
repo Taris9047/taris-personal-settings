@@ -4,25 +4,33 @@
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz",
     "type": "tarball",
     "alt-names": ["gcc-10"],
-    "dependency": []
+    "dependency": [],
+    "script": "install_gcc.rb",
+    "class": "InstGCC"
   },
   "gcc8": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz",
     "type": "tarball",
     "alt-names": ["gcc-8"],
-    "dependency": []
+    "dependency": [],
+    "script": "install_gcc.rb",
+    "class": "InstGCC8"
   },
   "gcc9": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz",
     "type": "tarball",
     "alt-names": ["gcc-9"],
-    "dependency": []
+    "dependency": [],
+    "script": "install_gcc.rb",
+    "class": "InstGCC9"
   },
   "gcc4": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-4.8.5/gcc-4.8.5.tar.bz2",
     "type": "tarball",
     "alt-names": ["gcc-4"],
-    "dependency": []
+    "dependency": [],
+    "script": "install_gcc.rb",
+    "class": "InstGCC4"
   },
 
   # cmake
@@ -30,7 +38,9 @@
     "url": "https://github.com/Kitware/CMake/releases/download/v3.19.5/cmake-3.19.5.tar.gz",
     "type": "tarball",
     "alt-names": ["CMake"],
-    "dependency": []
+    "dependency": [],
+    "script": "install_cmake.rb",
+    "class": "InstCmake"
   },
 
   # Lua
@@ -38,7 +48,9 @@
     "url": "https://www.lua.org/ftp/lua-5.4.0.tar.gz",
     "type": "tarball",
     "alt-names": ["Lua"],
-    "dependency": [ "gcc" ]
+    "dependency": [ "gcc" ],
+    "script": "install_lua.rb",
+    "class": "InstLua"
   },
 
   # Ruby
@@ -46,7 +58,9 @@
     "url": "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz",
     "type": "tarball",
     "alt-names": ["ruby2", "Ruby2"],
-    "dependency": ["gcc", "node"]
+    "dependency": ["gcc", "node"],
+    "script": "install_ruby.rb",
+    "class": "InstRuby"
   },
 
   # Ruby3
@@ -54,7 +68,9 @@
     "url": "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.0.tar.gz",
     "type": "tarball",
     "alt-names": ["Ruby3"],
-    "dependency": ["gcc"]
+    "dependency": ["gcc"],
+    "script": "install_ruby3.rb",
+    "class": "InstRuby3"
   },
 
   # Python stuffs
@@ -62,19 +78,25 @@
     "url": "https://bootstrap.pypa.io/get-pip.py",
     "type": "python",
     "alt-names": ["get-pip"],
-    "dependency": ["python3"]
+    "dependency": ["python3"],
+    "script": "install_python.rb",
+    "class": "N/A"
   },
   "python2": {
     "url": "https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz",
     "type": "tarball",
     "alt-names": ["Python2"],
-    "dependency": ["gcc"]
+    "dependency": ["gcc"],
+    "script": "install_python.rb",
+    "class": "InstPython2"
   },
   "python3": {
     "url": "https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz",
     "type": "tarball",
     "alt-names": ["Python3"],
-    "dependency": ["gcc"]
+    "dependency": ["gcc"],
+    "script": "install_python.rb",
+    "class": "InstPython3"
   },
 
   # PyPy repository
@@ -82,7 +104,9 @@
     "url": "https://foss.heptapod.net/pypy/pypy",
     "type": "mercurial",
     "alt-names": ["pypy", "PyPy"],
-    "dependency": ["python3", "python2"]
+    "dependency": ["python3", "python2"],
+    "script": "install_pypy.rb",
+    "class": "InstPyPy3"
   },
 
   # Node.JS
@@ -90,13 +114,17 @@
     "url": "https://nodejs.org/dist/v15.9.0/node-v15.9.0.tar.gz",
     "type": "tarball",
     "alt-names": ["Node.JS", "node.js", "nodejs"],
-    "dependency": ["gcc"]
+    "dependency": ["gcc"],
+    "script": "install_node.rb",
+    "class": "InstNode"
   },
   "node-lts": {
     "url": "https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz",
     "type": "tarball",
     "alt-names": ["Node.JS-lts", "node.js-lts", "nodejs-lts"],
-    "dependency": ["gcc"]
+    "dependency": ["gcc"],
+    "script": "install_node.rb",
+    "class": "InstNodeLTS"
   },
 
   # Boost
@@ -104,7 +132,9 @@
     "url": "https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.bz2",
     "type": "tarball",
     "alt-names": ["Boost"],
-    "dependency": ["gcc"]
+    "dependency": ["gcc"],
+    "script": "install_boost.rb",
+    "class": "InstBoost"
   },
 
   # LLVM-Clang
@@ -112,7 +142,9 @@
     "url": "https://github.com/llvm/llvm-project.git",
     "type": "git",
     "alt-names": ["llvm-clang", "clang", "Clang", "LLVM-Clang"],
-    "dependency": []
+    "dependency": [],
+    "script": "install_clang.rb",
+    "class": "InstClang"
   },
 
   # Rust
@@ -120,7 +152,9 @@
     "url": "https://static.rust-lang.org/dist/rustc-1.46.0-src.tar.gz",
     "type": "tarball",
     "alt-names": ["Rust"],
-    "dependency": []
+    "dependency": [],
+    "script": "install_rust.rb",
+    "class": "InstRust"
   },
 
   # ROOT
@@ -128,7 +162,9 @@
     "url": "https://github.com/root-project/root.git",
     "type": "git",
     "alt-names": ["root"],
-    "dependency": ["gcc", "python3"]
+    "dependency": ["gcc", "python3"],
+    "script": "install_ROOT.rb",
+    "class": "InstROOT"
   },
 
   # MPICH
@@ -136,13 +172,17 @@
     "url": "http://www.mpich.org/static/downloads/3.4.1/mpich-3.4.1.tar.gz",
     "type": "tarball",
     "alt-names": ["MPICH"],
-    "dependency": ["gcc"]
+    "dependency": ["gcc"],
+    "script": "install_mpich.rb",
+    "class": "InstMPICH"
   },
   "hydra": {
     "url": "http://www.mpich.org/static/downloads/3.4.1/hydra-3.4.1.tar.gz",
     "type": "tarball",
     "alt-names": ["Hydra"],
-    "dependency": ["gcc"]
+    "dependency": ["gcc", "mpich"],
+    "script": "install_hydra.rb",
+    "class": "InstHydra"
   },
 
   # GoLang
@@ -150,13 +190,17 @@
     "url": "https://dl.google.com/go/go1.4-bootstrap-20171003.tar.gz",
     "type": "tarball-bin",
     "alt-names": [],
-    "dependency": []
+    "dependency": [],
+    "script": "install_golang.rb",
+    "class": "InstGolang"
   },
   "golang": {
     "url": "https://go.googlesource.com/go",
     "type": "git",
     "alt-names": ["go", "Golang"],
-    "dependency": ["gcc"]
+    "dependency": ["gcc"],
+    "script": "install_golang.rb",
+    "class": "InstGolang"
   },
 
   # Julia
@@ -164,6 +208,8 @@
     "url": "https://github.com/JuliaLang/julia.git",
     "type": "git",
     "alt-names": ["Julia"],
-    "dependency": ["gcc"]
+    "dependency": ["gcc"],
+    "script": "install_julia.rb",
+    "class": "InstJulia"
   }
 }
