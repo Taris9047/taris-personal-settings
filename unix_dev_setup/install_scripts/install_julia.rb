@@ -23,9 +23,7 @@ class InstJulia < InstallStuff
   end
 
   def do_install
-    puts ""
-    puts "Working on #{@pkgname} (#{$julia_version.join('.')})!!"
-    puts ""
+
     puts "Unfortunately, building julia isn't so stable!"
     puts "If it fails, it fails!"
     puts ""

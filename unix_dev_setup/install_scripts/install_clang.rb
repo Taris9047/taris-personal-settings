@@ -26,9 +26,6 @@ class InstClang < InstallStuff
   end
 
   def do_install
-    puts ""
-    puts "Working on LLVM-Clang!! (git)"
-    puts ""
 
     dn = Download.new(@source_url, destination=@src_dir, source_ctl='git')
     @src_dir = dn.GetPath

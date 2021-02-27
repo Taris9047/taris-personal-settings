@@ -75,10 +75,6 @@ class InstGCC < InstallStuff
       end
     end
 
-    puts ""
-    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
-    puts ""
-
     # Replace '{prefix}' on configure parameters.
     @conf_options.each_with_index do |co, ind|
       if co.include?'{prefix}'
@@ -294,10 +290,6 @@ class InstGCC4 < InstGCC
 
   def do_install
     @pkginfo_file=File.join(@pkginfo_dir, @pkgname+'.info')
-
-    puts ""
-    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
-    puts ""
 
     # Replace '{prefix}' on configure parameters.
     @conf_options.each_with_index do |co, ind|

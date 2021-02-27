@@ -24,9 +24,6 @@ class InstGolang < InstallStuff
   end
 
   def do_install
-    puts ""
-    puts "Working on #{@pkgname} (#{@golang_ver})!!"
-    puts ""
 
     puts "Bootstraping!!"
     self.Run( "cd #{@src_dir} && wget #{@bootstrap_url} -O ./golang-bootstrap.tgz" )

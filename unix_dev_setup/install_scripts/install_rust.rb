@@ -37,9 +37,6 @@ class InstRust < InstallStuff
   end
 
   def do_install
-    puts ""
-    puts "Working on #{@pkgname}!!"
-    puts ""
 
     rustup_cmd = File.join(ENV["HOME"], '.cargo/bin/rustup')
     cargo_cmd = File.join(ENV["HOME"], '.cargo/bin/cargo')

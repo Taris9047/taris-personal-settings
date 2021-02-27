@@ -37,10 +37,6 @@ class InstNode < InstallStuff
 
   def do_install
 
-    puts ""
-    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
-    puts ""
-
     puts "Downloading source from ... "+@source_url
     dl = Download.new(@source_url, @src_dir)
 
@@ -114,15 +110,6 @@ class InstNodeLTS < InstallStuff
   end
 
   def install
-
-    self.GetSrcVer
-    puts ""
-    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
-    puts ""
-
-    if self.CheckInfo
-      return 0
-    end
 
     puts "Downloading source from ... "+@source_url
     dl = Download.new(@source_url, @src_dir)

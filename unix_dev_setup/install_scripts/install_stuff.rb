@@ -45,6 +45,7 @@ class InstallStuff < RunConsole
   end # initialize
 
   def install
+    self.ShowTitle
     self.SetURL
     if @run_install == true
       self.do_install
@@ -60,6 +61,12 @@ class InstallStuff < RunConsole
     else
       self.ShowInstallInfo
     end
+  end
+
+  def ShowTitle
+    puts ""
+    puts "Working on #{@pkgname} (#{SRC_VER[@pkgname].to_s})!!"
+    puts ""
   end
 
   def ShowInstallInfo

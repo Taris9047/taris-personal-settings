@@ -23,10 +23,6 @@ class InstROOT < InstallStuff
 
   def do_install
 
-    puts ""
-    puts "Working on #{@pkgname}!! (git)"
-    puts ""
-
     @root_prefix = File.join(@prefix, '/.opt/ROOT')
     if !File.directory? File.join(@prefix, '/.opt')
       self.Run('mkdir -pv '+File.join(@prefix, '/.opt'))

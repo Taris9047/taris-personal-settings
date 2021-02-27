@@ -49,9 +49,6 @@ class InstRuby < InstallStuff
   end
 
   def do_install
-    puts ""
-    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
-    puts ""
 
     dl = Download.new(@source_url, @src_dir)
     src_tarball_path = dl.GetPath

@@ -39,9 +39,6 @@ class InstPyPy3 < InstallStuff
   end
 
   def do_install
-    puts ""
-    puts "Working on #{@pkgname} (#{@pypy3_ver})!!"
-    puts ""
 
     puts "*** Note that we cannot gaurantee if it will work or not."
     puts "*** If it fails, it fails!"
