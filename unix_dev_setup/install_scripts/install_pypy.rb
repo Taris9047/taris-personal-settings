@@ -25,6 +25,7 @@ class InstPyPy3 < InstallStuff
       instance_variable_set("@#{k}", v) unless v.nil?
     end
 
+    @ver_check = false
     super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]

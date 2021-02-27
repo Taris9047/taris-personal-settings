@@ -18,6 +18,9 @@ $version = ['1', '0', '2']
 # title
 $title = "Unix Development Environment setup"
 
+# default install script directory
+$def_inst_script_dir = './install_scripts'
+
 #
 # The main stuff handler class!
 #
@@ -72,7 +75,7 @@ class UnixDevSetup
     @pkginfo_dir_path = File.join(@current_dir, 'pkginfo')
     @work_dir_log = File.join(@work_dir_root, 'log')
     @prefix_dir_path = def_prefix
-    @def_inst_script_dir='./install_scripts'
+    @inst_script_dir=$def_inst_script_dir
 
     # Setting up operatnion mode and package lists.
     @op_mode_list = op_mode_list
@@ -80,22 +83,20 @@ class UnixDevSetup
     @flag_wrong_pkg_given = false
     @wrong_pkgs = []
     @parameters = []
+
+    # Sort out input arguments
     @op_mode_list.each do |opm|
-      if @list_of_all.include?(opm)
+      if @list_of_progs.include?(opm)
         @pkgs_to_install.append(opm)
       elsif @aliases.keys.include?(opm)
         @pkgs_to_install.append(@aliases[opm])
       elsif @opt_list.include?(opm)
         @parameters.append(opm)
+      elsif opm == 'all'
+        @pkgs_to_install = @list_of_all
       else
         @wrong_pkgs.append(opm)
       end
-    end
-    unless @wrong_pkgs.empty?
-      @flag_wrong_pkg_given = true
-    end
-    if @pkgs_to_install.empty?
-      @pkgs_to_install = @list_of_all
     end
 
     # Clang mode for some packages.
@@ -105,6 +106,15 @@ class UnixDevSetup
     # Force install mode (no dep check.)
     @force_install_mode = false
     self.__parse_params__
+    unless @wrong_pkgs.empty?
+      puts "Some wrong packages given! Ignoring them!"
+      puts "#{@wrong_pkgs.join(' ')}"
+      @flag_wrong_pkg_given = true
+    end
+    if @pkgs_to_install.empty?
+      puts "No packages selected!"
+      exit(1)
+    end
 
     # Set up console
     require_relative './utils/run_console.rb'
@@ -235,7 +245,7 @@ class UnixDevSetup
       @verbose = true
       puts ""
       puts "*** Verbose ON! It will be pretty loud! ***"
-      puts "* Note that some compilation jobs hang up with Verbose ON. *"
+      puts "* Note that some compilation jobs might hang up with Verbose ON. *"
       puts ""
     end
 
@@ -360,7 +370,7 @@ class UnixDevSetup
     # The main installation loop
     @pkgs_to_install.each do |pkg|
       pid = fork do
-        require "#{@def_inst_script_dir}/#{SRC_SCRIPT[pkg]}"
+        require "#{@inst_script_dir}/#{SRC_SCRIPT[pkg]}"
         @inst_args["pkgname"] = pkg
         inst = Object.const_get(SRC_CLASS[pkg]).new( @inst_args )
         inst.install

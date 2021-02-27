@@ -32,6 +32,7 @@ class InstRust < InstallStuff
       instance_variable_set("@#{k}", v) unless v.nil?
     end
 
+    @ver_check = false
     super(@pkgname, prefix=ENV["HOME"], @work_dirs, ver_check=@ver_check, verbose_mode=@verbose_mode)
     @rust_utils_to_install = $rust_utils_to_install
   end

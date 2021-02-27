@@ -11,19 +11,6 @@ require_relative '../utils/utils.rb'
 class InstallStuff < RunConsole
 
   @souce_url = 'https://some_site.net.org/some_url-0.0.0'
-  @conf_options = []
-  @env = {}
-
-  @Processors = 1
-
-  @pkgname=''
-  @prefix=''
-  @os_type=''
-  @build_dir=''
-  @src_dir=''
-  @pkginfo_dir=''
-  @pkginfo_file=''
-  @run_install=''
 
   def initialize(pkgname, prefix, work_dirs=[], ver_check=true, verbose_mode=false)
 
@@ -42,6 +29,8 @@ class InstallStuff < RunConsole
     # Setting up processors
     @Processors = Etc.nprocessors
 
+    @Version = SRC_VER[@pkgname].join('.')
+
   end # initialize
 
   def install
@@ -54,7 +43,7 @@ class InstallStuff < RunConsole
 
   def SetURL
     @source_url = SRC_URL[@pkgname]
-    @ver_source = SRC_VER[@pkgname]
+    @ver_source = @Version
     # Version Checking
     if File.file?(@pkginfo_file) and self.VerCheck()
       @run_install = false
@@ -65,7 +54,7 @@ class InstallStuff < RunConsole
 
   def ShowTitle
     puts ""
-    puts "Working on #{@pkgname} (#{SRC_VER[@pkgname].to_s})!!"
+    puts "Working on #{@pkgname} (#{@Version})!!"
     puts ""
   end
 
