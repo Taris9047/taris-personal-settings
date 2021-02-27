@@ -11,29 +11,7 @@ require 'json'
 # Install order changer.
 
 # Dependency table. -- It seems simple now...
-$dependency_table = {
-  "gcc" => [],
-  "gcc9" => [],
-  "gcc8" => [],
-  "gcc4" => [],
-  "python2" => [ 'gcc' ],
-  "python3" => [ 'gcc' ],
-  "lua" => [ 'gcc' ],
-  "pypy3" => [ 'python2', 'python3' ],
-  "ROOT" => [ 'gcc', 'python3', 'golang' ],
-  "ruby" => [ 'gcc', 'node' ],
-  "ruby3" => [ 'gcc' ],
-  "node" => [ 'gcc' ],
-  "node-lts" => [ 'gcc' ],
-  "rust" => [],
-  "clang" => [ 'cmake' ],
-  "boost" => [ 'gcc' ],
-  "mpich" => [ 'gcc' ],
-  "hydra" => [ 'mpich' ],
-  "golang" => [],
-  "julia" => [],
-  "cmake" => [],
-}
+$dependency_table = TABLES.DEP_TABLE
 
 # class dependency resolve
 # Simply put, re-orders the installation list according to the dependency table.
@@ -83,7 +61,6 @@ class DepResolve
     if !src_type == 'tarball'
       return false
     end
-
     fnp = FNParser.new(src_url)
     src_ver = Version.new(fnp.version())
 

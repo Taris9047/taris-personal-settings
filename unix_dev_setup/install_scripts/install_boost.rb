@@ -14,10 +14,12 @@ $b2_opts = [
 
 class InstBoost < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo, verbose_mode=false)
-    super('boost', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
 
-    @need_sudo = need_sudo
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     self.SrcURL(SRC_URL[@pkgname])
     @b2_opts = $b2_opts
@@ -29,9 +31,6 @@ class InstBoost < InstallStuff
   end
 
   def do_install
-    puts ""
-    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
-    puts ""
 
     puts "Downloading the source from #{@source_url}"
     dl = Download.new(@source_url, @src_dir)

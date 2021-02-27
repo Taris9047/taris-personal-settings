@@ -36,19 +36,17 @@ $gcc_env = {
 
 class InstGCC < InstallStuff
 
-  def initialize (
-      prefix='/usr/local', os_type='x86_64-linux-gnu',
-      work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
+  def initialize (args)
+      
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
 
-    super('gcc', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
+    super(@pkgname, @prefix, @work_dirs, ver_check=@ver_check, verbose_mode=@verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
     @conf_options = $gcc_conf_options
     @env = $gcc_env
-
-    @os_type=os_type
-    @need_sudo=need_sudo
-    @verbose = verbose_mode
 
   end
 
@@ -61,7 +59,7 @@ class InstGCC < InstallStuff
   end
 
   def install
-    self.do_install
+    super
   end
 
   def do_install
@@ -76,10 +74,6 @@ class InstGCC < InstallStuff
         return 0
       end
     end
-
-    puts ""
-    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
-    puts ""
 
     # Replace '{prefix}' on configure parameters.
     @conf_options.each_with_index do |co, ind|
@@ -119,6 +113,7 @@ class InstGCC < InstallStuff
     end
 
     # Downloading prerequisites
+    puts "Downloading prerequisites ... "
     self.Run( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
 
     # Let's build!!
@@ -186,13 +181,15 @@ end # class InstGCC
 
 class InstGCC8 < InstGCC
 
-  def initialize (prefix='/usr/local', os_type='x86_64-linux-gnu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
-
-    super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
+  def initialize (args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+    super(args)
 
     @pkgname = 'gcc8'
     @source_url = SRC_URL[@pkgname]
-    @prefix = File.join(prefix, ".opt/#{@pkgname}")
+    @prefix = File.join(@prefix, ".opt/#{@pkgname}")
 
     @conf_options = \
       $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
@@ -207,9 +204,6 @@ class InstGCC8 < InstGCC
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
     }
 
-    @need_sudo=need_sudo
-    @verbose = verbose_mode
-
   end
 
   def do_install
@@ -221,13 +215,15 @@ end # class InstGCC8
 
 class InstGCC9 < InstGCC
 
-  def initialize (prefix='/usr/local', os_type='x86_64-linux-gnu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
-
-    super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
+  def initialize (args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+    super(args)
 
     @pkgname = 'gcc9'
     @source_url = SRC_URL[@pkgname]
-    @prefix = File.join(prefix, ".opt/#{@pkgname}")
+    @prefix = File.join(@prefix, ".opt/#{@pkgname}")
 
     @conf_options = \
       $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
@@ -242,9 +238,6 @@ class InstGCC9 < InstGCC
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
     }
 
-    @need_sudo=need_sudo
-    @verbose = verbose_mode
-
   end
 
   def do_install
@@ -256,14 +249,17 @@ end # class InstGCC9
 # Gcc4.8.5 --> matching version for cuda 6.5 (MBP 2008)
 class InstGCC4 < InstGCC
 
-  def initialize (prefix='/usr/local', os_type='x86_64-linux-gnu', work_dirs=['./build', './src', './pkginfo'], need_sudo=false, verbose_mode=false)
+  def initialize (args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
 
-    super(prefix, os_type, work_dirs, need_sudo, verbose_mode=verbose_mode)
+    super(args)
 
     @pkgname = 'gcc4'
     @source_url = SRC_URL[@pkgname]
     # Separating this gcc installation.
-    @prefix = File.join(prefix, ".opt/#{@pkgname}")
+    @prefix = File.join(@prefix, ".opt/#{@pkgname}")
     @ver_source = SRC_VER[@pkgname]
 
     @conf_options = [ 
@@ -289,19 +285,11 @@ class InstGCC4 < InstGCC
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
     }
 
-    @need_sudo=need_sudo
-    @verbose=verbose_mode
 
   end
 
   def do_install
     @pkginfo_file=File.join(@pkginfo_dir, @pkgname+'.info')
-
-    puts ""
-    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
-    puts ""
-
-    self.ShowInstallInfo
 
     # Replace '{prefix}' on configure parameters.
     @conf_options.each_with_index do |co, ind|

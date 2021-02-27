@@ -7,8 +7,13 @@ require_relative './install_stuff.rb'
 
 class InstMPICH < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('mpich', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
+  def initialize(args)
+
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
 
@@ -19,19 +24,15 @@ class InstMPICH < InstallStuff
       "--enable-fast=O3",
       "FFLAGS=-fallow-argument-mismatch"
     ]
-    @need_sudo = need_sudo
 
     # Setting up compilers
-    compiler_path = File.join(prefix,'bin')
+    compiler_path = File.join(@prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
     @env = gc.get_env_settings
 
   end
 
   def do_install
-    puts ""
-    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
-    puts ""
 
     dl = Download.new(@source_url, @src_dir)
     src_tarball_path = dl.GetPath

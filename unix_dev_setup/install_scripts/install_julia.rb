@@ -10,18 +10,20 @@ $julia_version = ["1", "3", "0"]
 
 class InstJulia < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('julia', prefix, work_dirs, ver_check=false, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
     @source_url = SRC_URL[@pkgname]
     @target_dir = File.join(@prefix, '/.opt')
     @Version = $julia_version
-    @need_sudo = need_sudo
+
   end
 
   def do_install
-    puts ""
-    puts "Working on #{@pkgname} (#{$julia_version.join('.')})!!"
-    puts ""
+
     puts "Unfortunately, building julia isn't so stable!"
     puts "If it fails, it fails!"
     puts ""

@@ -9,18 +9,20 @@ $least_cmake_ver = ['3', '13', '4']
 
 class InstCmake < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('cmake', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
 
     # cmake build options
     @conf_options = ["--parallel=#{@Processors.to_s}", "--no-qt-gui"]
 
-    @need_sudo = need_sudo
-
     # Setting up compilers
-    compiler_path = File.join(prefix,'bin')
+    compiler_path = File.join(@prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
     @env = gc.get_env_settings
 

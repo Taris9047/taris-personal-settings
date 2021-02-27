@@ -16,16 +16,16 @@ $projects_to_enable = [
 
 class InstClang < InstallStuff
 
-  def initialize(prefix, def_system, work_dirs, need_sudo, verbose_mode=false)
-    super('clang', prefix, work_dirs, ver_check=false, verbose_mode=verbose_mode)
-    @def_system = def_system
-    @pkgname='llvm'
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
+
   end
 
   def do_install
-    puts ""
-    puts "Working on LLVM-Clang!! (git)"
-    puts ""
 
     dn = Download.new(@source_url, destination=@src_dir, source_ctl='git')
     @src_dir = dn.GetPath
@@ -68,14 +68,14 @@ class InstClang < InstallStuff
     ]
 
     config_cmd = [
-    	"cd",
-    	@build_dir,
-    	"&&",
-    	"cmake",
-    	inst_prefix_opt,
-        cmake_opts.join(' '),
-    	comp_settings.join(' '),
-    	File.join(@src_dir, "llvm"),
+      "cd",
+      @build_dir,
+      "&&",
+      "cmake",
+      inst_prefix_opt,
+      cmake_opts.join(' '),
+      comp_settings.join(' '),
+      File.join(@src_dir, "llvm"),
     ]
 
     compile_cmd = [

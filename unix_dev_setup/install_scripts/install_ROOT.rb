@@ -11,17 +11,17 @@ $root_version = ["6", "22", "06"]
 
 class InstROOT < InstallStuff
 
-  def initialize(prefix, def_system, work_dirs, need_sudo, verbose_mode=false)
-    super('ROOT', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
-    @def_system = def_system
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
+    @def_system = @os_type
 
   end
 
   def do_install
-
-    puts ""
-    puts "Working on #{@pkgname}!! (git)"
-    puts ""
 
     @root_prefix = File.join(@prefix, '/.opt/ROOT')
     if !File.directory? File.join(@prefix, '/.opt')

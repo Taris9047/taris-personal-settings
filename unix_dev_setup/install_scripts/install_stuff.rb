@@ -33,7 +33,10 @@ class InstallStuff < RunConsole
     @pkginfo_file = File.join(@pkginfo_dir, "#{@pkgname}.info" )
     @check_ver = ver_check
     @verbose = verbose_mode
-    super(@verbose, @pkginfo_dir, "#{@pkgname}.log")
+    super(
+      verbose: @verbose, 
+      logf_dir: @pkginfo_dir, 
+      logf_name: "#{@pkgname}.log")
     @run_install = true
 
     # Setting up processors
@@ -42,6 +45,7 @@ class InstallStuff < RunConsole
   end # initialize
 
   def install
+    self.ShowTitle
     self.SetURL
     if @run_install == true
       self.do_install
@@ -54,11 +58,22 @@ class InstallStuff < RunConsole
     # Version Checking
     if File.file?(@pkginfo_file) and self.VerCheck()
       @run_install = false
+    else
+      self.ShowInstallInfo
     end
+  end
+
+  def ShowTitle
+    puts ""
+    puts "Working on #{@pkgname} (#{SRC_VER[@pkgname].to_s})!!"
+    puts ""
   end
 
   def ShowInstallInfo
     env_txt = ''
+    if @env == nil
+      return 0
+    end
     @env.each do |k, flag|
       env_txt += "#{k}: #{flag}\n"
     end

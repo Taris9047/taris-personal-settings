@@ -40,8 +40,12 @@ $py3_conf_options = [
 
 class InstPython2 < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false, use_clang=false)
-    super('python2', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
     @get_pip_url = SRC_URL['get_pip']
@@ -52,11 +56,8 @@ class InstPython2 < InstallStuff
     # Python2 build options
     @conf_options = $py2_conf_options
 
-    @need_sudo = need_sudo
-
     # Setting up compilers
-    @clang_mode = use_clang
-    compiler_path = File.join(prefix, 'bin')
+    compiler_path = File.join(@prefix, 'bin')
     gc = GetCompiler.new(
       cc_path=compiler_path, 
       cxx_path=compiler_path, 
@@ -69,10 +70,6 @@ class InstPython2 < InstallStuff
   end
 
   def do_install
-
-    puts ""
-    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
-    puts ""
 
     dl = Download.new(@source_url, @src_dir)
     # src_tarball_path = dl.GetPath
@@ -158,8 +155,12 @@ end # class InstPython2
 
 class InstPython3 < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false, use_clang=false)
-    super('python3', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
     @get_pip_url = SRC_URL['get_pip']
@@ -170,11 +171,8 @@ class InstPython3 < InstallStuff
     # Python2 build options
     @conf_options = $py3_conf_options
 
-    @need_sudo = need_sudo
-
     # Setting up compilers
-    @clang_mode = use_clang
-    compiler_path = File.join(prefix, 'bin')
+    compiler_path = File.join(@prefix, 'bin')
     gc = GetCompiler.new(
       cc_path=compiler_path, 
       cxx_path=compiler_path, 
@@ -186,10 +184,6 @@ class InstPython3 < InstallStuff
   end
 
   def do_install
-
-    puts ""
-    puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
-    puts ""
 
     dl = Download.new(@source_url, @src_dir)
     src_tarball_path = dl.GetPath
