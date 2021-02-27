@@ -22,16 +22,11 @@ class InstCmake < InstallStuff
     @conf_options = ["--parallel=#{@Processors.to_s}", "--no-qt-gui"]
 
     # Checking up qt5
-    qmake_cmd = nil
-    qmake_cmd_candidates = ['qmake', 'qmake5', 'qmake-qt5', 'qt5-qmake']
-    qmake_cmd_candidates.each do |qm_cmd|
-      qmake_cmd = UTILS.which(qm_cmd)
-      if qmake_cmd
-        @conf_options -= ["--no-qt-gui"]
-        @conf_options += ["--qt-qmake=#{qmake_cmd}"]
-        puts "qmake found (#{qmake_cmd}), enabling cmake-gui!!"
-        break
-      end
+    qmake_cmd = self.qt5_qmake()
+    if qmake_cmd
+      @conf_options -= ["--no-qt-gui"]
+      @conf_options += ["--qt-qmake=#{qmake_cmd}"]
+      puts "qmake found (#{qmake_cmd}), enabling cmake-gui!!"
     end
     # Setting up compilers
     self.CompilerSet

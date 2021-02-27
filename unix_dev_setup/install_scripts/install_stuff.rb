@@ -140,6 +140,20 @@ class InstallStuff < RunConsole
     @env = gc.get_env_settings
   end
 
+  # Qt5 existence check. (more likely qmake executable.)
+  def qt5_qmake()
+    qmake_cmd = nil
+    qmake_cmd_candidates = ['qmake', 'qmake5', 'qmake-qt5', 'qt5-qmake']
+    qmake_cmd_candidates.each do |qm_cmd|
+      qmake_cmd = UTILS.which(qm_cmd)
+      if qmake_cmd
+        return qmake_cmd
+        break
+      end
+    end
+    return nil
+  end
+
   def WriteInfo
     puts "Writing package info for #{@pkgname}..."
     fp = File.open(@pkginfo_file, 'w')
