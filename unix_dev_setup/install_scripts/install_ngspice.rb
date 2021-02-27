@@ -76,6 +76,8 @@ class InstNgspice < InstallStuff
     self.Run( @env, cmds.join(" ") )
 
     self.WriteInfo
+
+    puts "This is bare bones ngspice! Put in SPICE libraries to #{@prefix}"
   end
 
 end # class InstNgspice
