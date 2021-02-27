@@ -19,9 +19,7 @@ class InstBoost < InstallStuff
       instance_variable_set("@#{k}", v) unless v.nil?
     end
 
-    super(@pkgname, @prefix, @work_dirs, ver_check=@ver_check, verbose_mode=@verbose_mode)
-
-    @need_sudo = need_sudo
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     self.SrcURL(SRC_URL[@pkgname])
     @b2_opts = $b2_opts

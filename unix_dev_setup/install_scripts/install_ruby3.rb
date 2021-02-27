@@ -21,8 +21,12 @@ $pkg_name = 'ruby3'
 
 class InstRuby3 < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super($pkg_name, prefix, work_dirs,ver_check=true, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
 
@@ -34,7 +38,6 @@ class InstRuby3 < InstallStuff
       "--enable-shared",
       "--program-suffix=3"
     ]
-    @need_sudo = need_sudo
 
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')

@@ -14,14 +14,12 @@ class InstCmake < InstallStuff
       instance_variable_set("@#{k}", v) unless v.nil?
     end
 
-    super(@pkgname, @prefix, @work_dirs, ver_check=@ver_check, verbose_mode=@verbose_mode)
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
 
     # cmake build options
     @conf_options = ["--parallel=#{@Processors.to_s}", "--no-qt-gui"]
-
-    @need_sudo = need_sudo
 
     # Setting up compilers
     compiler_path = File.join(prefix,'bin')

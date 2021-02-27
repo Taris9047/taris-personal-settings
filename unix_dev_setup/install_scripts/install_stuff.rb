@@ -57,6 +57,8 @@ class InstallStuff < RunConsole
     # Version Checking
     if File.file?(@pkginfo_file) and self.VerCheck()
       @run_install = false
+    else
+      self.ShowInstallInfo
     end
   end
 

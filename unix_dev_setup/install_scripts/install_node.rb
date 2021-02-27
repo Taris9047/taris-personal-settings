@@ -17,14 +17,14 @@ $npm_global_pkgs = [
 
 class InstNode < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('node', prefix, work_dirs, ver_check=true, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
-    @need_sudo = need_sudo
-    @PythonCmd = "python3"
-    @work_dirs = work_dirs
-    @need_sudo = need_sudo
 
     # Setting up compilers
     compiler_path = File.join(prefix, 'bin')
@@ -95,14 +95,14 @@ end # class InstNode
 # Class InstNodeLTS
 class InstNodeLTS < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('node-lts', prefix, work_dirs, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
-    @need_sudo = need_sudo
-    @PythonCmd = "python3"
-    @work_dirs = work_dirs
-    @need_sudo = need_sudo
 
     # Setting up compilers
     compiler_path = File.join(prefix, 'bin')

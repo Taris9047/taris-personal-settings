@@ -11,7 +11,7 @@ class InstLua < InstallStuff
     args.each do |k,v|
       instance_variable_set("@#{k}", v) unless v.nil?
     end
-    super(@pkgname, @prefix, @work_dirs, ver_check=true, verbose_mode=@verbose_mode)
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
     
     @source_url = SRC_URL[@pkgname]
 

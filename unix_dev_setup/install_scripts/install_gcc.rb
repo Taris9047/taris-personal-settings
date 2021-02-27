@@ -193,7 +193,7 @@ class InstGCC8 < InstGCC
 
     @pkgname = 'gcc8'
     @source_url = SRC_URL[@pkgname]
-    @prefix = File.join(prefix, ".opt/#{@pkgname}")
+    @prefix = File.join(@prefix, ".opt/#{@pkgname}")
 
     @conf_options = \
       $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
@@ -207,9 +207,6 @@ class InstGCC8 < InstGCC
       "CXXFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
     }
-
-    @need_sudo=need_sudo
-    @verbose = verbose_mode
 
   end
 
@@ -245,9 +242,6 @@ class InstGCC9 < InstGCC
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
     }
 
-    @need_sudo=need_sudo
-    @verbose = verbose_mode
-
   end
 
   def do_install
@@ -260,7 +254,7 @@ end # class InstGCC9
 class InstGCC4 < InstGCC
 
   def initialize (args)
-        args.each do |k,v|
+    args.each do |k,v|
       instance_variable_set("@#{k}", v) unless v.nil?
     end
 
@@ -269,7 +263,7 @@ class InstGCC4 < InstGCC
     @pkgname = 'gcc4'
     @source_url = SRC_URL[@pkgname]
     # Separating this gcc installation.
-    @prefix = File.join(prefix, ".opt/#{@pkgname}")
+    @prefix = File.join(@prefix, ".opt/#{@pkgname}")
     @ver_source = SRC_VER[@pkgname]
 
     @conf_options = [ 
@@ -295,8 +289,6 @@ class InstGCC4 < InstGCC
       "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
     }
 
-    @need_sudo=need_sudo
-    @verbose=verbose_mode
 
   end
 
@@ -306,8 +298,6 @@ class InstGCC4 < InstGCC
     puts ""
     puts "Working on #{@pkgname} (#{@ver_source.to_s})!!"
     puts ""
-
-    self.ShowInstallInfo
 
     # Replace '{prefix}' on configure parameters.
     @conf_options.each_with_index do |co, ind|

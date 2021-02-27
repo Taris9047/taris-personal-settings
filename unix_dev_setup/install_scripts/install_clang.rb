@@ -21,8 +21,7 @@ class InstClang < InstallStuff
       instance_variable_set("@#{k}", v) unless v.nil?
     end
 
-    super(@pkgname, @prefix, @work_dirs, ver_check=@ver_check, verbose_mode=@verbose_mode)
-    @def_system = def_system
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
     @pkgname='llvm'
   end
 
@@ -72,14 +71,14 @@ class InstClang < InstallStuff
     ]
 
     config_cmd = [
-    	"cd",
-    	@build_dir,
-    	"&&",
-    	"cmake",
-    	inst_prefix_opt,
-        cmake_opts.join(' '),
-    	comp_settings.join(' '),
-    	File.join(@src_dir, "llvm"),
+      "cd",
+      @build_dir,
+      "&&",
+      "cmake",
+      inst_prefix_opt,
+      cmake_opts.join(' '),
+      comp_settings.join(' '),
+      File.join(@src_dir, "llvm"),
     ]
 
     compile_cmd = [

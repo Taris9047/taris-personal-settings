@@ -10,8 +10,13 @@ $golang_version = ["1", "15", "7"]
 
 class InstGolang < InstallStuff
 
-  def initialize(prefix, work_dirs, need_sudo=false, verbose_mode=false)
-    super('golang', prefix, work_dirs, ver_check=false, verbose_mode=verbose_mode)
+  def initialize(args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+
+    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
+    
     @source_url = SRC_URL[@pkgname]
     @bootstrap_url = SRC_URL['golang-bootstrap']
     @Version = $golang_version
