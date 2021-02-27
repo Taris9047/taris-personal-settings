@@ -1,27 +1,27 @@
-#!/bin/sh
+#!/bin/bash
 
 rust_pkgs=( \
-  exa \
-  bat \
-  rm-improved \
-  diskonaut \
-  lsd \
-  cargo-update \
-  starship \
-  tokei \
-  fd-find \
-  procs \
-  du-dust \
-  ripgrep \
-  hyperfine \
-  eureka \
-  ddh \
-  gitui \
-  ytop \
-  grex \
-  zoxide \
-  nu \
-  broot )
+  "exa" \
+  "bat" \
+  "rm-improved" \
+  "diskonaut" \
+  "lsd" \
+  "cargo-update" \
+  "starship" \
+  "tokei" \
+  "fd-find" \
+  "procs" \
+  "du-dust" \
+  "ripgrep" \
+  "hyperfine" \
+  "eureka" \
+  "ddh" \
+  "gitui" \
+  "ytop" \
+  "grex" \
+  "zoxide" \
+  "nu" \
+  "broot" )
 
 array_to_string ()
 {
