@@ -57,7 +57,7 @@ class InstPython2 < InstallStuff
     @conf_options = $py2_conf_options
 
     # Setting up compilers
-    compiler_path = File.join(prefix, 'bin')
+    compiler_path = File.join(@prefix, 'bin')
     gc = GetCompiler.new(
       cc_path=compiler_path, 
       cxx_path=compiler_path, 
@@ -176,7 +176,7 @@ class InstPython3 < InstallStuff
     @conf_options = $py3_conf_options
 
     # Setting up compilers
-    compiler_path = File.join(prefix, 'bin')
+    compiler_path = File.join(@prefix, 'bin')
     gc = GetCompiler.new(
       cc_path=compiler_path, 
       cxx_path=compiler_path, 

@@ -64,6 +64,9 @@ class InstallStuff < RunConsole
 
   def ShowInstallInfo
     env_txt = ''
+    if @env == nil
+      return 0
+    end
     @env.each do |k, flag|
       env_txt += "#{k}: #{flag}\n"
     end

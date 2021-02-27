@@ -22,7 +22,7 @@ class InstCmake < InstallStuff
     @conf_options = ["--parallel=#{@Processors.to_s}", "--no-qt-gui"]
 
     # Setting up compilers
-    compiler_path = File.join(prefix,'bin')
+    compiler_path = File.join(@prefix,'bin')
     gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
     @env = gc.get_env_settings
 

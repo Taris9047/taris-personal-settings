@@ -22,7 +22,7 @@ class InstClang < InstallStuff
     end
 
     super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
-    @pkgname='llvm'
+
   end
 
   def do_install
