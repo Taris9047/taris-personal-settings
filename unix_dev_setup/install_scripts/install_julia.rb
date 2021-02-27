@@ -19,14 +19,14 @@ class InstJulia < InstallStuff
     super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
     @source_url = SRC_URL[@pkgname]
     @target_dir = File.join(@prefix, '/.opt')
-    @Version = $julia_version
+    @Version = $julia_version.join('.')
 
   end
 
   def do_install
 
     puts "Unfortunately, building julia isn't so stable!"
-    puts "If it fails, it fails!"
+    puts "If it fails, it fails! ... especially on virtual machines."
     puts ""
 
     puts "Installing Julia"

@@ -20,8 +20,7 @@ class InstGolang < InstallStuff
     
     @source_url = SRC_URL[@pkgname]
     @bootstrap_url = SRC_URL['golang-bootstrap']
-    @Version = $golang_version
-    @golang_ver = @Version.join('.')
+    @Version = $golang_version.join('.')
   end
 
   def do_install
@@ -34,8 +33,8 @@ class InstGolang < InstallStuff
     bootstrap_dir = File.join(@src_dir, "/go")
     go_dir = File.join(@prefix, '/.opt/go')
 
-    puts "Let's build Golang version (#{@golang_ver})"
-    self.Run( "cd #{@src_dir} && git clone #{@source_url} #{go_dir} && cd #{go_dir} && git checkout go#{@golang_ver}" )
+    puts "Let's build Golang version (#{@Version})"
+    self.Run( "cd #{@src_dir} && git clone #{@source_url} #{go_dir} && cd #{go_dir} && git checkout go#{@Version}" )
     self.Run( {"GOROOT_BOOTSTRAP" => bootstrap_dir}, "cd #{go_dir}/src && ./all.bash" )
 
     self.WriteInfo

@@ -123,6 +123,23 @@ class InstallStuff < RunConsole
     return false
   end # VerCheck
 
+  # Invoke it only if you have a valid prefix
+  def CompilerSet(cflags='', cxxflags='')
+    if !File.directory? @prefix
+      puts "Cannot set a correct compiler with give path!"
+      puts "Given path: #{@prefix}"
+      puts "Reverting to default search path... /usr/bin"
+      compiler_path = '/usr/bin'
+    else
+      compiler_path = File.join(@prefix, 'bin')
+    end
+    gc = GetCompiler.new(
+      cc_path=compiler_path, cxx_path=compiler_path,
+      cflags=cflags, cxxflags=cxxflags)
+    @cmake_comp_settings = gc.get_cmake_settings
+    @env = gc.get_env_settings
+  end
+
   def WriteInfo
     puts "Writing package info for #{@pkgname}..."
     fp = File.open(@pkginfo_file, 'w')

@@ -27,10 +27,7 @@ class InstNode < InstallStuff
     @source_url = SRC_URL[@pkgname]
 
     # Setting up compilers
-    compiler_path = File.join(@prefix, 'bin')
-    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
-    @env = gc.get_env_settings
-
+    self.CompilerSet
     @conf_options = $conf_options
 
   end

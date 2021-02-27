@@ -23,6 +23,8 @@ class InstClang < InstallStuff
 
     super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
+    self.CompilerSet
+
   end
 
   def do_install
@@ -46,16 +48,10 @@ class InstClang < InstallStuff
       inst_cmd = "ninja install"
     end
 
-    # Setting up compilers
-    compiler_path = File.join(@prefix, 'bin')
-    gc = GetCompiler.new(cc_path=compiler_path, cxx_path=compiler_path)
-    comp_settings = gc.get_cmake_settings
-    @env = gc.get_env_settings
-
     # Setting up install prefix
     inst_prefix_opt = [ "-DCMAKE_INSTALL_PREFIX:PATH=#{@prefix}" ]
 
-    cmake_opts = [
+    @cmake_opts = [
       "-Wno-dev",
       "-G Ninja",
       "-DLLVM_ENABLE_PROJECTS=\"#{$projects_to_enable.join(';')}\"",
@@ -73,8 +69,8 @@ class InstClang < InstallStuff
       "&&",
       "cmake",
       inst_prefix_opt,
-      cmake_opts.join(' '),
-      comp_settings.join(' '),
+      @cmake_opts.join(' '),
+      @cmake_comp_settings.join(' '),
       File.join(@src_dir, "llvm"),
     ]
 

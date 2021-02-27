@@ -40,14 +40,8 @@ class InstRuby3 < InstallStuff
     ]
 
     # Setting up compilers
-    compiler_path = File.join(@prefix,'bin')
-    gc = GetCompiler.new(
-      cc_path=compiler_path, 
-      cxx_path=compiler_path, 
-      cflags='-fno-semantic-interposition', 
-      cxxflags='-fno-semantic-interposition',
-      clang=false)
-    @env = gc.get_env_settings
+    self.CompilerSet(
+      cflags='-fno-semantic-interposition', cxxflags='-fno-semantic-interposition')
 
   end
 

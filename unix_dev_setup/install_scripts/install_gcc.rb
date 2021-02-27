@@ -265,7 +265,7 @@ class InstGCC4 < InstGCC
     @conf_options = [ 
       "--enable-shared", 
       "--disable-boostrap",
-      "--enable-threads=posix",       
+      "--enable-threads=posix",
       "--disable-nls",
       "--enable-default-pie",
       "--disable-multilib",
@@ -324,7 +324,7 @@ class InstGCC4 < InstGCC
       puts "Extracted folder has been found. Using it!" 
     else
       puts "Extracting..."
-      self.Run( "tar xf "+source_file+" -C "+@build_dir)  
+      self.Run( "tar xf "+source_file+" -C "+@build_dir)
     end
     
     unless Dir.exists?(@prefix)
@@ -335,21 +335,15 @@ class InstGCC4 < InstGCC
     puts extracted_src_dir
     self.Run( "cd "+File.realpath(extracted_src_dir)+" && "+"./contrib/download_prerequisites" )
 
-    # Need to patch a file.
+    # Need to patch a few files.
     puts ""
     puts "Patching bugged files..."
-    # arches = [
-    #   "aarch64", "alpha", "bfin", "i386", "pa", "sh", "tilepro", "xtensa"
-    # ]
     patch_cmd = [
       "sed -i -e 's/__attribute__/\\/\\/__attribute__/g' #{extracted_src_dir}/gcc/cp/cfns.h",
       "sed -i 's/struct ucontext/ucontext_t/g' #{extracted_src_dir}/libgcc/config/i386/linux-unwind.h",
       "sed -i '/#include <pthread.h>/a #include <signal.h>' #{extracted_src_dir}/libsanitizer/asan/asan_linux.cc",
       "sed -i 's/__res_state \\*statp = (__res_state\\*)state\\;/struct __res_state \\*statp = (struct __res_state\\*)state\\;/g' #{extracted_src_dir}/libsanitizer/tsan/tsan_platform_linux.cc",
     ]
-    # arches.each do |ar|
-    #   patch_cmd += [
-    #     "wget \"https://gcc.gnu.org/git/?p=gcc.git;a=blob_plain;f=libgcc/config/#{ar}/linux-unwind.h\" -O #{extracted_src_dir}/libgcc/config/#{ar}/linux-unwind.h"  ]
     # end
     self.Run( patch_cmd.join(' && ') )
 
@@ -377,15 +371,17 @@ class InstGCC4 < InstGCC
       inst_cmd
     ]
 
-    puts "*** This is totally deprecated software! ***"
-    puts "*** If it breaks, it breaks... ***"
-    puts "*** (This package was added solely due to old cuda: 6.5) ***"
-    puts ""
-    puts "*** If it breaks, try installing ... ***"
-    puts " (Ubuntu) gcc-multilib libstdc++6:i386"
-    puts " (RHEL) libstdc++.i686"
-    puts "*** But don't expect to be 100\% successful. ***"
-    puts ""
+    brag_msg = %{
+*** This is totally deprecated software! ***
+*** If it breaks, it breaks... ***
+*** (This package was added solely due to old cuda: 6.5) ***
+
+*** If it breaks, try installing ... ***
+ (Ubuntu) gcc-multilib libstdc++6:i386
+ (RHEL) libstdc++.i686
+*** But don't expect to be 100\% successful. ***
+}
+    puts brag_msg
     sleep(2)
 
     # Ok let's rock!
