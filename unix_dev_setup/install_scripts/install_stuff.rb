@@ -142,6 +142,7 @@ class InstallStuff < RunConsole
       cc_path=compiler_path, cxx_path=compiler_path,
       cflags=cflags, cxxflags=cxxflags)
     @cmake_comp_settings = gc.get_cmake_settings
+    @comp_settings = gc.get_env_str
     @env = gc.get_env_settings
   end
 
@@ -162,11 +163,11 @@ class InstallStuff < RunConsole
   # Collects the list of files installed
   # TODO: make it faster. This is super brute force now...
   def InstallFiles(build_dir, inst_cmd)
-    files_before_install = Find.find(@prefix).collect { |_| _ if !_.include?'__pycache__'  }
+    files_before_install = Find.find(@prefix).collect { |_| _ }
 
     self.Run("cd #{File.join(build_dir)} && #{inst_cmd}")
 
-    files_after_install = Find.find(@prefix).collect { |_| _ if !_.include?'__pycache__'  }
+    files_after_install = Find.find(@prefix).collect { |_| _ }
     
     @Installed_files = files_after_install - files_before_install
   end

@@ -13,7 +13,7 @@ require_relative './utils/utils.rb'
 # follow up the newest changes in libc 2.26
 
 # Version
-$version = ['1', '0', '3']
+$version = ['1', '0', '5']
 
 # title
 $title = "Unix Development Environment setup"
@@ -52,6 +52,7 @@ class UnixDevSetup
       'purge', '--purge', 'clean', '--clean', '--version',
       '--use-system-gcc', '-sgcc',
       '--force', '-f', '-u', 'uninstall', 'remove',
+      '-l', 'list',
     ]
     @permitted_list += @opt_list
 
@@ -107,6 +108,8 @@ class UnixDevSetup
     @force_install_mode = false
     # uninstall mode?
     @uninstall_mode = false
+    # list mode
+    @list_mode = false
     self.__parse_params__
     unless @wrong_pkgs.empty?
       puts "Some wrong packages given! Ignoring them!"
@@ -143,6 +146,30 @@ class UnixDevSetup
 
     # Make or update workspace directories
     self.__setup_work_dirs__
+
+    if File.directory? @pkginfo_dir
+      @Installed_pkg_list = \
+        Dir.entries(@pkginfo_dir).select { |f| f.include?('.info') }.map { |item| item.gsub('.info', '') }
+    else
+      @Installed_pkg_list = []
+    end
+
+    if @list_mode
+      @pkgs_to_install.each do |pkg|
+        if !@Installed_pkg_list.include?(pkg)
+          next
+        end
+        puts "*** #{pkg} -- Installed Files:"
+        pkg_info = self.ReadPkgInfo(pkg)
+        file_list = pkg_info["Installed Files"]
+        file_list.each do |f|
+          puts f
+        end
+        puts ""
+        puts ""
+      end
+      exit(0)
+    end
 
     # Checking if the destination directory is writable or not.
     @need_sudo = !File.writable?(@prefix_dir)
@@ -227,6 +254,13 @@ class UnixDevSetup
     }
     puts hlp
     exit(0)
+  end
+
+  def ReadPkgInfo(pkg_name)
+    if !@pkginfo_dir
+      return {}
+    end
+    return JSON.parse(File.read(File.join(@pkginfo_dir, pkg_name+'.info')))
   end
 
   def __parse_params__
@@ -323,6 +357,11 @@ class UnixDevSetup
       @uninstall_mode = true
     end
 
+    if @parameters.include?('-l') or @parameters.include?('list')
+      puts "Reading pkg file list"
+      @list_mode = true
+    end
+
     if @parameters.include?('prereq')
       puts ""
       puts "========================================================="
@@ -388,18 +427,10 @@ class UnixDevSetup
     else
       spinner = TTY::Spinner.new("[Uninstalling] ... :spinner", format: :bouncing_ball)
       spinner.auto_spin
-      if File.directory? @pkginfo_dir
-        @Installed_pkg_list = \
-          Dir.entries(@pkginfo_dir).select { |f| f.include?('.info') }.map { |item| item.gsub('.info', '') }
-      else
-        @Installed_pkg_list = []
-      end
       
       @pkgs_to_install.each do |pkg|
         if @Installed_pkg_list.include?(pkg)
-          fp = File.open(File.join(@pkginfo_dir, pkg+'.info'), 'r')
-          pkg_txt = fp.read.strip
-          pkg_info = JSON.parse(pkg_txt)
+          pkg_info = self.ReadPkgInfo(pkg)
           files_to_delete = pkg_info["Installed Files"]
           files_to_delete.each do |f|
             FileUtils.rm_rf(f)
