@@ -166,13 +166,13 @@ class InstallStuff < RunConsole
 
   # Collects the list of files installed
   # TODO: make it faster. This is super brute force now...
-  def InstallFiles(build_dir, inst_cmd)
+  def RunInstall(env: {}, cmd: '')
+    if cmd.empty?
+      return 0
+    end
     files_before_install = self.get_prefix_file_list
-
-    self.Run("cd #{File.join(build_dir)} && #{inst_cmd}")
-
+    self.Run("cd #{File.join(@build_dir)} && #{inst_cmd}")
     files_after_install = self.get_prefix_file_list
-    
     @Installed_files = files_after_install - files_before_install
   end
 

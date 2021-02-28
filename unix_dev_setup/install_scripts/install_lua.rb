@@ -55,7 +55,7 @@ class InstLua < InstallStuff
       "&&",
       inst_cmd
     ]
-    self.Run( cmds.join(" ") )
+    self.RunInstall( cmd: cmds.join(" ") )
     self.WriteInfo
   end
 
