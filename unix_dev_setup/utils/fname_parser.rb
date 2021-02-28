@@ -1,14 +1,64 @@
 #!/usr/bin/env ruby
 
+# TODO: Need to handle alphabet based version number such as '6b'...
+# Alpha <--> Numeric conversion classes
+# Referenced: https://stackoverflow.com/questions/14632304/generate-letters-to-represent-number-using-ruby/31152792
+# and https://stackoverflow.com/questions/10637606/doesnt-ruby-have-isalpha
+#
+class Numeric
+  Alpha26 = ("a".."z").to_a
+  def to_s26
+    return "" if self < 1
+    s, q = "", self
+    loop do
+      q, r = (q - 1).divmod(26)
+      s.prepend(Alpha26[r]) 
+      break if q.zero?
+    end
+    s
+  end
+end
+
+class String
+  Alpha26 = ("a".."z").to_a
+
+  def to_i26
+    result = 0
+    downcased = downcase
+    (1..length).each do |i|
+      char = downcased[-i]
+      result += 26**(i-1) * (Alpha26.index(char) + 1)
+    end
+    result
+  end
+
+  def isalpha?
+    !match(/^[[:alnum:]]+$/)
+  end
+end
+
 #
 # Version handlig stuffs
 # Referenced: https://stackoverflow.com/questions/2051229/how-to-compare-versions-in-ruby/2051427#2051427
 #
 class Version < Array
   @ver_string = ''
+  @has_alphabet = false
+  @alphabet_uppercase = false
+
   def initialize(s)
     if s.instance_of? String
       begin
+        # puts "#{s}: #{s[-1]}: #{s[-1].isalpha?}"
+        if s[-1].isalpha?
+          tmp = s[-1]
+          s[-1] = '.'
+          s += tmp.to_i26.to_s
+          @has_alphabet = true
+          if /[[:upper:]]/.match(tmp)
+            @alphabet_uppercase = true
+          end
+        end
         super( s.split('.').map{ |e| e.delete(',').delete('v').delete('V').to_i } )
         @ver_string = self.join('.')
       rescue
@@ -40,11 +90,31 @@ class Version < Array
 
   # Returning the version info. from integer array to ...
   def to_s
-    return self.map{ |e| e.to_s }.join('.')
+    if @has_alphabet
+      ver_str = self[0..-2].map{ |e| e.to_s }.join('.')
+      unless @alphabet_uppercase
+        ver_str += self[-1].to_s26
+      else
+        ver_str += self[-1].to_s26.upper
+      end
+      return ver_str
+    else
+      return self.map{ |e| e.to_s }.join('.')
+    end
   end
 
   def to_sA
-    return self.map{ |e| e.to_s }
+    if @has_alphabet
+      ver_str = self[0..-2].map{ |e| e.to_s }.join('.')
+      unless @alphabet_uppercase
+        ver_str += self[-1].to_s26
+      else
+        ver_str += self[-1].to_s26.upcase
+      end
+      return ver_str.split('.')
+    else
+      return self.map{ |e| e.to_s }
+    end
   end
 
   def major
@@ -60,7 +130,21 @@ class Version < Array
   end
 
   def patch
-    return self[-1].to_s
+
+    if @has_alphabet
+      unless @alphabet_uppercase
+        patch_str = [self[-2].to_s, self[-1].to_s26].join('')
+      else
+        patch_str = [self[-2].to_s, self[-1].to_s26.upcase].join('')
+      end
+      return patch_str
+    else
+      return self[-1].to_s
+    end
+  end
+
+  def __alpha_to_int__
+    
   end
 
 end # class Version

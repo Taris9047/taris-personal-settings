@@ -133,8 +133,8 @@ class DepResolve
     # Checking out dependency list
     not_flat_dep_list = []
     dep_list.each do |pk|
-      if !$dependency_table[pk].empty?
-        not_flat_dep_list.append(pk)
+      unless $dependency_table[pk].empty?
+        not_flat_dep_list += [pk]
       end
     end
     not_flat_dep_list = not_flat_dep_list.uniq

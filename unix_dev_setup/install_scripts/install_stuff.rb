@@ -211,11 +211,10 @@ class InstallStuff < RunConsole
       conf_options_str = "N/A --> Probably the package was not based on automake or cmake."
     end
 
-    fnp = FNParser.new(@source_url)
     compile_info_json = {
       "Package Name" => @pkgname,
       "Source file URL" => @source_url,
-      "Version" => fnp.version(),
+      "Version" => SRC_VER[@pkgname].to_sA,
       "Config options" => conf_options_str,
       "Env Variables" => env_str,
       "Installed Files" => @Installed_files,

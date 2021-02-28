@@ -171,6 +171,17 @@ module SRC_VER
         return 'git'
       end
 
+      if pkg_name == 'pdflib'
+        src_tarball_fname = SRC_URL['pdflib'].split('/')[-1]
+        src_tarball_bname = src_tarball_fname.split('.')[0..-3].join('.')
+        return Version.new(src_tarball_bname.split('-')[1])
+      end
+
+      if pkg_name == 'libjpeg'
+        src_tarball_fname = SRC_URL['libjpeg'].split('/')[-1]
+        return Version.new(src_tarball_fname.split('.')[-3].delete('v'))
+      end
+
       if SRC_TYPE[pkg_name] == "tarball"
         fnp = FNParser.new(SRC_URL[pkg_name])
         src_ver = Version.new(fnp.version().join('.'))

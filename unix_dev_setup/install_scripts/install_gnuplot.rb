@@ -17,8 +17,21 @@ class InstGnuplot < InstallStuff
 
     @source_url = SRC_URL[@pkgname]
 
-    # mpich build options
+    # build options
     @conf_options = []
+    # Checking up qt5
+    @conf_options += ["--with-qt=no"]
+    qmake_cmd = self.qt5_qmake()
+    if qmake_cmd
+      @conf_options -= ["--with-qt=no"]
+      @conf_options += ["--with-qt5=#{qmake_cmd}"]
+      puts "qmake found (#{qmake_cmd}), enabling cmake-gui!!"
+    end
+    @conf_options += [
+      "--with-readline=builtin",
+      "--with-x",
+      "--with-gd=#{@prefix}/lib",
+    ]
 
     # Setting up compilers
     self.CompilerSet
@@ -77,4 +90,4 @@ class InstGnuplot < InstallStuff
     self.WriteInfo
   end
 
-end # class InstMPICH
+end # class InstGnuplot

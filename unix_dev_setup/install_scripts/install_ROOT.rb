@@ -104,6 +104,7 @@ class InstROOT < InstallStuff
     compile_info_json = {
       "Package Name" => @pkgname,
       "Version" => @Version,
+      "Installed Files" => @Installed_files
     }
     fp.write(compile_info_json.to_json)
     fp.close

@@ -35,7 +35,7 @@ class UnixDevSetup
     @list_of_progs = SRC_LIST[]
 
     @not_so_stable_pkgs = ['pypy3', 'clang', 'ROOT', 'julia']
-    @not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts', 'ruby3']
+    @not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts', 'ruby3', 'libjpeg']
     @not_really_a_pkg = ['get_pip', 'golang-bootstrap']
 
     @list_of_all = \

@@ -4,10 +4,12 @@
 
 # Install libPDFLib
 
-# --> Consider using cmake instead of configure.
+# Super simple bainary copying...
 
 require_relative '../../utils/utils.rb'
 require_relative '../install_stuff.rb'
+
+require 'fileutils'
 
 class InstPDFLib < InstallStuff
 
@@ -17,30 +19,24 @@ class InstPDFLib < InstallStuff
       instance_variable_set("@#{k}", v) unless v.nil?
     end
 
-    super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
+    super(@pkgname, @prefix, @work_dirs, ver_check=false, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
-
-    # mpich build options
-    @conf_options = []
-
-    # Setting up compilers
-    self.CompilerSet
 
   end
 
   def do_install
 
-    dl = Download.new(@source_url, @src_dir)
+    dl = Download.new(@source_url, @src_dir, source_ctl='', mode='wget', source_ctl_opts='')
     src_tarball_path = dl.GetPath
 
-    fp = FNParser.new(@source_url)
-    src_tarball_fname, src_tarball_bname = fp.name
-    major, minor, patch = fp.version
+    # This also has weird version naming...
+    @src_tarball_fname = @source_url.split('/')[-1]
+    @src_tarball_bname = @src_tarball_fname.split('.')[0..-3].join('.')
 
     # puts src_tarball_fname, src_tarball_bname, major, minor, patch
-    src_extract_folder = File.join(File.realpath(@build_dir), src_tarball_bname)
-    src_build_folder = File.join(File.realpath(@build_dir), src_tarball_bname+'-build')
+    src_extract_folder = File.join(File.realpath(@build_dir), @src_tarball_bname)
+    src_build_folder = File.join(File.realpath(@build_dir), @src_tarball_bname+'-build')
 
     if Dir.exists?(src_extract_folder)
       puts "Source file folder exists in "+src_extract_folder
@@ -49,36 +45,40 @@ class InstPDFLib < InstallStuff
       self.Run( "tar xf "+File.realpath(File.join(@src_dir, src_tarball_fname))+" -C "+@build_dir )
     end
 
-    if Dir.exists?(src_build_folder)
-      puts "Build folder found!! Removing it for 'pure' experience!!"
-      self.Run( "rm -rfv "+src_build_folder )
-    else
-      puts "Ok, let's make a build folder"
-    end
-    self.Run( "mkdir -p "+src_build_folder )
-
-    opts = ["--prefix="+@prefix]+@conf_options
-
     if @need_sudo
-      inst_cmd = "sudo make install"
-      mod_sudo = "sudo -H"
+      sudo_cmd = "sudo"
     else
-      inst_cmd = "make install"
-      mod_sudo = ""
+      sudo_cmd = ''
     end
 
     # Ok let's roll!!
+    cmds = []
+    if !File.directory? (File.realpath(@prefix, 'include'))
+      cmds.append("mkdir -pv #{@prefix}/include")
+    end
+    if !File.directory? (File.realpath(@prefix, 'lib'))
+      cmds.append("mkdir -pv #{@prefix}/lib")
+    end
     cmds = [
-      "cd", src_build_folder, "&&",
-      src_extract_folder+"/configure",
-      opts.join(" "), "&&",
-      "make -j", @Processors.to_s, "&&",
-      inst_cmd
+      "#{sudo_cmd} cp -vfr #{File.join(src_extract_folder,'/bind/c/include/pdflib.h')} #{File.join(@prefix, 'include/')}",
+      "#{sudo_cmd} cp -vfr #{File.join(src_extract_folder,'/bind/c/lib/libpdf.a')} #{File.join(@prefix, 'lib/')}"
     ]
 
-    puts "Compiling (with #{@Processors} processors) and Installing ..."
-    self.RunInstall( env: @env, cmd: cmds.join(" ") )
+    puts "Installing binaries..."
+    self.RunInstall( cmd: cmds.join(" && ") )
     self.WriteInfo
+  end
+
+  def WriteInfo
+    puts "Writing package info for #{@pkgname}..."
+    fp = File.open(@pkginfo_file, 'w')
+    compile_info_json = {
+      "Package Name" => @pkgname,
+      "Version" => @Version,
+      "Installed Files" => @Installed_files
+    }
+    fp.write(compile_info_json.to_json)
+    fp.close
   end
 
 end # class InstPDFLib

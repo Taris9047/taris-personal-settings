@@ -19,7 +19,7 @@ class InstLibTIFF < InstallStuff
 
     @source_url = SRC_URL[@pkgname]
 
-    # mpich build options
+    # build options
     @conf_options = []
 
     # Setting up compilers

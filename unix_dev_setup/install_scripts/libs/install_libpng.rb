@@ -15,7 +15,7 @@ class InstLibPNG < InstallStuff
 
     @source_url = SRC_URL[@pkgname]
 
-    # mpich build options
+    # build options
     @conf_options = [
       "--disable-static"
     ]
