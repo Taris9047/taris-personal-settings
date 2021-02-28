@@ -178,7 +178,7 @@ class InstallStuff < RunConsole
 
   def get_prefix_file_list
     if File.directory? @prefix
-      return Find.find(@prefix).collect { |_| _ if File.exist? _ }
+      return Find.find(@prefix).collect { |_| _ unless File.directory? _ }
     else
       return []
     end

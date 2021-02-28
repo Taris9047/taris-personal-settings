@@ -118,6 +118,8 @@ class UnixDevSetup
     end
     if @pkgs_to_install.empty?
       puts "No packages selected!"
+      puts ""
+      self.show_help
       exit(1)
     end
 
@@ -230,7 +232,7 @@ class UnixDevSetup
   Usage: ./unix_dev_setup.rb <params_or_installable_pkgs>
 
   <params> can be:
-  #{$opt_list.join(', ')}
+  #{@opt_list.join(', ')}
   --use-clang: Some packages can be built with clang.
   -v,--verbose: Make it loud!
   --version: displays version info.
@@ -244,13 +246,13 @@ class UnixDevSetup
   purge: purges all the working dirs including pkginfo dir.
 
   <installable_pkgs> can be:
-  #{($permitted_list-$opt_list).join(', ')}
+  #{(@permitted_list-@opt_list).join(', ')}
 
   --> Note that node-lts replaces node and vice versa.
   --> Default installation is node(latest version)
 
   Some packages are not very stable at the moment:
-  #{$not_so_stable_pkgs.join(', ')}
+  #{@not_so_stable_pkgs.join(', ')}
 
   More packages are coming!! Stay tuned!!
     }
