@@ -36,7 +36,6 @@ class InstNode < InstallStuff
 
     puts "Downloading source from ... "+@source_url
     dl = Download.new(@source_url, @src_dir)
-
     fp = FNParser.new(@source_url)
     src_tarball_fname, src_tarball_bname = fp.name
     major, minor, patch = fp.version
@@ -71,7 +70,7 @@ class InstNode < InstallStuff
       "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
-    self.Run( @env, cmds.join(" ") )
+    self.RunInstall( env: @env, cmds: cmds.join(" ") )
 
     self.WriteInfo
 

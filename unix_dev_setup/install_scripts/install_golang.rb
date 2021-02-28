@@ -35,7 +35,7 @@ class InstGolang < InstallStuff
 
     puts "Let's build Golang version (#{@Version})"
     self.Run( "cd #{@src_dir} && git clone #{@source_url} #{go_dir} && cd #{go_dir} && git checkout go#{@Version}" )
-    self.Run( {"GOROOT_BOOTSTRAP" => bootstrap_dir}, "cd #{go_dir}/src && ./all.bash" )
+    self.RunInstall( {"GOROOT_BOOTSTRAP" => bootstrap_dir}, "cd #{go_dir}/src && ./all.bash" )
 
     self.WriteInfo
 

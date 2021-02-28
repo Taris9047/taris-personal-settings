@@ -69,7 +69,7 @@ class InstBoost < InstallStuff
 
     # Ok let's rock!
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    self.Run( @env, cmds.join(" ") )
+    self.RunInstall( env: @env, cmd: cmds.join(" ") )
 
     @conf_options = @b2_opts
 

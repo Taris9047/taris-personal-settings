@@ -5,6 +5,8 @@
 require_relative '../utils/utils.rb'
 require_relative './install_stuff.rb'
 
+require 'fileutils'
+
 $py2_modules = [
   'numpy', 'scipy', 'matplotlib', 
   'pycparser', 'sympy', 'nose'
@@ -110,7 +112,7 @@ class InstPython2 < InstallStuff
       "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
-    self.Run( @env, cmds.join(" ") )
+    self.RunInstall( env: @env, cmd: cmds.join(" ") )
 
     # It seems get-pip.py doesn't support python2 anymore
     puts "Running python2 -mensurepip"
@@ -137,9 +139,11 @@ class InstPython2 < InstallStuff
       pip_inst_sudo,
       File.join(@prefix,"bin/pip"+major.to_s),
       "install -U",
-      @py2_modules.join(" ")
+      @py2_modules.join(" "),
+      "&&",
+      "rm -rf #{@prefix}/bin/isympy"
     ]
-    self.Run( inst_module_cmds.join(" ") )
+    self.RunInstall( cmd: inst_module_cmds.join(" ") )
     self.WriteInfo
 
   end
@@ -217,7 +221,7 @@ class InstPython3 < InstallStuff
       "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
-    self.Run( @env, cmds.join(" ") )
+    self.RunInstall( @env, cmds.join(" ") )
 
     if File.exists?(File.join(@src_dir, 'get-pip.py'))
       puts "Found get-pip.py"
@@ -236,7 +240,7 @@ class InstPython3 < InstallStuff
       File.join(@prefix,"bin/pip"),
       File.join(@prefix,"bin/pip"+major.to_s)
     ]
-    self.Run( inst_pip_cmds.join(" ") )
+    self.RunInstall( cmd: inst_pip_cmds.join(" ") )
 
     inst_module_cmds = [
       pip_inst_sudo,
@@ -244,7 +248,7 @@ class InstPython3 < InstallStuff
       "install -U",
       @py3_modules.join(" ")
     ]
-    self.Run( inst_module_cmds.join(" ") )
+    self.RunInstall( env: @env, cmds: inst_module_cmds.join(" ") )
     self.WriteInfo
 
   end

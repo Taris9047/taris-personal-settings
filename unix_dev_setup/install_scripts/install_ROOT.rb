@@ -91,7 +91,7 @@ class InstROOT < InstallStuff
 
     @Version = $root_version
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    self.Run( @env, compile_cmd.join(' ') )
+    self.RunInstall( env: @env, cmd: compile_cmd.join(' ') )
 
     @conf_options = [inst_prefix_opt]+cmake_opts+comp_settings
     self.WriteInfo

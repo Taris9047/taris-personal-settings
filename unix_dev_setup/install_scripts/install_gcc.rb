@@ -148,7 +148,7 @@ class InstGCC < InstallStuff
 
     # Ok let's rock!
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    self.Run( @env, cmd.join(" ") )
+    self.RunInstall( env: @env, cmd: cmd.join(" ") )
     self.WriteInfo
 
   end
@@ -168,6 +168,7 @@ class InstGCC < InstallStuff
       "Version" => ver_system_gcc.split('.'),
       "Config options" => conf_options_str,
       "Env Variables" => 'system_package_manager',
+      "Installed Files" => ['refer system package manager!']
     }
     fp.write(compile_info_json.to_json)
     # fp.puts(compile_info.join("\n"))
@@ -388,7 +389,7 @@ class InstGCC4 < InstGCC
 
     # Ok let's rock!
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    self.Run( @env, cmd.join(" && ") )
+    self.RunInstall( env: @env, cmd: cmd.join(" && ") )
 
     self.WriteInfo
 

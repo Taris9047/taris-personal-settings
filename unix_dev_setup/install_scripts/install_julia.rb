@@ -44,13 +44,13 @@ class InstJulia < InstallStuff
       FileUtils.rm_rf("#{@src_dir}")
     end
     self.Run( "cd #{@target_dir} && git clone #{@source_url} #{@src_dir}" )
-    self.Run( "cd #{@src_dir} && git checkout v#{@Version.join('.')} && make" )
+    self.RunInstall( env:@env, cmd: "cd #{@src_dir} && git checkout v#{@Version.join('.')} && make" )
     julia_bin = File.join(@src_dir, 'julia')
 
     puts "Compilation finished! Linking executable!"
     julia_bin = File.join(@prefix, '/bin')
     if !File.directory?(julia_bin)
-      self.Run("mkdir -pv #{julia_bin}")
+      self.Run( "mkdir -pv #{julia_bin}" )
     end
     FileUtils.ln_s "#{julia_bin}", "#{File.join(julia_bin, 'julia')}", force:true, verbose:true
 

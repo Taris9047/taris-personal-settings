@@ -171,13 +171,13 @@ class InstallStuff < RunConsole
       return 0
     end
     files_before_install = self.get_prefix_file_list
-    self.Run("cd #{File.join(@build_dir)} && #{inst_cmd}")
+    self.Run( env, "#{cmd}" )
     files_after_install = self.get_prefix_file_list
-    @Installed_files = files_after_install - files_before_install
+    @Installed_files += files_after_install - files_before_install
   end
 
   def get_prefix_file_list
-    return Find.find(@prefix).collect { |_| _ }
+    return Find.find(@prefix).collect { |_| _ if !File.directory? _ }
   end
 
   def uninstall

@@ -105,7 +105,7 @@ class InstClang < InstallStuff
     # self.Run( cmd.join(" ") )
 
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    self.Run( compile_cmd.join(' ') )
+    self.RunInstall( cmd: compile_cmd.join(' ') )
 
     @conf_options = [inst_prefix_opt]+cmake_opts+comp_settings
 

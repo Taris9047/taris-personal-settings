@@ -97,7 +97,7 @@ class InstCmake < InstallStuff
     ]
 
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    self.Run( @env, cmds.join(" ") )
+    self.RunInstall( env: @env, cmd: cmds.join(" ") )
 
     self.WriteInfo
 

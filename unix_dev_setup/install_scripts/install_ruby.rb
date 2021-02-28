@@ -90,7 +90,7 @@ class InstRuby < InstallStuff
     ]
 
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    self.Run( @env, cmds.join(" ") )
+    self.RunInstall( env: @env, cmd: cmds.join(" ") )
 
     inst_module_cmds = [
       mod_sudo,
@@ -100,7 +100,7 @@ class InstRuby < InstallStuff
     ]
 
     puts "Installing additional gems..."
-    self.Run( inst_module_cmds.join(" ") )
+    self.RunInstall( env: @env, cmd: inst_module_cmds.join(" ") )
 
     self.WriteInfo
   end

@@ -73,7 +73,7 @@ class InstNgspice < InstallStuff
     ]
 
     puts "Compiling (with #{@Processors} processors) and Installing ..."
-    self.Run( @env, cmds.join(" ") )
+    self.RunInstall( env: @env, cmd: cmds.join(" ") )
     self.WriteInfo
 
     puts "This is bare bones ngspice! Put in SPICE libraries to #{@prefix}"
