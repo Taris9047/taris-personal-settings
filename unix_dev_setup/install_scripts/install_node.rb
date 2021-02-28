@@ -11,7 +11,6 @@ $conf_options = [
 
 $npm_global_pkgs = [
   "npm@latest",
-  "n",
   "yarn",
 ]
 
