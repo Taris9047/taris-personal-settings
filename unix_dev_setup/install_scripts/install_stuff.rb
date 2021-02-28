@@ -34,6 +34,7 @@ class InstallStuff < RunConsole
     @Processors = Etc.nprocessors
 
     @Version = SRC_VER[@pkgname].join('.')
+    @conf_options = []
 
   end # initialize
 
@@ -170,6 +171,10 @@ class InstallStuff < RunConsole
     @Installed_files = files_after_install - files_before_install
   end
 
+  def get_prefix_file_list
+    return Find.find(@prefix).collect { |_| _ if !_.include?('__pycache__') }
+  end
+
   def uninstall
     puts "Uninstalling #{@pkgname} ... "
     spinner = TTY::Spinner("[Uninstalling] ... :spinner", format: :bouncing_ball)
@@ -180,7 +185,7 @@ class InstallStuff < RunConsole
     FileUtils.rm_rf(@pkginfo_file)
     spinner.stop
     puts "#{@pkgname} uninstalled successfully!"
-  def
+  end
 
   def WriteInfo
     puts "Writing package info for #{@pkgname}..."

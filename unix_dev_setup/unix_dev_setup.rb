@@ -13,7 +13,7 @@ require_relative './utils/utils.rb'
 # follow up the newest changes in libc 2.26
 
 # Version
-$version = ['1', '0', '2']
+$version = ['1', '0', '3']
 
 # title
 $title = "Unix Development Environment setup"
@@ -51,7 +51,7 @@ class UnixDevSetup
       '--use-clang', 'prereq', '-v', '--verbose',
       'purge', '--purge', 'clean', '--clean', '--version',
       '--use-system-gcc', '-sgcc',
-      '--force', '-f',
+      '--force', '-f', '-u', 'uninstall', 'remove',
     ]
     @permitted_list += @opt_list
 
@@ -105,6 +105,8 @@ class UnixDevSetup
     @use_system_gcc = false
     # Force install mode (no dep check.)
     @force_install_mode = false
+    # uninstall mode?
+    @uninstall_mode = false
     self.__parse_params__
     unless @wrong_pkgs.empty?
       puts "Some wrong packages given! Ignoring them!"
@@ -316,6 +318,11 @@ class UnixDevSetup
       @force_install_mode = true
     end
 
+    if @parameters.include?('-u') or @parameters.include?('uninstall') or @parameters.include?('remove')
+      puts "Uninstalling packages!!"
+      @uninstall_mode = true
+    end
+
     if @parameters.include?('prereq')
       puts ""
       puts "========================================================="
@@ -368,16 +375,42 @@ class UnixDevSetup
 
   def install_pkgs
     # The main installation loop
-    @pkgs_to_install.each do |pkg|
-      pid = fork do
-        require "#{@inst_script_dir}/#{SRC_SCRIPT[pkg]}"
-        @inst_args["pkgname"] = pkg
-        inst = Object.const_get(SRC_CLASS[pkg]).new( @inst_args )
-        inst.install
+    unless @uninstall_mode
+      @pkgs_to_install.each do |pkg|
+        pid = fork do
+          require "#{@inst_script_dir}/#{SRC_SCRIPT[pkg]}"
+          @inst_args["pkgname"] = pkg
+          inst = Object.const_get(SRC_CLASS[pkg]).new( @inst_args )
+          inst.install
+        end
+        Process.wait
+      end # @pkgs_to_install.each do |pkg|
+    else
+      spinner = TTY::Spinner.new("[Uninstalling] ... :spinner", format: :bouncing_ball)
+      spinner.auto_spin
+      if File.directory? @pkginfo_dir
+        @Installed_pkg_list = \
+          Dir.entries(@pkginfo_dir).select { |f| f.include?('.info') }.map { |item| item.gsub('.info', '') }
+      else
+        @Installed_pkg_list = []
       end
-      Process.wait
-
-    end # @pkgs_to_install.each do |pkg|
+      
+      @pkgs_to_install.each do |pkg|
+        if @Installed_pkg_list.include?(pkg)
+          fp = File.open(File.join(@pkginfo_dir, pkg+'.info'), 'r')
+          pkg_txt = fp.read.strip
+          pkg_info = JSON.parse(pkg_txt)
+          files_to_delete = pkg_info["Installed Files"]
+          files_to_delete.each do |f|
+            FileUtils.rm_rf(f)
+          end
+          FileUtils.rm_rf(File.join(@pkginfo_dir, pkg+'.info'))
+          FileUtils.rm_rf(File.join(@pkginfo_dir, pkg+'.log'))
+        end
+      end # @pkgs_to_install.each do |pkg|
+      spinner.stop
+      puts "Uninstallation complete!"
+    end
 
     if @flag_wrong_pkg_given
       puts ""

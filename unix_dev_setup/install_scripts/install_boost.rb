@@ -67,11 +67,17 @@ class InstBoost < InstallStuff
 
     @inst_cmd = cmds
 
+    prefix_files = self.get_prefix_file_list
+
     # Ok let's rock!
+    prefix_files = self.get_prefix_file_list
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.Run( @env, cmds.join(" ") )
 
     @conf_options = @b2_opts
+
+    prefix_files_after = self.get_prefix_file_list
+    @Installed_files = prefix_files_after - prefix_files
 
     self.WriteInfo
 
@@ -86,6 +92,7 @@ class InstBoost < InstallStuff
       "Install CMD" => @inst_cmd,
       "Config options" => @conf_options,
       "Version" => @@Version_Info,
+      "Installed Files" => @Installed_files
     }
     fp.write(compile_info_json.to_json)
     fp.close    

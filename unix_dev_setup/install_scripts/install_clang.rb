@@ -104,10 +104,14 @@ class InstClang < InstallStuff
 
     # self.Run( cmd.join(" ") )
 
+    prefix_files = self.get_prefix_file_list
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.Run( compile_cmd.join(' ') )
 
     @conf_options = [inst_prefix_opt]+cmake_opts+comp_settings
+
+    prefix_files_after = self.get_prefix_file_list
+    @Installed_files = prefix_files_after - prefix_files
 
     self.WriteInfo
 
@@ -119,6 +123,7 @@ class InstClang < InstallStuff
     compile_info_json = {
       "Package Name" => @pkgname,
       "Version" => @Version,
+      "Installed Files" => @Installed_files
     }
     fp.write(compile_info_json.to_json)
     fp.close

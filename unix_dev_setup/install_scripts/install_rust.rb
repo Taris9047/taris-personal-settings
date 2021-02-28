@@ -46,23 +46,23 @@ class InstRust < InstallStuff
       self.Run( $rust_inst_cmd, @pkgname )
 
       # path for cargo
-      for pkg in @rust_utils_to_install do
+      @rust_utils_to_install.each do |pkg|
         puts("Installing "+pkg)
         self.Run( [cargo_cmd, 'install', pkg].join(' ') )
       end
     else
       puts "Looks like the Rust is already installed!. Attempting to update"
       puts "Running rustup update"
-	  self.Run( ["source ~/.cargo/env && #{rustup_cmd} update"] )
+      self.Run( ["source ~/.cargo/env && #{rustup_cmd} update"] )
       puts "Updating cargo packages"
-	  self.Run( ["source ~/.cargo/env && #{cargo_cmd} install-update -a"] )
+      self.Run( ["source ~/.cargo/env && #{cargo_cmd} install-update -a"] )
       puts "Done working on Rust!"      
     end
     
-	rustc_cmd = File.join(ENV["HOME"], '.cargo/bin/rustc')
-	stdo, stde, stat = Open3.capture3("source ~/.cargo/env && #{rustc_cmd} --version")
+    rustc_cmd = File.join(ENV["HOME"], '.cargo/bin/rustc')
+    stdo, stde, stat = Open3.capture3("source ~/.cargo/env && #{rustc_cmd} --version")
     ver = stdo.split(" ")[1].split(".")
-    @@Version_Info = ver
+    @Version_Info = ver
 
     self.WriteInfo()
 
@@ -74,7 +74,8 @@ class InstRust < InstallStuff
     compile_info_json = {
       "Package Name" => @pkgname,
       "Install CMD" => $rust_inst_cmd,
-      "Version" => @@Version_Info,
+      "Version" => @Version_Info,
+      "Installed Files" => ["#{File.join(ENV["HOME"], '.cargo')}"]
     }
     fp.write(compile_info_json.to_json)
     fp.close

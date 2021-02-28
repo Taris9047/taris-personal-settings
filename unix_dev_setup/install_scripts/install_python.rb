@@ -101,6 +101,8 @@ class InstPython2 < InstallStuff
       pip_inst_sudo = ""
     end
 
+    # Rolling!
+    prefix_files = self.get_prefix_file_list
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     cmds = [
       "cd", src_build_folder, "&&",
@@ -139,6 +141,9 @@ class InstPython2 < InstallStuff
       @py2_modules.join(" ")
     ]
     self.Run( inst_module_cmds.join(" ") )
+
+    prefix_files_after = self.get_prefix_file_list
+    @Installed_files = prefix_files_after - prefix_files
 
     self.WriteInfo
 
@@ -209,6 +214,7 @@ class InstPython3 < InstallStuff
     end
 
     # Ok let's roll!!
+    prefix_files = self.get_prefix_file_list
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     cmds = [
       "cd", src_build_folder, "&&",
@@ -245,6 +251,9 @@ class InstPython3 < InstallStuff
       @py3_modules.join(" ")
     ]
     self.Run( inst_module_cmds.join(" ") )
+
+    prefix_files_after = self.get_prefix_file_list
+    @Installed_files = prefix_files_after - prefix_files
 
     self.WriteInfo
 

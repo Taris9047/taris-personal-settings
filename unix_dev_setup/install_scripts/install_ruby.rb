@@ -89,6 +89,7 @@ class InstRuby < InstallStuff
       inst_cmd
     ]
 
+    prefix_files = self.get_prefix_file_list
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.Run( @env, cmds.join(" ") )
 
@@ -101,6 +102,9 @@ class InstRuby < InstallStuff
 
     puts "Installing additional gems..."
     self.Run( inst_module_cmds.join(" ") )
+
+    prefix_files_after = self.get_prefix_file_list
+    @Installed_files = prefix_files_after - prefix_files
 
     self.WriteInfo
   end

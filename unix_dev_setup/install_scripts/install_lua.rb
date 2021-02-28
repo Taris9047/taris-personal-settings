@@ -17,6 +17,7 @@ class InstLua < InstallStuff
 
     # Setting up compilers
     self.CompilerSet
+
   end
 
   def do_install
@@ -47,15 +48,17 @@ class InstLua < InstallStuff
     end
 
     # Ok let's roll!!
+    prefix_files = self.get_prefix_file_list
     cmds = [
-      "cd", src_extract_folder, "&&",
-      "make "+@CompilerSettings.join(" ")+" linux",
+      "cd", src_extract_folder,
+      "&&",
+      "make #{@comp_settings} linux",
       "&&",
       inst_cmd
     ]
-
     self.Run( cmds.join(" ") )
-
+    prefix_files_after = self.get_prefix_file_list
+    @Installed_files = prefix_files_after - prefix_files
     self.WriteInfo
   end
 

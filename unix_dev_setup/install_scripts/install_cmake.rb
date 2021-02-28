@@ -97,9 +97,14 @@ class InstCmake < InstallStuff
     ]
 
     puts "Compiling (with #{@Processors} processors) and Installing ..."
+    prefix_files = self.get_prefix_file_list
     self.Run( @env, cmds.join(" ") )
 
+    prefix_files_after = self.get_prefix_file_list
+    @Installed_files = prefix_files_after - prefix_files
+
     self.WriteInfo
+
   end
 
 end # class InstCmake

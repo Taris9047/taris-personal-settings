@@ -62,6 +62,8 @@ class InstNode < InstallStuff
     @env['CC'] = 'gcc'
     @env['CXX'] = 'g++'
 
+    prefix_files = self.get_prefix_file_list
+
     # Ok let's rock!
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     cmds = [
@@ -78,6 +80,9 @@ class InstNode < InstallStuff
     puts "Let's install additional packages!"
     npm_cmd = File.join(@prefix,'bin/npm')
     self.Run( "#{npm_cmd} install -g #{$npm_global_pkgs.join(' ')}" )
+
+    prefix_files_after = self.get_prefix_file_list
+    @Installed_files = prefix_files_after - prefix_filess
 
   end # install
 
@@ -137,6 +142,7 @@ class InstNodeLTS < InstallStuff
     @env['CXX'] = 'g++'
 
     # Ok let's rock!
+    prefix_files = self.get_prefix_file_list
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     cmds = [
       "cd", src_extract_folder, "&&",
@@ -150,7 +156,8 @@ class InstNodeLTS < InstallStuff
     puts "Let's install additional packages!"
     npm_cmd = File.join(@prefix,'bin/npm')
     self.Run( "#{npm_cmd} install -g #{$npm_global_pkgs.join(' ')}" )
-
+    prefix_files_after = self.get_prefix_file_list
+    @Installed_files = prefix_files_after - prefix_files
     self.WriteInfo
 
   end # install
