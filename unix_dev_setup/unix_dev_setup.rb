@@ -437,6 +437,12 @@ class UnixDevSetup
           pkg_info = self.ReadPkgInfo(pkg)
           files_to_delete = pkg_info["Installed Files"]
           files_to_delete.each do |f|
+            # do not delete non-empty directory
+            if File.directory?(f)
+              if !Dir.empty?(f)
+                next
+              end
+            end
             FileUtils.rm_rf(f)
           end
           FileUtils.rm_rf(File.join(@pkginfo_dir, pkg+'.info'))
