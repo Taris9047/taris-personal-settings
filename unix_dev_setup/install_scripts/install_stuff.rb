@@ -45,6 +45,7 @@ class InstallStuff < RunConsole
     if @run_install
       self.do_install
     end
+    puts "Running some post install stuff."
     prefix_files_after = self.get_prefix_file_list
     @Installed_files = prefix_files_after - prefix_files
   end
@@ -166,17 +167,17 @@ class InstallStuff < RunConsole
   # Collects the list of files installed
   # TODO: make it faster. This is super brute force now...
   def InstallFiles(build_dir, inst_cmd)
-    files_before_install = Find.find(@prefix).collect { |_| _ }
+    files_before_install = self.get_prefix_file_list
 
     self.Run("cd #{File.join(build_dir)} && #{inst_cmd}")
 
-    files_after_install = Find.find(@prefix).collect { |_| _ }
+    files_after_install = self.get_prefix_file_list
     
     @Installed_files = files_after_install - files_before_install
   end
 
   def get_prefix_file_list
-    return Find.find(@prefix).collect { |_| _ if !_.include?('__pycache__') }
+    return Find.find(@prefix).collect { |_| _ }
   end
 
   def uninstall
