@@ -177,7 +177,11 @@ class InstallStuff < RunConsole
   end
 
   def get_prefix_file_list
-    return Find.find(@prefix).collect { |_| _ if !File.directory? _ }
+    if File.directory? @prefix
+      return Find.find(@prefix).collect { |_| _ if File.exist? _ }
+    else
+      return []
+    end
   end
 
   def uninstall

@@ -221,7 +221,7 @@ class InstPython3 < InstallStuff
       "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
-    self.RunInstall( @env, cmds.join(" ") )
+    self.RunInstall( env: @env, cmd: cmds.join(" ") )
 
     if File.exists?(File.join(@src_dir, 'get-pip.py'))
       puts "Found get-pip.py"
