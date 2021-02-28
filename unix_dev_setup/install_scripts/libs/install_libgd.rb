@@ -1,11 +1,13 @@
 #!/usr/bin/env ruby
 
-# this will handle Gnuplot
+# Install libGD
 
-require_relative '../utils/utils.rb'
-require_relative './install_stuff.rb'
+# --> Consider using cmake instead of configure.
 
-class InstGnuplot < InstallStuff
+require_relative '../../utils/utils.rb'
+require_relative '../install_stuff.rb'
+
+class InstLibGD < InstallStuff
 
   def initialize(args)
 
@@ -77,4 +79,4 @@ class InstGnuplot < InstallStuff
     self.WriteInfo
   end
 
-end # class InstMPICH
+end # class InstLibGD

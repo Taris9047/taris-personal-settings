@@ -82,4 +82,4 @@ class InstMPICH < InstallStuff
     self.WriteInfo
   end
 
-end # class InstRuby
+end # class InstMPICH

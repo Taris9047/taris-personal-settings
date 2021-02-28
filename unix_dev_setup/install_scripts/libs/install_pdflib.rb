@@ -1,11 +1,15 @@
 #!/usr/bin/env ruby
 
-# this will handle Gnuplot
+# TODO: pdflib has a bit of different file structure. -> Installation script needs to be totally re-written.
 
-require_relative '../utils/utils.rb'
-require_relative './install_stuff.rb'
+# Install libPDFLib
 
-class InstGnuplot < InstallStuff
+# --> Consider using cmake instead of configure.
+
+require_relative '../../utils/utils.rb'
+require_relative '../install_stuff.rb'
+
+class InstPDFLib < InstallStuff
 
   def initialize(args)
 
@@ -77,4 +81,4 @@ class InstGnuplot < InstallStuff
     self.WriteInfo
   end
 
-end # class InstMPICH
+end # class InstPDFLib

@@ -221,5 +221,63 @@
     "dependency": ["gcc"],
     "script": "install_ngspice.rb",
     "class": "InstNgspice"
+  },
+
+  # Gnuplot
+  "gnuplot": {
+    "url": "http://ftp.cstug.cz/pub/CTAN/graphics/gnuplot/5.2.6/gnuplot-5.2.6.tar.gz",
+    "type": "tarball",
+    "alt-names": ["Gnuplot"],
+    "dependency": ["libpng", "libjpeg", "pdflib"],
+    "script": "install_gnuplot.rb",
+    "class": "InstGnuplot"
+  },
+
+  # Libraries
+  #
+  # libpng
+  "libpng": {
+    "url": "http://prdownloads.sourceforge.net/libpng/libpng-1.6.37.tar.xz",
+    "type": "tarball",
+    "alt-names": ["libpng-dev", "libpng-devel", "png-devel"],
+    "dependency": [],
+    "script": "/src/install_libpng.rb",
+    "class": "InstLibPNG"
+  },
+  # libjpeg
+  "libjpeg": {
+    "url": "https://sourceforge.net/projects/libjpeg/files/libjpeg/6b/jpegsrc.v6b.tar.gz",
+    "type": "tarball",
+    "alt-names": ["libjpeg-dev", "libjpeg-devel", "jpeg-devel"],
+    "dependency": [],
+    "script": "/src/install_libjpeg.rb",
+    "class": "InstLibJPEG"
+  },
+  # libtiff
+  "libtiff": {
+    "url": "https://download.osgeo.org/libtiff/tiff-4.2.0.tar.gz",
+    "type": "tarball",
+    "alt-names": ["libtiff-dev", "libtiff-devel", "tiff-devel"],
+    "dependency": [],
+    "script": "/src/install_libtiff.rb",
+    "class": "InstLibTIFF"
+  },
+  # PDFlib
+  "pdflib": {
+    "url": "https://www.pdflib.com/binaries/PDFlib/930/PDFlib-9.3.0-Linux-x86_64-C-C++.tar.gz",
+    "type": "tarball",
+    "alt-names": ["pdflib-dev", "pdflib-devel"],
+    "dependency": [],
+    "script": "/src/install_pdflib.rb",
+    "class": "InstPDFLib"
+  },
+  # LibGD
+  "libgd": {
+    "url": "https://github.com/libgd/libgd/releases/download/gd-2.3.1/libgd-2.3.1.tar.xz",
+    "type": "tarball",
+    "alt-names": ["libgd-dev", "libgd-devel", "GD-devel"],
+    "dependency": [],
+    "script": "/src/install_libgd.rb",
+    "class": "InstLibGD"
   }
 }
