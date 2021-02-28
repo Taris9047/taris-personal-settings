@@ -248,7 +248,7 @@ class InstPython3 < InstallStuff
       "install -U",
       @py3_modules.join(" ")
     ]
-    self.RunInstall( env: @env, cmds: inst_module_cmds.join(" ") )
+    self.RunInstall( env: @env, cmd: inst_module_cmds.join(" ") )
     self.WriteInfo
 
   end

@@ -110,6 +110,7 @@ class RunConsole
   end
 
   def WhenCrapHappens(env, cmds)
+    puts ""
     puts "*** Execution ended with error! ***"
     puts " ENV:"
     env.keys.each do |k|

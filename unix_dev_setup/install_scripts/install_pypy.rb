@@ -35,7 +35,7 @@ class InstPyPy3 < InstallStuff
     @pypy_modules = $pypy_modules
     @pypy3_ver = $pypy3_ver
     @platform = $platform
-    @pypy_dest_dir = File.join(prefix, $pypy_prefix_dir)
+    @pypy_dest_dir = File.join(@prefix, $pypy_prefix_dir)
 
   end
 

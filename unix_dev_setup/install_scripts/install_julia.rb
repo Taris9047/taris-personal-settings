@@ -63,7 +63,8 @@ class InstJulia < InstallStuff
     fp = File.open(@pkginfo_file, 'w')
     compile_info_json = {
       "Package Name" => @pkgname,
-      "Version" => @Version
+      "Version" => @Version,
+      "Installed Files" => @Installed_files+[File.join(julia_bin, 'julia')]
     }
     fp.write(compile_info_json.to_json)
     fp.close

@@ -70,13 +70,13 @@ class InstNode < InstallStuff
       "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
-    self.RunInstall( env: @env, cmds: cmds.join(" ") )
+    self.RunInstall( env: @env, cmd: cmds.join(" ") )
 
     self.WriteInfo
 
     puts "Let's install additional packages!"
     npm_cmd = File.join(@prefix,'bin/npm')
-    self.Run( "#{npm_cmd} install -g #{$npm_global_pkgs.join(' ')}" )
+    self.RunInstall( cmd: "#{npm_cmd} install -g #{$npm_global_pkgs.join(' ')}" )
 
   end # install
 
@@ -145,11 +145,11 @@ class InstNodeLTS < InstallStuff
       "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
-    self.Run( @env, cmds.join(" ") )
+    self.RunInstall( env: @env, cmd: cmds.join(" ") )
 
     puts "Let's install additional packages!"
     npm_cmd = File.join(@prefix,'bin/npm')
-    self.Run( "#{npm_cmd} install -g #{$npm_global_pkgs.join(' ')}" )
+    self.RunInstall( cmd: "#{npm_cmd} install -g #{$npm_global_pkgs.join(' ')}" )
     prefix_files_after = self.get_prefix_file_list
     @Installed_files = prefix_files_after - prefix_files
     self.WriteInfo
