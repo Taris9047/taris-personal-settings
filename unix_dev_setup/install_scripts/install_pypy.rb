@@ -40,9 +40,6 @@ class InstPyPy3 < InstallStuff
   end
 
   def do_install
-
-    # prefix_files_before = self.get_prefix_file_list
-
     puts "*** Note that we cannot gaurantee if it will work or not."
     puts "*** If it fails, it fails!"
 
@@ -74,9 +71,6 @@ class InstPyPy3 < InstallStuff
     puts "5. Currently we can install #{pkgs_str} without too much trouble. Other packages, we cannot be sure! If it breaks, it breaks at this moment."
     puts "****"
     puts ""
-
-    # prefix_files_after = self.get_prefix_file_list
-    # @Installed_files = prefix_files_after - prefix_files
 
     self.WriteInfo
 

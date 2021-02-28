@@ -31,7 +31,6 @@ class InstJulia < InstallStuff
     puts ""
 
     puts "Installing Julia"
-    prefix_files = self.get_prefix_file_list
     if !File.directory?(@target_dir)
       if !need_sudo
         FileUtils.mkdir_p("#{@target_dir}", verbose: true)
@@ -55,9 +54,6 @@ class InstJulia < InstallStuff
     end
     FileUtils.ln_s "#{julia_bin}", "#{File.join(julia_bin, 'julia')}", force:true, verbose:true
 
-    prefix_files_after = self.get_prefix_file_list
-    @Installed_files = prefix_files_after - prefix_files
-    
     self.WriteInfo
 
   end

@@ -1,9 +1,6 @@
 >> Implement other platforms... namely Fedora, OS X
-  --> Fedora would be pretty easy since the system's almost similar...
-  --> OS X, we may not need do do too much. They have homebrew!
-  --> Fedora and Manjaro may not need this kind of crap anyway. They provide state-of-art packages anyway. But then they aren't really optimized for current machine.
-  ----> Thus, we may need some benchmarking session.
-  --> Done with Cent OS and RHEL.
+  --> Done with Cent OS and RHEL
+  --> Manjaro seems to be working
 
 >> Some automatic update checking system? Many open source projects implement rss feed to notify newer versions.
  -> At least version checking has been implemented.
@@ -14,3 +11,5 @@
 
 >> Implement Gnuplot, ngspice, and probably.. Qt5?
 
+>> Uninstall feature implemented. A bit brute force way though...
+  --> Just compares prefix directory's file list between before/after installation.

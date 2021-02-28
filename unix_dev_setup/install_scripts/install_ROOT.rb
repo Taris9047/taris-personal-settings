@@ -90,16 +90,10 @@ class InstROOT < InstallStuff
     self.Run( @env, config_cmd.join(' ') )
 
     @Version = $root_version
-
-    prefix_files = self.get_prefix_file_list
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.Run( @env, compile_cmd.join(' ') )
 
     @conf_options = [inst_prefix_opt]+cmake_opts+comp_settings
-
-    prefix_files_after = self.get_prefix_file_list
-    @Installed_files = prefix_files_after - prefix_files
-
     self.WriteInfo
 
   end

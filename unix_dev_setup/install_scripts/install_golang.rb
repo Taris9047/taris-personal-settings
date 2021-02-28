@@ -25,7 +25,6 @@ class InstGolang < InstallStuff
 
   def do_install
 
-    prefix_files = self.get_prefix_file_list
     puts "Bootstraping!!"
     self.Run( "cd #{@src_dir} && wget #{@bootstrap_url} -O ./golang-bootstrap.tgz" )
     self.Run( "cd #{@src_dir} && tar xvf ./golang-bootstrap.tgz")
@@ -37,9 +36,6 @@ class InstGolang < InstallStuff
     puts "Let's build Golang version (#{@Version})"
     self.Run( "cd #{@src_dir} && git clone #{@source_url} #{go_dir} && cd #{go_dir} && git checkout go#{@Version}" )
     self.Run( {"GOROOT_BOOTSTRAP" => bootstrap_dir}, "cd #{go_dir}/src && ./all.bash" )
-
-    prefix_files_after = self.get_prefix_file_list
-    @Installed_files = prefix_files_after - prefix_files
 
     self.WriteInfo
 

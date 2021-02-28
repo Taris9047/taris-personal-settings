@@ -238,6 +238,8 @@ class UnixDevSetup
   --clean: deletes working dirs before installing any package
   -sgcc,--use-system-gcc: uses system gcc instead of state-of-art one.
   -f,--force: ignores dependency check and install packages.
+  -l, list <package>: shows files that a given package installed on the system.
+  -u, uninstall, remove <package>: performs uninstallation.
   clean: deletes working dirs
   purge: purges all the working dirs including pkginfo dir.
 

@@ -222,5 +222,4 @@
     "script": "install_ngspice.rb",
     "class": "InstNgspice"
   }
-
 }

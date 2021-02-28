@@ -48,7 +48,6 @@ class InstLua < InstallStuff
     end
 
     # Ok let's roll!!
-    prefix_files = self.get_prefix_file_list
     cmds = [
       "cd", src_extract_folder,
       "&&",
@@ -57,8 +56,6 @@ class InstLua < InstallStuff
       inst_cmd
     ]
     self.Run( cmds.join(" ") )
-    prefix_files_after = self.get_prefix_file_list
-    @Installed_files = prefix_files_after - prefix_files
     self.WriteInfo
   end
 
