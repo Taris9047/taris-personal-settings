@@ -42,7 +42,7 @@ class InstallStuff < RunConsole
     self.ShowTitle
     self.SetURL
     prefix_files = self.get_prefix_file_list
-    if @run_install == true
+    if @run_install
       self.do_install
     end
     prefix_files_after = self.get_prefix_file_list

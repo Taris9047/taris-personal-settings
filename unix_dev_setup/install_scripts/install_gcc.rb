@@ -64,9 +64,11 @@ class InstGCC < InstallStuff
 
   def do_install
     @pkginfo_file=File.join(@pkginfo_dir, @pkgname+'.info')
+    @ver_source = SRC_VER['gcc']
 
     if @pkgname == 'gcc'
-      o, e, s = Open3.capture3('echo $(/usr/bin/gcc --version)')
+      system_gcc = UTILS.which('gcc')
+      o = `echo $(#{system_gcc} --version)`
       ver_system_gcc = Version.new(o.split(' ')[2])
       if ver_system_gcc >= @ver_source
         puts "Looks like system gcc is new enough! Skipping!"
