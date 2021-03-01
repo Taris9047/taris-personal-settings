@@ -55,7 +55,7 @@ class GetCompiler
       cxx_compiler = "g++-#{@current_gcc_major}"
     end
 
-    unless suffix == ''
+    unless suffix.empty?
       c_compiler = 'gcc' + '-' + suffix
       cxx_compiler = 'g++' + '-' + suffix
     end
@@ -64,14 +64,22 @@ class GetCompiler
       if File.file?(File.join(cc_path, c_compiler))
         @CC = File.realpath(File.join(cc_path, c_compiler))
       else
-        @CC = File.join(@fallback_compiler_path, "gcc")
+        if UTILS.which(c_compiler)
+          @CC = File.join(@fallback_compiler_path, c_compiler)
+        else
+          @CC = File.join(@fallback_compiler_path, "gcc")
+        end
       end
     end
     if File.directory?(cxx_path)
       if File.file?(File.join(cxx_path, cxx_compiler))
         @CXX = File.realpath(File.join(cc_path, cxx_compiler))
       else
-        @CXX = File.join(@fallback_compiler_path, "g++")
+        if UTILS.which(cxx_compiler)
+          @CXX = File.join(@fallback_compiler_path, cxx_compiler)
+        else
+          @CXX = File.join(@fallback_compiler_path, "g++")
+        end
       end
     end
 
