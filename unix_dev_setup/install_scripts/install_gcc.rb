@@ -67,9 +67,13 @@ class InstGCC < InstallStuff
     @ver_source = SRC_VER['gcc']
 
     if @pkgname == 'gcc'
-      system_gcc = UTILS.which('gcc')
-      o = `echo $(#{system_gcc} --version)`
-      ver_system_gcc = Version.new(o.split(' ')[2])
+      if UTILS.which("gcc-#{@ver_source.major.to_s}")
+        system_gcc = UTILS.which("gcc-#{@ver_source.major.to_s}")
+      else
+        system_gcc = UTILS.which("gcc")
+      end
+      o = `echo $(#{system_gcc} --version | grep ^gcc | sed 's/^.* //g')`
+      ver_system_gcc = Version.new(o)
       if ver_system_gcc >= @ver_source
         puts "Looks like system gcc is new enough! Skipping!"
         self.WriteInfo_system(ver_system_gcc.to_s)

@@ -22,13 +22,15 @@ class GetCompiler
 
     @fallback_compiler_path = '/usr/bin/'
 
+    @current_gcc_major = SRC_VER['gcc'].major
+
     @CC_PATH = @fallback_compiler_path
     @CXX_PATH = @fallback_compiler_path
     @CFLAGS = [$cflags, cflags].join(' ')
     @RPATH = $rpath
     @CXXFLAGS = [$cxxflags, cxxflags].join(' ')
-    @CC = File.join(@CC_PATH, 'gcc')
-    @CXX = File.join(@CXX_PATH, 'g++')
+    @CC = File.join(@CC_PATH, "gcc-#{@current_gcc_major}")
+    @CXX = File.join(@CXX_PATH, "g++-#{@current_gcc_major}")
 
     @verbose = verbose
 
@@ -49,27 +51,27 @@ class GetCompiler
         @CXXFLAGS.slice! '-fno-semantic-interposition'
       end  
     else
-      c_compiler = 'gcc'
-      cxx_compiler = 'g++'
+      c_compiler = "gcc-#{@current_gcc_major}"
+      cxx_compiler = "g++-#{@current_gcc_major}"
     end
 
     unless suffix == ''
-      c_compiler = c_compiler + '-' + suffix
-      cxx_compiler = cxx_compiler + '-' + suffix
+      c_compiler = 'gcc' + '-' + suffix
+      cxx_compiler = 'g++' + '-' + suffix
     end
 
     if File.directory?(cc_path)
       if File.file?(File.join(cc_path, c_compiler))
         @CC = File.realpath(File.join(cc_path, c_compiler))
       else
-        @CC = File.join(@fallback_compiler_path, 'gcc')
+        @CC = File.join(@fallback_compiler_path, "gcc")
       end
     end
     if File.directory?(cxx_path)
       if File.file?(File.join(cxx_path, cxx_compiler))
         @CXX = File.realpath(File.join(cc_path, cxx_compiler))
       else
-        @CXX = File.join(@fallback_compiler_path, 'g++')
+        @CXX = File.join(@fallback_compiler_path, "g++")
       end
     end
 

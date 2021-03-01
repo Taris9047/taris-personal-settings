@@ -48,6 +48,7 @@ class Version < Array
 
   def initialize(s)
     if s.instance_of? String
+      s = s.strip()
       begin
         # puts "#{s}: #{s[-1]}: #{s[-1].isalpha?}"
         if s[-1].isalpha?
