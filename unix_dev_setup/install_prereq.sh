@@ -3,7 +3,8 @@
 #
 # TODO: Need to populate proper package list for other distros.
 # There are tons of strange distros!!
-# --> Ubuntu 20.04, Debian, Fedora (F33), CentOS (8), RHEL (8) are ok now.
+# --> Ubuntu 20.04, Debian, Fedora (F33), CentOS (8), RHEL (8), openSUSE Leap 
+# are ok now.
 #
 
 if [ -x "$(command -v lsb_release)" ]; then
@@ -25,6 +26,7 @@ echo "... Looks like your distro is: $DISTRO"
 Debian_base=("Debian GNU/Linux")
 Ubuntu_base=("Ubuntu" "Linuxmint")
 Fedora_base=("Fedora" "CentOS Linux" "Red Hat Enterprise Linux")
+openSUSE_base=("openSUSE" "openSUSE Leap")
 Arch_base=("ArchLinux" "ManjaroLinux")
 
 # Supported modes
@@ -38,6 +40,8 @@ elif [[ " ${Fedora_base[@]} " =~ " ${DISTRO} " ]]; then
   MODE="Fedora"
 elif [[ " ${Arch_base[@]} " =~ " ${DISTRO} " ]]; then
   MODE="Arch"
+elif [[ " ${openSUSE_base[@]} " =~ " ${DISTRO} " ]]; then
+  MODE="openSUSE"
 fi
 
 echo "Current linux distribution seems $MODE based one."
@@ -191,6 +195,64 @@ RHEL_additional_packages=( \
   "ninja-build" \
   )
 
+# openSUSE
+openSUSE_packages=( \
+  "wget" \
+  "ruby" \
+  "ruby-devel" \
+  "cmake" \
+  "cmake-gui" \
+  "libuuid-devel" \
+  "tk-devel" \
+  "bzip2" \
+  "libffi-devel" \
+  "numactl" \
+  "xz-devel" \
+  "libexpat1" \
+  "openblas-devel" \
+  "lapack" \
+  "sqlite" \
+  "sqlite-devel" \
+  "zlib" \
+  "zlib-devel" \
+  "binutils" \
+  "libX11-devel" \
+  "libXpm-devel" \
+  "libXft-devel" \
+  "libXext-devel" \
+  "libXt-devel" \
+  "openssl" \
+  "openssl-devel" \
+  "pcre-devel" \
+  "Mesa" \
+  "ftgl-devel" \
+  "fftw-devel" \
+  "cfitsio-devel" \
+  "yast2-auth-server" \
+  "libxml2-devel" \
+  "gsl-devel" \
+  "emacs" \
+  "subversion" \
+  "git" \
+  "git-lfs" \
+  "wget" \
+  "curl" \
+  "valgrind" \
+  "valgrind-devel" \
+  "vim" \
+  "neovim" \
+  "screen" \
+  "neofetch" \
+  "openblas-devel" \
+  "blas-devel" \
+  "mysql-devel" \
+  "glew-devel" \
+  "graphviz-devel" \
+  "doxygen" \
+  "ninja" \
+)
+  
+# Arch
 Arch_packages=( \
   "base-devel" \
   "gcc-fortran" \
@@ -259,11 +321,12 @@ Ruby_gems=( \
 # newer 0.1.1 version. So, 0.1.0 will be installed on those systems.
 # Let's hope they can work with my codes without too much problem.
 #
-adj_gems=('open3')
-for del in ${adj_gems[@]}
-do
-  Ruby_gems_RHEL=( "{Ruby_gems[@]/$del}" )
-done
+Ruby_gems_RHEL=( \
+  "rsense" \
+  "json" \
+  "ruby-progressbar" \
+  "tty-spinner" \
+)
 
 array_to_string ()
 {
@@ -333,6 +396,16 @@ install_prereq_Arch ()
   sudo /usr/bin/gem install $gems
 }
 
+install_prereq_openSUSE ()
+{
+  pkgs=$( array_to_string "${openSUSE_packages[@]}" )
+  gems=$( array_to_string "${Ruby_gems_RHEL[@]}" )
+  sudo zypper refresh && sudo zypper update
+  sudo zypper in $pkgs
+  sudo /usr/bin/gem install $gems
+  sudo /usr/bin/gem install open3 -v 0.1.0
+}
+
 case ${MODE} in
   
   "Ubuntu")
@@ -347,9 +420,13 @@ case ${MODE} in
   "Arch")
     install_prereq_Arch
     ;;
+  "openSUSE")
+    install_prereq_openSUSE
+    ;;
   *)
     echo "${MODE} is not supported now."
     exit 1
+    ;;
 esac
 
 # Putting up some system info!
