@@ -200,6 +200,7 @@ openSUSE_packages=( \
   "wget" \
   "ruby" \
   "ruby-devel" \
+  "gcc10" "gcc10-g++" \
   "cmake" \
   "cmake-gui" \
   "libuuid-devel" \
@@ -249,6 +250,7 @@ openSUSE_packages=( \
   "glew-devel" \
   "graphviz-devel" \
   "doxygen" \
+	"unicode-emoji" \
   "ninja" \
 )
   
@@ -401,6 +403,8 @@ install_prereq_openSUSE ()
   pkgs=$( array_to_string "${openSUSE_packages[@]}" )
   gems=$( array_to_string "${Ruby_gems_RHEL[@]}" )
   sudo zypper refresh && sudo zypper update
+  sudo zypper install --type pattern devel_basis
+  sudo zypper install --type pattern devel_C_C++
   sudo zypper in $pkgs
   sudo /usr/bin/gem install $gems
   sudo /usr/bin/gem install open3 -v 0.1.0

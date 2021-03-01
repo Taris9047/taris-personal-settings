@@ -223,6 +223,13 @@ if [ -d $GOROOT ]; then
   addpath "$GOROOT/bin"
 fi
 
+# Snapd stuff
+SNAP_BIN=/snap/bin
+if [ -d "$SNAP_BIN" ]; then
+  printf "${check_symbol} Snap executables have been found at $SNAP_BIN\n"
+  addpath "$SNAP_BIN"
+fi
+
 # VNC stuff
 if [ -x "$(command -v vncserver)" ]; then
   echo "*** VNC server found! ***"
