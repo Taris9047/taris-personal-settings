@@ -11,16 +11,18 @@ if [ -x "$(command -v lsb_release)" ]; then
   fi
 else
   IN=$(grep '^NAME' /etc/os-release)
-  DISTRO=$(echo $IN | tr -d "\"" | sed -E 's/NAME=//')
+  DISTRO=$(echo $IN | sed -E 's/\"//g' | sed -E 's/NAME=//')
 fi
 
 echo "Detecting distro..."
 echo "... Looks like your distro is: $DISTRO"
 
 # Some Distro information
+# Some Distro information
 Debian_base=("Debian GNU/Linux")
-Ubuntu_base=("Ubuntu" "Linuxmint")
-Fedora_base=("Fedora" "CentOS Linux" "Red Hat Enterprise Linux" "RedHatEnterprise")
+Ubuntu_base=("Ubuntu" "Linuxmint" "Pop" "Pop\!_OS")
+Fedora_base=("Fedora" "CentOS Linux" "Red Hat Enterprise Linux")
+openSUSE_base=("openSUSE" "openSUSE Leap")
 Arch_base=("ArchLinux" "ManjaroLinux")
 
 # Supported modes
