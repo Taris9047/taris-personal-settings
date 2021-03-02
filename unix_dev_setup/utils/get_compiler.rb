@@ -51,8 +51,8 @@ class GetCompiler
         @CXXFLAGS.slice! '-fno-semantic-interposition'
       end  
     else
-      c_compiler = "gcc-#{@current_gcc_major}"
-      cxx_compiler = "g++-#{@current_gcc_major}"
+      c_compiler = "gcc"
+      cxx_compiler = "g++"
     end
 
     unless suffix.empty?
