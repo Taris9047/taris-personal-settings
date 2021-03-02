@@ -419,6 +419,13 @@ if [ -d "$HOME/.emacs.d/bin" ]; then
 	addpath "$HOME/.emacs.d/bin"
 fi
 
+# For old MBP cuda.
+if [ -d "/use/local/cuda-6.5" ]; then
+  printf "${check_symbol} CUDA 6.5 found! Doing some env stuff for it.\n"
+  export LD_LIBRARY_PATH="/usr/local/cuda/lib64":$LD_LIBRARY_PATH
+  export PATH=$PATH:"/use/local/cuda-6.5/bin"
+fi
+
 # Geolocation
 # if [ -x "$(command -v jq)" ]; then
 #   echo "jq found, we can use geolocation alias as: geoloc"

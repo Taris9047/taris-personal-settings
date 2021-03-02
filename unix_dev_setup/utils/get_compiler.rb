@@ -64,7 +64,7 @@ class GetCompiler
       if File.file?(File.join(cc_path, c_compiler))
         @CC = File.realpath(File.join(cc_path, c_compiler))
       else
-        if UTILS.which(c_compiler)
+        if File.file?(UTILS.which(c_compiler))
           @CC = UTILS.which(c_compiler)
         else
           @CC = File.join(@fallback_compiler_path, "gcc")
@@ -75,7 +75,7 @@ class GetCompiler
       if File.file?(File.join(cxx_path, cxx_compiler))
         @CXX = File.realpath(File.join(cc_path, cxx_compiler))
       else
-        if UTILS.which(cxx_compiler)
+        if File.file?(UTILS.which(cxx_compiler))
           @CXX = UTILS.which(cxx_compiler)
         else
           @CXX = File.join(@fallback_compiler_path, "g++")
