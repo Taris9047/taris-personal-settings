@@ -94,8 +94,11 @@ alias free='free -m'
 # A few more aliases
 #
 alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
+alias aptin='sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install'
 alias dnfup='sudo dnf -y update'
+alias dnfin='sudo dnf -y install'
 alias pmyy='sudo pacman -Syyu'
+alias pmin='sudo pacman -Syyu'
 ## get top process eating memory
 alias psmem='ps auxf | sort -nr -k 4'
 alias psmem10='ps auxf | sort -nr -k 4 | head -10'
