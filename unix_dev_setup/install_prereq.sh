@@ -24,7 +24,7 @@ echo "... Looks like your distro is: $DISTRO"
 
 # Some Distro information
 Debian_base=("Debian GNU/Linux")
-Ubuntu_base=("Ubuntu" "Linuxmint")
+Ubuntu_base=("Ubuntu" "Linuxmint" "Pop" "Pop\!_OS")
 Fedora_base=("Fedora" "CentOS Linux" "Red Hat Enterprise Linux")
 openSUSE_base=("openSUSE" "openSUSE Leap")
 Arch_base=("ArchLinux" "ManjaroLinux")
@@ -56,7 +56,7 @@ Debian_packages=( \
   "libssl-dev" \
   "libsqlite3-dev" \
   "libncursesw5-dev" \
-	"libyaml-dev" \
+  "libyaml-dev" \
   "libreadline-dev" \
   "libssl-dev" \
   "libgdbm-dev" \
@@ -250,7 +250,7 @@ openSUSE_packages=( \
   "glew-devel" \
   "graphviz-devel" \
   "doxygen" \
-	"unicode-emoji" \
+  "unicode-emoji" \
   "ninja" \
 )
   
@@ -304,7 +304,7 @@ Arch_packages=( \
   "lapack" \
   "mercurial" \
   "subversion" \
-	"unicode-emoji" \
+  "unicode-emoji" \
   "ninja" \
   "neofetch" \
   )
