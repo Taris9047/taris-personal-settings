@@ -420,17 +420,10 @@ class UnixDevSetup
     # The main installation loop
     unless @uninstall_mode
       @pkgs_to_install.each do |pkg|
-        pid = Process.fork do
-          require "#{@inst_script_dir}/#{SRC_SCRIPT[pkg]}"
-          @inst_args["pkgname"] = pkg
-          inst = Object.const_get(SRC_CLASS[pkg]).new( @inst_args )
-          inst.install
-        end
-        Process.wait
-        if !pid.success?
-          puts "*** Something went wrong!! ***"
-          exit -1
-        end
+        require "#{@inst_script_dir}/#{SRC_SCRIPT[pkg]}"
+        @inst_args["pkgname"] = pkg
+        inst = Object.const_get(SRC_CLASS[pkg]).new( @inst_args )
+        inst.install
       end # @pkgs_to_install.each do |pkg|
     else
       spinner = TTY::Spinner.new("[Uninstalling] ... :spinner", format: :bouncing_ball)
