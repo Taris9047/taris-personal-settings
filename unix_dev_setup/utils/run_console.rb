@@ -80,7 +80,7 @@ class RunConsole
       Thread.new do
         stdout_err.each do |l|
           puts l
-          stdout_err.flush
+          #stdout_err.flush
           o.append(l)
         end
       end
