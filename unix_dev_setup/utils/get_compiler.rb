@@ -5,10 +5,10 @@
 #$cflags = "-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe"
 #$cxxflags = "-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe"
 
-$cflags = "-O3 -march=native -fomit-frame-pointer -pipe"
+$cflags = "-O3 -march=native -fomit-frame-pointer -pipe -I{env_path}/include"
 $cxxflags = $cflags
 
-$rpath = "-Wl,-rpath={env_path}/lib -Wl,-rpath={env_path}/lib64"
+$rpath = "-Wl,-rpath={env_path}/lib -Wl,-rpath={env_path}/lib64 -L{env_path}/lib -L{env_path}/lib64"
 
 class GetCompiler
   attr_accessor :cc_path, :cxx_path, :cflags, :cxxflags, :clang, :suffix, :env_path
@@ -31,14 +31,17 @@ class GetCompiler
     @CXXFLAGS = [$cxxflags, cxxflags].join(' ')
     @CC = File.join(@CC_PATH, "gcc-#{@current_gcc_major}")
     @CXX = File.join(@CXX_PATH, "g++-#{@current_gcc_major}")
+    @env_path = env_path
 
     @verbose = verbose
 
-    r_path = '/usr/local'
-    if env_path == ''
-      r_path = File.dirname(cc_path)
+    @prefix = env_path
+    if env_path == '' or !File.directory? env_path
+      @prefix = File.dirname(cc_path)
     end
-    @RPATH = @RPATH.gsub('{env_path}', r_path)
+    @CFLAGS = @CFLAGS.gsub('{env_path}', @prefix)
+    @CXXFLAGS = @CFLAGS.gsub('{env_path}', @prefix)
+    @RPATH = @RPATH.gsub('{env_path}', @prefix)
 
     if clang
       c_compiler = 'clang'

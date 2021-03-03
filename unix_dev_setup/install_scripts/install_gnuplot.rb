@@ -24,13 +24,14 @@ class InstGnuplot < InstallStuff
     qmake_cmd = self.qt5_qmake()
     if qmake_cmd
       @conf_options -= ["--with-qt=no"]
-      @conf_options += ["--with-qt5=#{qmake_cmd}"]
-      puts "qmake found (#{qmake_cmd}), enabling cmake-gui!!"
+      @conf_options += ["--with-qt=qt5"]
+      puts "qmake found (#{qmake_cmd}), enabling qt-terminal!!"
     end
     @conf_options += [
       "--with-readline=builtin",
       "--with-x",
       "--with-gd=#{@prefix}/lib",
+      "--enable-backwards-compatibility",
     ]
 
     # Setting up compilers

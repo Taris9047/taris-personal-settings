@@ -42,7 +42,7 @@ class InstPDFLib < InstallStuff
       puts "Source file folder exists in "+src_extract_folder
     else
       puts "Extracting"
-      self.Run( "tar xf "+File.realpath(File.join(@src_dir, src_tarball_fname))+" -C "+@build_dir )
+      self.Run( "tar xf "+File.realpath(File.join(@src_dir, @src_tarball_fname))+" -C "+@build_dir )
     end
 
     if @need_sudo

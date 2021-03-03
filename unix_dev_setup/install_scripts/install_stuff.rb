@@ -41,13 +41,13 @@ class InstallStuff < RunConsole
   def install
     self.ShowTitle
     self.SetURL
-    prefix_files = self.get_prefix_file_list
+    # prefix_files = self.get_prefix_file_list
     if @run_install
       self.do_install
     end
-    puts "Running some post install stuff."
-    prefix_files_after = self.get_prefix_file_list
-    @Installed_files = prefix_files_after - prefix_files
+    # puts "Running some post install stuff."
+    # prefix_files_after = self.get_prefix_file_list
+    # @Installed_files = prefix_files_after - prefix_files
   end
 
   def SetURL
@@ -133,7 +133,7 @@ class InstallStuff < RunConsole
   end # VerCheck
 
   # Invoke it only if you have a valid prefix
-  def CompilerSet(cflags='', cxxflags='')
+  def CompilerSet(cflags='', cxxflags='', clang_mode=false)
     if !File.directory? @prefix
       puts "Cannot set a correct compiler with give path!"
       puts "Given path: #{@prefix}"
@@ -144,7 +144,9 @@ class InstallStuff < RunConsole
     end
     gc = GetCompiler.new(
       cc_path=compiler_path, cxx_path=compiler_path,
-      cflags=cflags, cxxflags=cxxflags)
+      cflags=cflags, cxxflags=cxxflags, 
+      clang=false, suffix='', env_path=@prefix,
+      verbose=false)
     @cmake_comp_settings = gc.get_cmake_settings
     @comp_settings = gc.get_env_str
     @env = gc.get_env_settings
