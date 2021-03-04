@@ -23,9 +23,19 @@ class InstPDFLib < InstallStuff
 
     @source_url = SRC_URL[@pkgname]
 
+    @run_install = true
+    if File.exists? (File.join(@prefix, 'lib/libpdf.a')) and File.exists? (File.join(@prefix, 'include/pdflib.h'))
+      puts "Looks like pdflib has already been installed!!"
+      @run_install = false
+    end
+
   end
 
   def do_install
+
+    if !@run_install
+      exit(0)
+    end
 
     dl = Download.new(@source_url, @src_dir, source_ctl='', mode='wget', source_ctl_opts='')
     src_tarball_path = dl.GetPath
