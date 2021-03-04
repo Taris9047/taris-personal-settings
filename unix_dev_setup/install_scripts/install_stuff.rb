@@ -35,6 +35,9 @@ class InstallStuff < RunConsole
 
     @Version = SRC_VER[@pkgname].join('.')
     @conf_options = []
+    @cmake_comp_settings = []
+    @comp_settings = ''
+    @env = {}
 
   end # initialize
 
@@ -147,22 +150,46 @@ class InstallStuff < RunConsole
       cflags=cflags, cxxflags=cxxflags, 
       clang=false, suffix='', env_path=@prefix,
       verbose=false)
-    @cmake_comp_settings = gc.get_cmake_settings
-    @comp_settings = gc.get_env_str
-    @env = gc.get_env_settings
+    @cmake_comp_settings += gc.get_cmake_settings
+    @comp_settings += gc.get_env_str
+    @env = @env.merge(gc.get_env_settings) {|key, oldval, newval| oldval+oldval}
   end
 
   # Qt5 existence check. (more likely qmake executable.)
-  def qt5_qmake()
+  def qt5_qmake(qt5_path='')
+    puts "Checking if the system has usable Qt5 ... "
     qmake_cmd = nil
     qmake_cmd_candidates = ['qmake', 'qmake5', 'qmake-qt5', 'qt5-qmake']
+    # Search for package manager installed one. (System)
     qmake_cmd_candidates.each do |qm_cmd|
       qmake_cmd = UTILS.which(qm_cmd)
       if qmake_cmd
+        puts "System qmake found!!: #{qmake_cmd}"
         return qmake_cmd
         break
       end
     end
+    # If not found... try the default search path... for some people who 
+    # actually installs Qt themselves.
+    qmake_cmd = File.join(qt5_path, 'qmake')
+    if File.exists? qmake_cmd
+      if !@env.empty?
+        if !@env["LDFLAGS"].empty?
+          @env["LDFLAGS"] += " -L#{qt5_path}/../lib"
+        end
+        if !@env["CFLAGS"].empty?
+          @env["CFLAGS"] += " -I#{qt5_path}/../include"
+        end
+        if !@env["CXXFLAGS"].empty?
+          @env["CXXFLAGS"] += " -I#{qt5_path}/../include"
+        end
+      end
+      @env["PATH"] = "#{qt5_path}:#{ENV["PATH"]}"
+      puts "Custom qmake found in ... #{qmake_cmd}"
+      return qmake_cmd
+    end
+    
+    puts "Looks like we don't have qmake in this system!"
     return nil
   end
 
