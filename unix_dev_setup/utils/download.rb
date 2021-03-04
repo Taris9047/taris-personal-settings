@@ -12,7 +12,7 @@ class Download < RunConsole
 
   def initialize(
     url='', destination='./', 
-    source_ctl='', mode='direct', 
+    source_ctl='', mode='wget', 
     source_ctl_opts='')
     
     super()
