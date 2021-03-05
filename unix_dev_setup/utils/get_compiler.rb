@@ -9,7 +9,7 @@ $cflags = "-O3 -march=native -fomit-frame-pointer -pipe -I{env_path}/include"
 $cxxflags = $cflags
 
 $rpath = "-Wl,-rpath={env_path}/lib -Wl,-rpath={env_path}/lib64 -L{env_path}/lib -L{env_path}/lib64"
-$pkg_config_path = "{env_path}/lib/pkgconfig"
+$pkg_config_path = "{env_path}/lib/pkgconfig:/usr/local/lib64/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib64/pkgconfig:/usr/lib/pkgconfig"
 
 class GetCompiler
   attr_accessor :cc_path, :cxx_path, :cflags, :cxxflags, :clang, :suffix, :env_path
