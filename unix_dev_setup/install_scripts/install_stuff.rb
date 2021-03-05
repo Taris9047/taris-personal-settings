@@ -172,17 +172,27 @@ class InstallStuff < RunConsole
     # If not found... try the default search path... for some people who 
     # actually installs Qt themselves.
     qmake_cmd = File.join(qt5_path, 'qmake')
+    self.patch_qt5_pkgconfig(qt5_path)
     if File.exists? qmake_cmd
       @env["LDFLAGS"] += " -Wl,-rpath=#{qt5_path}/../lib"
       @env["PKG_CONFIG_PATH"] = "#{qt5_path}/../lib/pkgconfig:#{@env["PKG_CONFIG_PATH"]}"
       @env["PATH"] = "#{qt5_path}:#{ENV["PATH"]}"
-      @env = @env.merge!({"QT5PREFIX" => "#{qt5_path}/../"})
       puts "Custom qmake found in ... #{qmake_cmd}"
       return qmake_cmd
     end
     
     puts "Looks like we don't have qmake in this system!"
     return nil
+  end
+
+  def patch_qt5_pkgconfig(qt5_bin_path)
+    qt5_pkgconfig_path = File.join(qt5_bin_path, '../lib/pkgconfig')
+    pkgconfig_files = Dir["#{qt5_pkgconfig_path}/*.pc"]
+    pkgconfig_files.each do |pkf|
+      pc_txt = File.read(pkf)
+      replaced_txt = pc_txt.gsub(/\/home\/qt\/work\/install/, qt5_bin_path)
+      File.open(pkf, 'w') {|file| file.puts replaced_txt}
+    end
   end
 
   # Collects the list of files installed
