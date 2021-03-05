@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 
-$qt5_bin_path = File.join(ENV["HOME"], '.Qt/5.15.2/gcc_64/bin')
+# Install libWebp
 
-# this will handle Gnuplot
+# --> Consider using cmake instead of configure.
 
-require_relative '../utils/utils.rb'
-require_relative './install_stuff.rb'
+require_relative '../../utils/utils.rb'
+require_relative '../install_stuff.rb'
 
-class InstGnuplot < InstallStuff
+class InstLibWebp < InstallStuff
 
   def initialize(args)
 
@@ -19,25 +19,11 @@ class InstGnuplot < InstallStuff
 
     @source_url = SRC_URL[@pkgname]
 
-    # Setting up compilers
-    self.CompilerSet
-
     # build options
     @conf_options = []
-    # Checking up qt5
-    @conf_options += ["--with-qt=no"]
-    qmake_cmd = self.qt5_qmake($qt5_bin_path)
-    if qmake_cmd
-      @conf_options -= ["--with-qt=no"]
-      @conf_options += ["--with-qt=qt5"]
-      # puts "qmake found (#{qmake_cmd}), enabling qt-terminal!!"
-    end
-    @conf_options += [
-      "--with-readline=builtin",
-      "--with-x",
-      "--with-gd=#{@prefix}/lib",
-      "--enable-backwards-compatibility",
-    ]
+
+    # Setting up compilers
+    self.CompilerSet
 
   end
 
@@ -63,7 +49,7 @@ class InstGnuplot < InstallStuff
 
     if Dir.exists?(src_build_folder)
       puts "Build folder found!! Removing it for 'pure' experience!!"
-      self.Run( "rm -rf "+src_build_folder )
+      self.Run( "rm -rfv "+src_build_folder )
     else
       puts "Ok, let's make a build folder"
     end
@@ -87,9 +73,10 @@ class InstGnuplot < InstallStuff
       "make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
+
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.RunInstall( env: @env, cmd: cmds.join(" ") )
     self.WriteInfo
   end
 
-end # class InstGnuplot
+end # class InstLibWebp

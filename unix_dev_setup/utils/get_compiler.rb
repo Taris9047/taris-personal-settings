@@ -9,6 +9,7 @@ $cflags = "-O3 -march=native -fomit-frame-pointer -pipe -I{env_path}/include"
 $cxxflags = $cflags
 
 $rpath = "-Wl,-rpath={env_path}/lib -Wl,-rpath={env_path}/lib64 -L{env_path}/lib -L{env_path}/lib64"
+$pkg_config_path = "{env_path}/lib/pkgconfig"
 
 class GetCompiler
   attr_accessor :cc_path, :cxx_path, :cflags, :cxxflags, :clang, :suffix, :env_path
@@ -28,6 +29,12 @@ class GetCompiler
     @CXX_PATH = @fallback_compiler_path
     @CFLAGS = [$cflags, cflags].join(' ')
     @RPATH = $rpath
+    if ENV['PKG_CONFIG_PATH']
+      @PKG_CONFIG_PATH = "#{$pkg_config_path}:#{ENV['PKG_CONFIG_PATH']}"
+    else
+      @PKG_CONFIG_PATH = $pkg_config_path
+    end
+    @PATH=""
     @CXXFLAGS = [$cxxflags, cxxflags].join(' ')
     @CC = File.join(@CC_PATH, "gcc-#{@current_gcc_major}")
     @CXX = File.join(@CXX_PATH, "g++-#{@current_gcc_major}")
@@ -42,6 +49,7 @@ class GetCompiler
     @CFLAGS = @CFLAGS.gsub('{env_path}', @prefix)
     @CXXFLAGS = @CFLAGS.gsub('{env_path}', @prefix)
     @RPATH = @RPATH.gsub('{env_path}', @prefix)
+    @PKG_CONFIG_PATH = @PKG_CONFIG_PATH.gsub('{env_path}', @prefix)
 
     if clang
       c_compiler = 'clang'
@@ -54,8 +62,8 @@ class GetCompiler
         @CXXFLAGS.slice! '-fno-semantic-interposition'
       end  
     else
-      c_compiler = "gcc"
-      cxx_compiler = "g++"
+      c_compiler = 'gcc'
+      cxx_compiler = 'g++'
     end
 
     unless suffix.empty?
@@ -101,7 +109,9 @@ class GetCompiler
       puts "C++ compiler: #{@CXX}"
       puts "C flags: #{@CFLAGS}"
       puts "CXX flags: #{@CXXFLAGS}"
-      puts "LL flags: #{@RPATH}"
+      puts "Linker flags: #{@RPATH}"
+      puts "pkgconfig path: #{@PKG_CONFIG_PATH}"
+
     end
 
   end
@@ -113,8 +123,9 @@ class GetCompiler
     cflags_env = ["CFLAGS=\"", @CFLAGS, "\""].join('')
     cxxflags_env = ["CXXFLAGS=\"", @CXXFLAGS, "\""].join('')
     ldflags_env = ["LDFLAGS=\"", @RPATH, "\""].join('')
+    pkgconfig_env = "PKG_CONFIG_PATH=\"#{@PKG_CONFIG_PATH}\""
 
-    return [cc_env, cxx_env, cflags_env, cxxflags_env, ldflags_env]
+    return [cc_env, cxx_env, cflags_env, cxxflags_env, ldflags_env, pkgconfig_env]
   end
 
   def get_env_str
@@ -128,6 +139,7 @@ class GetCompiler
       'CFLAGS' => @CFLAGS,
       'CXXFLAGS' => @CXXFLAGS,
       'LDFLAGS' => @RPATH,
+      'PKG_CONFIG_PATH' => @PKG_CONFIG_PATH,
     }
   end
 
@@ -139,8 +151,9 @@ class GetCompiler
     ld_exe_env = "-DCMAKE_EXE_LINKER_FLAGS_INIT=\""+@RPATH+"\""
     ld_shared_env = "-DCMAKE_SHARED_LINKER_FLAGS_INIT=\""+@RPATH+"\""
     ld_module_env = "-DCMAKE_MODULE_LINKER_FLAGS_INIT=\""+@RPATH+"\""
+    pkg_config_path = "-DCMAKE_PKG_CONFIG_PATH=\"#{@PKG_CONFIG_PATH}\""
 
-    return  [cc_env, cxx_env, cflags_env, cxxflags_env, ld_exe_env, ld_shared_env, ld_module_env]
+    return  [cc_env, cxx_env, cflags_env, cxxflags_env, ld_exe_env, ld_shared_env, ld_module_env, pkg_config_path]
   end
 
 end

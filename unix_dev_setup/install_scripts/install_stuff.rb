@@ -173,18 +173,20 @@ class InstallStuff < RunConsole
     # actually installs Qt themselves.
     qmake_cmd = File.join(qt5_path, 'qmake')
     if File.exists? qmake_cmd
-      if !@env.empty?
-        if !@env["LDFLAGS"].empty?
-          @env["LDFLAGS"] += " -L#{qt5_path}/../lib"
-        end
-        if !@env["CFLAGS"].empty?
-          @env["CFLAGS"] += " -I#{qt5_path}/../include"
-        end
-        if !@env["CXXFLAGS"].empty?
-          @env["CXXFLAGS"] += " -I#{qt5_path}/../include"
-        end
-      end
+      # if !@env.empty?
+      #   if !@env["LDFLAGS"].empty?
+      #     @env["LDFLAGS"] += " -L#{qt5_path}/../lib"
+      #   end
+      #   if !@env["CFLAGS"].empty?
+      #     @env["CFLAGS"] += " -I#{qt5_path}/../include"
+      #   end
+      #   if !@env["CXXFLAGS"].empty?
+      #     @env["CXXFLAGS"] += " -I#{qt5_path}/../include"
+      #   end
+      # end
+      @env["PKG_CONFIG_PATH"] = "#{qt5_path}/../lib/pkgconfig:#{@env["PKG_CONFIG_PATH"]}"
       @env["PATH"] = "#{qt5_path}:#{ENV["PATH"]}"
+      @env = @env.merge!({"QT5PREFIX" => "#{qt5_path}/../"})
       puts "Custom qmake found in ... #{qmake_cmd}"
       return qmake_cmd
     end

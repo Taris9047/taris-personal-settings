@@ -101,6 +101,10 @@ Debian_packages=( \
   "libxext-dev" \
   "libpng-dev" \
   "libjpeg-dev" \
+  "libpango1.0-dev" \
+  "libpangocairo-*" \
+  "libcairo-dev" \
+  "libcerf-dev" \
   "valgrind" \
   "cmake" \
   "cmake-gui" \

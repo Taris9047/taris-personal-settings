@@ -285,8 +285,17 @@
     "url": "https://github.com/libgd/libgd/releases/download/gd-2.3.1/libgd-2.3.1.tar.xz",
     "type": "tarball",
     "alt-names": ["libgd-dev", "libgd-devel", "GD-devel"],
-    "dependency": [],
+    "dependency": ["libtiff", "libpng", "libjpeg-turbo", "libwebp"],
     "script": "libs/install_libgd.rb",
     "class": "InstLibGD"
+  },
+  # libwebp
+  "libwebp": {
+    "url": "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.2.0.tar.gz",
+    "type": "tarball",
+    "alt-names": ["libwebp-dev", "libwebp-devel"],
+    "dependency": ["libtiff", "libpng", "libjpeg-turbo"],
+    "script": "libs/install_libwebp.rb",
+    "class": "InstLibWebp"
   }
 }
