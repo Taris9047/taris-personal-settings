@@ -25,7 +25,7 @@ echo "... Looks like your distro is: $DISTRO"
 # Some Distro information
 Debian_base=("Debian GNU/Linux")
 Ubuntu_base=("Ubuntu" "Linuxmint" "Pop" "Pop\!_OS")
-Fedora_base=("Fedora" "CentOS Linux" "Red Hat Enterprise Linux")
+Fedora_base=("Fedora" "CentOS Linux" "CentOS Stream" "Red Hat Enterprise Linux")
 openSUSE_base=("openSUSE" "openSUSE Leap")
 Arch_base=("ArchLinux" "ManjaroLinux")
 
@@ -180,7 +180,6 @@ Fedora_packages=( \
 # between Fedora and CentOS/RHEL...
 Fedora_additional_packages=( \
   "openblas-devel" \
-  "blas-devel" \
   "mysql-devel" \
   "glew-devel" \
   "graphviz-devel" \
@@ -190,8 +189,7 @@ Fedora_additional_packages=( \
   )
 # Many of them aren't really 
 RHEL_additional_packages=( \
-  "openblas-devel" \
-  "blas-devel" \
+  "openblas" \
   "glew-devel" \
   "graphviz-devel" \
   "avahi-compat-libdns_sd-devel" \

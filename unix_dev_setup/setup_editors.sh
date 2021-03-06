@@ -21,7 +21,7 @@ echo "... Looks like your distro is: $DISTRO"
 # Some Distro information
 Debian_base=("Debian GNU/Linux")
 Ubuntu_base=("Ubuntu" "Linuxmint" "Pop" "Pop\!_OS")
-Fedora_base=("Fedora" "CentOS Linux" "Red Hat Enterprise Linux")
+Fedora_base=("Fedora" "CentOS Linux" "CentOS Stream" "Red Hat Enterprise Linux")
 openSUSE_base=("openSUSE" "openSUSE Leap")
 Arch_base=("ArchLinux" "ManjaroLinux")
 
