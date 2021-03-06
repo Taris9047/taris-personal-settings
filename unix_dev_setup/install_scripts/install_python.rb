@@ -56,7 +56,7 @@ class InstPython2 < InstallStuff
     @py2_modules = $py2_modules
 
     # Python2 build options
-    @conf_options = $py2_conf_options
+    @conf_options = $py2_conf_options+["--libdir=#{@prefix}/lib"]
 
     # Setting up compilers
     self.CompilerSet(
@@ -166,7 +166,7 @@ class InstPython3 < InstallStuff
     @py3_modules = $py3_modules
 
     # Python2 build options
-    @conf_options = $py3_conf_options
+    @conf_options = $py3_conf_options+["--libdir=#{@prefix}/lib"]
 
     # Setting up compilers
     self.CompilerSet(
@@ -205,7 +205,7 @@ class InstPython3 < InstallStuff
     opts = ["--prefix="+@prefix]+@conf_options
 
     if @need_sudo
-      inst_cmd = "sudo make install"
+      inst_cmd = "sudo -H make install"
       pip_inst_sudo = "sudo -H"
     else
       inst_cmd = "make install"

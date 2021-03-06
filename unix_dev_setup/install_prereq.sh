@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash 
 
 #
 # TODO: Need to populate proper package list for other distros.
