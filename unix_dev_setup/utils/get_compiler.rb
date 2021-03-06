@@ -5,8 +5,13 @@
 #$cflags = "-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe"
 #$cxxflags = "-O3 -fno-semantic-interposition -march=native -fomit-frame-pointer -pipe"
 
+require_relative './src_urls.rb'
+require_relative './misc_utils.rb'
+
 $cflags = "-O3 -march=native -fomit-frame-pointer -pipe -I{env_path}/include"
 $cxxflags = $cflags
+$fallback_compiler_path = '/usr/bin'
+$state_of_art_gcc_ver = SRC_VER['gcc'][0]
 
 $rpath = "-Wl,-rpath={env_path}/lib -Wl,-rpath={env_path}/lib64 -L{env_path}/lib -L{env_path}/lib64"
 $pkg_config_path = "{env_path}/lib/pkgconfig:/usr/local/lib64/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib64/pkgconfig:/usr/lib/pkgconfig"
@@ -19,7 +24,10 @@ class GetCompiler
     cxx_path='/usr/bin', 
     cflags='', 
     cxxflags='', 
-    clang=false, suffix='', env_path='', verbose=false)
+    clang=false,
+    suffix='',
+    env_path='',
+    verbose=false)
 
     @fallback_compiler_path = '/usr/bin/'
 
@@ -32,7 +40,7 @@ class GetCompiler
     if ENV['PKG_CONFIG_PATH']
       @PKG_CONFIG_PATH = "#{$pkg_config_path}:#{ENV['PKG_CONFIG_PATH']}"
     else
-      @PKG_CONFIG_PATH = $pkg_config_path
+      @PKG_CONFIG_PATH = ''
     end
     @PATH=""
     @CXXFLAGS = [$cxxflags, cxxflags].join(' ')
@@ -62,8 +70,16 @@ class GetCompiler
         @CXXFLAGS.slice! '-fno-semantic-interposition'
       end  
     else
-      c_compiler = 'gcc'
-      cxx_compiler = 'g++'
+      if UTILS.which("gcc-#{$state_of_art_gcc_ver}")
+        c_compiler = "gcc-#{$state_of_art_gcc_ver}"
+      else
+        c_compiler = "gcc"
+      end
+      if UTILS.which("g++-#{$state_of_art_gcc_ver}")
+        cxx_compiler = "g++-#{$state_of_art_gcc_ver}"
+      else
+        cxx_compiler = 'g++'
+      end
     end
 
     unless suffix.empty?

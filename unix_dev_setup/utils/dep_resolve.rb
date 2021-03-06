@@ -153,6 +153,22 @@ class DepResolve
     return @Inst_list
   end
 
+  # TODO: Currently, it does autoremove not so needed libraries
+  # But sometimes, having those libraries and programs might
+  # not be that bad.
+  #
+  def GetUninstList
+    list_to_not_to_uninstall = []
+    @Inst_list.each do |uninst|
+      @Installed_pkg_list.each do |pkg|
+        if SRC_DEPS[pkg].include?(uninst) or ['gcc','node','ruby','lua'].include?(uninst)
+          list_to_not_to_uninstall += [uninst]
+        end
+      end
+    end
+    return @Inst_list - list_to_not_to_uninstall
+  end
+
   def PrintDepList
     if @dep_list.empty?
       return "Nothing!"

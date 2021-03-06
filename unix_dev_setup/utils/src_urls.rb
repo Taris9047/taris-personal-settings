@@ -220,6 +220,19 @@ module SRC_LIST
   module_function :[]
 end # mdoule SRC_LIST
 
+module SRC_DEPS
+  def [](pkg_name)
+    begin
+      json_parse = ParseHjson.new()
+      return json_parse.GetDepPkgs(pkg_name)
+    rescue
+      puts "Not a valid package name: \"#{pkg_name}\""
+      exit(-1)
+    end
+  end
+  module_function :[]
+end # module SRC_DEPS
+
 module TABLES
   def ALIAS_TABLE
     json_parse = ParseHjson.new()

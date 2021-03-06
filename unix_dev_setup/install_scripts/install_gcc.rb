@@ -71,8 +71,7 @@ class InstGCC < InstallStuff
       else
         system_gcc = UTILS.which("gcc")
       end
-      o = `echo $(#{system_gcc} --version | grep ^gcc | sed 's/^.* //g')`
-      ver_system_gcc = Version.new(o)
+      ver_system_gcc = get_system_gcc_ver(system_gcc)
       if ver_system_gcc >= @ver_source
         puts "Looks like system gcc is new enough! Skipping!"
         self.WriteInfo_system(ver_system_gcc.to_s)

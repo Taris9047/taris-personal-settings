@@ -132,20 +132,26 @@ class UnixDevSetup
     puts "Checking dependency for #{@pkgs_to_install.join(" ")}"
     dep_resolve = DepResolve.new(
       @pkgs_to_install, @pkginfo_dir_path, @force_install_mode, @use_system_gcc)
+    if @uninstall_mode
+      @pkgs_to_install = dep_resolve.GetUninstList()
+      puts "List of packages to uninstall..."
+      puts ""
+      puts @pkgs_to_install.join(' ')
+      puts ""
+    else
       @pkgs_to_install = dep_resolve.GetInstList()
-
-    # List packages to install
-    if !dep_resolve.GetDepList().empty?
-      puts "Following packages are selected to satisfy dependency."
+      # List packages to install
+      if !dep_resolve.GetDepList().empty?
+        puts "Following packages are selected to satisfy dependency."
+        puts ""
+        puts dep_resolve.PrintDepList()
+        puts ""
+      end
+      puts "List of packages to install..."
       puts ""
-      puts dep_resolve.PrintDepList()
-      puts ""
+      puts dep_resolve.PrintInstList()
+      puts ""  
     end
-    puts "List of packages to install..."
-    puts ""
-    puts dep_resolve.PrintInstList()
-    puts ""
-
     # Make or update workspace directories
     self.__setup_work_dirs__
 
@@ -425,6 +431,7 @@ class UnixDevSetup
         inst = Object.const_get(SRC_CLASS[pkg]).new( @inst_args )
         inst.install
       end # @pkgs_to_install.each do |pkg|
+    # Uninstallation loop
     else
       spinner = TTY::Spinner.new("[Uninstalling] ... :spinner", format: :bouncing_ball)
       spinner.auto_spin
