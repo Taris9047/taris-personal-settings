@@ -79,11 +79,11 @@
 		".hg",
 		"CVS"
 	],
-	"font_face": "BitstreamVeraSansMono Nerd Font Mono",
+	"font_face": "SpaceMono Nerd Font Mono",
 	"font_options":
 	[
 	],
-	"font_size": 10,
+	"font_size": 11,
 	"gutter": true,
 	"highlight_line": false,
 	"highlight_modified_tabs": false,
