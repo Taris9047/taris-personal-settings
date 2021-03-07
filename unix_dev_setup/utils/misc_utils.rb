@@ -165,7 +165,7 @@ module UTILS
         return exe if File.executable?(exe) && !File.directory?(exe)
       end
     end
-    nil
+    return nil
   end
 
   # Extracts system's GCC version - Returns as 

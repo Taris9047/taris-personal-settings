@@ -2,22 +2,12 @@
 
 # Written for Ubuntu... Skip this crap if your disto is not Ubuntu based.
 
-if [ -x "$(command -v lsb_release)" ]; then
-  DISTRO="$(lsb_release -is)"
-  if [ -z $DISTRO ]; then
-    echo "Cannot determine distro. of current OS."
-    echo "Exiting..."
-    exit 0
-  fi
-else
-  IN=$(grep '^NAME' /etc/os-release)
-  DISTRO=$(echo $IN | sed -E 's/\"//g' | sed -E 's/NAME=//')
-fi
+IN=$(grep '^NAME' /etc/os-release)
+DISTRO=$(echo $IN | sed -E 's/\"//g' | sed -E 's/NAME=//')
 
 echo "Detecting distro..."
 echo "... Looks like your distro is: $DISTRO"
 
-# Some Distro information
 # Some Distro information
 Debian_base=("Debian GNU/Linux")
 Ubuntu_base=("Ubuntu" "Linuxmint" "Pop" "Pop\!_OS")

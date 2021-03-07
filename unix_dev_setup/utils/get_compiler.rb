@@ -17,17 +17,16 @@ $rpath = "-Wl,-rpath={env_path}/lib -Wl,-rpath={env_path}/lib64 -L{env_path}/lib
 $pkg_config_path = "{env_path}/lib/pkgconfig:/usr/local/lib64/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib64/pkgconfig:/usr/lib/pkgconfig"
 
 class GetCompiler
-  attr_accessor :cc_path, :cxx_path, :cflags, :cxxflags, :clang, :suffix, :env_path
 
   def initialize(
-    cc_path='/usr/bin', 
-    cxx_path='/usr/bin', 
-    cflags='', 
-    cxxflags='', 
-    clang=false,
-    suffix='',
-    env_path='',
-    verbose=false)
+    cc_path: '/usr/bin', 
+    cxx_path: '/usr/bin', 
+    cflags: '', 
+    cxxflags: '', 
+    clang: false,
+    suffix: nil,
+    env_path: '',
+    verbose: false)
 
     @fallback_compiler_path = '/usr/bin/'
 
@@ -44,8 +43,8 @@ class GetCompiler
     end
     @PATH=""
     @CXXFLAGS = [$cxxflags, cxxflags].join(' ')
-    @CC = File.join(@CC_PATH, "gcc-#{@current_gcc_major}")
-    @CXX = File.join(@CXX_PATH, "g++-#{@current_gcc_major}")
+    # @CC = File.join(@CC_PATH, "gcc-#{@current_gcc_major}")
+    # @CXX = File.join(@CXX_PATH, "g++-#{@current_gcc_major}")
     @env_path = env_path
 
     @verbose = verbose
@@ -72,52 +71,37 @@ class GetCompiler
         @CXXFLAGS.slice! '-fno-semantic-interposition'
       end  
     else
-      if UTILS.which("gcc-#{$state_of_art_gcc_ver}")
-        c_compiler = "gcc-#{$state_of_art_gcc_ver}"
+      cc_state_of_art = UTILS.which("gcc-#{$state_of_art_gcc_ver}")
+      cxx_state_of_art = UTILS.which("g++-#{$state_of_art_gcc_ver}")
+      if cc_state_of_art and File.exist? cc_state_of_art
+        c_compiler = cc_state_of_art
       else
-        c_compiler = "gcc"
+        c_compiler = `command -v gcc`
       end
-      if UTILS.which("g++-#{$state_of_art_gcc_ver}")
-        cxx_compiler = "g++-#{$state_of_art_gcc_ver}"
+      if cc_state_of_art and File.exist? cxx_state_of_art
+        cxx_compiler = cxx_state_of_art
       else
-        cxx_compiler = 'g++'
-      end
-    end
-
-    unless suffix.empty?
-      c_compiler = 'gcc' + '-' + suffix
-      cxx_compiler = 'g++' + '-' + suffix
-    end
-
-    if File.directory?(cc_path)
-      if File.file?(File.join(cc_path, c_compiler))
-        @CC = File.realpath(File.join(cc_path, c_compiler))
-      else
-        if File.file?(UTILS.which(c_compiler))
-          @CC = UTILS.which(c_compiler)
-        else
-          @CC = File.join(@fallback_compiler_path, "gcc")
-        end
-      end
-    end
-    if File.directory?(cxx_path)
-      if File.file?(File.join(cxx_path, cxx_compiler))
-        @CXX = File.realpath(File.join(cc_path, cxx_compiler))
-      else
-        if File.file?(UTILS.which(cxx_compiler))
-          @CXX = UTILS.which(cxx_compiler)
-        else
-          @CXX = File.join(@fallback_compiler_path, "g++")
-        end
+        cxx_compiler = `command -v g++`
       end
     end
 
-    unless File.file?(@CC)
-      raise "C Compiler not found!!"
-      exit(-1)
+    if suffix
+      c_compiler_with_suffix = 'gcc' + '-' + suffix.to_s
+      cxx_compiler_with_suffix = 'g++' + '-' + suffix.to_s
+      if File.exist? c_compiler_with_suffix
+        c_compiler = c_compiler_with_suffix
+      end
+      if File.exist? cxx_compiler_with_suffix
+        cxx_compiler = cxx_compiler_with_suffix
+      end
     end
-    unless File.file?(@CXX)
-      raise "CXX Compiler not found!!"
+
+    @CC = File.expand_path(c_compiler.strip)
+    @CXX = File.expand_path(cxx_compiler.strip)
+
+    unless File.exist?(@CC) or File.exist?(@CXX)
+      puts "Detected C Compiler: #{@CC}, CXX Compiler: #{@CXX}"
+      raise "Compiler toolset not found!!"
       exit(-1)
     end
 
@@ -132,9 +116,7 @@ class GetCompiler
         puts "pkgconfig path: #{@PKG_CONFIG_PATH}"
       end
     end
-
   end
-
 
   def get_settings
     cc_env = "CC=\""+@CC+"\""

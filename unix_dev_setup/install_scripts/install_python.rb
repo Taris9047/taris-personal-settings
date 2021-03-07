@@ -67,7 +67,6 @@ class InstPython2 < InstallStuff
   def do_install
 
     dl = Download.new(@source_url, @src_dir)
-    # src_tarball_path = dl.GetPath
 
     fp = FNParser.new(@source_url)
     src_tarball_fname, src_tarball_bname = fp.name

@@ -146,10 +146,10 @@ class InstallStuff < RunConsole
       compiler_path = File.join(@prefix, 'bin')
     end
     gc = GetCompiler.new(
-      cc_path=compiler_path, cxx_path=compiler_path,
-      cflags=cflags, cxxflags=cxxflags, 
-      clang=false, suffix='', env_path=@prefix,
-      verbose=false)
+      cc_path: compiler_path, cxx_path: compiler_path,
+      cflags: cflags, cxxflags: cxxflags, 
+      clang: false, suffix: nil, env_path: @prefix,
+      verbose: false)
     @cmake_comp_settings += gc.get_cmake_settings
     @comp_settings += gc.get_env_str
     @env = @env.merge(gc.get_env_settings) {|key, oldval, newval| oldval+oldval}
