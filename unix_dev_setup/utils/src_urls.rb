@@ -49,6 +49,10 @@ class ParseHjson
     @URL_DB = JSON.parse(@cleaned_up_data)
   end
 
+  def GetDB(pkg_name)
+    return @URL_DB[pkg_name]
+  end
+
   def GetURL(pkg_name)
     return @URL_DB[pkg_name]["url"]
   end
@@ -232,6 +236,19 @@ module SRC_DEPS
   end
   module_function :[]
 end # module SRC_DEPS
+
+module DB_PKG
+  def [](pkg_name)
+    begin
+      json_parse = ParseHjson.new()
+      return json_parse.GetDB(pkg_name)
+    rescue
+      puts "Not a valid package name: \"#{pkg_name}\""
+      exit(-1)
+    end
+  end
+  module_function :[]
+end # module URL_DB
 
 module TABLES
   def ALIAS_TABLE

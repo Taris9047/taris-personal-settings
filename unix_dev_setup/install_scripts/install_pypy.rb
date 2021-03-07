@@ -29,7 +29,7 @@ class InstPyPy3 < InstallStuff
     super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
-    @bootstrap_bin_url = "https://downloads.python.org/pypy/pypy2.7-v7.3.3-linux64.tar.bz2"
+    @bootstrap_bin_url = URL_DB[@pkgname]["bootstrap_bin_url"]
     @bootstrap_bin_tar = @bootstrap_bin_url.split('/')[-1]
     @bootstrap_bin_dirname = @bootstrap_bin_tar.split('.')[0..-3]
     @get_pip_url = SRC_URL['get_pip']
