@@ -18,7 +18,8 @@ $dependency_table = TABLES.DEP_TABLE
 class DepResolve
   def initialize(
     install_list, pkginfo_dir,
-    force_install=false, system_gcc=false)
+    force_install=false, system_gcc=false,
+    unintall_mode=false)
 
     if install_list.empty?
       puts "No install list given! Exiting"
@@ -36,6 +37,7 @@ class DepResolve
     @use_system_gcc = system_gcc
     @force_install = force_install
     @pkginfo_dir = pkginfo_dir
+    @uninstall_mode=uninstall_mode
 
     @Inst_list = install_list.uniq
     if !@force_install and !@Installed_pkg_list.empty?
@@ -158,15 +160,16 @@ class DepResolve
   # not be that bad.
   #
   def GetUninstList
-    list_to_not_to_uninstall = []
-    @Inst_list.each do |uninst|
-      @Installed_pkg_list.each do |pkg|
-        if SRC_DEPS[pkg].include?(uninst) or ['gcc','node','ruby','lua'].include?(uninst)
-          list_to_not_to_uninstall += [uninst]
-        end
-      end
-    end
-    return @Inst_list - list_to_not_to_uninstall
+    # list_to_not_to_uninstall = []
+    # @dep_list.each do |uninst|
+    #   @Installed_pkg_list.each do |pkg|
+    #     if SRC_DEPS[pkg].include?(uninst) or ['gcc','node','ruby','lua'].include?(uninst)
+    #       list_to_not_to_uninstall += [uninst]
+    #     end
+    #   end
+    # end
+    # return @Inst_list - list_to_not_to_uninstall
+    return @Inst_list - @dep_list
   end
 
   def PrintDepList

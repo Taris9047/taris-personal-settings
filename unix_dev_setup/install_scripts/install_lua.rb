@@ -2,6 +2,8 @@
 
 # Installs Lua
 
+require 'fileutils'
+
 require_relative '../utils/utils.rb'
 require_relative './install_stuff.rb'
 
@@ -34,12 +36,14 @@ class InstLua < InstallStuff
 
     if Dir.exists?(src_extract_folder)
       puts "Source file folder exists in "+src_extract_folder
-    else
-      puts "Extracting"
-      self.Run(
-        "tar xf "+File.realpath(File.join(@src_dir, src_tarball_fname))+" -C "+@build_dir )
+      puts "Deleting ... "
+      FileUtils.rm_rf(src_extract_folder)
     end
 
+    puts "Extracting"
+    self.Run(
+      "tar xf "+File.realpath(File.join(@src_dir, src_tarball_fname))+" -C "+@build_dir )
+    
     puts "Installing Lua!!"
     if @need_sudo
       inst_cmd = "sudo make INSTALL_TOP=\""+@prefix+"\" install"

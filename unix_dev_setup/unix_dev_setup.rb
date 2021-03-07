@@ -440,17 +440,25 @@ class UnixDevSetup
         if @Installed_pkg_list.include?(pkg)
           pkg_info = self.ReadPkgInfo(pkg)
           files_to_delete = pkg_info["Installed Files"]
+          dirs_to_delete = []
           files_to_delete.each do |f|
             # do not delete non-empty directory
             if File.directory?(f)
-              if !Dir.empty?(f)
+              unless Dir.empty?(f)
                 next
               end
             end
             FileUtils.rm_rf(f)
+            # delete empty directory once files are deleted
+            if !dirs_to_delete.include?(File.dirname(f))
+              dirs_to_delete += [File.dirname(f)]
+            end
           end
-          FileUtils.rm_rf(File.join(@pkginfo_dir, pkg+'.info'))
-          FileUtils.rm_rf(File.join(@pkginfo_dir, pkg+'.log'))
+          dirs_to_delete.each do |d|
+            FileUtils.rmdir(d)
+          end
+          FileUtils.rm_rf(File.join(File.realpath(@pkginfo_dir), pkg+'.info'))
+          FileUtils.rm_rf(File.join(File.realpath(@pkginfo_dir), pkg+'.log'))
         end
       end # @pkgs_to_install.each do |pkg|
       spinner.stop
