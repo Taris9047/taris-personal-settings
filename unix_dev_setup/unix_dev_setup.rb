@@ -36,12 +36,14 @@ class UnixDevSetup
 
     @not_so_stable_pkgs = ['pypy3', 'clang', 'ROOT', 'julia']
     @not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts', 'ruby3', 'libjpeg']
+    @deprecated_pkgs = ['python2']
     @not_really_a_pkg = ['get_pip', 'golang-bootstrap']
 
     @list_of_all = \
       @list_of_progs - @not_so_stable_pkgs \
       - @not_so_needed_pkgs \
-      - @not_really_a_pkg 
+      - @not_really_a_pkg \
+      - @deprecated_pkgs
 
     @aliases = TABLES.ALIAS_TABLE
     @aliases['all'] = @list_of_all

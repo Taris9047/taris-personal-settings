@@ -65,6 +65,14 @@ class InstPython2 < InstallStuff
   end
 
   def do_install
+    deprecation_txt = %Q{#{@pkgname} (#{@Version.to_s}) is completely deprecated as of now.
+We still have this package since some old-school programs might still need them.
+But installing it may cause some instability in the toolchain unless you know
+what you are doing!!
+
+** Press Ctrl+C to cancel the installation or just wait to continue the installation. **}
+    puts deprecation_txt
+    sleep(7)
 
     dl = Download.new(@source_url, @src_dir)
 
