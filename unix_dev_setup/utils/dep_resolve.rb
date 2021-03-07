@@ -19,7 +19,7 @@ class DepResolve
   def initialize(
     install_list, pkginfo_dir,
     force_install=false, system_gcc=false,
-    unintall_mode=false)
+    uninstall_mode=false)
 
     if install_list.empty?
       puts "No install list given! Exiting"

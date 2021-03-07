@@ -455,7 +455,9 @@ class UnixDevSetup
             end
           end
           dirs_to_delete.each do |d|
-            FileUtils.rmdir(d)
+            if Dir.empty? (d)
+              FileUtils.rmdir(d)
+            end
           end
           FileUtils.rm_rf(File.join(File.realpath(@pkginfo_dir), pkg+'.info'))
           FileUtils.rm_rf(File.join(File.realpath(@pkginfo_dir), pkg+'.log'))

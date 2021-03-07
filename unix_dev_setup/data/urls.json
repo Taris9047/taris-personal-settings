@@ -45,7 +45,7 @@
 
   # Lua
   "lua": {
-    "url": "https://www.lua.org/ftp/lua-5.4.0.tar.gz",
+    "url": "https://www.lua.org/ftp/lua-5.4.2.tar.gz",
     "type": "tarball",
     "alt-names": ["Lua"],
     "dependency": [ "gcc" ],
