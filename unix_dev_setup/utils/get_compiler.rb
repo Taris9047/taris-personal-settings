@@ -76,12 +76,12 @@ class GetCompiler
       if cc_state_of_art and File.exist? cc_state_of_art
         c_compiler = cc_state_of_art
       else
-        c_compiler = `command -v gcc`
+        c_compiler = UTILS.which("gcc")
       end
       if cc_state_of_art and File.exist? cxx_state_of_art
         cxx_compiler = cxx_state_of_art
       else
-        cxx_compiler = `command -v g++`
+        cxx_compiler = UTILS.which("g++")
       end
     end
 
