@@ -18,7 +18,7 @@ Debian_base=("Debian GNU/Linux")
 Ubuntu_base=("Ubuntu" "Linuxmint" "Pop" "Pop\!_OS")
 Fedora_base=("Fedora" "CentOS Linux" "CentOS Stream" "Red Hat Enterprise Linux")
 openSUSE_base=("openSUSE" "openSUSE Leap")
-Arch_base=("ArchLinux" "ManjaroLinux")
+Arch_base=("ArchLinux" "Manjaro Linux")
 
 # Supported modes
 # "Ubuntu" "Fedora" "Arch"
@@ -238,7 +238,6 @@ openSUSE_packages=( \
   "screen" \
   "neofetch" \
   "openblas-devel" \
-  "blas-devel" \
   "mysql-devel" \
   "glew-devel" \
   "graphviz-devel" \
@@ -278,7 +277,6 @@ Arch_packages=( \
   "p7zip" \
   "ruby" \
   "ruby-irb" \
-  "openblas" \
   "gsl" \
   "ftgl" \
   "fftw" \
