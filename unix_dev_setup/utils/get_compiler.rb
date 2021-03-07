@@ -57,7 +57,9 @@ class GetCompiler
     @CFLAGS = @CFLAGS.gsub('{env_path}', @prefix)
     @CXXFLAGS = @CFLAGS.gsub('{env_path}', @prefix)
     @RPATH = @RPATH.gsub('{env_path}', @prefix)
-    @PKG_CONFIG_PATH = @PKG_CONFIG_PATH.gsub('{env_path}', @prefix)
+    unless @PKG_CONFIG_PATH.empty?
+      @PKG_CONFIG_PATH = @PKG_CONFIG_PATH.gsub('{env_path}', @prefix)
+    end
 
     if clang
       c_compiler = 'clang'
@@ -126,8 +128,9 @@ class GetCompiler
       puts "C flags: #{@CFLAGS}"
       puts "CXX flags: #{@CXXFLAGS}"
       puts "Linker flags: #{@RPATH}"
-      puts "pkgconfig path: #{@PKG_CONFIG_PATH}"
-
+      unless @PKG_CONFIG_PATH.empty?
+        puts "pkgconfig path: #{@PKG_CONFIG_PATH}"
+      end
     end
 
   end
@@ -141,7 +144,11 @@ class GetCompiler
     ldflags_env = ["LDFLAGS=\"", @RPATH, "\""].join('')
     pkgconfig_env = "PKG_CONFIG_PATH=\"#{@PKG_CONFIG_PATH}\""
 
-    return [cc_env, cxx_env, cflags_env, cxxflags_env, ldflags_env, pkgconfig_env]
+    unless @PKG_CONFIG_PATH.empty?
+      return [cc_env, cxx_env, cflags_env, cxxflags_env, ldflags_env, pkgconfig_env]
+    else
+      return [cc_env, cxx_env, cflags_env, cxxflags_env, ldflags_env]
+    end
   end
 
   def get_env_str
@@ -149,14 +156,24 @@ class GetCompiler
   end
 
   def get_env_settings
-    return {
-      'CC' => @CC,
-      'CXX' => @CXX,
-      'CFLAGS' => @CFLAGS,
-      'CXXFLAGS' => @CXXFLAGS,
-      'LDFLAGS' => @RPATH,
-      'PKG_CONFIG_PATH' => @PKG_CONFIG_PATH,
-    }
+    unless @PKG_CONFIG_PATH.empty?
+      return {
+        'CC' => @CC,
+        'CXX' => @CXX,
+        'CFLAGS' => @CFLAGS,
+        'CXXFLAGS' => @CXXFLAGS,
+        'LDFLAGS' => @RPATH,
+        'PKG_CONFIG_PATH' => @PKG_CONFIG_PATH,
+      }
+    else
+      return {
+        'CC' => @CC,
+        'CXX' => @CXX,
+        'CFLAGS' => @CFLAGS,
+        'CXXFLAGS' => @CXXFLAGS,
+        'LDFLAGS' => @RPATH,
+      }
+    end
   end
 
   def get_cmake_settings
@@ -169,7 +186,11 @@ class GetCompiler
     ld_module_env = "-DCMAKE_MODULE_LINKER_FLAGS_INIT=\""+@RPATH+"\""
     pkg_config_path = "-DCMAKE_PKG_CONFIG_PATH=\"#{@PKG_CONFIG_PATH}\""
 
-    return  [cc_env, cxx_env, cflags_env, cxxflags_env, ld_exe_env, ld_shared_env, ld_module_env, pkg_config_path]
+    unless @PKG_CONFIG_PATH.empty?
+      return [cc_env, cxx_env, cflags_env, cxxflags_env, ld_exe_env, ld_shared_env, ld_module_env, pkg_config_path]
+    else
+      return [cc_env, cxx_env, cflags_env, cxxflags_env, ld_exe_env, ld_shared_env, ld_module_env]
+    end
   end
 
 end

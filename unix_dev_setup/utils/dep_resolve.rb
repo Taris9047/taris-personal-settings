@@ -59,19 +59,9 @@ class DepResolve
   end # initialize
 
   def ver_chk_src_lte_ipkg(ipkg)
-    src_url = SRC_URL[ipkg]
-    src_type = SRC_TYPE[ipkg]
+    src_ver = SRC_VER[ipkg]
 
-    # If the src is some repository, they must have newer version
-    # than me, anyways.
-    if !src_type == 'tarball'
-      return false
-    end
-    fnp = FNParser.new(src_url)
-    src_ver = Version.new(fnp.version())
-
-    fp = File.open(File.join(@pkginfo_dir, ipkg+'.info'), 'r')
-    ipkg_txt = fp.read.strip
+    ipkg_txt = File.read(File.join(@pkginfo_dir, ipkg+'.info')).strip
     ipkg_info = JSON.parse(ipkg_txt)
     ipkg_ver = Version.new(ipkg_info["Version"].join('.'))
 
@@ -114,7 +104,7 @@ class DepResolve
           next
         end
 
-        if self.ver_chk_src_lte_ipkg(ipkg)
+        unless self.ver_chk_src_lte_ipkg(ipkg)
           next
         end
 
