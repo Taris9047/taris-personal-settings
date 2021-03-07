@@ -6,7 +6,7 @@ require 'open3'
 require_relative '../utils/utils.rb'
 require_relative './install_stuff.rb'
 
-$root_version = ["6", "22", "06"]
+$root_version = ["6", "24", "00"]
 
 
 class InstROOT < InstallStuff
@@ -32,7 +32,7 @@ class InstROOT < InstallStuff
       self.Run('ln -sfv '+File.join(@prefix, '/.opt')+' '+File.join(@prefix, '/opt'))
     end
     @src_url = SRC_URL['ROOT']
-    branch_opts = '--branch v#{$root_version[0]}-#{$root_version[1]}-#{$root_version[2]}'
+    branch_opts = "-b v#{$root_version[0]}-#{$root_version[1]}-#{$root_version[2]}-patches"
     dn = Download.new(
       @src_url, destination=@src_dir, source_ctl='git', mode='git', source_ctl_opts=branch_opts)
     @src_dir = dn.GetPath
