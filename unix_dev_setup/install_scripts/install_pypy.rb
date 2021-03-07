@@ -29,6 +29,9 @@ class InstPyPy3 < InstallStuff
     super(@pkgname, @prefix, @work_dirs, @ver_check, @verbose_mode)
 
     @source_url = SRC_URL[@pkgname]
+    @bootstrap_bin_url = "https://downloads.python.org/pypy/pypy2.7-v7.3.3-linux64.tar.bz2"
+    @bootstrap_bin_tar = @bootstrap_bin_url.split('/')[-1]
+    @bootstrap_bin_dirname = @bootstrap_bin_tar.split('.')[0..-3]
     @get_pip_url = SRC_URL['get_pip']
 
     # Python2 modules to install
@@ -43,6 +46,10 @@ class InstPyPy3 < InstallStuff
     puts "*** Note that we cannot gaurantee if it will work or not."
     puts "*** If it fails, it fails!"
 
+    puts "Downloading bootstrap binary."
+    self.Run( "cd #{@src_dir} && wget #{@bootstrap_bin_url} && tar xvf #{@bootstrap_bin_tar}")
+    @bootstrap_bin = File.join(@src_dir, @bootstrap_bin_dirname, 'bin', 'pypy')
+
     puts "Cloning PyPy source from mercurial repo."
     self.Run( "cd #{@src_dir} && hg clone #{@source_url} pypy && cd ./pypy && hg update py#{@pypy3_ver}" )
     pypy_src_dir = File.join(@src_dir, 'pypy')
@@ -54,10 +61,10 @@ class InstPyPy3 < InstallStuff
 
     puts ""
     puts "Let's start the interpretation job. It will take pretty long time!"
-    self.Run("cd #{pypy_src_dir}/pypy/goal && python2 ../../rpython/bin/rpython --opt=2 && PYTHONPATH=../.. ./pypy3-c ../../lib_pypy/pypy_tools/build_cffi_imports.py")
+    self.Run("cd #{pypy_src_dir}/pypy/goal && #{@bootstrap_bin} ../../rpython/bin/rpython --opt=jit && PYTHONPATH=../.. ./pypy3-c ../../lib_pypy/pypy_tools/build_cffi_imports.py")
 
     puts "Ok, let's package them!"
-    so, se, stat = Open3.capture3("cd #{pypy_src_dir}/pypy/tool/release && python2 ./package.py --archive-name=pypy-#{@pypy3_ver}-#{@platform}")
+    so, se, stat = Open3.capture3("cd #{pypy_src_dir}/pypy/tool/release && #{@bootstrap_bin} ./package.py --archive-name=pypy-#{@pypy3_ver}-#{@platform}")
 
     archive_path = so.split('\n')[-1]
 

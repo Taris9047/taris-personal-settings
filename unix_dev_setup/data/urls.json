@@ -104,7 +104,7 @@
     "url": "https://foss.heptapod.net/pypy/pypy",
     "type": "mercurial",
     "alt-names": ["pypy", "PyPy"],
-    "dependency": ["python3", "python2"],
+    "dependency": ["python3"],
     "script": "install_pypy.rb",
     "class": "InstPyPy3"
   },
