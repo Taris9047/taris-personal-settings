@@ -93,7 +93,7 @@ class InstROOT < InstallStuff
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.RunInstall( env: @env, cmd: compile_cmd.join(' ') )
 
-    @conf_options = [inst_prefix_opt]+cmake_opts+comp_settings
+    @conf_options = [inst_prefix_opt]+cmake_opts+@cmake_comp_settings
     self.WriteInfo
 
   end
