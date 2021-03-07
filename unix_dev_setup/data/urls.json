@@ -106,17 +106,19 @@
     "alt-names": ["pypy", "PyPy"],
     "dependency": ["python3"],
     "script": "install_pypy.rb",
-    "class": "InstPyPy3"
+    "class": "InstPyPy3",
+    "bootstrap_bin_url": "https://downloads.python.org/pypy/pypy2.7-v7.3.3-linux64.tar.bz2"
   },
 
   # Node.JS
   "node": {
-    "url": "https://nodejs.org/dist/v15.10.0/node-v15.10.0.tar.gz",
+    "url": "https://nodejs.org/dist/v15.11.0/node-v15.11.0.tar.gz",
     "type": "tarball",
     "alt-names": ["Node.JS", "node.js", "nodejs"],
     "dependency": ["gcc"],
     "script": "install_node.rb",
-    "class": "InstNode"
+    "class": "InstNode",
+    "bin_url": "https://nodejs.org/dist/v15.11.0/node-v15.11.0-linux-x64.tar.xz"
   },
   "node-lts": {
     "url": "https://nodejs.org/dist/v14.16.0/node-v14.16.0-linux-x64.tar.xz",
@@ -124,7 +126,8 @@
     "alt-names": ["Node.JS-lts", "node.js-lts", "nodejs-lts"],
     "dependency": ["gcc"],
     "script": "install_node.rb",
-    "class": "InstNodeLTS"
+    "class": "InstNodeLTS",
+    "bin_url": "https://nodejs.org/dist/v14.16.0/node-v14.16.0-linux-x64.tar.xz"
   },
 
   # Boost
