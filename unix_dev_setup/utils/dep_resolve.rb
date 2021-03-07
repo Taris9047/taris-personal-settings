@@ -40,12 +40,16 @@ class DepResolve
     @uninstall_mode=uninstall_mode
 
     @Inst_list = install_list.uniq
-    if !@force_install and !@Installed_pkg_list.empty?
+    if !@force_install and !@Installed_pkg_list.empty? and !@uninstall_mode
       @Inst_list = self.remove_installed_pkg(@Inst_list)
     end
 
-    @dep_list = self.__make_dep_list(@Inst_list)
-    @Inst_list = (@dep_list+@Inst_list).uniq
+    if !@uninstall_mode
+      @dep_list = self.__make_dep_list(@Inst_list)
+      @Inst_list = (@dep_list+@Inst_list).uniq
+    else
+      @dep_list = []
+    end
 
     if @use_system_gcc
       @dep_list.delete('gcc')

@@ -131,7 +131,8 @@ class UnixDevSetup
     require './utils/utils.rb'
     puts "Checking dependency for #{@pkgs_to_install.join(" ")}"
     dep_resolve = DepResolve.new(
-      @pkgs_to_install, @pkginfo_dir_path, @force_install_mode, @use_system_gcc)
+      @pkgs_to_install, @pkginfo_dir_path, @force_install_mode, @use_system_gcc,
+      @uninstall_mode)
     if @uninstall_mode
       @pkgs_to_install = dep_resolve.GetUninstList()
       puts "List of packages to uninstall..."
@@ -431,11 +432,11 @@ class UnixDevSetup
         inst = Object.const_get(SRC_CLASS[pkg]).new( @inst_args )
         inst.install
       end # @pkgs_to_install.each do |pkg|
+    
     # Uninstallation loop
     else
       spinner = TTY::Spinner.new("[Uninstalling] ... :spinner", format: :bouncing_ball)
       spinner.auto_spin
-      
       @pkgs_to_install.each do |pkg|
         if @Installed_pkg_list.include?(pkg)
           pkg_info = self.ReadPkgInfo(pkg)
@@ -444,13 +445,12 @@ class UnixDevSetup
           files_to_delete.each do |f|
             # do not delete non-empty directory
             if File.directory?(f)
-              unless Dir.empty?(f)
-                next
-              end
+              next
+            else
+              FileUtils.rm_rf(f)
             end
-            FileUtils.rm_rf(f)
             # delete empty directory once files are deleted
-            if !dirs_to_delete.include?(File.dirname(f))
+            if File.directory?(f) and !dirs_to_delete.include?(File.dirname(f))
               dirs_to_delete += [File.dirname(f)]
             end
           end
