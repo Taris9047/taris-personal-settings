@@ -31,7 +31,7 @@ class InstPyPy3 < InstallStuff
     @source_url = SRC_URL[@pkgname]
     @bootstrap_bin_url = DB_PKG[@pkgname]["bootstrap_bin_url"]
     @bootstrap_bin_tar = @bootstrap_bin_url.split('/')[-1]
-    @bootstrap_bin_dirname = @bootstrap_bin_tar.split('.')[0..-3]
+    @bootstrap_bin_dirname = @bootstrap_bin_tar.split('.')[0..-3].join('.')
     @get_pip_url = SRC_URL['get_pip']
 
     # Python2 modules to install
@@ -47,17 +47,20 @@ class InstPyPy3 < InstallStuff
     puts "*** If it fails, it fails!"
 
     puts "Downloading bootstrap binary."
-    self.Run( "cd #{@src_dir} && wget #{@bootstrap_bin_url} && tar xvf #{@bootstrap_bin_tar}")
+    dn = Download.new(@bootstrap_bin_url, @src_dir)
+    if !File.directory? @bootstrap_bin_dirname
+      self.Run( "tar xvf #{File.join(@src_dir, @bootstrap_bin_tar)} -C #{@src_dir}/")
+    end
     @bootstrap_bin = File.join(@src_dir, @bootstrap_bin_dirname, 'bin', 'pypy')
 
     puts "Cloning PyPy source from mercurial repo."
-    self.Run( "cd #{@src_dir} && hg clone #{@source_url} pypy && cd ./pypy && hg update py#{@pypy3_ver}" )
-    pypy_src_dir = File.join(@src_dir, 'pypy')
+    if File.directory? File.join(@src_dir, 'pypy')
+      self.Run( "cd #{File.join(@src_dir, 'pypy')} && hg update py#{@pypy3_ver}" )
+    else
+      self.Run( "cd #{@src_dir} && hg clone #{@source_url} pypy && cd ./pypy && hg update py#{@pypy3_ver}" )
+    end
 
-    puts "Working on rpython interpretation with system python2"
-    puts ""
-    puts "Making sure system python2 has proper modules."
-    system('pip2 install -U pycparser')
+    pypy_src_dir = File.join(@src_dir, 'pypy')
 
     puts ""
     puts "Let's start the interpretation job. It will take pretty long time!"
