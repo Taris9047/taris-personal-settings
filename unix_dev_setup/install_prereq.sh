@@ -1,9 +1,11 @@
-#!/bin/bash 
+#!/bin/bash -e
 
 #
 # TODO: Need to populate proper package list for other distros.
 # There are tons of strange distros!!
-# --> Ubuntu 20.04, Debian, Fedora (F33), CentOS (8), RHEL (8), openSUSE Leap 
+# -> Ubuntu 20.04, Debian, Fedora (F33),
+#    CentOS (8), RHEL (8), openSUSE Leap,
+#    Manjaro
 # are ok now.
 #
 
@@ -245,7 +247,7 @@ openSUSE_packages=( \
   "unicode-emoji" \
   "ninja" \
 )
-  
+
 # Arch
 Arch_packages=( \
   "base-devel" \
@@ -331,9 +333,9 @@ install_prereq_Ubuntu ()
 {
   pkgs=$( array_to_string "${Ubuntu_packages[@]}")
   gems=$( array_to_string "${Ruby_gems[@]}")
-  sudo apt-get -y update && sudo apt-get -y upgrade
-  sudo apt-get -y install $pkgs
-  sudo /usr/bin/gem install $gems
+  sudo -H apt-get -y update && sudo apt-get -y upgrade
+  sudo -H apt-get -y install $pkgs
+  sudo -H /usr/bin/gem install $gems
 }
 
 install_prereq_Debian ()
@@ -352,57 +354,56 @@ install_prereq_Fedora ()
   gems=()
   # Fedora
   if [[ "$DISTRO" == *"Fedora"* ]]; then
-    sudo dnf -y groupinstall "Development Tools" "Development Libraries"
+    sudo -H dnf -y groupinstall "Development Tools" "Development Libraries"
     add_pkgs=$( array_to_string "${Fedora_additional_packages[@]}" )
     gems=$( array_to_string "${Ruby_gems[@]}")
-    sudo dnf -y update && sudo dnf -y upgrade
-    sudo dnf -y install $pkgs $add_pkgs
-    sudo /usr/bin/gem install $gems
+    sudo -H dnf -y update && sudo dnf -y upgrade
+    sudo -H dnf -y install $pkgs $add_pkgs
+    sudo -H /usr/bin/gem install $gems
   # In case CentOS or RHEL
   else
     sudo dnf -y install dnf-plugins-core
     if [[ "$DISTRO" == *"CentOS Linux"* ]]; then
       echo "Installing CentOS repos."
-      sudo dnf -y install epel-release
-      sudo dnf config-manager --set-enabled powertools
+      sudo -H dnf -y install epel-release
+      sudo -H dnf config-manager --set-enabled powertools
     elif [[ "$DISTRO" == *"Red Hat Enterprise Linux"* ]]; then
       echo "Working with RHEL8 repos.."
-      sudo subscription-manager repos --enable "codeready-builder-for-rhel-8-$(arch)-rpms"
-      sudo dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      sudo -H subscription-manager repos --enable "codeready-builder-for-rhel-8-$(arch)-rpms"
+      sudo -H dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
     fi
-    sudo dnf -y groupinstall "Development Tools" "Additional Development"
+    sudo -H dnf -y groupinstall "Development Tools" "Additional Development"
     add_pkgs=$( array_to_string "${RHEL_additional_packages[@]}" )
     gems=$( array_to_string "${Ruby_gems_RHEL[@]}")
-    sudo dnf -y update && sudo dnf -y upgrade
-    sudo dnf -y install $pkgs $add_pkgs
-    sudo /usr/bin/gem install $gems
-    sudo /usr/bin/gem install open3 -v 0.1.0
-  fi 
-  
+    sudo -H dnf -y update && sudo dnf -y upgrade
+    sudo -H dnf -y install $pkgs $add_pkgs
+    sudo -H /usr/bin/gem install $gems
+    sudo -H /usr/bin/gem install open3 -v 0.1.0
+  fi
 }
 
 install_prereq_Arch ()
 {
   pkgs=$( array_to_string "${Arch_packages[@]}" )
   gems=$( array_to_string "${Ruby_gems[@]}" )
-  sudo pacman -Syyu --noconfirm $pkgs
-  sudo /usr/bin/gem install $gems
+  sudo -H pacman -Syyu --noconfirm $pkgs
+  /usr/bin/gem install $gems
 }
 
 install_prereq_openSUSE ()
 {
   pkgs=$( array_to_string "${openSUSE_packages[@]}" )
   gems=$( array_to_string "${Ruby_gems_RHEL[@]}" )
-  sudo zypper refresh && sudo zypper update
-  sudo zypper install --type pattern devel_basis
-  sudo zypper install --type pattern devel_C_C++
-  sudo zypper in $pkgs
-  sudo /usr/bin/gem install $gems
-  sudo /usr/bin/gem install open3 -v 0.1.0
+  sudo -H zypper refresh && sudo zypper update
+  sudo -H zypper install --type pattern devel_basis
+  sudo -H zypper install --type pattern devel_C_C++
+  sudo -H zypper in $pkgs
+  sudo -H /usr/bin/gem install $gems
+  sudo -H /usr/bin/gem install open3 -v 0.1.0
 }
 
 case ${MODE} in
-  
+
   "Ubuntu")
     install_prereq_Ubuntu
     ;;

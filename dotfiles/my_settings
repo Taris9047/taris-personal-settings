@@ -90,6 +90,12 @@ alias rsync='rsync -azvh --info=progress2'
 alias sudo='sudo -H'
 alias free='free -m'
 
+# Some CD aliases
+alias cd..='cd ..' # Just like MS-DOS
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+
 #
 # A few more aliases
 #
@@ -446,6 +452,7 @@ if [ -x "$(command -v starship)" ]; then
   fi
 fi
 
+# Clean up the screen before loading good stuff.
 clear
 
 if [ -x "$(command -v neofetch)" ]; then 
