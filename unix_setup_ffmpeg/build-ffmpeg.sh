@@ -29,42 +29,43 @@ fi
 # Fallback compilers
 if [ ! -x $(command -v clang) ]; then
   echo "Oops, clang can't be found!! Falling back to system GCC."
-  CC=$(command -v /usr/bin/gcc)
-  CXX=$(command -v /usr/bin/g++)
+  CC="$(command -v /usr/bin/gcc)"
+  CXX="$(command -v /usr/bin/g++)"
 fi
 
 PYTHON=''
-if [ -x $(command -v python3) ]; then
-  PYTHON=$(command -v python3)
-elif [ -x $(command -v python2) ]; then
-  PYTHON=$(command -v python2)
+if [ -x "$(command -v python3)" ]; then
+  PYTHON="$(command -v python3)"
+elif [ -x "$(command -v python2)" ]; then
+  PYTHON="$(command -v python2)"
 else
   PYTHON='i_have_no_python_booooz'
 fi
 
-if [ ! -x $CC ]; then
+if [ ! -x "$(command -v $CC)" ]; then
+	echo "$CC"
   echo "No compiler found!!"
   exit 1
 fi
 
-if [ ! -x $(command -v make) ]; then
+if [ ! -x "$(command -v make)" ]; then
   echo "No make in this system!!"
   exit 1
 fi
 
-if [ ! -x $(command -v curl) ]; then
+if [ ! -x "$(command -v curl)" ]; then
   echo "No curl found in this system!!"
   exit 1
 fi
 
-if [ ! -x $PYTHON ]; then
+if [ ! -x "$PYTHON" ]; then
   echo "No Python found! Lv2 won't be available!"
 fi
 
 # Speed up the process
 # Env Var NUMJOBS overrides automatic detection
-if [[ -n $NUMJOBS ]]; then
-    MJOBS=$NUMJOBS
+if [[ -n "$NUMJOBS" ]]; then
+    MJOBS="$NUMJOBS"
 elif [[ -f /proc/cpuinfo ]]; then
     MJOBS=$(grep -c processor /proc/cpuinfo)
 elif [[ "$OSTYPE" == "darwin"* ]]; then
@@ -107,7 +108,7 @@ download () {
     curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
 
     EXITCODE=$?
-    if [ $EXITCODE -ne 0 ]; then
+    if [ "$EXITCODE" -ne 0 ]; then
       echo ""
       echo "Failed to download $1. Exitcode $EXITCODE. Retrying in 10 seconds";
       sleep 10
@@ -115,7 +116,7 @@ download () {
     fi
 
     EXITCODE=$?
-    if [ $EXITCODE -ne 0 ]; then
+    if [ "$EXITCODE" -ne 0 ]; then
       echo ""
       echo "Failed to download $1. Exitcode $EXITCODE";
       exit 1
@@ -213,7 +214,7 @@ cleanup () {
 # esac
 
 vercomp () {
-    if [[ $1 == $2 ]]
+    if [[ "$1" == "$2" ]]
     then
         return 0
     fi
@@ -244,7 +245,7 @@ vercomp () {
 }
 
 get_nvcc_ver () {
-  if [ -v $(command -v nvcc) ]; then
+  if [ -v "$(command -v nvcc)" ]; then
     nvcc_ver_txt=$(nvcc --version | grep 'release')
     read -a nvcc_ver_ary <<< "$nvcc_ver_txt"
     nvcc_ver=${${nvcc_ver_txt[-1]}:1}
