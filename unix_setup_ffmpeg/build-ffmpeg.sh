@@ -650,7 +650,7 @@ if build "av1"; then
   cd "$PACKAGES"/av1 || exit
   mkdir -p "$PACKAGES"/aom_build
   cd "$PACKAGES"/aom_build || exit
-  execute env "$COMPILER_SET" cmake -DENABLE_TESTS=0 -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" "$PACKAGES"/av1
+  execute env "$COMPILER_SET" cmake -DENABLE_TESTS=0 -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib "$PACKAGES"/av1
   execute make -j $MJOBS
   execute make install
 
@@ -661,7 +661,7 @@ CONFIGURE_OPTIONS+=("--enable-libaom")
 ## Other Library
 if build "libsdl"; then
   download "https://www.libsdl.org/release/SDL2-2.0.14.tar.gz"
-  execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+  execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
   execute make -j $MJOBS
   execute make install
 
@@ -674,7 +674,7 @@ if build "srt"; then
   export OPENSSL_ROOT_DIR="${WORKSPACE}"
   export OPENSSL_LIB_DIR="${WORKSPACE}"/lib
   export OPENSSL_INCLUDE_DIR="${WORKSPACE}"/include/
-  execute cmake "$PACKAGES"/srt-1.4.1 -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DENABLE_SHARED=OFF -DENABLE_STATIC=ON -DENABLE_APPS=OFF
+  execute env "$COMPILER_SET" cmake "$PACKAGES"/srt-1.4.1 -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_INSTALL_INCLUDEDIR=include -DENABLE_SHARED=OFF -DENABLE_STATIC=ON -DENABLE_APPS=OFF -DUSE_STATIC_LIBSTDCXX=ON
   execute make install
 
   if [ -n "$LDEXEFLAGS" ]; then
@@ -766,7 +766,7 @@ EOF
 fi
 
 PATH="$WORKSPACE/bin:$PATH" \
-PKG_CONFIG_PATH="$WORKSPACE/lib/pkgconfig" \
+PKG_CONFIG_PATH="$WORKSPACE/lib/pkgconfig:/usr/local/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig" \
 env "$COMPILER_SET" ./configure "${CONFIGURE_OPTIONS[@]}" \
   --prefix="${WORKSPACE}" \
   --disable-debug \
