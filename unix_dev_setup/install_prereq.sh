@@ -17,7 +17,7 @@ echo "... Looks like your distro is: $DISTRO"
 
 # Some Distro information
 Debian_base=("Debian GNU/Linux")
-Ubuntu_base=("Ubuntu" "Linuxmint" "Pop" "Pop\!_OS")
+Ubuntu_base=("Ubuntu" "Linuxmint" "Linux Mint" "Pop" "Pop\!_OS")
 Fedora_base=("Fedora" "CentOS Linux" "CentOS Stream" "Red Hat Enterprise Linux")
 openSUSE_base=("openSUSE" "openSUSE Leap")
 Arch_base=("ArchLinux" "Manjaro Linux")
@@ -92,6 +92,7 @@ Debian_packages=( \
   "libxpm-dev" \
   "libxft-dev" \
   "libxext-dev" \
+  "libxaw7-dev" \
   "libpng-dev" \
   "libjpeg-dev" \
   "libpango1.0-dev" \
