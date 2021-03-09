@@ -169,12 +169,21 @@ module UTILS
   end
 
   # Extracts system's GCC version - Returns as 
-  def get_system_gcc_ver(system_gcc='')
-    if system_gcc.empty?
-      system_gcc = 'gcc'
+  def get_system_gcc_ver(system_gcc='gcc')
+    o = `echo $(#{system_gcc} --version | grep ^gcc )`
+    gcc_txt_ary = o.split(' ')
+    gcc_ver_txt = ''
+    gcc_txt_ary.each do |txt|
+      if txt.split('.').length() == 3
+        txt_split = txt.split('.')
+        major = txt_split[0].to_i
+        minor = txt_split[1].to_i
+        patch = txt_split[2].to_i
+        gcc_ver_txt = "#{major}.#{minor}.#{patch}"
+        break
+      end
     end
-    o = `echo $(#{system_gcc} --version | grep ^gcc | sed 's/^.* //g')`
-    ver_system_gcc = Version.new(o)
+    ver_system_gcc = Version.new(gcc_ver_txt)
     return ver_system_gcc
   end
 
