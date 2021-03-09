@@ -143,6 +143,7 @@ Fedora_packages=( \
   "libXft-devel" \
   "libXext-devel" \
   "libXt-devel" \
+  "libXaw-devel" \
   "openssl" \
   "openssl-devel" \
   "redhat-lsb-core" \
