@@ -12,6 +12,7 @@ CXX=clang++
 LDFLAGS="-L${WORKSPACE}/lib -ldl -lm -lpthread -lz"
 LDFLAGS_Z="-L${WORKSPACE}/lib -ldl -lm -lpthread"
 LDEXEFLAGS=""
+EXTRALIBS="-ldl -lpthread -lm -lz"
 CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fno-semantic-interposition -fPIC -fPIE"
 CXXFLAGS=$CFLAGS
 COMPILER_SET="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\" "
@@ -32,6 +33,12 @@ if [ ! -x $(command -v clang) ]; then
   CC="$(command -v /usr/bin/gcc)"
   CXX="$(command -v /usr/bin/g++)"
 fi
+
+echo ""
+echo "Compilers are..."
+echo "C Compiler=${CC}"
+echo "C++ Compiler=${CXX}"
+echo ""
 
 PYTHON=''
 if [ -x "$(command -v python3)" ]; then
