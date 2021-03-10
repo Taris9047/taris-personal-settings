@@ -5,6 +5,11 @@ CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd -P 
 echo "Target directory: ${USR_DIR}"
 echo "Source directory: ${CURRENT_DIR}"
 
+if [ ! -d "$HOMEBREW" ]; then
+  mkdir -pv $HOMEBREW
+fi
+ln -sfv "$HOMEBREW" "$HOME/Homebrew"
+
 # OS Detection
 function lowercase()
 {
@@ -29,7 +34,7 @@ function set_os_type ()
 set_os_type
 
 # Config Files
-CONF_LIST=("vim" "vimrc" "emacs" "gitignore" "gitconfig" "gdbinit" "Xresources")
+CONF_LIST=("vim" "vimrc" "gitignore" "gitconfig" "gdbinit" "Xresources")
 DOT="."
 echo ""
 for conf_file in ${CONF_LIST[*]}
@@ -58,7 +63,6 @@ fi
 echo "Installing Alacritty config file"
 ALACRITTY_CONF_FILE=$USR_DIR/.config/alacritty.yml
 ln -sfv $CURRENT_DIR/dotfiles/alacritty.yml $ALACRITTY_CONF_FILE
-
 
 # Some Handy dirs and Symbolic links
 GOOGLE_DRIVE=$HOME/".google-drive"

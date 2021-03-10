@@ -13,3 +13,5 @@
 
 >> Uninstall feature implemented. A bit brute force way though...
   --> Just compares prefix directory's file list between before/after installation.
+
+>> Work on some doomemacs stuff?

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEF_QT_VER=5.15.2
+DEF_QT_VER="5.15.2"
 if [ ! -z "$1"]; then
   DEF_QT_VER="$1"
 fi
