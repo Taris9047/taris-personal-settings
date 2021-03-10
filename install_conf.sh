@@ -135,4 +135,6 @@ elif [[ "$PLATFORM" == "darwin" ]]; then
 fi
 
 echo ""
+echo "If you need some Doomemacs stuff, run install_doomemacs.sh in the ./bin dir."
+echo ""
 echo "Have a nice day!"
