@@ -1,0 +1,25 @@
+* TODO Implement other platforms... namely Fedora, OS X, etc.
+** DONE Done with Cent OS and RHEL
+** DONE Manjaro seems to be working
+** DONE openSUSE Leap seems ok as of now.
+
+* TODO Some automatic update checking system? Many open source projects implement rss feed to notify newer versions.
+** DONE At least version checking has been implemented.
+** TODO Do we need any sub-project?
+
+* TODO Some web-based system using rails. (far fetched)
+
+* TODO Implement FFMpeg?
+
+* TODO Implement Gnuplot, ngspice, and probably.. Qt5?
+** DONE Gnuplot, ngspice done. Qt5 is under debate.
+** TODO Qt5 can be installed via package managers or Web installation script. Both have pros and cons. If the distro is really old, Web install would be better. But Fedora or Manjaro doesn't need additional space caused by Web install.
+
+* TODO Uninstall feature implemented. A bit brute force way though...
+** Currently, list of iles are gathered through comparison with prefix directory's file list between before/after installation.
+** This method is kind of brute force and prone to unexpected file change.
+** Therefore, we better figure out some other way to get the list of files.
+
+* Work on some doomemacs stuff?
+** TODO Installation scripts and initial settings are done.
+** IDEA Maybe include them into initial installation script.
