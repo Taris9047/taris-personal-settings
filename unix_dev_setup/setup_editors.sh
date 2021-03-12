@@ -20,11 +20,13 @@ Arch_base=("Arch Linux" "Manjaro Linux")
 MODE=''
 
 if [[ " ${Ubuntu_base[@]} " =~ " ${DISTRO} " ]]; then
-  MODE="Ubuntu"
+  MODE="Apt"
 elif [[ " ${Fedora_base[@]} " =~ " ${DISTRO} " ]]; then
-  MODE="Fedora"
+  MODE="Dnf"
 elif [[ " ${Arch_base[@]} " =~ " ${DISTRO} " ]]; then
-  MODE="Arch"
+  MODE="Pacman"
+elif [[ " ${openSUSE_base[@]} " =~ " ${DISTRO} " ]]; then
+  MODE="Zypper"
 fi
 
 echo "Current linux distribution seems $MODE based one."
@@ -33,33 +35,58 @@ echo "Current linux distribution seems $MODE based one."
 #
 # Sublme Text
 #
-install_subl_ubuntu ()
+install_subl_apt ()
 {
   if [ ! -x "$(command -v subl)" ]; then
     echo '>>> Installing Sublme Text ... '
     wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
     echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
-    sudo apt-get -y update && sudo apt-get -y install sublime-text
+    sudo apt-get -y update && sudo apt-get -y install sublime-text sublime-merge
   else
     echo '>>> Updating Sublime Text ... '
     sudo apt-get -y update && sudo apt-get -y upgrade
   fi
 }
-install_subl_fedora ()
+install_subl_dnf ()
 {
   if [ ! -x "$(command -v subl)" ]; then
     echo '>>> Installing Sublime Text ... '
     sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
     sudo dnf -y config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
-    sudo dnf install -y sublime-text
+    sudo dnf install -y sublime-text sublime-merge
   else
     echo '>>> Updating Sublime Text ... '
     sudo dnf -y update
   fi
 }
 
+install_subl_pacman {
+  if [ ! -x "$(command -v subl)" ]; then
+    echo '>>> Installing Sublime Text ... '
+    curl -O https://download.sublimetext.com/sublimehq-pub.gpg && sudo pacman-key --add sublimehq-pub.gpg && sudo pacman-key --lsign-key 8A8F901A && rm sublimehq-pub.gpg
+    echo -e "\n[sublime-text]\nServer = https://download.sublimetext.com/arch/stable/x86_64" | sudo tee -a /etc/pacman.conf
+    sudo pacman -Syyu sublime-text sublime-merge
+  else
+    echo '>>> Updating Sublime Text ... '
+    sudo pacman -Syyu
+  fi
+}
+
+install_subl_zypper ()
+{
+  if [ ! -x "$(command -v subl)" ]; then
+    echo '>>> Installing Sublime Text ... '
+    sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+    sudo zypper addrepo -g -f https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+    sudo zypper install sublime-text sublime-merge
+  else
+    echo '>>> Updating Sublime Text ... '
+    sudo zypper refresh && sudo zypper update
+  fi
+}
+
 # Atom
-install_atom_ubuntu ()
+install_atom_apt ()
 {
   if [ ! -x "$(command -v atom)" ]; then
     echo '>>> Installing Atom ... '
@@ -72,7 +99,7 @@ install_atom_ubuntu ()
     sudo apt-get -y update && sudo apt-get -y install atom
   fi
 }
-install_atom_fedora ()
+install_atom_dnf ()
 {
   echo '>>> Installing and Updating Atom ... '
   sudo dnf install -y $(curl -sL "https://api.github.com/repos/atom/atom/releases/latest" | grep "https.*atom.x86_64.rpm" | cut -d '"' -f 4)
@@ -84,8 +111,29 @@ install_atom_fedora ()
   fi
 }
 
+install_atom_pacman ()
+{
+  if [ ! -x "$(command -v atom)" ]; then
+    echo "Probably... just rely on snap..."
+    echo 'https://snapcraft.io/install/atom/arch'
+  fi 
+}
+
+install_atom_zypper ()
+{
+  if [ ! -x "$(command -v atom)" ]; then
+    echo '>>> Installing Atom ... '
+    sudo sh -c 'echo -e "[Atom]\nname=Atom Editor\nbaseurl=https://packagecloud.io/AtomEditor/atom/el/7/\$basearch\nenabled=1\ntype=rpm-md\ngpgcheck=0\nrepo_gpgcheck=1\ngpgkey=https://packagecloud.io/AtomEditor/atom/gpgkey" > /etc/zypp/repos.d/atom.repo'
+    sudo zypper --gpg-auto-import-keys refresh
+    sudo zypper install atom
+  else
+    echo '>>> Updating Atom ... '
+    sudo zypper refresh && sudo zypper update
+  fi
+}
+
 # VS Code --> who knows, this will replace Atom in near future...
-install_vscode_ubuntu ()
+install_vscode_apt ()
 {
   if [ ! -x "$(command -v code)" ]; then
     echo '>>> Installing VSCode ... '
@@ -102,7 +150,7 @@ install_vscode_ubuntu ()
   fi
 }
 
-install_vscode_fedora ()
+install_vscode_dnf ()
 {
   if [ ! -x "$(command -v code)" ]; then
     echo '>>> Installing VSCode ... '
@@ -116,17 +164,48 @@ install_vscode_fedora ()
   fi
 }
 
+install_vscode_pacman ()
+{
+  echo "AUR is needed! refer some web sources: maybe ..."
+  echo "https://linuxhint.com/install_visual_studio_code_arch_linux/"
+}
+
+install_vscode_zypper ()
+{
+  if [ ! -x "$(command -v atom)" ]; then
+    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    sudo zypper addrepo https://packages.microsoft.com/yumrepos/vscode vscode
+    sudo zypper refresh && sudo zypper install code
+  else
+    echo '>>> Updating VSCode ... '
+    sudo zypper refresh && sudo zypper update
+  fi
+}
+
 
 # Let's really install them!
 case ${MODE} in
-  "Fedora")
-    install_subl_fedora
-    install_atom_fedora
-    install_vscode_fedora
+  "Dnf")
+    install_subl_dnf
+    install_atom_dnf
+    install_vscode_dnf
     ;;
-  "Ubuntu")
-    install_subl_ubuntu
-    install_atom_ubuntu
-    install_vscode_ubuntu
+  "Apt")
+    install_subl_apt
+    install_atom_apt
+    install_vscode_apt
+  "Pacman")
+    install_subl_pacman
+    install_atom_pacman
+    install_vscode_pacman
+    ;;
+  "Zypper")
+    install_subl_zypper
+    install_atom_zypper
+    install_vscode_zypper
+    ;;
+  *)
+    echo "${DISTRO} is not supported as of now.."
+    exit(1)
     ;;
 esac
