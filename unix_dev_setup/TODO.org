@@ -22,4 +22,8 @@
 
 * Work on some doomemacs stuff?
 ** TODO Installation scripts and initial settings are done.
-** IDEA Maybe include them into initial installation script.
+** DONE Maybe include them into initial installation script.
+
+* Implemented Emacs install script
+** TODO Its dependencies needs to be implemented as well. Currently, all the other dependencies are installed with distro's package manager but that's not my style.
+** TODO Gnutls might be hectic to implement due to its own dependency. I'm not going to implement entire linux system.
