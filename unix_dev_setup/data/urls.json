@@ -188,6 +188,16 @@
     "class": "InstHydra"
   },
 
+  # Emacs
+  "emacs": {
+    "url": "http://ftp.gnu.org/gnu/emacs/emacs-27.1.tar.xz",
+    "type": "tarball",
+    "alt-names": ["Emacs", "EMAC"],
+    "dependency": ["libpng", "libjpeg-turbo", "libtiff"],
+    "script": "install_emacs.rb",
+    "class": "InstEmacs"
+  },
+
   # GoLang
   "golang-bootstrap": {
     "url": "https://dl.google.com/go/go1.4-bootstrap-20171003.tar.gz",

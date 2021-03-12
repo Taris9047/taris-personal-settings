@@ -13,7 +13,7 @@ require_relative './utils/utils.rb'
 # follow up the newest changes in libc 2.26
 
 # Version
-$version = ['1', '0', '5']
+$version = ['1', '0', '6']
 
 # title
 $title = "Unix Development Environment setup"
@@ -35,7 +35,7 @@ class UnixDevSetup
     @list_of_progs = SRC_LIST[]
 
     @not_so_stable_pkgs = ['pypy3', 'clang', 'ROOT', 'julia']
-    @not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts', 'ruby3', 'libjpeg']
+    @not_so_needed_pkgs = ['gccold', 'cudacc', 'node-lts', 'ruby3', 'libjpeg', 'emacs']
     @deprecated_pkgs = ['python2']
     @not_really_a_pkg = ['get_pip', 'golang-bootstrap']
 
