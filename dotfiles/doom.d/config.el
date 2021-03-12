@@ -56,17 +56,21 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+;; File management stuff
 (setq-default
  delete-by-moving-to-trash t
  window-combination-resize t
  x-stretch-cursor t)
 
+;; Moar undos!
 (setq undo-limit 800000000
       evil-want-fine-undo t
       truncate-string-ellipsis "…")
 
+;; Tile mode!
 (display-time-mode 1)
 
+;; Battery status show
 (if (equal "Batter status not available"
            (battery))
     (display-battery-mode 1)
@@ -74,7 +78,8 @@
 
 (global-subword-mode 1)
 
-(add-to-list 'default-frame-alist '(height . 24))
+;; Smaller default window size
+(add-to-list 'default-frame-alist '(height . 30))
 (add-to-list 'default-frame-alist '(width . 80))
 
 ;; Setting up windows stuff
@@ -98,3 +103,16 @@
       "C-<down>"        #'+evil/window-move-down
       "C-<up>"          #'+evil/window-move-up
       "C-<right>"       #'+evil/window-move-right)
+
+;; Hangul stuff
+(setq default-input-method "korean-hangul")
+(global-set-key (kbd "S-SPC") 'toggle-input-method)
+(global-set-key (kbd "<Hangul>") 'toggle-input-method)
+(global-set-key (kbd "<Ctrl_R>") 'toggle-input-method)
+(global-set-key (kbd "<Alt_R>") 'toggle-input-method)
+(when (eq system-type 'gnu/linux)
+  (set-fontset-font t 'hangul (font-spec :family "NotoSans CJK KR" :size 16))
+  )
+
+(provide 'config)
+;;; config.el ends here

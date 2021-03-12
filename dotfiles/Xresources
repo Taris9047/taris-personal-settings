@@ -64,7 +64,6 @@ URxvt.keysym.M-c: perl:clipboard:copy
 URxvt.keysym.M-v: perl:clipboard:paste
 URxvt*depth: 32
 
-
 ! Palenight Xresources palette
 !! COLORS
 
@@ -183,5 +182,7 @@ URxvt*depth: 32
 *.color7:       #202328
 *.color15:      #dfdfdf
 
+! Emacs Hangul Problem
+Emacs*useXIM: false
 
 

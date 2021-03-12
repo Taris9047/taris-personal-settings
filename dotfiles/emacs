@@ -1,3 +1,10 @@
+;;; package --- Summary
+;;; Commentary:
+;; My own Emacs setup came from 2003...
+;; Now it's deprecated thanks to doomemacs!
+;;
+
+;;; Code:
 ;; Default Settings
 (setq track-eol nil)
 (setq scroll-step 1)
@@ -179,3 +186,5 @@
 (require 'haskell-mode-autoloads)
 (add-to-list 'Info-default-directory-list "~/.emacs.d/lisp/haskell-mode/")
 
+(provide 'emacs)
+;;; emacs ends here

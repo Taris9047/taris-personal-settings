@@ -187,7 +187,7 @@ else
 fi
 
 # The homebrew path!!
-if [ -d $HBREW_PATH ]; then
+if [ -d "${HBREW_PATH}" ]; then
   export HOMEBREW=$HBREW_PATH
   printf "${check_symbol} HOMEBREW directory is $HOMEBREW\n"
   sleep ${line_delay}
@@ -196,11 +196,20 @@ fi
 
 # Setting for JRE
 JAVA_HOME=/opt/java
-if [ -d $JAVA_HOME ]; then
+if [ -d "$JAVA_HOME" ]; then
   printf "${check_symbol} Java (Possibly Oracle) found at $JAVAHOME\n"
   sleep ${line_delay}
-  export PATH=$JAVA_HOME/bin:$PATH
-  export CLASSPATH=$JAVA_HOME/lib
+  addpath "${JAVA_HOME}/bin"
+  export CLASSPATH=${JAVA_HOME}/lib
+fi
+
+# Custom emacs
+# Make sure put an emacs with gui capability for doomemacs.
+EMACS_HOME=$HOME/.emacs_local
+if [ -d "${EMACS_HOME}" ]; then
+  printf "${check_symbil} Custom emacs found at $EMACS_HOME\n"
+  sleep ${line_delay}
+  addpath "${EMACS_HOME}/bin"
 fi
 
 # Rust
