@@ -5,25 +5,34 @@
 
 * TODO Some automatic update checking system? Many open source projects implement rss feed to notify newer versions.
 ** DONE At least version checking has been implemented.
-** TODO Do we need any sub-project?
+** IDEA Do we need any sub-project?
 
 * TODO Some web-based system using rails. (far fetched)
+** TODO We might need to implement or sketch up a GUI version of the script first.
+** IDEA Actually, we can implement some kind of Web(HTML2) based management interface with ruby.
 
 * TODO Implement FFMpeg?
+** OKAY There is a dedicated bash script for it. It works well at this moment and produces a statically linked ffmpeg which is not too bad.
+** OKAY The only drawback of such installation is file size. In fact, its performance is faster than dynamically linked version which is usual way of many linux package managers.
 
 * TODO Implement Gnuplot, ngspice, and probably.. Qt5?
 ** DONE Gnuplot, ngspice done. Qt5 is under debate.
-** TODO Qt5 can be installed via package managers or Web installation script. Both have pros and cons. If the distro is really old, Web install would be better. But Fedora or Manjaro doesn't need additional space caused by Web install.
+** OKAY Qt5 can be installed via package managers or Web installation script. Both have pros and cons. If the distro is really old, Web install would be better. But Fedora or Manjaro doesn't need additional space caused by Web install.
+** OKAY Anyway, Web installed Qt5 can be adopted as local compile-install situation.
 
 * TODO Uninstall feature implemented. A bit brute force way though...
-** Currently, list of iles are gathered through comparison with prefix directory's file list between before/after installation.
+** Currently, list of files are gathered through comparison with prefix directory's file list between before/after installation.
 ** This method is kind of brute force and prone to unexpected file change.
-** Therefore, we better figure out some other way to get the list of files.
+** PROJ Therefore, we better figure out some other way to get the list of files.
+** IDEA Some people suggest making a dedicated directory for 'temporary' installation. But this might compromise module installation.
 
-* Work on some doomemacs stuff?
-** TODO Installation scripts and initial settings are done.
+* DONE Work on some doomemacs stuff?
+** DONE Installation scripts and initial settings are done.
 ** DONE Maybe include them into initial installation script.
 
 * Implemented Emacs install script
-** TODO Its dependencies needs to be implemented as well. Currently, all the other dependencies are installed with distro's package manager but that's not my style.
-** TODO Gnutls might be hectic to implement due to its own dependency. I'm not going to implement entire linux system.
+** DONE Its dependencies needs to be implemented as well. Currently, all the other dependencies are installed with distro's package manager but that's not my style.
+** DONE Gnutls might be hectic to implement due to its own dependency. I'm not going to implement entire linux system.
+** DONE RHEL now can copmile emacs 27.1 to work with doomeamcs.
+** OKAY Arch based distro can work with doomemacs without too much hassle since they provide newest emacs 27.1 anyway.
+** TODO Gotta try Fedora, but it will work well.
