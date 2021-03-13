@@ -168,6 +168,7 @@ esac
 
 # Putting up some system info!
 if [ -x "$(command -v neofetch)" ]; then
+  clear
   neofetch
 fi
 

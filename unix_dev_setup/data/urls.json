@@ -193,7 +193,7 @@
     "url": "http://ftp.gnu.org/gnu/emacs/emacs-27.1.tar.xz",
     "type": "tarball",
     "alt-names": ["Emacs", "EMAC"],
-    "dependency": ["libpng", "libjpeg-turbo", "libtiff"],
+    "dependency": ["libpng", "libjpeg-turbo", "libtiff", "giflib"],
     "script": "install_emacs.rb",
     "class": "InstEmacs"
   },
@@ -283,6 +283,24 @@
     "dependency": [],
     "script": "libs/install_libtiff.rb",
     "class": "InstLibTIFF"
+  },
+  # giflib
+  "giflib": {
+    "url": "https://sourceforge.net/projects/giflib/files/giflib-5.2.1.tar.gz",
+    "type": "tarball",
+    "alt-names": ["libgif", "Giflib", "libgif-dev"],
+    "dependency": [],
+    "script": "libs/install_giflib.rb",
+    "class": "InstGiflib"
+  },
+  # libjansson
+  "libjansson": {
+    "url": "https://digip.org/jansson/releases/jansson-2.13.1.tar.bz2",
+    "type": "tarball",
+    "alt-names": ["jansson-dev", "libjansson"],
+    "dependency": [],
+    "script": "libs/install_libjansson.rb",
+    "class": "InstLibJansson"
   },
   # PDFlib
   "pdflib": {

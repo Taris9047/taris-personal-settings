@@ -57,6 +57,7 @@ libpango1.0-dev
 libpangocairo-* 
 libcairo-dev 
 libcerf-dev 
+libgnutls-dev
 valgrind 
 cmake 
 cmake-gui 

@@ -13,7 +13,7 @@ require_relative './utils/utils.rb'
 # follow up the newest changes in libc 2.26
 
 # Version
-$version = ['1', '0', '6']
+$version = ['1', '0', '7']
 
 # title
 $title = "Unix Development Environment setup"
