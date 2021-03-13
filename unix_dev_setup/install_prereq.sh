@@ -39,271 +39,11 @@ fi
 
 echo "Current linux distribution seems $MODE based one."
 
-Debian_packages=( \
-  "build-essential"  \
-  "flex" \
-  "bison" \
-  "zlib1g" \
-  "zlib1g-dev" \
-  "openssl" \
-  "libssl-dev" \
-  "libsqlite3-dev" \
-  "libncursesw5-dev" \
-  "libyaml-dev" \
-  "libreadline-dev" \
-  "libssl-dev" \
-  "libgdbm-dev" \
-  "libc6-dev" \
-  "libsqlite3-dev" \
-  "tk-dev" \
-  "libbz2-dev" \
-  "libicu-dev" \
-  "libffi-dev" \
-  "autotools-dev" \
-  "python3-dev" \
-  "libncurses5-dev" \
-  "libxml2-dev" \
-  "libedit-dev" \
-  "swig" \
-  "doxygen" \
-  "graphviz" \
-  "xz-utils" \
-  "ruby" \
-  "ruby-dev" \
-  "git-lfs" \
-  "tree" \
-  "screen" \
-  "libzmq3-dev" \
-  "libtool-bin" \
-  "dos2unix" \
-  "liblzma-dev" \
-  "lzma" \
-  "pkg-config" \
-  "libbz2-dev" \
-  "libncurses5-dev" \
-  "libexpat1-dev" \
-  "libgdbm-dev" \
-  "tk-dev" \
-  "libgc-dev" \
-  "libnuma-dev" \
-  "python-cffi" \
-  "libopenblas-dev" \
-  "libx11-dev" \
-  "libxpm-dev" \
-  "libxft-dev" \
-  "libxext-dev" \
-  "libxaw7-dev" \
-  "libpng-dev" \
-  "libjpeg-dev" \
-  "libpango1.0-dev" \
-  "libpangocairo-*" \
-  "libcairo-dev" \
-  "libcerf-dev" \
-  "valgrind" \
-  "cmake" \
-  "cmake-gui" \
-  "ninja-build" \
-  "autoconf" \
-  "automake" \
-  "vim" \
-  "emacs" \
-  "ttf-bitstream-vera" \
-  "subversion" \
-  "git" \
-  "wget" \
-  "curl" \
-  "neofetch" \
-)
-
-Ubuntu_packages=${Debian_packages[@]}
-
-Fedora_packages=( \
-  "wget" \
-  "ruby" \
-  "ruby-devel" \
-  "cmake" \
-  "cmake-gui" \
-  "libuuid" \
-  "libuuid-devel" \
-  "tk-devel" \
-  "bzip2-libs" \
-  "libffi-devel" \
-  "numactl-devel" \
-  "xz-devel" \
-  "expat-devel" \
-  "openblas" \
-  "lapack" \
-  "sqlite" \
-  "sqlite-devel" \
-  "zlib" \
-  "zlib-devel" \
-  "binutils" \
-  "libX11-devel" \
-  "libXpm-devel" \
-  "libXft-devel" \
-  "libXext-devel" \
-  "libXt-devel" \
-  "libXaw-devel" \
-  "openssl" \
-  "openssl-devel" \
-  "redhat-lsb-core" \
-  "gcc-gfortran" \
-  "pcre-devel" \
-  "mesa-libGL-devel" \
-  "mesa-libGLU-devel" \
-  "ftgl-devel" \
-  "fftw-devel" \
-  "cfitsio-devel" \
-  "openldap-devel" \
-  "libxml2-devel" \
-  "gsl-devel" \
-  "emacs" \
-  "subversion" \
-  "git" \
-  "git-lfs" \
-  "wget" \
-  "curl" \
-  "valgrind" \
-  "valgrind-devel" \
-  "vim" \
-  "neovim" \
-  "screen" \
-  "neofetch" \
-  )
-
-# Well, apparently, there were some package differences 
-# between Fedora and CentOS/RHEL...
-Fedora_additional_packages=( \
-  "openblas-devel" \
-  "mysql-devel" \
-  "glew-devel" \
-  "graphviz-devel" \
-  "avahi-compat-libdns_sd-devel" \
-  "doxygen" \
-  "ninja-build" \
-  )
-# Many of them aren't really 
-RHEL_additional_packages=( \
-  "openblas" \
-  "glew-devel" \
-  "graphviz-devel" \
-  "avahi-compat-libdns_sd-devel" \
-  "doxygen" \
-  "ninja-build" \
-  )
-
-# openSUSE
-openSUSE_packages=( \
-  "wget" \
-  "ruby" \
-  "ruby-devel" \
-  "gcc10" "gcc10-g++" \
-  "cmake" \
-  "cmake-gui" \
-  "libuuid-devel" \
-  "tk-devel" \
-  "bzip2" \
-  "libffi-devel" \
-  "numactl" \
-  "xz-devel" \
-  "libexpat1" \
-  "openblas-devel" \
-  "lapack" \
-  "sqlite" \
-  "sqlite-devel" \
-  "zlib" \
-  "zlib-devel" \
-  "binutils" \
-  "libX11-devel" \
-  "libXpm-devel" \
-  "libXft-devel" \
-  "libXext-devel" \
-  "libXt-devel" \
-  "openssl" \
-  "openssl-devel" \
-  "pcre-devel" \
-  "Mesa" \
-  "ftgl-devel" \
-  "fftw-devel" \
-  "cfitsio-devel" \
-  "yast2-auth-server" \
-  "libxml2-devel" \
-  "gsl-devel" \
-  "emacs" \
-  "subversion" \
-  "git" \
-  "git-lfs" \
-  "wget" \
-  "curl" \
-  "valgrind" \
-  "valgrind-devel" \
-  "vim" \
-  "neovim" \
-  "screen" \
-  "neofetch" \
-  "openblas-devel" \
-  "mysql-devel" \
-  "glew-devel" \
-  "graphviz-devel" \
-  "doxygen" \
-  "unicode-emoji" \
-  "ninja" \
-)
-
-# Arch
-Arch_packages=( \
-  "base-devel" \
-  "gcc-fortran" \
-  "libffi" \
-  "flex" \
-  "tk" \
-  "bison" \
-  "zlib" \
-  "bzip2" \
-  "cfitsio" \
-  "expat" \
-  "pcre" \
-  "git" \
-  "git-lfs" \
-  "doxygen" \
-  "wget" \
-  "curl" \
-  "vim" \
-  "neovim" \
-  "emacs" \
-  "valgrind" \
-  "swig" \
-  "sqlite" \
-  "mariadb" \
-  "cmake" \
-  "pkgconf" \
-  "xz" \
-  "p7zip" \
-  "ruby" \
-  "ruby-irb" \
-  "gsl" \
-  "ftgl" \
-  "fftw" \
-  "openssl" \
-  "openldap" \
-  "numactl" \
-  "glew" \
-  "graphviz" \
-  "libxml2" \
-  "libx11" \
-  "libxpm" \
-  "libxft" \
-  "libxext" \
-  "libxt" \
-  "screen" \
-  "lapack" \
-  "mercurial" \
-  "subversion" \
-  "unicode-emoji" \
-  "ninja" \
-  "neofetch" \
-  )
-
+readarray -t Debian_packages < './data/ubuntu_pkgs'
+readarray -t Ubuntu_packages < './data/ubuntu_pkgs'
+readarray -t Fedora_packages < './data/fedora_pkgs'
+readarray -t RHEL_packages < './data/rhel_pkgs'
+readarray -t Arch_packages < './data/arch_pkgs'
 
 Ruby_gems=( \
   "rsense" \
@@ -351,19 +91,19 @@ install_prereq_Debian ()
 
 install_prereq_Fedora ()
 {
-  pkgs=$( array_to_string "${Fedora_packages[@]}" )
-  add_pkgs=()
+
   gems=()
   # Fedora
   if [[ "$DISTRO" == *"Fedora"* ]]; then
+    pkgs=$( array_to_string "${Fedora_packages[@]}" )
     sudo -H dnf -y groupinstall "Development Tools" "Development Libraries"
-    add_pkgs=$( array_to_string "${Fedora_additional_packages[@]}" )
     gems=$( array_to_string "${Ruby_gems[@]}")
     sudo -H dnf -y update && sudo dnf -y upgrade
-    sudo -H dnf -y install $pkgs $add_pkgs
+    sudo -H dnf -y install $pkgs
     sudo -H /usr/bin/gem install $gems
   # In case CentOS or RHEL
-  else
+  elif [[ "$DISTRO" == *"CentOS Linux"* || "$DISTRO" == *"Red Hat Enterprise Linux"* ]]; then
+    pkgs=$( array_to_string "${RHEL_packages[@]}")
     sudo dnf -y install dnf-plugins-core
     if [[ "$DISTRO" == *"CentOS Linux"* ]]; then
       echo "Installing CentOS repos."
@@ -375,10 +115,9 @@ install_prereq_Fedora ()
       sudo -H dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
     fi
     sudo -H dnf -y groupinstall "Development Tools" "Additional Development"
-    add_pkgs=$( array_to_string "${RHEL_additional_packages[@]}" )
     gems=$( array_to_string "${Ruby_gems_RHEL[@]}")
     sudo -H dnf -y update && sudo dnf -y upgrade
-    sudo -H dnf -y install $pkgs $add_pkgs
+    sudo -H dnf -y install $pkgs
     sudo -H /usr/bin/gem install $gems
     sudo -H /usr/bin/gem install open3 -v 0.1.0
   fi

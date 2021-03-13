@@ -4,7 +4,7 @@
 # TODO: Implement more dependencies.
 # 1. gnutls
 # 2. giflib
-# 3. jesson json parsor
+# 3. jansson json parsor
 # 4. libotf
 # 5. m17n-flt
 # 6. libxft
