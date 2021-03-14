@@ -25,7 +25,7 @@
                                                (kbd "g <down>")  'centaur-tabs-forward-group
                                                (kbd "g <up>")    'centaur-tabs-backward-group)
 
-map! :leader
+(map! :leader
       :desc "Dired"
       "d d" #'dired
       :leader
