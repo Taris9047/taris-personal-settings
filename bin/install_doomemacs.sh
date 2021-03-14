@@ -13,7 +13,11 @@ git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom -y install
 
 echo "Ok, migrating the settings file!!"
-cp -vfr $SCRIPTPATH/../dotfiles/doom.d/*.el $HOME/.doom.d/
+# cp -vfr $SCRIPTPATH/../dotfiles/doom.d/*.el $HOME/.doom.d/
+ln -sfv "${SCRIPTPATH}/../dotfiles/doom.d/init.el" "${HOME}/.doom.d/init.el"
+ln -sfv "${SCRIPTPATH}/../dotfiles/doom.d/config.el" "${HOME}/.doom.d/config.el"
+ln -sfv "${SCRIPTPATH}/../dotfiles/doom.d/packages.el" "${HOME}/.doom.d/packages.el"
+
 $HOME/.emacs.d/bin/doom -y sync
 
 echo "Have fun!!"

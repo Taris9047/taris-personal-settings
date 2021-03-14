@@ -26,7 +26,9 @@
        ;;ido               ; the other *other* search engine...
        (ivy               ; a search engine for love and life
         +icons
-        +perscient)
+        +perscient
+        +ivyposframe
+        +fonts)
 
        :ui
        ;;deft              ; notational velocity for Emacs
@@ -42,7 +44,7 @@
        minimap           ; show a map of the code on the side
        modeline          ; snazzy, Atom-inspired modeline, plus API
        nav-flash         ; blink cursor line after big motions
-       ;;neotree           ; a project drawer, like NERDTree for vim
+       neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup
         +all
@@ -79,9 +81,9 @@
        vc                ; version-control and Emacs, sitting in a tree
 
        :term
-       ;;eshell            ; the elisp shell that works everywhere
-       ;;shell             ; simple shell REPL for Emacs
-       ;;term              ; basic terminal emulator for Emacs
+       eshell            ; the elisp shell that works everywhere
+       shell             ; simple shell REPL for Emacs
+       term              ; basic terminal emulator for Emacs
        vterm             ; the best terminal emulation in Emacs
 
        :checkers
@@ -201,6 +203,12 @@
        irc               ; how neckbeards socialize
        (rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
+
+       :emms
+       emms-setup
+       emms-info
+       emms-cue
+       emms-mode-line
 
        :config
        ;;literate
