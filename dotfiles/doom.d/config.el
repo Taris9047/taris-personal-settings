@@ -233,7 +233,7 @@
 (global-subword-mode 1)
 
 ;; Smaller default window size
-(add-to-list 'default-frame-alist '(height . 30))
+(add-to-list 'default-frame-alist '(height . 40))
 (add-to-list 'default-frame-alist '(width . 80))
 
 ;; Setting up windows stuff
@@ -287,7 +287,8 @@
 ;; neotree
 (after! neotree
   (setq neo-smart-open t
-        neo-window-fixed-size nil))
+        neo-window-fixed-size nil
+        neo-window-width 25))
 (after! doom-themes
   (setq doom-neotree-enable-variable-pitch t))
 (map! :leader
@@ -313,6 +314,14 @@
       :leader
       :desc "Edit doom packages.el"
       "- p" #'(lambda () (interactive) (find-file "~/.doom.d/packages.el")))
+
+;; Winner mode
+(map! :leader
+      :desc "Winner redo"
+      "w <right>" #'winner-redo
+      :leader
+      :desc "Winner undo"
+      "w <left>" #'winner-undo)
 
 
 (provide 'config)

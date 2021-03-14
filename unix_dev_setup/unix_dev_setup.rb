@@ -210,7 +210,7 @@ class UnixDevSetup
     puts "Removing 'python' command to preserve system native python..."
     sudo_cmd = ''
     if !File.writable?(@prefix_dir)
-      sudo_cmd = "sudo"
+      sudo_cmd = "sudo -H"
     end
     del_python_cmd = [
       File.join($prefix_dir, "bin/python"),
