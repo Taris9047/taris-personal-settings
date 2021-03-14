@@ -183,6 +183,40 @@ class InstGCC < InstallStuff
 
 end # class InstGCC
 
+class InstGCCJit < InstGCC
+
+  def initialize (args)
+    args.each do |k,v|
+      instance_variable_set("@#{k}", v) unless v.nil?
+    end
+    super(args)
+
+    @pkgname = 'gcc-jit'
+    @source_url = SRC_URL[@pkgname]
+    @prefix = File.join(@prefix, ".opt/#{@pkgname}")
+
+    @conf_options = \
+      $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
+      + ["--enable-languages=c,c++,jit"] \
+      + ["--program-suffix=-jit"] \
+      + ["--enable-host-shared"]
+
+    @env = {
+      "CC" => "gcc",
+      "CXX" => "g++",
+      "CFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
+      "CXXFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
+      "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
+    }
+
+  end
+
+  def do_install
+    super
+  end
+
+end # class InstGCCJit
+
 
 class InstGCC8 < InstGCC
 

@@ -8,6 +8,14 @@
     "script": "install_gcc.rb",
     "class": "InstGCC"
   },
+  "gcc-jit": {
+    "url": "https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz",
+    "type": "tarball",
+    "alt-names": ["gccjit", "gcc-10-jit"],
+    "dependency": [],
+    "script": "install_gcc.rb",
+    "class": "InstGCCJit"
+  },
   "gcc8": {
     "url": "https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.gz",
     "type": "tarball",
