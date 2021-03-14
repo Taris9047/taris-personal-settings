@@ -195,7 +195,7 @@ class UnixDevSetup
       "os_type" => @def_system,
       "def_system" => @def_system,
       "work_dirs" => @work_dirs,
-      "need_sudo" => @eed_sudo,
+      "need_sudo" => @need_sudo,
       "verbose_mode" => @verbose,
       "ver_check" => @vercheck,
       "clang_mode" => @clang_mode,
