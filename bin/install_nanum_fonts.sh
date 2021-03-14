@@ -31,8 +31,11 @@ if [ ! -d "${TARGET_DIR}" ]; then
     mkdir -p "${TARGET_DIR}"
 fi
 
-unzip "${TEMP_DIR}/ngf.zip" -do "${TARGET_DIR}/"
-unzip "${TEMP_DIR}/ngfc.zip" -do "${TARGET_DIR}/"
+# unzip "${TEMP_DIR}/ngf.zip" -do "${TARGET_DIR}/"
+# unzip "${TEMP_DIR}/ngfc.zip" -do "${TARGET_DIR}/"
+cd "${TARGET_DIR}" && unzip "${TEMP_DIR}/ngf.zip"
+cd "${TARGET_DIR}" && unzip "${TEMP_DIR}/ngfc.zip"
+
 
 rm -rf "${TARGET_DIR}/__MACOSX"
 

@@ -193,7 +193,7 @@
     "url": "http://ftp.gnu.org/gnu/emacs/emacs-27.1.tar.xz",
     "type": "tarball",
     "alt-names": ["Emacs", "EMAC"],
-    "dependency": ["libpng", "libjpeg-turbo", "libtiff", "giflib"],
+    "dependency": ["libpng", "libjpeg-turbo", "libtiff", "giflib", "libungif", "libjansson"],
     "script": "install_emacs.rb",
     "class": "InstEmacs"
   },
@@ -292,6 +292,14 @@
     "dependency": [],
     "script": "libs/install_giflib.rb",
     "class": "InstGiflib"
+  },
+  "libungif": {
+    "url": "https://sourceforge.net/projects/giflib/files/libungif-4.x/libungif-4.1.4/libungif-4.1.4.tar.bz2",
+    "type": "tarball",
+    "alt-names": [],
+    "dependency": [],
+    "script": "libs/install_libungif.rb",
+    "class": "InstLibungif"
   },
   # libjansson
   "libjansson": {

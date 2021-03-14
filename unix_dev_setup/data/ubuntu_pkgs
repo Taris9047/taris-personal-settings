@@ -57,6 +57,9 @@ libpango1.0-dev
 libpangocairo-* 
 libcairo-dev 
 libcerf-dev
+libotf-dev
+imagemagick
+libm17n-dev
 gcc-10
 g++-10
 clang

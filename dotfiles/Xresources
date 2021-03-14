@@ -185,4 +185,5 @@ URxvt*depth: 32
 ! Emacs Hangul Problem
 Emacs*useXIM: false
 
+! Korean stuff
 

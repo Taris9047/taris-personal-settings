@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Installs Lua
+# Installs giflib
 
 require 'fileutils'
 
@@ -69,4 +69,4 @@ class InstGiflib < InstallStuff
     self.WriteInfo
   end
 
-end # class InstLua
+end # class InstGiflib
