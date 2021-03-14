@@ -25,7 +25,7 @@ $py3_modules = [
   "numpy", "scipy", "matplotlib", "pandas", "nose",
   "ipython", "jedi", "parso", "sympy", "cytoolz",
   "spyder", "pyinstaller", "jupyter", "bpytop", "pycparser",
-  "mercurial", "nose"
+  "mercurial", "nose", "virtualenv"
 ]
 $py3_conf_options = [
   "--enable-shared",
