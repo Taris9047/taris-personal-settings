@@ -205,6 +205,14 @@
     "script": "install_emacs.rb",
     "class": "InstEmacs"
   },
+  "emacs-nc": {
+    "url": "git://git.savannah.gnu.org/emacs.git",
+    "type": "git",
+    "alt-names": ["GccEmacs", "emacs-native-compiler"],
+    "dependency": ["libpng", "libjpeg-turbo", "libtiff", "giflib", "libungif", "libjansson"],
+    "script": "install_emacs_nc.rb",
+    "class": "InstEmacsNC"
+  },
 
   # GoLang
   "golang-bootstrap": {

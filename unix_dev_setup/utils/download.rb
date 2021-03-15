@@ -92,7 +92,7 @@ class Download < RunConsole
       return 0
     end
     puts "Cloning from #{@URL} into #{@DEST}"
-    system( "cd #{@DEST} && git clone #{@src_ctl_opts} #{@URL}" )
+    system( "cd #{@DEST} && git clone #{@URL} #{@src_ctl_opts}" )
   end
 
   def GetPath

@@ -62,6 +62,9 @@ imagemagick
 libm17n-dev
 gcc-10
 g++-10
+libgccjit0
+libgccjit10-dev
+texinfo
 clang
 libgnutls*-dev
 valgrind 
