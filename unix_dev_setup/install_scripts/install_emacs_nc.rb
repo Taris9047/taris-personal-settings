@@ -36,8 +36,18 @@ class InstEmacsNC < InstallStuff
     #  '--with-xwidgets'    # needs webkitgtk4-dev
     ]
 
-    @env["CC"] = "gcc-10"
-    @env["CXX"] = "g++-10"
+    # TODO: Implement more elegant way to find out jit enabled gcc
+    #
+    if UTILS.which('gcc-jit')
+      @env["CC"] = 'gcc-jit'
+    else
+      @env["CC"] = 'gcc-10'
+    end
+    if UTILS.which('g++-jit')
+      @env["CXX"] = 'g++-jit'
+    else
+      @env["CXX"] = 'g++-10'
+    end
     @env["CFLAGS"] = "-O3 -fomit-frame-pointer -march=native -pipe"
     @env["CXXLAGS"] = "-O3 -fomit-frame-pointer -march=native -pipe"
     @env["LDFLAGS"] = "-Wl,-rpath=#{@prefix}/lib -Wl,-rpath=#{@prefix}/lib64 -L#{@prefix}/lib -L#{@prefix}/lib64"
@@ -49,11 +59,11 @@ class InstEmacsNC < InstallStuff
   def do_install
 
     puts ""
-    
     warn_txt = %q{
 Emacs native-compiler (GccEmacs) is an experiemental program.
 Many rolling distros provide this version with repl or copr.
 So, it's better to use them instead of this head bonking source compile.
+
 }      
     puts warn_txt
     sleep (2)

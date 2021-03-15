@@ -139,11 +139,16 @@ class InstGCC < InstallStuff
     end
 
     opts = ["--prefix="+@prefix]+@conf_options
+    unless opts.include?('--disable-bootstrap')
+      bootstrap_cmd = "nice make -j#{@Processors.to_s} bootstrap &&"
+    else
+      bootstrap_cmd = ''
+    end
     cmd = [
       "cd #{File.realpath(bld_dir)}", "&&",
       File.join(File.realpath(extracted_src_dir),"configure"), opts.join(" "), "&&",
-      !opts.include?('--disable-bootstrap') "make -j#{@Processors.to_s} bootstrap &&": "" ,
-      "make -j#{@Processors.to_s}", "&&",
+      bootstrap_cmd,
+      "nice make -j#{@Processors.to_s}", "&&",
       inst_cmd
     ]
 
@@ -194,14 +199,22 @@ class InstGCCJit < InstGCC
     @source_url = SRC_URL[@pkgname]
     @prefix = File.join(@prefix, ".opt/#{@pkgname}")
 
-    @conf_options = \
-      $gcc_conf_options \
-      - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
-      - ["--enable-shared"] \
-      + ["--enable-languages=c,c++,jit"] \
-      + ["--program-suffix=-jit"] \
-      + ["--enable-host-shared"] \
-      + ["--disable-bootstrap"]
+    # @conf_options = \
+    #   $gcc_conf_options \
+    #   - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
+    #   - ["--enable-shared"] \
+    #   + ["--enable-languages=c,c++,jit"] \
+    #   + ["--program-suffix=-jit"] \
+    #   + ["--enable-host-shared"] \
+    #   + ["--disable-bootstrap"]
+    @conf_options = [
+      "--enable-languages=c,c++,jit",
+      "--program-suffix=-jit",
+      "--enable-host-shared",
+      "--disable-bootstrap",
+      "--enable-checking=release",
+      "--disable-multilib"
+    ]
     @env = $gcc_env
   end
 
