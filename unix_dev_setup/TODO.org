@@ -36,3 +36,7 @@
 ** DONE RHEL now can copmile emacs 27.1 to work with doomeamcs.
 ** OKAY Arch based distro can work with doomemacs without too much hassle since they provide newest emacs 27.1 anyway.
 ** TODO Gotta try Fedora, but it will work well.
+* Emacs native-compiler
+** DONE It works on Kubuntu (Ubuntu).
+** TODO We need to implement gcc selector -> some distro doesn't provide newest compiler packages with jit. Such as RHEL.
+** HOLD Fedora, Manjaro has their own repo (or additional repo) to install emacs-nc. So, don't bother with them.

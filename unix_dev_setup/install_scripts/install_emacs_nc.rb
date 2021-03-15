@@ -48,6 +48,14 @@ class InstEmacsNC < InstallStuff
 
   def do_install
 
+    puts ""
+    
+    warn_txt = %q{
+Emacs native-compiler (GccEmacs) is an experiemental program.
+Many rolling distros provide this version with repl or copr.
+So, it's better to use them instead of this head bonking source compile.
+}      
+    puts warn_txt
     sleep (2)
 
     dl = Download.new(@source_url, @src_dir,
@@ -77,12 +85,11 @@ class InstEmacsNC < InstallStuff
 
     # Ok let's roll!!
     cmds = [
-      "cd", src_clone_folder, "&&",
+      "cd #{src_clone_folder}", "&&",
       "./autogen.sh", "&&",
-      "cd", src_build_folder, "&&",
-      File.join(src_clone_folder,"configure"),
-      opts.join(" "), "&&",
-      "make -j", @Processors.to_s, "&&",
+      "cd #{src_build_folder}", "&&",
+      File.join(src_clone_folder,"configure"), opts.join(" "), "&&",
+      "make -j#{@Processors.to_s}", "&&",
       inst_cmd
     ]
     puts "Compiling (with #{@Processors} processors) and Installing ..."
