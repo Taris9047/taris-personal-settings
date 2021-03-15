@@ -6,6 +6,11 @@
 # libgccjit0 libgccjit10-dev texinfo
 #
 
+# Additional deps for Fedora
+#
+# libgccjit-devel texinfo
+# 
+
 require 'fileutils'
 require_relative '../utils/utils.rb'
 require_relative './install_stuff.rb'
@@ -38,43 +43,71 @@ class InstEmacsNC < InstallStuff
 
     # TODO: Implement more elegant way to find out jit enabled gcc
     #
+    self.detect_libgccjit
+  
+  end # initialize
+
+  def detect_libgccjit
     gcc_jit_found = false
+    libgccjit_found = false
     @gcc_prefix = @prefix
     if UTILS.which('gcc-jit')
       @env["CC"] = 'gcc-jit'
       gcc_jit_found = true
-    else
+      libgccjit_found = true
+    elsif UTILS.which('gcc-10')
       @env["CC"] = 'gcc-10'
+    else
+      @env["CC"] = 'gcc'
     end
     if UTILS.which('g++-jit')
       @env["CXX"] = 'g++-jit'
       gcc_jit_found = true
-    else
+      libgccjit_found = true
+    elsif UTILS.which('g++-10')
       @env["CXX"] = 'g++-10'
+    else
+      @env["CXX"] = 'g++'
     end
 
+    # Detect whether current gcc has libgccjit capability.
+    @gcc_prefix = File.realpath(File.join(File.dirname(UTILS.which(@env["CC"])), '..'))
+
     if gcc_jit_found
-      @gcc_prefix = File.realpath(
-        File.join(File.dirname(UTILS.which('gcc-jit')), '..')
-      )
       @env["C_INCLUDE_PATH"] = "#{@gcc_prefix}/include:"+@env["C_INCLUDE_PATH"]
       @env["CPLUS_INCLUDE_PATH"] = "#{@gcc_prefix}/include:"+@env["CPLUS_INCLUDE_PATH"]
       @env["LDFLAGS"] = "-Wl,-rpath=#{@gcc_prefix}/lib -Wl,-rpath=#{@gcc_prefix}/lib64 "+@env["LDFLAGS"]
-      # @env = @env.merge({"LD_LIBRARY_PATH" => File.join(@gcc_prefix, 'lib')})
+      return true
+    else
+      gcc_libdirs = \
+        [ File.join(@gcc_prefix, 'lib'), File.join(@gcc_prefix, 'lib64') ]
+      gcc_libdirs.each do |lib_dir|
+        lib_list = Dir[File.join(lib_dir, '*.so')]
+        lib_list.each do |libso|
+          if libso.include? 'libgccjit' and libso.include? '.so'
+            libgccjit_found = true
+            return libgccjit_found
+          end
+        end
+      end
+
+      unless libgccjit_found
+        puts "Oops, current compiler #{@env["CC"]} cannot support jit!!"
+        puts "Exiting!!"
+        exit 1
+      end
     end
-    # puts UTILS.which('gcc-jit')
-    # puts @env, @gcc_prefix
-    # exit 0
-  end
+
+    return libgccjit_found
+  end # detect_libgccjit
 
   def do_install
-
-    puts ""
     warn_txt = %q{
-Emacs native-compiler (GccEmacs) is an experiemental program.
-Many rolling distros provide this version with repl or copr.
-So, it's better to use them instead of this head bonking source compile.
-
+*** Note ***
+ Emacs native-compiler (GccEmacs) is an experiemental program.
+ Many rolling distros provide this version with repl or copr.
+ So, it's better to use them instead of this head-bonking source compile.
+*** **** ***
 }      
     puts warn_txt
     sleep (2)
@@ -96,10 +129,10 @@ So, it's better to use them instead of this head bonking source compile.
     end
     self.Run( "mkdir -p "+src_build_folder )
 
-    opts = ["--prefix="+@prefix]+@conf_options
+    opts = ["--prefix=#{@prefix}"]+@conf_options
 
     if @need_sudo
-      inst_cmd = "sudo make install"
+      inst_cmd = "sudo -H make install"
     else
       inst_cmd = "make install"
     end

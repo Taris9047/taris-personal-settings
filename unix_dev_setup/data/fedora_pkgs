@@ -5,6 +5,9 @@ cmake
 cmake-gui 
 libuuid 
 libuuid-devel 
+libgccjit-devel
+texinfo
+gnutls-devel
 tk-devel 
 bzip2-libs 
 libffi-devel 
@@ -56,3 +59,4 @@ graphviz-devel
 avahi-compat-libdns_sd-devel 
 doxygen 
 ninja-build
+gnome-shell-extension-pop-shell
