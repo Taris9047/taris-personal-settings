@@ -28,8 +28,10 @@ $gcc_conf_options = [
 $gcc_env = {
   "CC" => "gcc",
   "CXX" => "g++",
-  "CFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
-  "CXXFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe",
+  "CFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe -fPIC",
+  "C_INCLUDE_PATH" => "{prefix}/include",
+  "CXXFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe -fPIC",
+  "CPLUS_INCLUDE_PATH" => "{prefix}/include",
   "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
 }
 
@@ -107,7 +109,7 @@ class InstGCC < InstallStuff
     src_tarball_fname, src_tarball_bname = fp.name
 
     extracted_src_dir = File.join(@build_dir, src_tarball_bname)
-    bld_dir = extracted_src_dir+"-build"
+    bld_dir = extracted_src_dir+"-#{@pkgname}-build"
 
     if Dir.exists?(extracted_src_dir)
       puts "Extracted folder has been found. Using it!" 
@@ -130,21 +132,17 @@ class InstGCC < InstallStuff
     FileUtils.mkdir_p( bld_dir )
 
     if @need_sudo
-      inst_cmd = "&& sudo make install"
+      inst_cmd = "sudo -H make install"
     else
-      inst_cmd = "&& make install"
+      inst_cmd = "make install"
     end
 
     opts = ["--prefix="+@prefix]+@conf_options
     cmd = [
-      self.get_env_str,
-      "cd",
-      File.realpath(bld_dir),
-      "&&",
-      File.realpath(extracted_src_dir)+"/configure",
-      opts.join(" "),
-      "&& make -j", @Processors.to_s, "bootstrap",
-      "&& make -j", @Processors.to_s,
+      "cd #{File.realpath(bld_dir)}", "&&",
+      File.join(File.realpath(extracted_src_dir),"configure"), opts.join(" "), "&&",
+      "make -j#{@Processors.to_s} bootstrap", "&&",
+      "make -j#{@Processors.to_s}", "&&",
       inst_cmd
     ]
 
