@@ -215,8 +215,10 @@ class InstGCCJit < InstGCC
       "--enable-checking=release",
       "--disable-multilib",
       "--enable-default-pie",
+      "--libexecdir={prefix}/lib",
+      "--libdir={prefix}/lib",
     ]
-    @env = $gcc_env
+    @env = $gcc_env.gsub('{prefix}', @prefix)
   end
 
   def do_install

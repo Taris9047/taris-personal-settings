@@ -38,22 +38,33 @@ class InstEmacsNC < InstallStuff
 
     # TODO: Implement more elegant way to find out jit enabled gcc
     #
+    gcc_jit_found = false
+    @gcc_prefix = @prefix
     if UTILS.which('gcc-jit')
       @env["CC"] = 'gcc-jit'
+      gcc_jit_found = true
     else
       @env["CC"] = 'gcc-10'
     end
     if UTILS.which('g++-jit')
       @env["CXX"] = 'g++-jit'
+      gcc_jit_found = true
     else
       @env["CXX"] = 'g++-10'
     end
-    @env["CFLAGS"] = "-O3 -fomit-frame-pointer -march=native -pipe"
-    @env["CXXLAGS"] = "-O3 -fomit-frame-pointer -march=native -pipe"
-    @env["LDFLAGS"] = "-Wl,-rpath=#{@prefix}/lib -Wl,-rpath=#{@prefix}/lib64 -L#{@prefix}/lib -L#{@prefix}/lib64"
-    @env["C_INCLUDE_PATH"] = "#{@prefix}/include"
-    @env["CPLUS_INCLUDE_PATH"] = "#{@prefix}/include"
 
+    if gcc_jit_found
+      @gcc_prefix = File.realpath(
+        File.join(File.dirname(UTILS.which('gcc-jit')), '..')
+      )
+      @env["C_INCLUDE_PATH"] = "#{@gcc_prefix}/include:"+@env["C_INCLUDE_PATH"]
+      @env["CPLUS_INCLUDE_PATH"] = "#{@gcc_prefix}/include:"+@env["CPLUS_INCLUDE_PATH"]
+      @env["LDFLAGS"] = "-Wl,-rpath=#{@gcc_prefix}/lib -Wl,-rpath=#{@gcc_prefix}/lib64 "+@env["LDFLAGS"]
+      # @env = @env.merge({"LD_LIBRARY_PATH" => File.join(@gcc_prefix, 'lib')})
+    end
+    # puts UTILS.which('gcc-jit')
+    # puts @env, @gcc_prefix
+    # exit 0
   end
 
   def do_install
@@ -99,7 +110,7 @@ So, it's better to use them instead of this head bonking source compile.
       "./autogen.sh", "&&",
       "cd #{src_build_folder}", "&&",
       File.join(src_clone_folder,"configure"), opts.join(" "), "&&",
-      "make -j#{@Processors.to_s}", "&&",
+      "nice make -j#{@Processors.to_s}", "&&",
       inst_cmd
     ]
     puts "Compiling (with #{@Processors} processors) and Installing ..."

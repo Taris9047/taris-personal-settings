@@ -97,7 +97,7 @@ class InstEmacs < InstallStuff
       "cd", src_build_folder, "&&",
       src_extract_folder+"/configure",
       opts.join(" "), "&&",
-      "make -j", @Processors.to_s, "&&",
+      "nice make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
     puts "Compiling (with #{@Processors} processors) and Installing ..."
