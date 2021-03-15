@@ -116,7 +116,7 @@ what you are doing!!
       "cd", src_build_folder, "&&",
       File.join(src_extract_folder,"configure"),
       opts.join(" "), "&&",
-      "make -j", @Processors.to_s, "&&",
+      "nice make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
     self.RunInstall( env: @env, cmd: cmds.join(" ") )
@@ -225,7 +225,7 @@ class InstPython3 < InstallStuff
       "cd", src_build_folder, "&&",
       File.join(src_extract_folder,"configure"),
       opts.join(" "), "&&",
-      "make -j", @Processors.to_s, "&&",
+      "nice make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
     self.RunInstall( env: @env, cmd: cmds.join(" ") )

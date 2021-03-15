@@ -128,7 +128,7 @@ class InstNode < InstallStuff
       "cd", src_extract_folder, "&&",
       File.join(src_extract_folder,"configure"),
       opts.join(" "), "&&",
-      "make -j", @Processors.to_s, "&&",
+      "nice make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
     self.RunInstall( env: @env, cmd: cmds.join(" ") )
@@ -260,7 +260,7 @@ class InstNodeLTS < InstallStuff
       "cd", src_extract_folder, "&&",
       File.join(src_extract_folder,"configure"),
       opts.join(" "), "&&",
-      "make -j", @Processors.to_s, "&&",
+      "nice make -j", @Processors.to_s, "&&",
       inst_cmd
     ]
     self.RunInstall( env: @env, cmd: cmds.join(" ") )

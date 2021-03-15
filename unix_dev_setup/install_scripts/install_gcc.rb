@@ -213,7 +213,8 @@ class InstGCCJit < InstGCC
       "--enable-host-shared",
       "--disable-bootstrap",
       "--enable-checking=release",
-      "--disable-multilib"
+      "--disable-multilib",
+      "--enable-default-pie",
     ]
     @env = $gcc_env
   end
@@ -413,7 +414,7 @@ class InstGCC4 < InstGCC
       self.get_env_str,
       "cd #{File.realpath(bld_dir)}",
       "#{File.join(File.realpath(extracted_src_dir), "configure")} #{opts.join(" ")}",
-      "make -j #{@Processors.to_s}",
+      "nice make -j #{@Processors.to_s}",
       inst_cmd
     ]
 

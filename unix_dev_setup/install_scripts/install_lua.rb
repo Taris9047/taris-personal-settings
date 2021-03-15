@@ -143,7 +143,7 @@ diff -Naurp lua-5.4.0.orig/src/Makefile lua-5.4.0/src/Makefile
 
     puts "Installing Lua!!"
     install_cmd = [
-      "make",
+      "nice make",
       "INSTALL_TOP=\"#{@prefix}\"",
       "INSTALL_DATA=\"cp -d\"",
       "TO_LIB=\"liblua.so liblua.so.#{@ver_maj_min} liblua.so.#{@version}\"",

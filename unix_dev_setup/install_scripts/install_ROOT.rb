@@ -81,7 +81,7 @@ class InstROOT < InstallStuff
       "cd",
       @build_dir,
       "&&",
-      "make -j #{@Processors}",
+      "nice make -j #{@Processors}",
       "&&",
       inst_cmd
     ]

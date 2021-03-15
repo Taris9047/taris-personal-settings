@@ -61,7 +61,7 @@ class InstBoost < InstallStuff
       "cd",
       src_extracted_folder, "&&",
       "./bootstrap.sh", "--prefix="+@prefix, "&&",
-      "./b2", @b2_opts.join(" "), "&&",
+      "nice ./b2", @b2_opts.join(" "), "&&",
       inst_cmd
     ]
 

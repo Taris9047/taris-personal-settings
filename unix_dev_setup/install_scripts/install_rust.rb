@@ -48,7 +48,7 @@ class InstRust < InstallStuff
       # path for cargo
       @rust_utils_to_install.each do |pkg|
         puts("Installing "+pkg)
-        self.Run( [cargo_cmd, 'install', pkg].join(' ') )
+        self.Run( ['nice', cargo_cmd, 'install', pkg].join(' ') )
       end
     else
       puts "Looks like the Rust is already installed!. Attempting to update"

@@ -78,7 +78,7 @@ class InstClang < InstallStuff
       "cd",
       @build_dir,
       "&&",
-      "ninja",
+      "nice ninja",
       "&&",
       inst_cmd
     ]
