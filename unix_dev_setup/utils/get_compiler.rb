@@ -8,8 +8,9 @@
 require_relative './src_urls.rb'
 require_relative './misc_utils.rb'
 
-$cflags = "-O3 -march=native -fomit-frame-pointer -pipe -I{env_path}/include"
+$cflags = "-O3 -march=native -fomit-frame-pointer -pipe"
 $cxxflags = $cflags
+$include_path = '{env_path}/include'
 $fallback_compiler_path = '/usr/bin'
 $state_of_art_gcc_ver = SRC_VER['gcc'][0]
 
@@ -55,6 +56,8 @@ class GetCompiler
     end
     @CFLAGS = @CFLAGS.gsub('{env_path}', @prefix)
     @CXXFLAGS = @CFLAGS.gsub('{env_path}', @prefix)
+    @C_INCLUDE_PATH=$include_path.gsub('{env_path}', @prefix)
+    @CPLUS_INCLUDE_PATH=@C_INCLUDE_PATH
     @RPATH = @RPATH.gsub('{env_path}', @prefix)
     unless @PKG_CONFIG_PATH.empty?
       @PKG_CONFIG_PATH = @PKG_CONFIG_PATH.gsub('{env_path}', @prefix)
@@ -110,7 +113,9 @@ class GetCompiler
       puts "C compiler: #{@CC}"
       puts "C++ compiler: #{@CXX}"
       puts "C flags: #{@CFLAGS}"
+      puts "C include path: #{@C_INCLUDE_PATH}"
       puts "CXX flags: #{@CXXFLAGS}"
+      puts "CXX include path: #{@CPLUS_INCLUDE_PATH}"
       puts "Linker flags: #{@RPATH}"
       unless @PKG_CONFIG_PATH.empty?
         puts "pkgconfig path: #{@PKG_CONFIG_PATH}"
@@ -119,18 +124,18 @@ class GetCompiler
   end
 
   def get_settings
-    cc_env = "CC=\""+@CC+"\""
-    cxx_env = "CXX=\""+@CXX+"\""
-    cflags_env = ["CFLAGS=\"", @CFLAGS, "\""].join('')
-    cxxflags_env = ["CXXFLAGS=\"", @CXXFLAGS, "\""].join('')
-    ldflags_env = ["LDFLAGS=\"", @RPATH, "\""].join('')
-    pkgconfig_env = "PKG_CONFIG_PATH=\"#{@PKG_CONFIG_PATH}\""
-
+    env_ary = [ "CC=\"#{@CC}\"" ] + \
+      [ "CXX=\""+@CXX+"\"" ] + \
+      [ "CFLAGS=\"#{@CFLAGS}\"" ] + \
+      [ "CXXFLAGS=\"#{@CXXFLAGS}\"" ] + \
+      [ "C_INCLUDE_PATH=\"#{@C_INCLUDE_PATH}\"" ] + \
+      [ "CPLUS_INCLUDE_PATH=\"#{@CPLUS_INCLUDE_PATH}\"" ] + \
+      [ "LDFLAGS=\"#{@RPATH}\"" ]
+    
     unless @PKG_CONFIG_PATH.empty?
-      return [cc_env, cxx_env, cflags_env, cxxflags_env, ldflags_env, pkgconfig_env]
-    else
-      return [cc_env, cxx_env, cflags_env, cxxflags_env, ldflags_env]
+      env_ary += [ "PKG_CONFIG_PATH=\"#{@PKG_CONFIG_PATH}\"" ]
     end
+    return env_ary
   end
 
   def get_env_str
@@ -138,41 +143,36 @@ class GetCompiler
   end
 
   def get_env_settings
+    env_hash = {
+      'CC' => @CC,
+      'CXX' => @CXX,
+      'CFLAGS' => @CFLAGS,
+      'CXXFLAGS' => @CXXFLAGS,
+      'LDFLAGS' => @RPATH,
+      'C_INCLUDE_PATH' => @C_INCLUDE_PATH,
+      'CPLUS_INCLUDE_PATH' => @CPLUS_INCLUDE_PATH
+    }
+
     unless @PKG_CONFIG_PATH.empty?
-      return {
-        'CC' => @CC,
-        'CXX' => @CXX,
-        'CFLAGS' => @CFLAGS,
-        'CXXFLAGS' => @CXXFLAGS,
-        'LDFLAGS' => @RPATH,
-        'PKG_CONFIG_PATH' => @PKG_CONFIG_PATH,
-      }
-    else
-      return {
-        'CC' => @CC,
-        'CXX' => @CXX,
-        'CFLAGS' => @CFLAGS,
-        'CXXFLAGS' => @CXXFLAGS,
-        'LDFLAGS' => @RPATH,
-      }
+      env_hash.merge({ 'PKG_CONFIG_PATH' => @PKG_CONFIG_PATH })
     end
+    return env_hash
   end
 
   def get_cmake_settings
-    cc_env = "-DCMAKE_C_COMPILER=\""+@CC+"\""
-    cxx_env = "-DCMAKE_CXX_COMPILER=\""+@CXX+"\""
-    cflags_env = "-DCMAKE_C_FLAGS=\""+@CFLAGS+" "+@RPATH+"\""
-    cxxflags_env = "-DCMAKE_CXX_FLAGS=\""+@CXXFLAGS+" "+@RPATH+"\""
-    ld_exe_env = "-DCMAKE_EXE_LINKER_FLAGS_INIT=\""+@RPATH+"\""
-    ld_shared_env = "-DCMAKE_SHARED_LINKER_FLAGS_INIT=\""+@RPATH+"\""
-    ld_module_env = "-DCMAKE_MODULE_LINKER_FLAGS_INIT=\""+@RPATH+"\""
-    pkg_config_path = "-DCMAKE_PKG_CONFIG_PATH=\"#{@PKG_CONFIG_PATH}\""
+    env_ary = [ "-DCMAKE_C_COMPILER=\""+@CC+"\"" ] + \
+      [ "-DCMAKE_CXX_COMPILER=\""+@CXX+"\"" ] + \
+      [ "-DCMAKE_C_FLAGS=\""+@CFLAGS+" "+@RPATH+"\"" ] + \
+      [ "-DCMAKE_CXX_FLAGS=\""+@CXXFLAGS+" "+@RPATH+"\"" ] + \
+      [ "-DCMAKE_EXE_LINKER_FLAGS_INIT=\""+@RPATH+"\"" ] + \
+      [ "-DCMAKE_SHARED_LINKER_FLAGS_INIT=\""+@RPATH+"\"" ] + \
+      [ "-DCMAKE_MODULE_LINKER_FLAGS_INIT=\""+@RPATH+"\"" ] + \
+      [ "-DCMAKE_FIND_ROOT_PATH=#{@prefix}"]
 
     unless @PKG_CONFIG_PATH.empty?
-      return [cc_env, cxx_env, cflags_env, cxxflags_env, ld_exe_env, ld_shared_env, ld_module_env, pkg_config_path]
-    else
-      return [cc_env, cxx_env, cflags_env, cxxflags_env, ld_exe_env, ld_shared_env, ld_module_env]
+      env_ary += [ "-DCMAKE_PKG_CONFIG_PATH=\"#{@PKG_CONFIG_PATH}\"" ]
     end
+    return env_ary
   end
 
 end
