@@ -198,15 +198,7 @@ class InstGCCJit < InstGCC
       + ["--enable-languages=c,c++,jit"] \
       + ["--program-suffix=-jit"] \
       + ["--enable-host-shared"]
-
-    @env = {
-      "CC" => "gcc",
-      "CXX" => "g++",
-      "CFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe -fPIC",
-      "CXXFLAGS" => "-w -O3 -march=native -fomit-frame-pointer -pipe -fPIC",
-      "LDFLAGS" => "-Wl,-rpath={prefix}/lib -Wl,-rpath={prefix}/lib64",
-    }
-
+    @env = $gcc_env
   end
 
   def do_install

@@ -220,6 +220,10 @@ if [ -d $HOME/.cargo ]; then
 fi
 
 # Other gcc stuff
+if [ -d $HOMEBREW/.opt/gcc-jit ]; then
+  printf "${check_symbol} Gcc with libgccjit found in the system!\n"
+  addpath "$HOMEBREW/.opt/gcc-jit/bin"
+fi
 if [ -d $HOMEBREW/.opt/gcc9 ]; then
   printf "${check_symbol} Gcc9 found in the system!\n"
   addpath "$HOMEBREW/.opt/gcc9/bin"
