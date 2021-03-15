@@ -12,6 +12,7 @@ $gcc_conf_options = [
   "--enable-default-pie",
   "--enable-linker-build-id",
   "--enable-threads=posix",
+  "--enable-checking=release",
   "--enable-plugin",
   "--with-system-zlib",
   "--with-default-libstdcxx-abi=new",
@@ -141,7 +142,7 @@ class InstGCC < InstallStuff
     cmd = [
       "cd #{File.realpath(bld_dir)}", "&&",
       File.join(File.realpath(extracted_src_dir),"configure"), opts.join(" "), "&&",
-      "make -j#{@Processors.to_s} bootstrap", "&&",
+      !opts.include?('--disable-bootstrap') "make -j#{@Processors.to_s} bootstrap &&": "" ,
       "make -j#{@Processors.to_s}", "&&",
       inst_cmd
     ]
@@ -194,10 +195,13 @@ class InstGCCJit < InstGCC
     @prefix = File.join(@prefix, ".opt/#{@pkgname}")
 
     @conf_options = \
-      $gcc_conf_options - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
+      $gcc_conf_options \
+      - ["--enable-languages=c,c++,fortran,objc,obj-c++"] \
+      - ["--enable-shared"] \
       + ["--enable-languages=c,c++,jit"] \
       + ["--program-suffix=-jit"] \
-      + ["--enable-host-shared"]
+      + ["--enable-host-shared"] \
+      + ["--disable-bootstrap"]
     @env = $gcc_env
   end
 
