@@ -11,6 +11,7 @@
 
 IN=$(grep '^NAME' /etc/os-release)
 DISTRO=$(echo $IN | sed -E 's/\"//g' | sed -E 's/NAME=//')
+SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 echo "Detecting distro..."
 echo "... Looks like your distro is: $DISTRO"
@@ -39,11 +40,11 @@ fi
 
 echo "Current linux distribution seems $MODE based one."
 
-readarray -t Debian_packages < './data/ubuntu_pkgs'
-readarray -t Ubuntu_packages < './data/ubuntu_pkgs'
-readarray -t Fedora_packages < './data/fedora_pkgs'
-readarray -t RHEL_packages < './data/rhel_pkgs'
-readarray -t Arch_packages < './data/arch_pkgs'
+readarray -t Debian_packages < "$SCRIPTPATH/data/ubuntu_pkgs"
+readarray -t Ubuntu_packages < "$SCRIPTPATH/data/ubuntu_pkgs"
+readarray -t Fedora_packages < "$SCRIPTPATH/data/fedora_pkgs"
+readarray -t RHEL_packages < "$SCRIPTPATH/data/rhel_pkgs"
+readarray -t Arch_packages < "$SCRIPTPATH/data/arch_pkgs"
 
 Ruby_gems=( \
   "rsense" \

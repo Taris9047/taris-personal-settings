@@ -63,7 +63,7 @@ libm17n-dev
 gcc-10
 g++-10
 libgccjit0
-libgccjit10-dev
+libgccjit-10-dev
 texinfo
 clang
 libgnutls*-dev
