@@ -115,6 +115,9 @@ alias free='free -m'
 alias br='broot -dhp'
 alias bs='broot --sizes'
 
+# check battery status
+alias battery_stat="upower -i `upower -e | grep 'BAT'`"
+
 # Some CD aliases
 alias cd..='cd ..' # Just like MS-DOS
 alias ...='cd ../..'
