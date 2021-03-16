@@ -55,6 +55,27 @@ ex ()
   fi
 }
 
+### navigation
+up () {
+  local d=""
+  local limit="$1"
+
+  # Default to limit of 1
+  if [ -z "$limit" ] || [ "$limit" -le 0 ]; then
+    limit=1
+  fi
+
+  for ((i=1;i<=limit;i++)); do
+    d="../$d"
+  done
+
+  # perform cd. Show error if cd fails
+  if ! cd "$d"; then
+    echo "Couldn't go up $limit dirs.";
+  fi
+}
+
+
 # Default Homebrew Path
 HBREW_PATH=$HOME/.local
 
@@ -90,6 +111,10 @@ alias rsync='rsync -azvh --info=progress2'
 alias sudo='sudo -H'
 alias free='free -m'
 
+# Aliases for other tools
+alias br='broot -dhp'
+alias bs='broot --sizes'
+
 # Some CD aliases
 alias cd..='cd ..' # Just like MS-DOS
 alias ...='cd ../..'
@@ -118,9 +143,23 @@ alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
 alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
 
 # Git commit and push
-gc () {
+gc() {
 	git commit -a -m "\"$1\"" && git push
 }
+
+# Git discard all and catch up.
+gcatchup() {
+  git fetch --all && git reset --hard origin/master && git pull
+}
+
+# git add a new tag
+gtag() {
+  git tag -a "\"$1\""
+}
+
+# git add
+alias gaddup='git add -u'
+alias gaddall='git add .'
 
 # switch between shells
 alias tobash="sudo chsh $USER -s /bin/bash && echo 'Now log out.'"
