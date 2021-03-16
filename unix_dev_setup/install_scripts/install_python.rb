@@ -20,11 +20,10 @@ $py2_conf_options = [
 ]
 
 $py3_modules = [
-  "pexpect", "sphinx", "autopep8", "xlrd", "xlsxwriter",
+  "autopep8", "xlrd", "xlsxwriter", "sphinx",
   "pylint", "pyparsing", "pyopengl",
   "numpy", "scipy", "matplotlib", "pandas", "nose",
-  "parso", "sympy", "cytoolz",
-  "spyder", "pyinstaller", "jupyter", "bpytop", "pycparser",
+  "sympy", "pyinstaller", "jupyter", "bpytop",
   "mercurial", "nose", "virtualenv"
 ]
 $py3_conf_options = [

@@ -44,4 +44,9 @@
 ** After a lot of struggle, emacs-nc works perfectly well on RHEL. It feels far faster than regular emacs!
 *** Also, gcc-jit works well on RHEL as well. Now we can consider emacs-nc is portable!
 *** Of course, it takes more than 5-6 hours to compile everything! So, we better take gcc-jit from distro repos instead of compiling on system.
-** TODO Let's test them on Fedora and Mint 20.1!
+** DONE Let's test them on Fedora and Mint 20.1! --> They work super fine!
+* Frontend development started!
+** IDEA It will be written with most common interpreter. I believe Python would be the one since most of Linux or Unix systems ships with it. Good thing is python2 is already dead. We can concentrate into python3
+** IDEA GUI isn't really a thing as of now. But Python enables it. However, we need to push user to install additional packages for GUI (i.e. PyQt5). We do not want to use decades old Tk now. It's even deprecated.
+** TODO For now, let's implement the front end to perform install_prereq.sh and unix_dev_setup's jobs all in one.
+** TODO Delete current front end implementations after merge. Don't touch them!
