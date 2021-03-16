@@ -47,11 +47,22 @@ done
 # NVIM
 echo "Installing NVIM config file"
 NVIM_CONF_HOME=$USR_DIR/.config/nvim
-if [ ! -d $NVIM_CONF_HOME ]; then
+if [ ! -d "$NVIM_CONF_HOME" ]; then
   echo "NVIM config dir not found, making one."
-  mkdir -p $NVIM_CONF_HOME
+  mkdir -pv "$NVIM_CONF_HOME"
 fi
+rm -rf $NVIM_CONF_HOME/init.vim
 ln -sfv $CURRENT_DIR/dotfiles/init.vim.nvim $NVIM_CONF_HOME/init.vim
+
+# Fish
+echo "Installing fish config file"
+FISH_CONF_HOME=$USR_DIR/.config/fish
+if [ ! -d "$FISH_CONF_HOME" ]; then
+  echo "FISH config dir not found, making one."
+  mkdir -pv "$FISH_CONF_HOME"
+fi
+rm -rf $FISH_CONF_HOME/config.fish
+ln -sfv $CURRENT_DIR/dotfiles/config.fish $FISH_CONF_HOME/config.fish
 
 # Starship
 echo "Installing starship config file"
