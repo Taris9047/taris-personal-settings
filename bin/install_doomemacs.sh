@@ -78,6 +78,7 @@ if [ -d "$HOME/.emacs.d" ] || [ -e "$HOME/.emacs" ] || [ -L "$HOME/.emacs.d" ]; 
 fi
 
 echo "Ok, updating the doom.d setting files!!"
+rm -rf ${HOME}/.doom.d/*.el
 # cp -vfr $SCRIPTPATH/../dotfiles/doom.d/*.el $HOME/.doom.d/
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/init.el" "${HOME}/.doom.d/init.el" || true
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/config.el" "${HOME}/.doom.d/config.el" || true 
