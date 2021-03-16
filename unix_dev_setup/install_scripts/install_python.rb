@@ -23,7 +23,7 @@ $py3_modules = [
   "pexpect", "sphinx", "autopep8", "xlrd", "xlsxwriter",
   "pylint", "pyparsing", "pyopengl",
   "numpy", "scipy", "matplotlib", "pandas", "nose",
-  "ipython", "jedi", "parso", "sympy", "cytoolz",
+  "parso", "sympy", "cytoolz",
   "spyder", "pyinstaller", "jupyter", "bpytop", "pycparser",
   "mercurial", "nose", "virtualenv"
 ]
@@ -74,7 +74,7 @@ what you are doing!!
     puts deprecation_txt
     sleep(7)
 
-    dl = Download.new(@source_url, @src_dir)
+    Download.new(@source_url, @src_dir)
 
     fp = FNParser.new(@source_url)
     src_tarball_fname, src_tarball_bname = fp.name
@@ -183,8 +183,7 @@ class InstPython3 < InstallStuff
 
   def do_install
 
-    dl = Download.new(@source_url, @src_dir)
-    src_tarball_path = dl.GetPath
+    Download.new(@source_url, @src_dir)
 
     fp = FNParser.new(@source_url)
     src_tarball_fname, src_tarball_bname = fp.name
@@ -233,7 +232,7 @@ class InstPython3 < InstallStuff
     if File.exists?(File.join(@src_dir, 'get-pip.py'))
       puts "Found get-pip.py"
     else
-      dl_pip = Download.new(@get_pip_url, @src_dir)
+      Download.new(@get_pip_url, @src_dir)
     end
 
     puts "Installing modules for #{@pkgname}"
