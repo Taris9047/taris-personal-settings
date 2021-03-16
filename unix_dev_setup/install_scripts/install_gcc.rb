@@ -218,7 +218,7 @@ class InstGCCJit < InstGCC
       "--libexecdir={prefix}/lib",
       "--libdir={prefix}/lib",
     ]
-    @env = $gcc_env.gsub('{prefix}', @prefix)
+    # @env = $gcc_env.gsub('{prefix}', @prefix)
   end
 
   def do_install
