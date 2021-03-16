@@ -70,3 +70,6 @@
 (package! tldr)
 (package! wc-mode)
 (package! writeroom-mode)
+
+(provide 'packages)
+;;; packages.el ends here
