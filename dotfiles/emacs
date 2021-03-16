@@ -71,22 +71,22 @@
 (setq-default indent-tabs-mode nil)
 
 ;; Color Theme mode
-(add-to-list 'load-path "~/.emacs.d/lisp/color-theme-6.6.0")
-(require 'color-theme)
-(eval-after-load "color-theme"
-  '(progn
-   (color-theme-initialize)
-   (color-theme-blue-sea)))
+;(add-to-list 'load-path "~/.emacs.d/lisp/color-theme-6.6.0")
+;(require 'color-theme)
+;(eval-after-load "color-theme"
+;  '(progn
+;   (color-theme-initialize)
+;   (color-theme-blue-sea)))
 
 ;; PHP mode
 ;;(load "php-mode")
-(require 'php-mode)
-(autoload 'php-mode "php-mode" "Major mode for editing php code." t)
-(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
-(add-to-list 'auto-mode-alist '("\\.module$" . php-mode))
-(add-to-list 'auto-mode-alist '("\\.install$" . php-mode))
-(add-to-list 'auto-mode-alist '("\\.engine$" . php-mode))
+;(require 'php-mode)
+;(autoload 'php-mode "php-mode" "Major mode for editing php code." t)
+;(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+;(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
+;(add-to-list 'auto-mode-alist '("\\.module$" . php-mode))
+;(add-to-list 'auto-mode-alist '("\\.install$" . php-mode))
+;(add-to-list 'auto-mode-alist '("\\.engine$" . php-mode))
 
 
 ;; Python mode
@@ -133,19 +133,19 @@
 (setq x-select-enable-clipboard t)
 
 ;; Highlight Parenthesis
-(require 'highlight-parentheses)
+;(require 'highlight-parentheses)
 
 ;; Matlab mode
-(autoload 'matlab-mode "~/.emacs.d/lisp/matlab.el" "Enter Matlab mode." t)
-(setq auto-mode-alist (cons '("\\.m\\'" . matlab-mode) auto-mode-alist))
-(autoload 'matlab-shell "~/.emacs.d/lisp/matlab.el" "Interactive Matlab mode." t)
+;(autoload 'matlab-mode "~/.emacs.d/lisp/matlab.el" "Enter Matlab mode." t)
+;(setq auto-mode-alist (cons '("\\.m\\'" . matlab-mode) auto-mode-alist))
+;(autoload 'matlab-shell "~/.emacs.d/lisp/matlab.el" "Interactive Matlab mode." t)
 
 ;; SVN mode
-(load "psvn.el" nil t t)
+;(load "psvn.el" nil t t)
 
 ;; NEXTStep mode
-(require 'ns-platform-support)
-(ns-extended-platform-support-mode 1)
+;(require 'ns-platform-support)
+;(ns-extended-platform-support-mode 1)
 
 ;; Resolving Mac OS X PATH problem
 (defun set-exec-path-from-shell-PATH ()
@@ -157,15 +157,15 @@
 (when (equal system-type 'darwin) (set-exec-path-from-shell-PATH))
 
 ;; Loading AucTex
-(load "auctex.el" nil t t)
-(load "preview-latex.el" nil t t)
+;(load "auctex.el" nil t t)
+;(load "preview-latex.el" nil t t)
 
 ;; Loading Gnuplot mode
-(require 'gnuplot-mode)
-(setq gnuplot-program "/usr/local/bin/gnuplot")
+;(require 'gnuplot-mode)
+;(setq gnuplot-program "/usr/local/bin/gnuplot")
 ;; automatically open files ending with .gp or .gnuplot in gnuplot mode
-(setq auto-mode-alist 
-(append '(("\\.\\(gp\\|gnuplot\\)$" . gnuplot-mode)) auto-mode-alist))
+;(setq auto-mode-alist 
+;(append '(("\\.\\(gp\\|gnuplot\\)$" . gnuplot-mode)) auto-mode-alist))
 
 ;; MELPA!
 (require 'package)
@@ -182,9 +182,9 @@
       c-basic-offset 4)
 
 ;; Haskell
-(add-to-list 'load-path "~/.emacs.d/lisp/haskell-mode/")
-(require 'haskell-mode-autoloads)
-(add-to-list 'Info-default-directory-list "~/.emacs.d/lisp/haskell-mode/")
+;(add-to-list 'load-path "~/.emacs.d/lisp/haskell-mode/")
+;(require 'haskell-mode-autoloads)
+;(add-to-list 'Info-default-directory-list "~/.emacs.d/lisp/haskell-mode/")
 
 (provide 'emacs)
 ;;; emacs ends here
