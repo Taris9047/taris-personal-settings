@@ -19,11 +19,13 @@ else
   export VISUAL="xdg-open"
 fi
 
-  
 # For safety..
 addpath ()
 {
-  export PATH=$1:$PATH
+  case ":$PATH:" in
+    *":$1:"*) :;;
+    *) export PATH="$1:$PATH";;
+  esac
 }
 
 ### CHANGE TITLE OF TERMINALS
@@ -524,3 +526,6 @@ clear
 if [ -x "$(command -v neofetch)" ]; then 
 	neofetch
 fi
+
+# Lastly, cleaning up PATH
+export PATH=$(printf "%s" "$PATH" | awk -v RS=':' '!a[$1]++ { if (NR > 1) printf RS; printf $1 }')
