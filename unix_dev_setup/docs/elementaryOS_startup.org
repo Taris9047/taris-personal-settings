@@ -1,0 +1,79 @@
+* Things to do after installing elementary OS.
+1.  Enable repo
+    #+begin_src shell
+    sudo apt install software-properties-common
+    #+end_src
+
+2.  Install tweak
+    #+begin_src shell
+    sudo add-apt-repository ppa:philip.scott/elementary-tweaks
+    sudo apt update
+    sudo apt install elementary-tweaks
+    #+end_src
+
+3.  Disable single click
+    Use Tweaks -> Files -> Single click
+
+4.  Enable good window top bar buttons!
+    Use Tweaks -> Appearance -> Layout -> OS X
+
+5.  Install multimedia codecs
+    #+begin_src shell
+    sudo apt install ubuntu-restricted-extras libavccodec-extra libdvd-pkg
+    #+end_src
+
+6.  Activate Night Light
+    Settings -> Displays -> Night Light
+
+7.  Install Drivers
+    #+begin_src shell
+    sudo ubuntu-drivers autoinstall
+    #+end_src
+
+8.  Enable tray icons for third party apps
+    #+begin_src shell
+    sudo -H sed -i 's/OnlyShowIn\=Unity\;GNOME\;/OnlyShowIn\=Unity\;GNOME\;Pantheon\;/' /etc/xdg/autostart/indicator-application.desktop
+    #+end_src
+
+9.  Install synaptic
+    #+begin_src shell
+    sudo apt install synaptic
+    #+end_src
+
+10. Install Hangul Input Method
+    * Refer [[file:elementaryOS_hangul_input.org][Hangul input method install instruction for elementary OS]]
+
+
+* Some optional stuffs.
+1.  Install Firefox
+    #+begin_src shell
+    sudo apt install firefox
+    sudo apt remove epiphany-browser
+    #+end_src
+
+2.  Install LibreOffice
+    #+begin_src shell
+    sudo apt install libreoffice libreoffice-gtk3 libreoffice-style-elementary
+    #+end_src
+    * Do not forget to set icon style to Elementary in Libreoffice options
+      Tools -> Options -> View -> Icon style
+
+3.  Install Clipped
+    #+begin_src shell
+    sudo apt install com.github.devidmhewitt.clipped
+    #+end_src
+    * Also make shortcut for it
+      Settings -> Keyboard -> Shortcuts (Make any key you want!)
+
+4.  Install GDebi
+    #+begin_src shell
+    sudo apt install gdebi
+    #+end_src
+
+5.  If laptop, install some TLP packages
+    #+begin_src shell
+    sudo apt install tlp tlp-rdw
+    #+end_src
+
+6.  Install Emacs, no Doomemacs!
+    * Refer [[file:elementaryOS_running_emacs.org][Doomemacs install instruction on elementary OS]]
