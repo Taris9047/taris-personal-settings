@@ -123,25 +123,25 @@ if [[ "$PLATFORM" == "linux" ]]; then
     touch $HOME/.bashrc
   fi
   echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
-  echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
+  printf "\n\nsource $LINUXBASHFILE\n" >> "$HOME/.bashrc"
   if [ ! -f $HOME/.zshrc ]; then
 	touch "$HOME/.zshrc"
   fi
   echo "Appending $HOME/.zshrc with $LINUXZSHFILE"
-  echo "source $LINUXZSHFILE" >> "$HOME/.zshrc"
+  printf "\n\nsource $LINUXZSHFILE\n" >> "$HOME/.zshrc"
 elif [[ "$PLATFORM" == "cygwin" ]]; then 
   echo "Appending $HOME/.bashrc with $LINUXBASHFILE"
-  echo "source $LINUXBASHFILE" >> "$HOME/.bashrc"
+  printf "\n\nsource $LINUXBASHFILE\n" >> "$HOME/.bashrc"
 elif [[ "$PLATFORM" == "darwin" ]]; then
   if [ ! -f $HOME/.bash_profile ]; then
     touch $HOME/.bash_profile
   fi
   echo "Appending $HOME/.bash_profile with $DARWINBASHFILE"
-  echo "source $DARWINBASHFILE" >> "$HOME/.bash_profile"
+  printf "\n\nsource $DARWINBASHFILE\n" >> "$HOME/.bash_profile"
   if [ ! -f $HOME/.zshrc ]; then
     touch "$HOME/.zshrc"
   fi
-  echo "source $DARWINBASHFILE" >> "$HOME/.zshrc"
+  printf "\n\nsource $DARWINBASHFILE\n" >> "$HOME/.zshrc"
   echo "Appending $HOME/.zshrc with $DARWINZSHFILE"
 fi
 
