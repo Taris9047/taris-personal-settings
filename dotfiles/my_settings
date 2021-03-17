@@ -112,8 +112,10 @@ alias sudo='sudo -H'
 alias free='free -m'
 
 # Aliases for other tools
-alias br='broot -dhp'
-alias bs='broot --sizes'
+if [ -x "$(command -v broot)" ]; then
+  alias br='broot -dhp'
+  alias bs='broot --sizes'
+fi
 
 # check battery status
 alias battery_stat="upower -i `upower -e | grep 'BAT'`"
@@ -212,21 +214,6 @@ delete_recursive ()
     esac
   done
 }
-
-# Get Linux distro. info.
-ARCH=$(uname -m)
-KERNEL=$(uname -r)
-if [ -n "$(command -v lsb_release)" ]; then
-  DISTRONAME=$(lsb_release -s -d)
-elif [ -f "/etc/os-release" ]; then
-  DISTRONAME=$(grep PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME=//g' | tr -d '="')
-elif [ -f "/etc/debian_version" ]; then
-  DISTRONAME="Debian $(cat /etc/debian_version)"
-elif [ -f "/etc/redhat-release" ]; then
-  DISTRONAME=$(cat /etc/redhat-release)
-else
-  DISTRONAME="$(uname -s) $(uname -r)"
-fi
 
 # The homebrew path!!
 if [ -d "${HBREW_PATH}" ]; then

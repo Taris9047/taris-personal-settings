@@ -79,8 +79,10 @@ alias sudo="sudo -H"
 alias free="free -m"
 
 ### Aliases for other tools ###
-alias br="broot -dhp"
-alias bs="broot --sizes"
+if test -x broot
+    alias br="broot -dhp"
+    alias bs="broot --sizes"
+end
 
 ### Alises for directory nav. ###
 alias 'cd..'="cd .."
@@ -88,12 +90,48 @@ alias '...'="cd ../.."
 alias '....'="cd ../../.."
 alias '.....'="cd ../../../.."
 
-### Aliases for package managers ###
-alias aptup="sudo -H apt-get -y update && sudo -H apt-get -y upgrade"
-function aptin
-    aptup
-    sudo -H apt-get -y install $argv[1]
+#
+# A few more aliases
+#
+alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
+alias aptin='sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install'
+alias dnfup='sudo dnf -y update'
+alias dnfin='sudo dnf -y install'
+alias pmyy='sudo pacman -Syyu'
+alias pmin='sudo pacman -Syyu'
+## get top process eating memory
+alias psmem='ps auxf | sort -nr -k 4'
+alias psmem10='ps auxf | sort -nr -k 4 | head -10'
+## get top process eating cpu ##
+alias pscpu='ps auxf | sort -nr -k 3'
+alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
+# gpg encryption
+# verify signature for isos
+alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
+# receive the key of a developer
+alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
+
+### Git related stuffs ###
+function gc
+    git commit -a -m "\"$argv[1]\"" && git push
 end
+function gcatchup
+    git fetch --all && git reset --hard origin/master && git pull
+end
+function gtag
+    git tag -a "\"$argv[1]\""
+end
+alias gaddup='git add -u'
+alias gaddall='git add .'
+
+### Switch between shells ###
+alias tobash="sudo -H chsh $USER -s /bin/bash && echo 'Now log out.'"
+if test -x /bin/zsh
+    alias tozsh="sudo -H chsh $USER -s /bin/zsh && echo 'Now log out.'"
+end
+
+### Termbin ###
+alias tb="nc termbin.com 9999"
 
 ### Application Aliases ###
 if test -x 'nvim'
@@ -157,4 +195,78 @@ function up
     if ! cd "$d"
         echo "Couldn't go up $limit dirs."
     end
+end
+
+### Now path things... a lot of them ###
+
+# Homebrew path
+if test -d "$HBREW_PATH"
+    set HOMEBREW $HBREW_PATH
+    printf "$check_symbol HOMEBREW directory is $HOMEBREW\n"
+    sleep $line_delay
+    set PATH "$HOMEBREW/bin" "$HOMEBREW/.opt/bin" $PATH
+end
+
+# JRE
+set JAVA_HOME '/opt/java'
+if test -d "$JAVA_HOME"
+    printf "$check_symbol Java found at $JAVA_HOME\n"
+    sleep $line_delay
+    fish_add_path "$JAVA_HOME"
+end
+
+# Emacs
+set EMACS_HOME $HOME/.emacs_local
+if test -d $EMACS_HOME
+    printf "$check_symbol Custom emacs found at $EMACS_HOME\n"
+    sleep $line_delay
+    fish_add_path "$EMACS_HOME/bin"
+end
+
+# Rust
+if test -d $HOME/.cargo
+    printf "$check_symbol Cargo directory detected at $HOME/.cargo\n"
+    sleep $line_delay
+    set PATH "$HOME/.cargo/bin" $PATH
+end
+
+# GCC variants.
+if test -d $HOMEBREW/.opt/gcc-jit
+    printf "$check_symbol Gcc with libgccjit found in the system!\n"
+    fish_add_path "$HOMEBREW/.opt/gcc-jit/bin"
+end
+if test -d $HOMEBREW/.opt/gcc9
+    printf "$check_symbol Gcc9 found in the system!\n"
+    fish_add_path "$HOMEBREW/.opt/gcc9/bin"
+end
+if test -d $HOMEBREW/.opt/gcc8
+    printf "$check_symbol Gcc8 found in the system!\n"
+    fish_add_path "$HOMEBREW/.opt/gcc8/bin"
+end
+if test -d $HOMEBREW/.opt/gcc4
+    printf "$check_symbol Gcc4 found in the system!\n"
+    fish_add_path "$HOMEBREW/.opt/gcc4/bin"
+end
+
+# Golang
+set GOROOT "$HOMEBREW/.opt/go"
+set GOPATH "$HOMEBREW/.opt/go/bin"
+if test -d $GOROOT
+    printf "$check_symbol Golang has been found at $GOROOT\n"
+    fish_add_path "$GOROOT/bin"
+end
+
+# Starship
+if type -q starship
+    printf "$check_symbol Starship shell extension found! Let's start it!\n"
+    sleep $line_delay
+    starship init fish | source
+end
+
+# Clean up screen
+clear
+
+# Finally, run neofetch
+if type -q neofetch
+    neofetch
 end
