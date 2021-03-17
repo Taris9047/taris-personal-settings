@@ -1,47 +1,26 @@
 # Fish config file...
 #
 
-# TODO Uhhh shit... fish is totally different animal! Let's ranslate my_settings to fish
-#
-# Some guidelines:
-# 
-#    setting variables
-#        bash: var=value
-#        fish: set var value
-#    function arguments
-#     bash: "$@"
-#     fish: $argv
-# function local variables
-#     bash: local var
-#     fish: set -l var
-# conditionals I
-#     bash: [[ ... ]] and [ ... ]
-#     fish: test ...
-# conditionals II
-#     bash: if cond; then cmds; fi
-#     fish: if cond; cmds; end
-# conditionals III
-#     bash: cmd1 && cmd2
-#     fish: cmd1; and cmd2
-#     fish (as of fish 3.0): cmd1 && cmd2
-# command substitution
-#     bash: output=$(pipeline)
-#     fish: set output (pipeline)
-# process substitution
-#     bash: join <(sort file1) <(sort file2)
-#     fish: join (sort file1 | psub) (sort file2 | psub)
-
 ### EXPORT ###
-set HOMEBREW $HOME/.local/bin
-echo "Setting homebrew dir to $HOMEBREW"
-set -Ua fish_user_paths $HOME/.local/bin $fish_user_paths
+# set HOMEBREW $HOME/.local/bin
+# echo "Setting homebrew dir to $HOMEBREW"
+# set -Ua fish_user_paths $HOME/.local/bin $fish_user_paths
 set fish_greeting
 set TERM "xterm-256color"
-set EDITOR "nvim"
-set VISUAL "subl"
+
+if type -q nvim
+    set EDITOR "nvim"
+else
+    set EDITOR "vi"
+end
+
+if type -q subl
+    set VISUAL "subl"
+else
+    set VISUAL "xdg-open"
+end
 
 ### Some utility paths ###
-set HBREW_PATH $HOME/.local
 set GOOGLE_DRIVE $HOME/.google-drive
 set ONE_DRIVE $HOME/.onedrive
 set texlive_base_path $HOME/.texlive
@@ -51,7 +30,7 @@ set line_delay 0.12
 
 ### Prepend path
 function addpath
-    set -Ua PATH $argv[1] $PATH
+    set -a fish_user_paths $argv[1]
 end
 
 ### Set manpager ###
@@ -79,7 +58,7 @@ alias sudo="sudo -H"
 alias free="free -m"
 
 ### Aliases for other tools ###
-if test -x broot
+if type -q broot
     alias br="broot -dhp"
     alias bs="broot --sizes"
 end
@@ -135,12 +114,6 @@ end
 
 ### Termbin ###
 alias tb="nc termbin.com 9999"
-
-### Application Aliases ###
-if test -x 'nvim'
-    echo "neovim not found int the path!"
-end
-alias vim='nvim'
 
 ### 'open' macro. Just like OS X ###
 function open
@@ -212,11 +185,12 @@ end
 ### Now path things... a lot of them ###
 
 # Homebrew path
-if test -d "$HBREW_PATH"
-    set -Ua HOMEBREW $HBREW_PATH
+if test -d "$HOME/.local"
+    set HOMEBREW "$HOME/.local"
     printf "$check_symbol HOMEBREW directory is $HOMEBREW\n"
     sleep $line_delay
-    set -Ua PATH "$HOMEBREW/bin" "$HOMEBREW/.opt/bin" $PATH
+    set -a fish_user_paths "$HOMEBREW/bin"
+    set -a fish_user_paths "$HOMEBREW/.opt/bin"
 end
 
 # JRE
@@ -224,50 +198,48 @@ set JAVA_HOME '/opt/java'
 if test -d "$JAVA_HOME"
     printf "$check_symbol Java found at $JAVA_HOME\n"
     sleep $line_delay
-    set -Ua PATH "$JAVA_HOME/bin" $PATH
+    addpath "$JAVA_HOME/bin"
 end
 
 # Emacs
 set EMACS_HOME $HOME/.emacs_local
-if test -d $EMACS_HOME
+if test -d "$EMACS_HOME"
     printf "$check_symbol Custom emacs found at $EMACS_HOME\n"
     sleep $line_delay
-    set -Ua PATH "$EMACS_HOME/bin" $PATH
+    addpath "$EMACS_HOME/bin"
 end
 
 # Rust
-if test -d $HOME/.cargo
+if test -d "$HOME/.cargo"
     printf "$check_symbol Cargo directory detected at $HOME/.cargo\n"
     sleep $line_delay
     addpath "$HOME/.cargo/bin"
-    # set -Ua PATH "$HOME/.cargo/bin" $PATH
 end
 
 # GCC variants.
-if test -d $HOMEBREW/.opt/gcc-jit
+if test -d "$HOMEBREW/.opt/gcc-jit"
     printf "$check_symbol Gcc with libgccjit found in the system!\n"
-    # set -Ua PATH "$HOMEBREW/.opt/gcc-jit/bin" $PATH
     addpath "$HOMEBREW/.opt/gcc-jit/bin"
 end
-if test -d $HOMEBREW/.opt/gcc9
+if test -d "$HOMEBREW/.opt/gcc9"
     printf "$check_symbol Gcc9 found in the system!\n"
-    set -Ua PATH "$HOMEBREW/.opt/gcc9/bin" $PATH
+    addpath "$HOMEBREW/.opt/gcc9/bin"
 end
-if test -d $HOMEBREW/.opt/gcc8
+if test -d "$HOMEBREW/.opt/gcc8"
     printf "$check_symbol Gcc8 found in the system!\n"
-    set -Ua PATH "$HOMEBREW/.opt/gcc8/bin" $PATH
+    addpath "$HOMEBREW/.opt/gcc8/bin"
 end
-if test -d $HOMEBREW/.opt/gcc4
+if test -d "$HOMEBREW/.opt/gcc4"
     printf "$check_symbol Gcc4 found in the system!\n"
-    set -Ua PATH "$HOMEBREW/.opt/gcc4/bin" $PATH
+    addpath "$HOMEBREW/.opt/gcc4/bin"
 end
 
 # Golang
 set GOROOT "$HOMEBREW/.opt/go"
 set GOPATH "$HOMEBREW/.opt/go/bin"
-if test -d $GOROOT
+if test -d "$GOROOT"
     printf "$check_symbol Golang has been found at $GOROOT\n"
-    set -Ua PATH "$GOROOT/bin" $PATH
+    addpath "$GOROOT/bin"
 end
 
 # snap
@@ -374,7 +346,7 @@ end
 if type -q n
     printf "$check_symbol n found!, Setting up N_PREFIX for it!\n"
     sleep $line_delay
-    set -Ua N_PREFIX (type -p n | sed -E 's/\/bin\/n//g')
+    set -U N_PREFIX (type -p n | sed -E 's/\/bin\/n//g')
 end
 
 # IrfanView - you need wine to install it!
@@ -458,8 +430,8 @@ end
 # old MBP cuda
 if test -d "/usr/local/cuda-6.5"
     printf "$check_symbol CUDA 6.5 found! Doing some env stuff for it.\n"
-    set -Ua LD_LIBRARY_PATH "/usr/local/cuda-6.5/lib64" $LD_LIBRARY_PATH
-    set PATH $PATH "/usr/local/cuda-6.5/bin"
+    set -Ua LD_LIBRARY_PATH "/usr/local/cuda-6.5/lib64"
+    set -Up fish_user_paths "/usr/local/cuda-6.5/bin"
 end
 
 # Starship
@@ -470,7 +442,7 @@ if type -q starship
 end
 
 # Clean up screen
-clear
+# clear
 
 # Finally, run neofetch
 if type -q neofetch

@@ -6,9 +6,20 @@
 #
 export TERM="xterm-256color"
 export HISTCONTROL=ignoredups:erasedups
-export EDITOR="nvim"
-export VISUAL="subl"
 
+if [ -x "$(command -v nvim)" ]; then
+  export EDITOR="nvim"
+else
+  export EDITOR="vi"
+fi
+
+if [ -x "$(command -v subl)" ]; then
+  export VISUAL="subl"
+else
+  export VISUAL="xdg-open"
+fi
+
+  
 # For safety..
 addpath ()
 {
