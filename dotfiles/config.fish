@@ -308,9 +308,11 @@ end
 
 # zoxide
 if type -q zoxide
-    printf "$check_symbol zoxide found! activating it!\n"
+    printf "$check_symbol zoxide found! activating it! (z replaces cd)\n"
     sleep $line_delay
     zoxide init fish | source
+    # On fish, cd has an alias! So, using yet another alias to alias is not a good idea!
+    # Just use z instead of cd
     # alias cd='z'
 end
 
@@ -442,7 +444,7 @@ if type -q starship
 end
 
 # Clean up screen
-# clear
+clear
 
 # Finally, run neofetch
 if type -q neofetch
