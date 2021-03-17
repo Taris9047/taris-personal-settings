@@ -407,7 +407,7 @@ if type -q rclone
     else
         if test -n (cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive\]")
             printf "$check_symbol Mounting MS One Drive to $GOOGLE_DRIVE\n"
-            rclone mount onedrive: "$ONE_DRIVE" &
+            rclone mount --vfs-cache-mode writes onedrive: $ONE_DRIVE &
             sleep 2
         end
     end
