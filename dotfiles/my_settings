@@ -442,7 +442,7 @@ if [ -x "$(command -v rclone)" ]; then
     mkdir -pv $GOOGLE_DRIVE
   fi
 
-  if mountpoint -q $GOOGLE_DRIVE; then
+  if grep -qs $GOOGLE_DRIVE /proc/mounts ; then
     printf "${check_symbol} Google Drive already mounted at $GOOGLE_DRIVE\n"
     sleep ${line_delay}
   else
@@ -458,11 +458,11 @@ if [ -x "$(command -v rclone)" ]; then
     mkdir -pv $ONE_DRIVE
   fi
 
-  if mountpoint -q $ONE_DRIVE; then
+  if grep -qs $ONE_DRIVE /proc/mounts ; then
     printf "${check_symbol} MS One Drive already mounted at $ONE_DRIVE\n"
     sleep ${line_delay}
   else
-    if [ ! -z "$(cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive]")" ]; then
+    if [ ! -z "$(cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive\]")" ]; then
       printf "${check_symbol} Mounting MS One Drive to $ONE_DRIVE\n"
       rclone mount --vfs-cache-mode writes onedrive: $ONE_DRIVE &
       sleep 2
@@ -478,7 +478,7 @@ if [ -x "$(command -v $ROOT_DIR/bin/root)" ]; then
 fi
 
 # Doom-Emacs
-if [ -d "$HOME/.emacs.d/bin" ]; then
+if [ -d "$HOME/.emacs.d/bin" ] && [ -d "$HOME/.doom.d" ]; then
 	printf "${ckeck_symbol} Doomemacs found! Adding to path!\n"
 	addpath "$HOME/.emacs.d/bin"
 fi
@@ -486,7 +486,7 @@ fi
 # For old MBP cuda.
 if [ -d "/usr/local/cuda-6.5" ]; then
   printf "${check_symbol} CUDA 6.5 found! Doing some env stuff for it.\n"
-  export LD_LIBRARY_PATH="/usr/local/cuda/lib64":$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH="/usr/local/cuda-6.5/lib64":$LD_LIBRARY_PATH
   export PATH=$PATH:"/usr/local/cuda-6.5/bin"
 fi
 

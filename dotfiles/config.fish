@@ -325,7 +325,8 @@ if type -q
 end
 
 # bpytop
-if type -q $HOMEBREW/bin/pip3 -a type -q $HOMEBREW/bin/bpytop
+if type -q $HOMEBREW/bin/pip3
+    and type -q $HOMEBREW/bin/bpytop
     printf "$check_symbol Locally installed bpytop found!\n"
     sleep $line_delay
     alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && $HOMEBREW/bin/bpytop"
@@ -338,7 +339,7 @@ if type -q zoxide
     printf "$check_symbol zoxide found! activating it!\n"
     sleep $line_delay
     zoxide init fish | source
-    alias cd='z'
+    # alias cd='z'
 end
 
 # neovim
@@ -381,7 +382,8 @@ set iview64_path "$HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe"
 function run_iview
     wine "$iview64_path" (winepath --windows $argv[@])
 end
-if type -q wine -a test -f "$iview64_path"
+if type -q wine
+    and test -f "$iview64_path"
     printf "$check_symbol Irfanveiw found!\n"
     printf "  $right_arrow_symbol Usage: iview <files>\n"
     alias iview='run_iview'
@@ -406,25 +408,59 @@ end
 
 # Rclone stuff!
 if type -q rclone
-
     if not test -d "$GOOGLE_DRIVE"
         printf "$check_symbol Google drive mount point not found! making one...\n"
         mkdir -pv "$GOOGLE_DRIVE"
     end
 
-    if test (mountpoint -q "$GOOGLE_DRIVE")
+    if grep -qs "$GOOGLE_DRIVE" /proc/mounts
         printf "$check_symbol Google drive already mounted at $GOOGLE_DRIVE\n"
         sleep $line_delay
     else
-        printf "$check_symbol Mounting Google Drive to $GOOGLE_DRIVE\n"
-        rclone mount google-drive: "$GOOGLE_DRIVE" &
-        sleep 2
+        if test -n (cat $HOME/.config/rclone/rclone.conf | grep "\[google-drive\]")
+            printf "$check_symbol Mounting Google Drive to $GOOGLE_DRIVE\n"
+            rclone mount google-drive: "$GOOGLE_DRIVE" &
+            sleep 2
+        end
     end
 
+    if not test -d "$ONE_DRIVE"
+        printf "$check_symbol MS One Drive mount point not found! making one...\n"
+        mkdir -pv "$ONE_DRIVE"
+    end
 
-
+    if grep -qs "$ONE_DRIVE" /proc/mounts
+        printf "$check_symbol MS One drive already mounted at $ONE_DRIVE\n"
+        sleep $line_delay
+    else
+        if test -n (cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive\]")
+            printf "$check_symbol Mounting MS One Drive to $GOOGLE_DRIVE\n"
+            rclone mount onedrive: "$ONE_DRIVE" &
+            sleep 2
+        end
+    end
 end
 
+# ROOT
+set ROOT_DIR "$HOMEBREW/.opt/ROOT"
+if type -q "$ROOT_DIR/bin/root"
+    printf "$check_symbol ROOT Found! Applying its shell env.\n"
+    alias thisroot="$ROOT_DIR/bin/thisroot.fish"
+end
+
+# Doomemacs!
+if test -d "$HOME/.emacs.d/bin"
+    and test -d "$HOME/.doom.d"
+    printf "$check_symbol Doomemacs found! Adding to path!\n"
+    addpath "$HOME/.emacs.d/bin"
+end
+
+# old MBP cuda
+if test -d "/usr/local/cuda-6.5"
+    printf "$check_symbol CUDA 6.5 found! Doing some env stuff for it.\n"
+    set -Ua LD_LIBRARY_PATH "/usr/local/cuda-6.5/lib64" $LD_LIBRARY_PATH
+    set PATH $PATH "/usr/local/cuda-6.5/bin"
+end
 
 # Starship
 if type -q starship
@@ -434,7 +470,7 @@ if type -q starship
 end
 
 # Clean up screen
-#clear
+clear
 
 # Finally, run neofetch
 if type -q neofetch
