@@ -178,6 +178,15 @@ fi
 # Termbin
 alias tb="nc termbin.com 9999"
 
+# open - just like os x
+open()
+{
+  if [ -x "$(command -v xdg-open)" ]; then
+    xdg-open "$1" &> /dev/null &
+  else
+    echo "open on this kind of file has not implemented yet!"
+  fi
+}
 
 # Delete certain files recursively!!
 delete_recursive ()

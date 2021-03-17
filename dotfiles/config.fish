@@ -139,6 +139,15 @@ if test -x 'nvim'
 end
 alias vim='nvim'
 
+### 'open' macro. Just like OS X ###
+function open
+    if type -q xdg-open
+        xdg-open "$argv[1]" $ >/dev/null &
+    else
+        echo "open on this kind of file has not implemented yet!"
+    end
+end
+
 ### Extraction ###
 function ex
     if test -f $argv[1]
