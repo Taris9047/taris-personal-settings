@@ -125,9 +125,12 @@ alias gaddup='git add -u'
 alias gaddall='git add .'
 
 ### Switch between shells ###
-alias tobash="sudo -H chsh $USER -s /bin/bash && echo 'Now log out.'"
-if test -x /bin/zsh
-    alias tozsh="sudo -H chsh $USER -s /bin/zsh && echo 'Now log out.'"
+alias tobash="sudo -H chsh $USER -s bash && echo 'Now log out.'"
+if type -q zsh
+    alias tozsh="sudo -H chsh $USER -s zsh && echo 'Now log out.'"
+end
+if type -q fish
+    alias tofish="sudo -H chsh $USER -s fish && echo 'Now log out.'"
 end
 
 ### Termbin ###
