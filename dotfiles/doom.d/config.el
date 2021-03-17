@@ -262,7 +262,6 @@
       :desc "Winner undo"
       "w <left>" #'winner-undo)
 
-
 ;; Hotkeys for window navigation
 (map! :map evil-window-map
       "SPC" #'rotate-layout
@@ -280,8 +279,9 @@
 ;; Hangul stuff
 (setq default-input-method "korean-hangul")
 (global-set-key (kbd "S-SPC") 'toggle-input-method)
+;; Be sure to enable hardware Hangul key from Keyboard(XKB) Options to use this.
 (global-set-key (kbd "<Hangul>") 'toggle-input-method)
-(global-set-key (kbd "<Ctrl_R>") 'toggle-input-method)
+;; (global-set-key (kbd "<Ctrl_R>") 'toggle-input-method)
 (global-set-key (kbd "<Alt_R>") 'toggle-input-method)
 (when (eq system-type 'gnu/linux)
   (set-fontset-font t 'hangul (font-spec :family "NotoSans CJK KR" :size 16))
