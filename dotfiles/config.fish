@@ -34,7 +34,7 @@
 ### EXPORT ###
 set HOMEBREW $HOME/.local/bin
 echo "Setting homebrew dir to $HOMEBREW"
-set -U fish_user_paths $HOME/.local/bin $fish_user_paths
+set -Ua fish_user_paths $HOME/.local/bin $fish_user_paths
 set fish_greeting
 set TERM "xterm-256color"
 set EDITOR "nvim"
@@ -51,7 +51,7 @@ set line_delay 0.12
 
 ### Prepend path
 function addpath
-    set PATH $argv[1] $PATH
+    set -Ua PATH $argv[1] $PATH
 end
 
 ### Set manpager ###
@@ -145,7 +145,7 @@ alias vim='nvim'
 ### 'open' macro. Just like OS X ###
 function open
     if type -q xdg-open
-        xdg-open "$argv[1]" $ >/dev/null &
+        xdg-open "$argv[1]" &>/dev/null &
     else
         echo "open on this kind of file has not implemented yet!"
     end
@@ -213,10 +213,10 @@ end
 
 # Homebrew path
 if test -d "$HBREW_PATH"
-    set HOMEBREW $HBREW_PATH
+    set -Ua HOMEBREW $HBREW_PATH
     printf "$check_symbol HOMEBREW directory is $HOMEBREW\n"
     sleep $line_delay
-    set PATH "$HOMEBREW/bin" "$HOMEBREW/.opt/bin" $PATH
+    set -Ua PATH "$HOMEBREW/bin" "$HOMEBREW/.opt/bin" $PATH
 end
 
 # JRE
@@ -224,7 +224,7 @@ set JAVA_HOME '/opt/java'
 if test -d "$JAVA_HOME"
     printf "$check_symbol Java found at $JAVA_HOME\n"
     sleep $line_delay
-    fish_add_path "$JAVA_HOME"
+    set -Ua PATH "$JAVA_HOME/bin" $PATH
 end
 
 # Emacs
@@ -232,32 +232,34 @@ set EMACS_HOME $HOME/.emacs_local
 if test -d $EMACS_HOME
     printf "$check_symbol Custom emacs found at $EMACS_HOME\n"
     sleep $line_delay
-    fish_add_path "$EMACS_HOME/bin"
+    set -Ua PATH "$EMACS_HOME/bin" $PATH
 end
 
 # Rust
 if test -d $HOME/.cargo
     printf "$check_symbol Cargo directory detected at $HOME/.cargo\n"
     sleep $line_delay
-    set PATH "$HOME/.cargo/bin" $PATH
+    addpath "$HOME/.cargo/bin"
+    # set -Ua PATH "$HOME/.cargo/bin" $PATH
 end
 
 # GCC variants.
 if test -d $HOMEBREW/.opt/gcc-jit
     printf "$check_symbol Gcc with libgccjit found in the system!\n"
-    fish_add_path "$HOMEBREW/.opt/gcc-jit/bin"
+    # set -Ua PATH "$HOMEBREW/.opt/gcc-jit/bin" $PATH
+    addpath "$HOMEBREW/.opt/gcc-jit/bin"
 end
 if test -d $HOMEBREW/.opt/gcc9
     printf "$check_symbol Gcc9 found in the system!\n"
-    fish_add_path "$HOMEBREW/.opt/gcc9/bin"
+    set -Ua PATH "$HOMEBREW/.opt/gcc9/bin" $PATH
 end
 if test -d $HOMEBREW/.opt/gcc8
     printf "$check_symbol Gcc8 found in the system!\n"
-    fish_add_path "$HOMEBREW/.opt/gcc8/bin"
+    set -Ua PATH "$HOMEBREW/.opt/gcc8/bin" $PATH
 end
 if test -d $HOMEBREW/.opt/gcc4
     printf "$check_symbol Gcc4 found in the system!\n"
-    fish_add_path "$HOMEBREW/.opt/gcc4/bin"
+    set -Ua PATH "$HOMEBREW/.opt/gcc4/bin" $PATH
 end
 
 # Golang
@@ -265,8 +267,164 @@ set GOROOT "$HOMEBREW/.opt/go"
 set GOPATH "$HOMEBREW/.opt/go/bin"
 if test -d $GOROOT
     printf "$check_symbol Golang has been found at $GOROOT\n"
-    fish_add_path "$GOROOT/bin"
+    set -Ua PATH "$GOROOT/bin" $PATH
 end
+
+# snap
+set SNAP_BIN /snap/bin
+if test -d "$SNAP_BIN"
+    printf "$check_symbol Snap executables have been found at $SNAP_BIN\n"
+    addpath "$SNAP_BIN"
+end
+
+# VNC
+if type -q vncserver
+    echo "$check_symbol VNC server found!"
+    echo "  To start: vncstart"
+    echo "  To end: vnckill"
+    alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+    alias vnckill="vncserver -kill :1"
+end
+
+# exa
+if type -q exa
+    printf "$check_symbol exa found! using it instead of ls\n"
+    sleep $line_delay
+    alias ls='exa -hF --color=always --group-directories-first'
+    alias ll='exa -lahF --color=always --group-directories-first'
+    alias l='exa -hF --color=always --group-directories-first'
+    alias lt='exa -aT --color=always --group-directories-first'
+    alias l.='exa -a | egrep "^\."'
+end
+
+# lsd
+if type -q lsd
+    printf "$check_symbol lsd found! using it instead of ls or exa\n"
+    sleep $line_delay
+    alias ls='lsd -hF --color=always --group-dirs=first'
+    alias ll='lsd -lahF --color=always --group-dirs=first'
+    alias lld='lsd -lahF --color=always --group-dirs=first --total-size'
+    alias l='lsd -hF --color=auto --group-dirs=first'
+    alias lt='lsd -a --tree --color=always --group-dirs=first'
+    alias l.='lsd -a | egrep "^\."'
+end
+
+# bat
+if type -q bat
+    printf "$check_symbol bat found! using it instead of cat\n"
+    sleep $line_delay
+    alias cat='bat'
+end
+
+# rip, rm-improved
+set trash_location "$HOME/.local/share/Trash/files/"
+if type -q
+    printf "$check_symbol rip, rm-improved found!\n $right_arrow_symbol Setting up graveyard at $trash_location"
+    sleep $line_delay
+    alias rip="rip --graveyard $trash_location"
+end
+
+# bpytop
+if type -q $HOMEBREW/bin/pip3 -a type -q $HOMEBREW/bin/bpytop
+    printf "$check_symbol Locally installed bpytop found!\n"
+    sleep $line_delay
+    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && $HOMEBREW/bin/bpytop"
+    alias htop="$HOMEBREW/bin/bpytop"
+    alias top="$HOMEBREW/bin/bpytop"
+end
+
+# zoxide
+if type -q zoxide
+    printf "$check_symbol zoxide found! activating it!\n"
+    sleep $line_delay
+    zoxide init fish | source
+    alias cd='z'
+end
+
+# neovim
+if type -q nvim
+    printf "$check_symbol Neovim found! replacing vim!\n"
+    sleep $line_delay
+    alias vim='nvim'
+    alias vi='nvim'
+end
+
+# Texlive
+set texlive_year "2020"
+set texlive_arch "x86_64-linux"
+set texlive_bin_dir "$texlive_base_path/$texlive_year/bin/$texlive_arch"
+set texlive_bin_dir_woyear "$texlive_base_path/bin/$texlive_arch"
+if test -d "$texlive_bin_dir"
+    printf "$check_symbol Texlive found at $texlive_bin_dir directory!!\n"
+    addpath "$texlive_bin_dir"
+    elif test -d "$texlive_bin_dir_woyear"
+    printf "$check_symbol Texlive found at $texlive_bin_dir_woyear directory!!\n"
+    addpath "$texlive_bin_dir_woyear"
+end
+
+# pypy - brewed one
+if type -q "$HOMEBREW/.opt/pypy/bin/pypy3"
+    printf "$check_symbol pypy3 found in $HOMEBREW/.oopt/pypy/bin/pypy3"
+    sleep $line_delay
+    addpath "$HOMEBREW/.opt/pypy/bin"
+end
+
+# Node.JS's update tool, n
+if type -q n
+    printf "$check_symbol n found!, Setting up N_PREFIX for it!\n"
+    sleep $line_delay
+    set -Ua N_PREFIX (type -p n | sed -E 's/\/bin\/n//g')
+end
+
+# IrfanView - you need wine to install it!
+set iview64_path "$HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe"
+function run_iview
+    wine "$iview64_path" (winepath --windows $argv[@])
+end
+if type -q wine -a test -f "$iview64_path"
+    printf "$check_symbol Irfanveiw found!\n"
+    printf "  $right_arrow_symbol Usage: iview <files>\n"
+    alias iview='run_iview'
+    sleep $line_dealy
+end
+
+# youtube-dl stuff
+if type -q youtube-dl
+    printf "$check_symbol youtube-dl found! setting up yta(ytv)-* commands.\n"
+    alias yta-help="echo 'yta-aac yta-best yta-flac yta-m4a yta-mp3 yta-opus yta-vorbis yta-wav ytv-best'"
+    alias yta-aac="youtube-dl --extract-audio --audio-format aac "
+    alias yta-best="youtube-dl --extract-audio --audio-format best "
+    alias yta-flac="youtube-dl --extract-audio --audio-format flac "
+    alias yta-m4a="youtube-dl --extract-audio --audio-format m4a "
+    alias yta-mp3="youtube-dl --extract-audio --audio-format mp3 "
+    alias yta-opus="youtube-dl --extract-audio --audio-format opus "
+    alias yta-vorbis="youtube-dl --extract-audio --audio-format vorbis "
+    alias yta-wav="youtube-dl --extract-audio --audio-format wav "
+    alias ytv-best="youtube-dl -f bestvideo+bestaudio "
+    sleep $line_delay
+end
+
+# Rclone stuff!
+if type -q rclone
+
+    if not test -d "$GOOGLE_DRIVE"
+        printf "$check_symbol Google drive mount point not found! making one...\n"
+        mkdir -pv "$GOOGLE_DRIVE"
+    end
+
+    if test (mountpoint -q "$GOOGLE_DRIVE")
+        printf "$check_symbol Google drive already mounted at $GOOGLE_DRIVE\n"
+        sleep $line_delay
+    else
+        printf "$check_symbol Mounting Google Drive to $GOOGLE_DRIVE\n"
+        rclone mount google-drive: "$GOOGLE_DRIVE" &
+        sleep 2
+    end
+
+
+
+end
+
 
 # Starship
 if type -q starship
@@ -276,7 +434,7 @@ if type -q starship
 end
 
 # Clean up screen
-clear
+#clear
 
 # Finally, run neofetch
 if type -q neofetch

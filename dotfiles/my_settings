@@ -385,10 +385,10 @@ elif [ -d $texlive_bin_dir_woyear ]; then
 fi
 
 # pypy
-if [ -x "$(command -v $HOMEBREW/opt/pypy/bin/pypy3)" ]; then
-  printf "${check_symbol} pypy3 found in $HOMEBREW/opt/pypy/bin/pypy3!!\n"
+if [ -x "$(command -v $HOMEBREW/.opt/pypy/bin/pypy3)" ]; then
+  printf "${check_symbol} pypy3 found in $HOMEBREW/.opt/pypy/bin/pypy3!!\n"
   sleep ${line_delay}
-  export PATH=$HOMEBREW/opt/pypy/bin:$PATH
+  export PATH=$HOMEBREW/.opt/pypy/bin:$PATH
 fi
 
 # Node.JS update tool n
@@ -446,9 +446,11 @@ if [ -x "$(command -v rclone)" ]; then
     printf "${check_symbol} Google Drive already mounted at $GOOGLE_DRIVE\n"
     sleep ${line_delay}
   else
-    printf "${check_symbol} Mounting Google Drive to $GOOGLE_DRIVE\n"
-    rclone mount google-drive: $GOOGLE_DRIVE &
-    sleep 2
+    if [ ! -z "$(cat $HOME/.config/rclone/rclone.conf | grep "\[google-drive\]")" ]; then
+      printf "${check_symbol} Mounting Google Drive to $GOOGLE_DRIVE\n"
+      rclone mount google-drive: $GOOGLE_DRIVE &
+      sleep 2
+    fi
   fi
 
   if [ ! -d $ONE_DRIVE ]; then
@@ -460,9 +462,11 @@ if [ -x "$(command -v rclone)" ]; then
     printf "${check_symbol} MS One Drive already mounted at $ONE_DRIVE\n"
     sleep ${line_delay}
   else
-    printf "${check_symbol} Mounting MS One Drive to $ONE_DRIVE\n"
-    rclone mount --vfs-cache-mode writes onedrive: $ONE_DRIVE &
-    sleep 2
+    if [ ! -z "$(cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive]")" ]; then
+      printf "${check_symbol} Mounting MS One Drive to $ONE_DRIVE\n"
+      rclone mount --vfs-cache-mode writes onedrive: $ONE_DRIVE &
+      sleep 2
+    fi
   fi
 fi
 
