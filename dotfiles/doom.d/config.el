@@ -196,14 +196,6 @@
              "DONE(d)"           ; Task has been completed
              "CANCELLED(c)" )))) ; Task has been cancelled
 
-(setq user-full-name "Taylor Shin"
-      user-mail-address "talezshin@gmail.com")
-
-(setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 16)
-      doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
-      doom-variable-pitch-font (font-spec :family "NanumGothic" :size 16)
-      doom-serif-font (font-spec :family "NanumGothic" :weight 'light))
-
 (defun dt/org-babel-tangle-async (file)
   "Invoke `org-babel-tangle-file' asynchronously."
   (message "Tangling %s..." (buffer-file-name))
@@ -223,6 +215,48 @@
 (defun dt/org-babel-tangle-current-buffer-async ()
   "Tangle current buffer asynchronously."
   (dt/org-babel-tangle-async (buffer-file-name)))
+
+(setq user-full-name "Taylor Shin"
+      user-mail-address "talezshin@gmail.com")
+
+(setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 16)
+      doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
+      doom-variable-pitch-font (font-spec :family "NanumGothic" :size 16)
+      doom-serif-font (font-spec :family "NanumGothic" :weight 'light))
+
+(map! :leader
+      :desc "Copy to register"
+      "r c" #'copy-to-register
+      :leader
+      :desc "Frameset to register"
+      "r f" #'frameset-to-register
+      :leader
+      :desc "Insert contents of register"
+      "r i" #'insert-register
+      :leader
+      :desc "Jump to register"
+      "r j" #'jump-to-register
+      :leader
+      :desc "List registers"
+      "r l" #'list-registers
+      :leader
+      :desc "Number to register"
+      "r n" #'number-to-register
+      :leader
+      :desc "Interactively choose a register"
+      "r r" #'counsel-register
+      :leader
+      :desc "View a register"
+      "r v" #'view-register
+      :leader
+      :desc "Window configuration to register"
+      "r w" #'window-configuration-to-register
+      :leader
+      :desc "Increment register"
+      "r +" #'increment-register
+      :leader
+      :desc "Point to register"
+      "r SPC" #'point-to-register)
 
 (setq default-input-method "korean-hangul")
 (global-set-key (kbd "S-SPC") 'toggle-input-method)

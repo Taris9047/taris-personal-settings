@@ -16,9 +16,10 @@
 - [[#settings-file-shortcuts][Settings file shortcuts.]]
 - [[#neotree][Neotree]]
 - [[#org-mode][Org mode]]
+- [[#automatic-tangle][Automatic Tangle!]]
 - [[#my-credentials][My credentials]]
 - [[#font-configs][Font configs]]
-- [[#automatic-tangle][Automatic Tangle!]]
+- [[#registers-clipboard-system][Registers (clipboard system.)]]
 - [[#hangul-stuff][Hangul stuff]]
 - [[#splits][Splits]]
 - [[#winner-mode][Winner Mode]]
@@ -98,6 +99,8 @@
 #+end_src
 
 * Theme!
+Looks a bit complex since linux distro detection has been implemented. (Maybe we need to add OS X case as well.) This part was purely due to my fanboysm on elementary OS' default theme! --> Solarized Light! At this moment, if it detects elementary OS, the theme will be doom-solarized-light instead of my usual favorite dark theme.
+
 #+begin_src emacs-lisp
 ;; Custom functions to detect linux distro
 (defun guess-linux-release(regexp)
@@ -176,6 +179,15 @@
 #+end_src
 
 * Quick edit shortcuts
+
+| PATH TO FILE           | DESCRIPTION           | KEYBINDING |
+|------------------------+-----------------------+------------|
+| ~/Org/agenda.org       | /Edit agenda file/      | SPC - a    |
+| ~/.doom.d/config.org"  | /Edit doom config.org/  | SPC - c    |
+| ~/.doom.d/aliases"     | /Edit eshell aliases/   | SPC - e    |
+| ~/.doom.d/init.el"     | /Edit doom init.el/     | SPC - i    |
+| ~/.doom.d/packages.el" | /Edit doom packages.el/ | SPC - p    |
+
 #+begin_src emacs-lisp
 (setq display-line-numbers-type t)
 (map! :leader
@@ -215,6 +227,12 @@
 #+end_src
 
 * Neotree
+
+| COMMAND        | DESCRIPTION               | KEYBINDING |
+|----------------+---------------------------+------------|
+| neotree-toggle | /Toggle neotree/            | SPC t n    |
+| neotree- dir   | /Open directory in neotree/ | SPC d n    |
+
 #+begin_src emacs-lisp
 (after! neotree
   (setq neo-smart-open t
@@ -228,7 +246,6 @@
       :desc "Open directory in neotree"
       "d n" #'neotree-dir)
 #+end_src
-
 
 * Org mode
 #+begin_src emacs-lisp
@@ -263,21 +280,6 @@
              "CANCELLED(c)" )))) ; Task has been cancelled
 #+end_src
 
-* My credentials
-#+begin_src emacs-lisp
-(setq user-full-name "Taylor Shin"
-      user-mail-address "talezshin@gmail.com")
-#+end_src
-
-* Font configs
-#+begin_src emacs-lisp
-(setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 16)
-      doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
-      doom-variable-pitch-font (font-spec :family "NanumGothic" :size 16)
-      doom-serif-font (font-spec :family "NanumGothic" :weight 'light))
-#+end_src
-
-
 * Automatic Tangle!
 In fact, this is called 'asynchronous' tangle.
 
@@ -304,6 +306,71 @@ In fact, this is called 'asynchronous' tangle.
 #+end_src
 
 
+* My credentials
+#+begin_src emacs-lisp
+(setq user-full-name "Taylor Shin"
+      user-mail-address "talezshin@gmail.com")
+#+end_src
+
+* Font configs
+#+begin_src emacs-lisp
+(setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 16)
+      doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
+      doom-variable-pitch-font (font-spec :family "NanumGothic" :size 16)
+      doom-serif-font (font-spec :family "NanumGothic" :weight 'light))
+#+end_src
+
+* Registers (clipboard system.)
+
+| COMMAND                          | DESCRIPTION                      | KEYBINDING |
+|----------------------------------+----------------------------------+------------|
+| copy-to-register                 | /Copy to register/                 | SPC r c    |
+| frameset-to-register             | /Frameset to register/             | SPC r f    |
+| insert-register                  | /Insert contents of register/      | SPC r i    |
+| jump-to-register                 | /Jump to register/                 | SPC r j    |
+| list-registers                   | /List registers/                   | SPC r l    |
+| number-to-register               | /Number to register/               | SPC r n    |
+| counsel-register                 | /Interactively choose a register/  | SPC r r    |
+| view-register                    | /View a register/                  | SPC r v    |
+| window-configuration-to-register | /Window configuration to register/ | SPC r w    |
+| increment-register               | /Increment register/               | SPC r +    |
+| point-to-register                | /Point to register/                | SPC r SPC  |
+
+#+begin_src emacs-lisp
+(map! :leader
+      :desc "Copy to register"
+      "r c" #'copy-to-register
+      :leader
+      :desc "Frameset to register"
+      "r f" #'frameset-to-register
+      :leader
+      :desc "Insert contents of register"
+      "r i" #'insert-register
+      :leader
+      :desc "Jump to register"
+      "r j" #'jump-to-register
+      :leader
+      :desc "List registers"
+      "r l" #'list-registers
+      :leader
+      :desc "Number to register"
+      "r n" #'number-to-register
+      :leader
+      :desc "Interactively choose a register"
+      "r r" #'counsel-register
+      :leader
+      :desc "View a register"
+      "r v" #'view-register
+      :leader
+      :desc "Window configuration to register"
+      "r w" #'window-configuration-to-register
+      :leader
+      :desc "Increment register"
+      "r +" #'increment-register
+      :leader
+      :desc "Point to register"
+      "r SPC" #'point-to-register)
+#+end_src
 
 * Hangul stuff
 #+begin_src emacs-lisp
