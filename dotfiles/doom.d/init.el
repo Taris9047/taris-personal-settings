@@ -241,7 +241,7 @@
       +doom-dashboard-name "► Doom")
 
 ;; to avoid bugs on org mode
-(custom-set-faces! '(doom-modeline-evil-insert-state :weight bold :foreground "#339CDB"))
+;;(custom-set-faces! '(doom-modeline-evil-insert-state :weight bold :foreground "#339CDB"))
 
 
 
