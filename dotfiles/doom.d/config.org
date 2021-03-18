@@ -279,8 +279,10 @@
 :PROPERTIES:
 :header-args: :tangle config.el
 :END:
-Many settings were imported from DistroTube's repo.
-[[[[https://gitlab.com/dwt1/dotfiles/-/blob/master/.doom.d/config.org]]][Distrotube's GitLab Repo doom.d/config.org]]
+Many settings were imported from DistroTube's repo.:
+[[https://gitlab.com/dwt1/dotfiles/-/blob/master/.doom.d/config.org][DistroTube's GitLab repo. doom.d/config.org]]
+Also referenced
+[[https://tecosaur.github.io/emacs-config/config.html][Tecosaur's github]]
 
 ** Header
 Setting up =lexical-binding= for this file.
