@@ -172,15 +172,12 @@
 (setq ivy-sort-max-size 50000)
 
 ;; Smart Parentheses
-(sp-local-pair
- '(org-mode)
- "<<" ">>"
- :actions '(insert))
+;; (sp-local-pair
+ ;; '(org-mode)
+ ;; "<<" ">>"
+ ;; :actions '(insert))
 
 ;; Ignore some files in tree
-
-#
-
 (after! treemacs
   (defvar treemacs-file-ignore-extensions '()
     "File extension which `treemacs-ignore-filter' will ensure are ignored")
@@ -248,17 +245,17 @@
   :config
   (setq org-ref-completion-library 'org-ref-ivy-cite))
 
-(org-link-set-parameters "yt" :export #'+org-export-yt)
-(defun +org-export-yt (path desc backend _com)
-  (cond ((org-export-derived-backend-p backend 'html)
-         (format "<iframe width='440' \
-height='335' \
-src='https://www.youtube.com/embed/%s' \
-frameborder='0' \
-allowfullscreen>%s</iframe>" path (or "" desc)))
-        ((org-export-derived-backend-p backend 'latex)
-         (format "\\href{https://youtu.be/%s}{%s}" path (or desc "youtube")))
-        (t (format "https://youtu.be/%s" path))))
+;; (org-link-set-parameters "yt" :export #'+org-export-yt)
+;; (defun +org-export-yt (path desc backend _com)
+;;   (cond ((org-export-derived-backend-p backend 'html)
+;;          (format "<iframe width='440' \
+;; height='335' \
+;; src='https://www.youtube.com/embed/%s' \
+;; frameborder='0' \
+;; allowfullscreen>%s</iframe>" path (or "" desc)))
+;;         ((org-export-derived-backend-p backend 'latex)
+;;          (format "\\href{https://youtu.be/%s}{%s}" path (or desc "youtube")))
+;;         (t (format "https://youtu.be/%s" path))))
 
 
 
