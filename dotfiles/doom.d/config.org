@@ -1,7 +1,7 @@
+#+PROPERTY: header-args :tangle yes
 #+TITLE: Taris' Doom Emacs Config
 #+AUTHOR: Taylor Shin
 #+STARTUP: showeverything
-#+PROPERTY: header-args :tangle './config.el'
 
 * Table of Contents :toc:
 - [[#bookmarking][Bookmarking]]
@@ -9,6 +9,7 @@
 - [[#dired-directory-manager][Dired directory manager]]
 - [[#undoredo][Undo/Redo]]
 - [[#window-nav][Window Nav.]]
+- [[#line-number-manipulation][Line number manipulation]]
 - [[#quick-edit-shortcuts][Quick edit shortcuts]]
 - [[#settings-file-shortcuts][Settings file shortcuts.]]
 - [[#neotree][Neotree]]
@@ -20,6 +21,9 @@
 - [[#hangul-stuff][Hangul stuff]]
 - [[#splits][Splits]]
 - [[#winner-mode][Winner Mode]]
+- [[#elfeed-stuff][Elfeed stuff]]
+- [[#emms-music-player-stuff][EMMS music player stuff]]
+- [[#ews-web-browser][EWS Web browser]]
 
 * Bookmarking
 #+begin_src emacs-lisp
@@ -110,6 +114,25 @@
       "C-<right>"       #'+evil/window-move-right)
 #+end_src
 
+* Line number manipulation
+#+begin_src emacs-lisp
+(setq display-line-numbers-type t)
+(map! :leader
+      :desc "Comment or uncomment lines"
+      "TAB TAB" #'comment-line
+      :leader
+      :desc "Toggle line numbers"
+      "t l" #'doom/toggle-line-numbers
+      :leader
+      :desc "Toggle line highlight in frame"
+      "t h" #'hl-line-mode
+      :leader
+      :desc "Toggle line highlight globally"
+      "t H" #'global-hl-line-mode
+      :leader
+      :desc "Toggle truncate lines"
+      "t t" #'toggle-truncate-lines)
+#+end_src
 
 * Quick edit shortcuts
 #+begin_src emacs-lisp
@@ -250,6 +273,7 @@ In fact, this is called 'asynchronous' tangle.
 #+end_src
 
 
+
 * Hangul stuff
 #+begin_src emacs-lisp
 (setq default-input-method "korean-hangul")
@@ -282,4 +306,83 @@ In fact, this is called 'asynchronous' tangle.
       :leader
       :desc "Winner undo"
       "w <left>" #'winner-undo)
+#+end_src
+
+* Elfeed stuff
+#+begin_src emacs-lisp
+(custom-set-variables
+ '(elfeed-feeds
+   (quote
+    (("https://www.reddit.com/r/linux.rss" reddit linux)
+     ("https://www.gamingonlinux.com/article_rss.php" gaming linux)
+     ("https://hackaday.com/blog/feed/" hackaday linux)
+     ("https://opensource.com/feed" opensource linux)
+     ("https://linux.softpedia.com/backend.xml" softpedia linux)
+     ("https://itsfoss.com/feed/" itsfoss linux)
+     ("https://www.zdnet.com/topic/linux/rss.xml" zdnet linux)
+     ("https://www.phoronix.com/rss.php" phoronix linux)
+     ("http://feeds.feedburner.com/d0od" omgubuntu linux)
+     ("https://www.computerworld.com/index.rss" computerworld linux)
+     ("https://www.networkworld.com/category/linux/index.rss" networkworld linux)
+     ("https://www.techrepublic.com/rssfeeds/topic/open-source/" techrepublic linux)
+     ("https://betanews.com/feed" betanews linux)
+     ("http://lxer.com/module/newswire/headlines.rss" lxer linux)
+     ("https://distrowatch.com/news/dwd.xml" distrowatch linux)))))
+#+end_src
+
+* EMMS music player stuff
+#+begin_src emacs-lisp
+(emms-all)
+(emms-default-players)
+(emms-mode-line 1)
+(emms-playing-time 1)
+(setq emms-source-file-default-directory "~/Music/Non-Classical/70s-80s/"
+      emms-playlist-buffer-name "*Music*"
+      emms-info-asynchronously t
+      emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find)
+(map! :leader
+      :desc "Go to emms playlist"
+      "a a" #'emms-playlist-mode-go
+      :leader
+      :desc "Emms pause track"
+      "a x" #'emms-pause
+      :leader
+      :desc "Emms stop track"
+      "a s" #'emms-stop
+      :leader
+      :desc "Emms play previous track"
+      "a p" #'emms-previous
+      :leader
+      :desc "Emms play next track"
+      "a n" #'emms-next)
+
+(map! :leader
+      :desc "Evaluate elisp in buffer"
+      "e b" #'eval-buffer
+      :leader
+      :desc "Evaluate defun"
+      "e d" #'eval-defun
+      :leader
+      :desc "Evaluate elisp expression"
+      "e e" #'eval-expression
+      :leader
+      :desc "Evaluate last sexpression"
+      "e l" #'eval-last-sexp
+      :leader
+      :desc "Evaluate elisp in region"
+      "e r" #'eval-region)
+#+end_src
+
+* EWS Web browser
+#+begin_src emacs-lisp
+(setq browse-url-browser-function 'eww-browse-url)
+(map! :leader
+      :desc "Eww web browser"
+      "e w" #'eww
+      :leader
+      :desc "Eww reload page"
+      "e R" #'eww-reload
+      :leader
+      :desc "Search web for text between BEG/END"
+      "s w" #'eww-search-words)
 #+end_src
