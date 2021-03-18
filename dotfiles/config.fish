@@ -20,6 +20,15 @@ else
     set VISUAL "xdg-open"
 end
 
+### Setting up manpager ###
+if type -q bat
+    set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
+else if type -q vim and not type -q nvim
+    set -x MANPAGER '/bin/bash -c "vim -MRn -c \"set buftype=nofile showtabline=0 ft=man ts=8 nomod nolist norelativenumber nonu noma\" -c \"normal L\" -c \"nmap q :qa<CR>\"</dev/tty <(col -b)"'
+else if type -q nvim
+    set -x MANPAGER "nvim -c 'set ft=man' -"
+end
+
 ### Some utility paths ###
 set GOOGLE_DRIVE $HOME/.google-drive
 set ONE_DRIVE $HOME/.onedrive
@@ -102,6 +111,17 @@ function gtag
 end
 alias gaddup='git add -u'
 alias gaddall='git add .'
+function gitlog2w
+    for day in (seq 14 -1 0)
+        git log --before="$day days" --after="($day+1) days" --format=oneline | wc -l
+    end | spark
+end
+function gitlog8h
+    for hour in (seq 8 -1 0)
+        git log --before="$hour hours" --after="($hour+1) hours" --format=oneline | wc -l
+    end | spark
+end
+
 
 ### Switch between shells ###
 alias tobash="sudo -H chsh $USER -s bash && echo 'Now log out.'"
@@ -444,7 +464,13 @@ if type -q starship
 end
 
 # Clean up screen
-#clear
+if type -q spark and type -q lolcat
+    alias clear='clear; echo; echo; seq 1 (tput cols) | sort -R | spark | lolcat; echo; echo' # Coloured
+else if type -q spark and not type -q lolcat
+    alias clear='clear; echo; echo; seq 1 (tput cols) | sort -R | spark | echo; echo' # Non-Coloured end clear
+end
+
+clear
 
 # Finally, run neofetch
 if type -q neofetch
