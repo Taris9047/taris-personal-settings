@@ -215,36 +215,5 @@
        ;;literate
        (default +bindings +smartparens))
 
-;; Custom functions to detect linux distro
-(defun guess-linux-release(regexp)
-  "Guess linux release"
-  (let ((maybe-get-dis-str (shell-command-to-string "cat /etc/*release")))
-    (with-temp-buffer
-      (insert maybe-get-dis-str)
-      (beginning-of-buffer)
-      (condition-case nil
-          (progn
-            (search-forward-regexp regexp)
-            (downcase (buffer-substring (match-beginning 1) (match-end 1))))
-        (search-failed nil)))))
-
-(defun guess-linux-based-distribution()
-  "Guess linux distribution family"
-  (guess-linux-release "^ID_LIKE=\"?\\([a-zA-Z ]*\\)\"?$"))
-
-(defun guess-linux-distribution()
-  "Guess linux distribution"
-  (guess-linux-release "^ID=\"?\\(\\w*\\)\"?$"))
-
-;; Fallback buffer names
-(setq doom-fallback-buffer-name "► Doom"
-      +doom-dashboard-name "► Doom")
-
-;; Read in config.org file
-;; (require 'org)
-;; (org-babel-load-file
-;;   (expand-file-name "config.org"
-;;                     user-emacs-directory))
-
 (provide 'init)
 ;;; init.el ends here

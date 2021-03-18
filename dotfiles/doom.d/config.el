@@ -1,3 +1,7 @@
+;; Fallback buffer names
+(setq doom-fallback-buffer-name "► Doom"
+      +doom-dashboard-name "► Doom")
+
 (map! :leader
       :desc "List bookmarks"
       "b L" #'list-bookmarks
@@ -50,6 +54,35 @@
                               ("png" . "sxiv")
                               ("mkv" . "mpv")
                               ("mp4" . "mpv")))
+
+;; Custom functions to detect linux distro
+(defun guess-linux-release(regexp)
+  "Guess linux release"
+  (let ((maybe-get-dis-str (shell-command-to-string "cat /etc/*release")))
+    (with-temp-buffer
+      (insert maybe-get-dis-str)
+      (beginning-of-buffer)
+      (condition-case nil
+          (progn
+            (search-forward-regexp regexp)
+            (downcase (buffer-substring (match-beginning 1) (match-end 1))))
+        (search-failed nil)))))
+
+(defun guess-linux-based-distribution()
+  "Guess linux distribution family"
+  (guess-linux-release "^ID_LIKE=\"?\\([a-zA-Z ]*\\)\"?$"))
+
+(defun guess-linux-distribution()
+  "Guess linux distribution"
+  (guess-linux-release "^ID=\"?\\(\\w*\\)\"?$"))
+
+(if (string= (guess-linux-distribution) "elementary")
+    (setq doom-theme 'doom-solarized-light)
+  (setq doom-theme 'doom-palenight))
+
+(map! :leader
+      :desc "Load new theme"
+      "h t" #'counsel-load-theme)
 
 (map! :leader
       :desc "Winner redo"
@@ -170,14 +203,6 @@
       doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
       doom-variable-pitch-font (font-spec :family "NanumGothic" :size 16)
       doom-serif-font (font-spec :family "NanumGothic" :weight 'light))
-
-(if (string= (guess-linux-distribution) "elementary")
-    (setq doom-theme 'doom-solarized-light)
-  (setq doom-theme 'doom-palenight))
-
-(map! :leader
-      :desc "Load new theme"
-      "h t" #'counsel-load-theme)
 
 (defun dt/org-babel-tangle-async (file)
   "Invoke `org-babel-tangle-file' asynchronously."
