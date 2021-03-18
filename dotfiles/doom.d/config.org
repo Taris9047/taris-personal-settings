@@ -599,10 +599,6 @@ In fact, this is called 'asynchronous' tangle.
 ;;   (dt/org-babel-tangle-async (buffer-file-name)))
 #+end_src
 
-#+RESULTS:
-: dt/org-babel-tangle-current-buffer-async
-
-
 ** My credentials
 #+begin_src emacs-lisp
 (setq user-full-name "Taylor Shin"
@@ -626,6 +622,11 @@ Not using it since it screws up fond rendering engine and fonts look erratic. Ma
 #+end_src
 
 *** Actual Font config.
+
+I was trying out a few different nerd fonts but decided to settle down to mononoki. I guess the 'roundy-ness' sold me out. Variable pitch and serif fonts are free Korean fonts that are distributed by Naver.com which is a dinosaur Internet portal company, i.e. It's the Google in Korea.
+
+You can download them from my Github repo as well: [[https://github.com/Taris9047/taris-personal-settings/releases/download/Nanum/NanumFonts.zip][Download Nanum Fonts]]
+
 #+begin_src emacs-lisp
 ;; (setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 14 :height 1.0)
 ;;       doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
@@ -638,6 +639,8 @@ Not using it since it screws up fond rendering engine and fonts look erratic. Ma
 #+end_src
 
 ** Registers (clipboard system.)
+
+I'm not sure I would utilize it frequently. But at least it seems pretty neat to have. Emacs can do everything that KDE do... huh.
 
 | COMMAND                          | DESCRIPTION                      | KEYBINDING |
 |----------------------------------+----------------------------------+------------|
@@ -690,6 +693,17 @@ Not using it since it screws up fond rendering engine and fonts look erratic. Ma
 #+end_src
 
 ** Hangul stuff
+
+Hangul stuff.
+
+Apparently, Emacs doesn't work well with xdg based input methods such as iBus, Fcitx, etc. So, even though Emacs runs on GUI environment, changing input method on Emacs was not so easy.
+
+But Emacs has everything! Even hangul input method!! Huh!
+
+So, I've decided to use it. The default Hangul/English switching keystroke is the Shift Space which was an industry(?) standard within Korean opensource community. However, times change, we can now map Right Alt key as Hangul on X input. So, why not? Implementing Hangul/English key on Emacs was not very challenging these days.
+
+We may not use Hanja key on Emacs... Maybe we need to find some other way later... LaTeXing still needs Hanja input for some specific cases.
+
 #+begin_src emacs-lisp
 (setq default-input-method "korean-hangul")
 (global-set-key (kbd "S-SPC") 'toggle-input-method)
@@ -703,6 +717,7 @@ Not using it since it screws up fond rendering engine and fonts look erratic. Ma
 #+end_src
 
 ** Window Splits
+
 #+begin_src emacs-lisp
 (defun prefer-horizontal-split ()
   (set-variable 'split-height-threshold nil t)
@@ -714,6 +729,9 @@ Not using it since it screws up fond rendering engine and fonts look erratic. Ma
 #+end_src
 
 ** Winner Mode
+
+Note that this mode actually provides saving window layout.
+
 #+begin_src emacs-lisp
 (map! :leader
       :desc "Winner redo"
@@ -724,6 +742,9 @@ Not using it since it screws up fond rendering engine and fonts look erratic. Ma
 #+end_src
 
 ** Elfeed stuff
+
+RSS Feed from DistroTube. I'll change them later but I do not really rely on them. Most of people alreay relays immediate news via a lot of channel. So, missing an important news is pretty hard anyway.
+
 #+begin_src emacs-lisp
 (custom-set-variables
  '(elfeed-feeds
@@ -746,12 +767,15 @@ Not using it since it screws up fond rendering engine and fonts look erratic. Ma
 #+end_src
 
 ** EMMS music player stuff
+
+Gotta be friendly with this player. But it doesn't work on homebrewed GccEmacs. Maybe try it later.
+
 #+begin_src emacs-lisp
 (emms-all)
 (emms-default-players)
 (emms-mode-line 1)
 (emms-playing-time 1)
-(setq emms-source-file-default-directory "~/Music/Non-Classical/70s-80s/"
+(setq emms-source-file-default-directory "~/Music/"
       emms-playlist-buffer-name "*Music*"
       emms-info-asynchronously t
       emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find)
