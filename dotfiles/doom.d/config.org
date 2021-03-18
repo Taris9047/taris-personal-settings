@@ -4,9 +4,9 @@
 #+PROPERTY: header-args :tangle-mode
 
 * Table of Contents :toc:
-- [[#init-file][Init file]]
-- [[#package-list][Package list]]
-- [[#packages-configuration][Packages Configuration]]
+- [[#init-file-initel][Init file (=init.el=)]]
+- [[#package-list-packagesel][Package list (=packages.el=)]]
+- [[#packages-configuration-configel][Packages Configuration (=config.el=)]]
   - [[#references][References...]]
   - [[#header][Header]]
   - [[#window-title][Window title]]
@@ -14,7 +14,7 @@
   - [[#dired-directory-manager][Dired directory manager]]
   - [[#centaur-tabs][Centaur tabs]]
   - [[#theme][Theme!]]
-  - [[#undoredo][Undo/Redo]]
+  - [[#undoredo-window-settings][Undo/Redo Window Settings]]
   - [[#window-navigation][Window Navigation]]
   - [[#line-number-manipulation][Line number manipulation]]
   - [[#quick-edit-shortcuts][Quick edit shortcuts]]
@@ -33,7 +33,7 @@
   - [[#ews-web-browser][EWS Web browser]]
   - [[#misc-stuffs][Misc stuffs]]
 
-* Init file
+* Init file (=init.el=)
 #+begin_src emacs-lisp :tangle init.el
 ;;; init.el -*- lexical-binding: t; -*-
 (doom! :input
@@ -221,9 +221,9 @@
        :app
        ;;calendar
        ;; emms
-       ;; everywhere        ; *leave* Emacs!? You must be joking
+       everywhere        ; *leave* Emacs!? You must be joking
        ;; irc               ; how neckbeards socialize
-       ;; (rss +org)        ; emacs as an RSS reader
+       (rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :emms
@@ -237,7 +237,7 @@
        (default +bindings +smartparens))
 #+end_src
 
-* Package list
+* Package list (=packages.el=)
 #+begin_src emacs-lisp :tangle packages.el
 ;;; packages.el -*- lexical-binding: t; -*-
 (package! all-the-icons-dired)
@@ -265,18 +265,25 @@
 (package! info-colors) ; Pretty manual
 
 ;; Open biglly files
-(package! vlf :recipe (:host github :repo "m00natic/vlfi" :files ("*.el"))
-  :pin "cc02f25337..." :disable t)
-(use-package! vlf-setup
-  :defer-incrementally vlf-tune vlf-base vlf-write vlf-search vlf-occur vlf-follow vlf-ediff vlf)
+;; (package! vlf :recipe (:host github :repo "m00natic/vlfi" :files ("*.el"))
+;;   :pin "cc02f25337..." :disable t)
+;; (use-package! vlf-setup
+;;   :defer-incrementally vlf-tune vlf-base vlf-write vlf-search vlf-occur vlf-follow vlf-ediff vlf)
 
 (package! systemd) ; Editing systemd unit files
 (package! graphviz-dot-mode) ; graphviz
 (package! org-auto-tangle) ; org tangle
+
+(package! elvish-mode)
+(package! ob-elvish)
+(package! ob-cfengine3)
+(package! iedit)
+(package! annotate)
+
 #+end_src
 
 
-* Packages Configuration
+* Packages Configuration (=config.el=)
 :PROPERTIES:
 :header-args: :tangle config.el
 :END:
@@ -295,6 +302,8 @@ Many settings were imported from these sources.
 4.  Distro detection elisp code was adopted from...
     [[https://emacs.stackexchange.com/a/44292][Yong Cheng's Answer at Stack Exchange.]]
 
+5.  Zzamboni had some useful macros...
+    [[https://zzamboni.org/post/my-doom-emacs-configuration-with-commentary/][Zzamboni.org]]
 
 ** Header
 Setting up =lexical-binding= for this file.
@@ -406,7 +415,10 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
       "h t" #'counsel-load-theme)
 #+end_src
 
-** Undo/Redo
+** Undo/Redo Window Settings
+
+Winner Mode. Windows configuration management. If you were looking for text edit undo/redo, use 'u' and 'C-r' in evil mode.
+
 #+begin_src emacs-lisp
 (map! :leader
       :desc "Winner redo"
@@ -558,25 +570,33 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
 In fact, this is called 'asynchronous' tangle.
 
 #+begin_src emacs-lisp
-(defun dt/org-babel-tangle-async (file)
-  "Invoke `org-babel-tangle-file' asynchronously."
-  (message "Tangling %s..." (buffer-file-name))
-  (async-start
-   (let ((args (list file)))
-     `(lambda ()
-        (require 'org)
-        ;;(load "~/.emacs.d/init.el")
-        (let ((start-time (current-time)))
-          (apply #'org-babel-tangle-file ',args)
-          (format "%.2f" (float-time (time-since start-time))))))
-   (let ((message-string (format "Tangling %S completed after " file)))
-     `(lambda (tangle-time)
-        (message (concat ,message-string
-                         (format "%s seconds" tangle-time)))))))
+(use-package! org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
 
-(defun dt/org-babel-tangle-current-buffer-async ()
-  "Tangle current buffer asynchronously."
-  (dt/org-babel-tangle-async (buffer-file-name)))
+;; DT's code, not sure why it doesn't work.
+;;'
+;; (defun dt/org-babel-tangle-async (file)
+;;   "Invoke `org-babel-tangle-file' asynchronously."
+;;   (message "Tangling %s..." (buffer-file-name))
+;;   (async-start
+;;    (let ((args (list file)))
+;;      `(lambda ()
+;;         (require 'org)
+;;         ;;(load "~/.emacs.d/init.el")
+;;         (let ((start-time (current-time)))
+;;           (apply #'org-babel-tangle-file ',args)
+;;           (format "%.2f" (float-time (time-since start-time))))))
+;;    (let ((message-string (format "Tangling %S completed after " file)))
+;;      `(lambda (tangle-time)
+;;         (message (concat ,message-string
+;;                          (format "%s seconds" tangle-time)))))))
+
+;; (defun dt/org-babel-tangle-current-buffer-async ()
+;;   "Tangle current buffer asynchronously."
+;;   (dt/org-babel-tangle-async (buffer-file-name)))
 #+end_src
 
 #+RESULTS:
@@ -590,11 +610,31 @@ In fact, this is called 'asynchronous' tangle.
 #+end_src
 
 ** Font configs
+
+*** Mixed pitch mode: Org mode IS yet another programming environment!
+
+Not using it since it screws up fond rendering engine and fonts look erratic. Maybe it's due to my homebrewed GccEmacs which was compiled without full set of graphics library included.
+
 #+begin_src emacs-lisp
+;; (add-hook! 'org-mode-hook #'mixed-pitch-mode)
+;; (setq mixed-pitch-variable-pitch-cursor nil)
+;; (use-package! mixed-pitch
+;;   :hook (org-mode . mixed-pitch-mode)
+;;   :config
+;;   (setq mixed-pitch-set-height t)
+;;   (set-face-attribute 'variable-pitch nil :height 1.2))
+#+end_src
+
+*** Actual Font config.
+#+begin_src emacs-lisp
+;; (setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 14 :height 1.0)
+;;       doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
+;;       doom-variable-pitch-font (font-spec :family "NanumSquareRound" :size 14 :height 1.2)
+;;       doom-serif-font (font-spec :family "NanumMyeongjo" :size 14))
 (setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 16)
       doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
-      doom-variable-pitch-font (font-spec :family "NanumGothic" :size 16)
-      doom-serif-font (font-spec :family "NanumGothic" :weight 'light))
+      doom-variable-pitch-font (font-spec :family "NanumSquareRound" :size 16)
+      doom-serif-font (font-spec :family "NanumMyeongjo" :size 16))
 #+end_src
 
 ** Registers (clipboard system.)
@@ -763,6 +803,18 @@ In fact, this is called 'asynchronous' tangle.
 #+end_src
 
 ** Misc stuffs
+*** OS X (Apple machines) modifiers to be more 'sane'
+
+This code has not been tested since my financial situation cannot support any newer Apple products and all my Apple machines are abandoned old models.
+
+#+begin_src emacs-lisp
+(cond (IS-MAC
+       (setq mac-command-modifier 'meta
+             mac-option-modifier 'alt
+             mac-right-option-modifier 'alt)))
+#+end_src
+
+
 *** File management stuff
 #+begin_src emacs-lisp
 ;; File management stuff
@@ -799,4 +851,28 @@ In fact, this is called 'asynchronous' tangle.
 ;; Smaller default window size
 (add-to-list 'default-frame-alist '(height . 40))
 (add-to-list 'default-frame-alist '(width . 80))
+#+end_src
+
+*** Graphviz
+#+begin_src emacs-lisp
+(use-package! graphviz-dot-mode)
+#+end_src
+
+*** iEdit settings
+#+begin_src emacs-lisp
+(use-package! iedit
+  :defer
+  :config
+  (set-face-background 'iedit-occurrence "Magneta")
+  :bind
+  ("C-;" . iedit-mode))
+#+end_src
+
+*** measure-time macro
+#+begin_src emacs-lisp
+(defmacro ts/measure-time (&rest body)
+  "Measure the time it takes to evaluate BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (float-time (time-since time))))
 #+end_src

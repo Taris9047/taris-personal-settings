@@ -24,11 +24,17 @@
 (package! info-colors) ; Pretty manual
 
 ;; Open biglly files
-(package! vlf :recipe (:host github :repo "m00natic/vlfi" :files ("*.el"))
-  :pin "cc02f25337..." :disable t)
-(use-package! vlf-setup
-  :defer-incrementally vlf-tune vlf-base vlf-write vlf-search vlf-occur vlf-follow vlf-ediff vlf)
+;; (package! vlf :recipe (:host github :repo "m00natic/vlfi" :files ("*.el"))
+;;   :pin "cc02f25337..." :disable t)
+;; (use-package! vlf-setup
+;;   :defer-incrementally vlf-tune vlf-base vlf-write vlf-search vlf-occur vlf-follow vlf-ediff vlf)
 
 (package! systemd) ; Editing systemd unit files
 (package! graphviz-dot-mode) ; graphviz
 (package! org-auto-tangle) ; org tangle
+
+(package! elvish-mode)
+(package! ob-elvish)
+(package! ob-cfengine3)
+(package! iedit)
+(package! annotate)

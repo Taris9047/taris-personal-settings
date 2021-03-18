@@ -198,33 +198,53 @@
              "DONE(d)"           ; Task has been completed
              "CANCELLED(c)" )))) ; Task has been cancelled
 
-(defun dt/org-babel-tangle-async (file)
-  "Invoke `org-babel-tangle-file' asynchronously."
-  (message "Tangling %s..." (buffer-file-name))
-  (async-start
-   (let ((args (list file)))
-     `(lambda ()
-        (require 'org)
-        ;;(load "~/.emacs.d/init.el")
-        (let ((start-time (current-time)))
-          (apply #'org-babel-tangle-file ',args)
-          (format "%.2f" (float-time (time-since start-time))))))
-   (let ((message-string (format "Tangling %S completed after " file)))
-     `(lambda (tangle-time)
-        (message (concat ,message-string
-                         (format "%s seconds" tangle-time)))))))
+(use-package! org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
 
-(defun dt/org-babel-tangle-current-buffer-async ()
-  "Tangle current buffer asynchronously."
-  (dt/org-babel-tangle-async (buffer-file-name)))
+;; DT's code, not sure why it doesn't work.
+;;'
+;; (defun dt/org-babel-tangle-async (file)
+;;   "Invoke `org-babel-tangle-file' asynchronously."
+;;   (message "Tangling %s..." (buffer-file-name))
+;;   (async-start
+;;    (let ((args (list file)))
+;;      `(lambda ()
+;;         (require 'org)
+;;         ;;(load "~/.emacs.d/init.el")
+;;         (let ((start-time (current-time)))
+;;           (apply #'org-babel-tangle-file ',args)
+;;           (format "%.2f" (float-time (time-since start-time))))))
+;;    (let ((message-string (format "Tangling %S completed after " file)))
+;;      `(lambda (tangle-time)
+;;         (message (concat ,message-string
+;;                          (format "%s seconds" tangle-time)))))))
+
+;; (defun dt/org-babel-tangle-current-buffer-async ()
+;;   "Tangle current buffer asynchronously."
+;;   (dt/org-babel-tangle-async (buffer-file-name)))
 
 (setq user-full-name "Taylor Shin"
       user-mail-address "talezshin@gmail.com")
 
+;; (add-hook! 'org-mode-hook #'mixed-pitch-mode)
+;; (setq mixed-pitch-variable-pitch-cursor nil)
+;; (use-package! mixed-pitch
+;;   :hook (org-mode . mixed-pitch-mode)
+;;   :config
+;;   (setq mixed-pitch-set-height t)
+;;   (set-face-attribute 'variable-pitch nil :height 1.2))
+
+;; (setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 14 :height 1.0)
+;;       doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
+;;       doom-variable-pitch-font (font-spec :family "NanumSquareRound" :size 14 :height 1.2)
+;;       doom-serif-font (font-spec :family "NanumMyeongjo" :size 14))
 (setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 16)
       doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
-      doom-variable-pitch-font (font-spec :family "NanumGothic" :size 16)
-      doom-serif-font (font-spec :family "NanumGothic" :weight 'light))
+      doom-variable-pitch-font (font-spec :family "NanumSquareRound" :size 16)
+      doom-serif-font (font-spec :family "NanumMyeongjo" :size 16))
 
 (map! :leader
       :desc "Copy to register"
@@ -355,6 +375,11 @@
       :desc "Search web for text between BEG/END"
       "s w" #'eww-search-words)
 
+(cond (IS-MAC
+       (setq mac-command-modifier 'meta
+             mac-option-modifier 'alt
+             mac-right-option-modifier 'alt)))
+
 ;; File management stuff
 (setq-default
  delete-by-moving-to-trash t
@@ -378,3 +403,18 @@
 ;; Smaller default window size
 (add-to-list 'default-frame-alist '(height . 40))
 (add-to-list 'default-frame-alist '(width . 80))
+
+(use-package! graphviz-dot-mode)
+
+(use-package! iedit
+  :defer
+  :config
+  (set-face-background 'iedit-occurrence "Magneta")
+  :bind
+  ("C-;" . iedit-mode))
+
+(defmacro ts/measure-time (&rest body)
+  "Measure the time it takes to evaluate BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (float-time (time-since time))))
