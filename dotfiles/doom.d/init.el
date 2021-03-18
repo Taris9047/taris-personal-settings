@@ -240,11 +240,6 @@
 (setq doom-fallback-buffer-name "► Doom"
       +doom-dashboard-name "► Doom")
 
-;; to avoid bugs on org mode
-;;(custom-set-faces! '(doom-modeline-evil-insert-state :weight bold :foreground "#339CDB"))
-
-
-
 
 (provide 'init)
 ;;; init.el ends here

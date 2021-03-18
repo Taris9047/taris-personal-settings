@@ -72,10 +72,10 @@
 (package! writeroom-mode)
 
 ;; Window pin
-(package! rotate :pin "4e9ac3ff00...")
+(package! rotate)
 
 ;; Pretty manual
-(package! info-colors :pin "47ee73cc19...")
+(package! info-colors)
 
 ;; Open biglly files
 (package! vlf :recipe (:host github :repo "m00natic/vlfi" :files ("*.el"))
@@ -83,63 +83,12 @@
 (use-package! vlf-setup
   :defer-incrementally vlf-tune vlf-base vlf-write vlf-search vlf-occur vlf-follow vlf-ediff vlf)
 
-;; Dictionary
-(package! lexic :recipe (:local-repo "lisp/lexic"))
-
-;; orgmode
-(unpin! org-mode)
-(package! org-super-agenda :pin "f5e80e4d0d...")
-(package! doct
-  :recipe (:host github :repo "progfolio/doct")
-  :pin "8ac08633ae...")
-(package! org-pretty-table
-  :recipe (:host github :repo "Fuco1/org-pretty-table") :pin "474ad84a8f...")
-(use-package! org-pretty-table
-  :commands (org-pretty-table-mode global-org-pretty-table-mode))
-(package! org-fragtog :pin "0151cabc7a...")
-(package! org-appear :recipe (:host github :repo "awth13/org-appear")
-  :pin "845be82b7a...")
-(package! org-pretty-tags :pin "5c7521651b...")
-;; (package! engrave-faces :recipe (:local-repo "lisp/engrave-faces"))
-;; (use-package! engrave-faces-latex
-  ;; :after ox-latex)
-(package! ox-gfm :pin "99f93011b0...")
-(use-package! ox-gfm
-  :after org)
-(package! org-ref :pin "7dbe3ace9b...")
-(package! org-graph-view :recipe (:host github :repo "alphapapa/org-graph-view") :pin "13314338d7...")
-;; (package! org-pandoc-import :recipe
-;;   (:local-repo "lisp/org-pandoc-import" :files ("*.el" "filters" "preprocessors")))
-;; (use-package! org-pandoc-import
-;;   :after org)
 
 ;; Editing systemd unit files
 (package! systemd :pin "b6ae63a236...")
 
 ;; graphviz
 (package! graphviz-dot-mode :pin "3642a0a5f4...")
-
-
-;; Centaur-tabs
-(after! centaur-tabs
-  (centaur-tabs-mode -1)
-  (setq centaur-tabs-height 36
-        centaur-tabs-set-icons t
-        centaur-tabs-modified-marker "o"
-        centaur-tabs-close-button "×"
-        centaur-tabs-set-bar 'above
-        centaur-tabs-gray-out-icons 'buffer)
-  (centaur-tabs-change-fonts "P22 Underground Book" 160))
-;; (setq x-underline-at-descent-line t)
-
-;; Company
-(after! company
-  (setq company-idle-delay 0.5
-        company-minimum-prefix-length 2)
-  (setq company-show-numbers t)
-  (add-hook 'evil-normal-state-entry-hook #'company-abort)) ;; make aborting less annoying.
-(setq-default history-length 1000)
-(setq-default prescient-history-length 1000)
 
 ;; Emoji
 (setq emojify-emoji-set "twemoji-v2")
@@ -162,9 +111,7 @@
 ;; Info colors
 (use-package! info-colors
   :commands (info-colors-fontify-node))
-
 (add-hook 'Info-selection-hook 'info-colors-fontify-node)
-
 (add-hook 'Info-mode-hook #'mixed-pitch-mode)
 
 ;; Ivy
@@ -244,19 +191,6 @@
   :after org
   :config
   (setq org-ref-completion-library 'org-ref-ivy-cite))
-
-;; (org-link-set-parameters "yt" :export #'+org-export-yt)
-;; (defun +org-export-yt (path desc backend _com)
-;;   (cond ((org-export-derived-backend-p backend 'html)
-;;          (format "<iframe width='440' \
-;; height='335' \
-;; src='https://www.youtube.com/embed/%s' \
-;; frameborder='0' \
-;; allowfullscreen>%s</iframe>" path (or "" desc)))
-;;         ((org-export-derived-backend-p backend 'latex)
-;;          (format "\\href{https://youtu.be/%s}{%s}" path (or desc "youtube")))
-;;         (t (format "https://youtu.be/%s" path))))
-
 
 
 (provide 'packages)
