@@ -332,7 +332,7 @@ set texlive_bin_dir_woyear "$texlive_base_path/bin/$texlive_arch"
 if test -d "$texlive_bin_dir"
     printf "$check_symbol Texlive found at $texlive_bin_dir directory!!\n"
     addpath "$texlive_bin_dir"
-    elif test -d "$texlive_bin_dir_woyear"
+else if test -d "$texlive_bin_dir_woyear"
     printf "$check_symbol Texlive found at $texlive_bin_dir_woyear directory!!\n"
     addpath "$texlive_bin_dir_woyear"
 end
@@ -444,7 +444,7 @@ if type -q starship
 end
 
 # Clean up screen
-clear
+#clear
 
 # Finally, run neofetch
 if type -q neofetch
