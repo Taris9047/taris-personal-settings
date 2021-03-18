@@ -1,1 +1,16 @@
-* Org mode
+#+TITLE: Taris' Doom Emacs Config
+#+AUTHOR: Taylor Shin
+#+STARTUP: showeverything
+
+* Table of Contents :toc:
+- [[#bookmarking][Bookmarking]]
+
+* Bookmarking
+#+begin_src emacs-lisp
+(map! :leader
+      :desc "List bookmarks"
+      "b L" #'list-bookmarks
+      :leader
+      :desc "Save current bookmarks to bookmark file"
+      "b w" #'bookmark-save)
+#+end_src
