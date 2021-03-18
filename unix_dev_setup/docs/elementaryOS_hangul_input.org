@@ -1,3 +1,7 @@
+#+PROPERTY: header-args :tangle yes
+#+TITLE: elementary OS Setting up Hangul Input guide.
+#+AUTHOR: Taylor Shin
+
 * Hangul Setup on elementary OS 5.
 ** Elementary OS Juno still uses Ubuntu 18.04 as its base which is already an ancient crap. Also, their repository has really limited software selections. But it looks SO GOOD!
 ** The Xorg engine itself cannot even run ibus correctly. But we have some way to walkaroud this problem with HarmoniKR linux's repo.
@@ -16,7 +20,7 @@
     #+end_src
     * For future releases which 'might' be based on 20.04
     #+begin_src sh
-    curl -sL https://apt.hamonikr.org/setup_hamonikr.jin | sudo -E bash -
+    # curl -sL https://apt.hamonikr.org/setup_hamonikr.jin | sudo -E bash -
     #+end_src
 
 3.  As usual, install nimf and nimf-libhangul
@@ -31,12 +35,3 @@
     #+end_src
 
 5.  Restart the system or Xorg.
-
-* All in one code
-#+begin_src sh
-sudo -H apt install software-properties-common
-curl -sL https://apt.hamonikr.org/setup_hamonikr.sun | sudo -E bash -
-sudo -H apt update && sudo apt install -y nimf nimf-libhangul
-sudo -H im-config -n nimf
-#+end_src
-
