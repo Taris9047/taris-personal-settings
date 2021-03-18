@@ -172,7 +172,7 @@ module SRC_VER
   def [](pkg_name)
     begin
       if pkg_name == 'golang'
-        return 'git'
+        return ['git']
       end
 
       if pkg_name == 'pdflib'
