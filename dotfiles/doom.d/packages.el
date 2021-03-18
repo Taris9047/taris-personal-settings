@@ -91,22 +91,22 @@
 (package! graphviz-dot-mode :pin "3642a0a5f4...")
 
 ;; Emoji
-(setq emojify-emoji-set "twemoji-v2")
-(defvar emojify-disabled-emojis
-  '(;; Org
-    "◼" "☑" "☸" "⚙" "⏩" "⏪" "⬆" "⬇" "❓"
-    ;; Terminal powerline
-    "✔"
-    ;; Box drawing
-    "▶" "◀")
-  "Charachters that should never be affected by `emojify-mode'.")
+;; (setq emojify-emoji-set "twemoji-v2")
+;; (defvar emojify-disabled-emojis
+;;   '(;; Org
+;;     "◼" "☑" "☸" "⚙" "⏩" "⏪" "⬆" "⬇" "❓"
+;;     ;; Terminal powerline
+;;     "✔"
+;;     ;; Box drawing
+;;     "▶" "◀")
+;;   "Charachters that should never be affected by `emojify-mode'.")
 
-(defadvice! emojify-delete-from-data ()
-  "Ensure `emojify-disabled-emojis' don't appear in `emojify-emojis'."
-  :after #'emojify-set-emoji-data
-  (dolist (emoji emojify-disabled-emojis)
-    (remhash emoji emojify-emojis)))
-(add-hook! '(mu4e-compose-mode org-msg-edit-mode circe-channel-mode) (emoticon-to-emoji 1))
+;; (defadvice! emojify-delete-from-data ()
+;;   "Ensure `emojify-disabled-emojis' don't appear in `emojify-emojis'."
+;;   :after #'emojify-set-emoji-data
+;;   (dolist (emoji emojify-disabled-emojis)
+;;     (remhash emoji emojify-emojis)))
+;; (add-hook! '(mu4e-compose-mode org-msg-edit-mode circe-channel-mode) (emoticon-to-emoji 1))
 
 ;; Info colors
 (use-package! info-colors
@@ -186,11 +186,11 @@
    ))
 
 ;; More org mode
-(setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
-(use-package! org-ref
-  :after org
-  :config
-  (setq org-ref-completion-library 'org-ref-ivy-cite))
+;; (setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
+;; (use-package! org-ref
+;;   :after org
+;;   :config
+;;   (setq org-ref-completion-library 'org-ref-ivy-cite))
 
 
 (provide 'packages)

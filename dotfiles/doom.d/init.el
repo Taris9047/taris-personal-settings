@@ -168,8 +168,7 @@
         +pandoc
         +gnuplot
         ;;+pomodoro
-        +present
-        +roam)
+        +present)
        php               ; perl's insecure younger brother
        ;;perl
        ;;plantuml          ; diagrams for confusing people more
