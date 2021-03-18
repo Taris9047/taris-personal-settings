@@ -28,6 +28,11 @@ addpath ()
   esac
 }
 
+# Install spark if not exists.
+if [ ! -x "$(command -v spark)" ]; then
+  sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark"
+fi
+
 ### CHANGE TITLE OF TERMINALS
 case ${TERM} in
   xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
@@ -178,6 +183,19 @@ gtag() {
 # git add
 alias gaddup='git add -u'
 alias gaddall='git add .'
+
+gitlog2w() {
+  for day in $(seq 14 -1 0); do
+    git log --before="${day} days" --after="$($day+1) days" --format=oneline | wc -l
+  done | spark
+}
+
+gitlog8h() {
+  for hour in $(seq 8 -1 0); do
+    git log --before="${hour} hours" --after="$($hour+1) hours" --format=oneline | wc -l
+  done | spark
+}
+
 
 # switch between shells
 alias tobash="sudo chsh $USER -s $(command -v bash) && echo 'Now log out.'"
@@ -332,8 +350,8 @@ if [ -x "$(command -v lsd)" ]; then
   alias ll='lsd -lahF --color=always --group-dirs=first'
   alias lld='lsd -lahF --color=always --group-dirs=first --total-size'
   alias l='lsd -hF --color=auto --group-dirs=first'
-	alias lt='lsd -a --tree --color=always --group-dirs=first'
-	alias l.='lsd -a | egrep "^\."'
+  alias lt='lsd -a --tree --color=always --group-dirs=first'
+  alias l.='lsd -a | egrep "^\."'
 fi
 
 # Bat
@@ -357,8 +375,8 @@ if [ -x "$(command -v $HOMEBREW/bin/pip3)" ]; then
     printf "${check_symbol} Locally installed bpytop found!\n"
     sleep ${line_delay}
     alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
-	alias htop=bpytop
-	alias top=bpytop
+    alias htop=bpytop
+    alias top=bpytop
   fi
 fi
 
@@ -492,8 +510,8 @@ fi
 
 # Doom-Emacs
 if [ -d "$HOME/.emacs.d/bin" ] && [ -d "$HOME/.doom.d" ]; then
-	printf "${ckeck_symbol} Doomemacs found! Adding to path!\n"
-	addpath "$HOME/.emacs.d/bin"
+  printf "${ckeck_symbol} Doomemacs found! Adding to path!\n"
+  addpath "$HOME/.emacs.d/bin"
 fi
 
 # For old MBP cuda.
@@ -521,9 +539,20 @@ if [ -x "$(command -v starship)" ]; then
 fi
 
 # Clean up the screen before loading good stuff.
+
+# Before just cleaning up... let's implement some fun stuff lol
+if [ -x "$(command -v spark)" ] && [ -x "$(command -v lolcat)" ]; then
+  alias clear='clear; echo; echo; seq 1 $(tput cols) | sort -R | spark | lolcat; echo; echo'
+elif [ -x "$(command -v spark)" ] && [ ! -x "$(command -v lolcat)" ]; then
+  alias clear='clear; echo; echo; seq 1 $(tput cols) | sort -R | spark | echo; echo'
+fi
 clear
 
-if [ -x "$(command -v neofetch)" ]; then 
+check_uptime() {
+  echo "$(awk '{print $1}' /proc/uptime)"
+}
+
+if [ -x "$(command -v neofetch)" ] && [ $(printf '%.0f' $(check_uptime)) -lt 2400 ]; then 
 	neofetch
 fi
 

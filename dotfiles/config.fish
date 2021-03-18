@@ -473,6 +473,12 @@ end
 clear
 
 # Finally, run neofetch
+
+function check_uptime
+    echo (awk '{print $1}' /proc/uptime)
+end
+
 if type -q neofetch
+    and test (printf '%.0f' (check_uptime)) -lt 2400 
     neofetch
 end
