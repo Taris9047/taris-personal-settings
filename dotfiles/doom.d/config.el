@@ -293,3 +293,29 @@
       :leader
       :desc "Search web for text between BEG/END"
       "s w" #'eww-search-words)
+
+;; File management stuff
+(setq-default
+ delete-by-moving-to-trash t
+ window-combination-resize t
+ x-stretch-cursor t)
+
+;; Moar undos!
+(setq undo-limit 800000000
+      evil-want-fine-undo t
+      truncate-string-ellipsis "…")
+
+;; Tile mode!
+(display-time-mode 1)
+
+;; Battery status show
+(if (equal "Batter status not available"
+           (battery))
+    (display-battery-mode 1)
+  (setq password-cache-expiry nil))
+
+(global-subword-mode 1)
+
+;; Smaller default window size
+(add-to-list 'default-frame-alist '(height . 40))
+(add-to-list 'default-frame-alist '(width . 80))
