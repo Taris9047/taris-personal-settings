@@ -1,3 +1,5 @@
+;;; ./config.el -*- lexical-binding: t; -*-
+
 ;; Fallback buffer names
 (setq doom-fallback-buffer-name "► Doom"
       +doom-dashboard-name "► Doom")
@@ -8,24 +10,6 @@
       :leader
       :desc "Save current bookmarks to bookmark file"
       "b w" #'bookmark-save)
-
-(setq centaur-tabs-set-bar 'over
-      centaur-tabs-set-icons t
-      centaur-tabs-gray-out-icons 'buffer
-      centaur-tabs-height 24
-      centaur-tabs-set-modified-marker t
-      centaur-tabs-style "bar"
-      centaur-tabs-modified-marker "•")
-(map! :leader
-      :desc "Toggle tabs globally"
-      "t c" #'centaur-tabs-mode
-      :leader
-      :desc "Toggle tabs local display"
-      "t C" #'centaur-tabs-local-mode)
-(evil-define-key 'normal centaur-tabs-mode-map (kbd "g <right>") 'centaur-tabs-forward        ; default Doom binding is 'g t'
-                                               (kbd "g <left>")  'centaur-tabs-backward       ; default Doom binding is 'g T'
-                                               (kbd "g <down>")  'centaur-tabs-forward-group
-                                               (kbd "g <up>")    'centaur-tabs-backward-group)
 
 (map! :leader
       :desc "Dired"
@@ -54,6 +38,24 @@
                               ("png" . "sxiv")
                               ("mkv" . "mpv")
                               ("mp4" . "mpv")))
+
+(setq centaur-tabs-set-bar 'over
+      centaur-tabs-set-icons t
+      centaur-tabs-gray-out-icons 'buffer
+      centaur-tabs-height 24
+      centaur-tabs-set-modified-marker t
+      centaur-tabs-style "bar"
+      centaur-tabs-modified-marker "•")
+(map! :leader
+      :desc "Toggle tabs globally"
+      "t c" #'centaur-tabs-mode
+      :leader
+      :desc "Toggle tabs local display"
+      "t C" #'centaur-tabs-local-mode)
+(evil-define-key 'normal centaur-tabs-mode-map (kbd "g <right>") 'centaur-tabs-forward        ; default Doom binding is 'g t'
+                                               (kbd "g <left>")  'centaur-tabs-backward       ; default Doom binding is 'g T'
+                                               (kbd "g <down>")  'centaur-tabs-forward-group
+                                               (kbd "g <up>")    'centaur-tabs-backward-group)
 
 ;; Custom functions to detect linux distro
 (defun guess-linux-release(regexp)
@@ -367,12 +369,10 @@
 ;; Tile mode!
 (display-time-mode 1)
 
-;; Battery status show
 (if (equal "Batter status not available"
            (battery))
     (display-battery-mode 1)
   (setq password-cache-expiry nil))
-
 (global-subword-mode 1)
 
 ;; Smaller default window size

@@ -1,41 +1,299 @@
-#+PROPERTY: header-args :tangle yes
 #+TITLE: Taris' Doom Emacs Config
 #+AUTHOR: Taylor Shin
 #+STARTUP: showeverything
+#+PROPERTY: header-args :tangle-mode
 
 * Table of Contents :toc:
-- [[#window-title][Window title]]
-- [[#bookmarking][Bookmarking]]
-- [[#centaur-tabs][Centaur tabs]]
-- [[#dired-directory-manager][Dired directory manager]]
-- [[#theme][Theme!]]
-- [[#undoredo][Undo/Redo]]
-- [[#window-nav][Window Nav.]]
-- [[#line-number-manipulation][Line number manipulation]]
-- [[#quick-edit-shortcuts][Quick edit shortcuts]]
-- [[#settings-file-shortcuts][Settings file shortcuts.]]
-- [[#neotree][Neotree]]
-- [[#org-mode][Org mode]]
-- [[#automatic-tangle][Automatic Tangle!]]
-- [[#my-credentials][My credentials]]
-- [[#font-configs][Font configs]]
-- [[#registers-clipboard-system][Registers (clipboard system.)]]
-- [[#hangul-stuff][Hangul stuff]]
-- [[#splits][Splits]]
-- [[#winner-mode][Winner Mode]]
-- [[#elfeed-stuff][Elfeed stuff]]
-- [[#emms-music-player-stuff][EMMS music player stuff]]
-- [[#ews-web-browser][EWS Web browser]]
-- [[#misc-stuffs][Misc stuffs]]
+- [[#init-file][Init file]]
+- [[#package-list][Package list]]
+- [[#packages-configuration][Packages Configuration]]
+  - [[#header][Header]]
+  - [[#window-title][Window title]]
+  - [[#bookmarking][Bookmarking]]
+  - [[#dired-directory-manager][Dired directory manager]]
+  - [[#centaur-tabs][Centaur tabs]]
+  - [[#theme][Theme!]]
+  - [[#undoredo][Undo/Redo]]
+  - [[#window-navigation][Window Navigation]]
+  - [[#line-number-manipulation][Line number manipulation]]
+  - [[#quick-edit-shortcuts][Quick edit shortcuts]]
+  - [[#settings-file-shortcuts][Settings file shortcuts.]]
+  - [[#neotree][Neotree]]
+  - [[#org-mode][Org mode]]
+  - [[#automatic-tangle][Automatic Tangle!]]
+  - [[#my-credentials][My credentials]]
+  - [[#font-configs][Font configs]]
+  - [[#registers-clipboard-system][Registers (clipboard system.)]]
+  - [[#hangul-stuff][Hangul stuff]]
+  - [[#window-splits][Window Splits]]
+  - [[#winner-mode][Winner Mode]]
+  - [[#elfeed-stuff][Elfeed stuff]]
+  - [[#emms-music-player-stuff][EMMS music player stuff]]
+  - [[#ews-web-browser][EWS Web browser]]
+  - [[#misc-stuffs][Misc stuffs]]
 
-* Window title
+* Init file
+#+begin_src emacs-lisp :tangle init.el
+;;; init.el -*- lexical-binding: t; -*-
+(doom! :input
+       ;;chinese
+       ;;japanese
+       ;;layout            ; auie,ctsrnm is the superior home row
+
+       :completion
+       (company           ; the ultimate code completion backend
+        +childframe)      ; ... when your children are better than you.
+       ;;helm              ; the *other* search engine for love and life
+       ;;ido               ; the other *other* search engine...
+       (ivy               ; a search engine for love and life
+        +icons
+        +perscient
+        +ivyposframe
+        +fonts)
+
+       :ui
+       ;;deft              ; notational velocity for Emacs
+       doom              ; what makes DOOM look the way it does
+       doom-dashboard    ; a nifty splash screen for Emacs
+       doom-quit         ; DOOM quit-message prompts when you quit Emacs
+       (emoji +unicode)  ; 🙂
+       ;;fill-column       ; a `fill-column' indicator
+       hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
+       ;;hydra
+       ;;indent-guides     ; highlighted indent columns
+       (ligatures +extra)         ; ligatures and symbols to make your code pretty again
+       ;; minimap           ; show a map of the code on the side
+       modeline          ; snazzy, Atom-inspired modeline, plus API
+       ;; nav-flash         ; blink cursor line after big motions
+       neotree           ; a project drawer, like NERDTree for vim
+       ophints           ; highlight the region an operation acts on
+       (popup +defaults)   ; tame sudden yet inevitable temporary windows
+       ;; tabs              ; a tab bar for Emacs
+       ;; treemacs          ; a project drawer, like neotree but cooler
+       unicode           ; extended unicode support for various languages
+       vc-gutter         ; vcs diff in the fringe
+       vi-tilde-fringe   ; fringe tildes to mark beyond EOB
+       ;; (window-select
+       ;; +numbers); visually switch windows
+       workspaces        ; tab emulation, persistence & separate workspaces
+       zen               ; distraction-free coding or writing
+
+       :editor
+       (evil +everywhere); come to the dark side, we have cookies
+       file-templates    ; auto-snippets for empty files
+       fold              ; (nigh) universal code folding
+       (format +onsave)  ; automated prettiness
+       ;;god               ; run Emacs commands without modifier keys
+       ;;lispy             ; vim for lisp, for people who don't like vim
+       multiple-cursors  ; editing in many places at once
+       ;;objed             ; text object editing for the innocent
+       ;;parinfer          ; turn lisp into python, sort of
+       ;; rotate-text       ; cycle region at point between text candidates
+       snippets          ; my elves. They type so I don't have to
+       word-wrap         ; soft wrapping with language-aware indent
+
+       :emacs
+       (dired +icons)             ; making dired pretty [functional]
+       electric          ; smarter, keyword-based electric-indent
+       (ibuffer +icons)         ; interactive buffer management
+       (undo +tree)              ; persistent, smarter undo for your inevitable mistakes
+       vc                ; version-control and Emacs, sitting in a tree
+
+       :term
+       eshell            ; the elisp shell that works everywhere
+       shell             ; simple shell REPL for Emacs
+       term              ; basic terminal emulator for Emacs
+       vterm             ; the best terminal emulation in Emacs
+
+       :checkers
+       syntax              ; tasing you for every semicolon you forget
+       (:if (executable-find "aspell") spell +flyspell) ; tasing you for misspelling mispelling
+       grammar           ; tasing grammar mistake every you make
+
+       :tools
+       ;; ansible
+       ;;debugger          ; FIXME stepping through code, to help you add bugs
+       ;;direnv
+       ;; docker
+       ;;editorconfig      ; let someone else argue about tabs vs spaces
+       ;;ein               ; tame Jupyter notebooks with emacs
+       (eval +overlay)     ; run code, run (also, repls)
+       ;;gist              ; interacting with github gists
+       (lookup
+        +dictionary
+        +docsets); navigate your code and its documentation
+       lsp
+       (magit +forge)             ; a git porcelain for Emacs
+       make              ; run make tasks from Emacs
+       ;;pass              ; password manager for nerds
+       ;;pdf               ; pdf enhancements
+       ;;prodigy           ; FIXME managing external services & code builders
+       ;;rgb               ; creating color strings
+       ;;taskrunner        ; taskrunner for all your projects
+       ;;terraform         ; infrastructure as code
+       ;;tmux              ; an API for interacting with tmux
+       upload            ; map local to remote projects via ssh/ftp
+
+       :os
+       (:if IS-MAC macos)  ; improve compatibility with macOS
+       tty               ; improve the terminal Emacs experience
+
+       :lang
+       ;;agda              ; types of types of types of types...
+       cc                ; C/C++/Obj-C madness
+       ;;clojure           ; java with a lisp
+       ;;common-lisp       ; if you've seen one lisp, you've seen them all
+       ;;coq               ; proofs-as-programs
+       ;;crystal           ; ruby at the speed of c
+       csharp            ; unity, .NET, and mono shenanigans
+       data              ; config/data formats
+       ;;(dart +flutter)   ; paint ui and not much else
+       ;;elixir            ; erlang done right
+       ;;elm               ; care for a cup of TEA?
+       emacs-lisp        ; drown in parentheses
+       ;;erlang            ; an elegant language for a more civilized age
+       ess               ; emacs speaks statistics
+       ;;faust             ; dsp, but you get to keep your soul
+       ;;fsharp            ; ML stands for Microsoft's Language
+       ;;fstar             ; (dependent) types and (monadic) effects and Z3
+       ;;gdscript          ; the language you waited for
+       (go +lsp)         ; the hipster dialect
+       (haskell +dante)  ; a language that's lazier than I am
+       ;;hy                ; readability of scheme w/ speed of python
+       ;;idris             ; a language you can depend on
+       json              ; At least it ain't XML
+       (java +meghanada) ; the poster child for carpal tunnel syndrome
+       javascript        ; all(hope(abandon(ye(who(enter(here))))))
+       julia             ; a better, faster MATLAB
+       ;;kotlin            ; a better, slicker Java(Script)
+       (latex
+        +latexmk
+        +cdlatex
+        +fold); writing papers in Emacs has never been so fun
+       ;;lean
+       ;;factor
+       ;;ledger            ; an accounting system in Emacs
+       lua               ; one-based indices? one-based indices
+       markdown          ; writing docs for people to ignore
+       ;;nim               ; python + lisp at the speed of c
+       ;;nix               ; I hereby declare "nix geht mehr!"
+       ;;ocaml             ; an objective camel
+       (org                     ; organize your plain life in plain text
+        +pretty
+        +dragndrop
+        ;;+hugo
+        +noter
+        +jupyter
+        +pandoc
+        +gnuplot
+        ;;+pomodoro
+        +present
+        +org-bullets
+        +org-ql)
+       php               ; perl's insecure younger brother
+       ;;perl
+       ;;plantuml          ; diagrams for confusing people more
+       ;;purescript        ; javascript, but functional
+       (python +lsp +pyright)           ; beautiful is better than ugly
+       qt                ; the 'cutest' gui framework ever
+       ;;racket            ; a DSL for DSLs
+       ;; raku              ; the artist formerly known as perl6
+       ;;rest              ; Emacs as a REST client
+       ;;rst               ; ReST in peace
+       (ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
+       (rust +lsp)              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
+       ;; scala             ; java, but good
+       ;; scheme            ; a fully conniving family of lisps
+       (sh +fish)                ; she sells {ba,z,fi}sh shells on the C xor
+       ;;sml
+       ;;solidity          ; do you need a blockchain? No.
+       ;;swift             ; who asked for emoji variables?
+       ;;terra             ; Earth and Moon in alignment for performance.
+       web               ; the tubes
+       yaml              ; JSON, but readable
+
+       :email
+       (:if (executable-find "mu") (mu4e +org +gmail))
+       ;;notmuch
+       ;;(wanderlust +gmail)
+
+       :app
+       ;;calendar
+       ;; emms
+       ;; everywhere        ; *leave* Emacs!? You must be joking
+       ;; irc               ; how neckbeards socialize
+       ;; (rss +org)        ; emacs as an RSS reader
+       ;;twitter           ; twitter client https://twitter.com/vnought
+
+       :emms
+       emms-setup
+       emms-info
+       emms-cue
+       emms-mode-line
+
+       :config
+       ;;literate
+       (default +bindings +smartparens))
+#+end_src
+
+* Package list
+#+begin_src emacs-lisp :tangle packages.el
+;;; packages.el -*- lexical-binding: t; -*-
+(package! all-the-icons-dired)
+(package! flycheck-aspell)
+(package! async)
+(package! dired-open)
+;; (package! dmenu)
+(package! elfeed)
+(package! elpher)
+(package! emms)
+(package! emojify)
+(package! evil-tutor)
+(package! ivy-posframe)
+(package! mastodon)
+(package! org-bullets)
+(package! org-ql)
+(package! peep-dired)
+(package! pianobar)
+(package! rainbow-mode)
+(package! resize-window)
+(package! tldr)
+(package! wc-mode)
+(package! writeroom-mode)
+(package! rotate) ; Window pin
+(package! info-colors) ; Pretty manual
+
+;; Open biglly files
+(package! vlf :recipe (:host github :repo "m00natic/vlfi" :files ("*.el"))
+  :pin "cc02f25337..." :disable t)
+(use-package! vlf-setup
+  :defer-incrementally vlf-tune vlf-base vlf-write vlf-search vlf-occur vlf-follow vlf-ediff vlf)
+
+(package! systemd) ; Editing systemd unit files
+(package! graphviz-dot-mode) ; graphviz
+(package! org-auto-tangle) ; org tangle
+#+end_src
+
+
+* Packages Configuration
+:PROPERTIES:
+:header-args: :tangle config.el
+:END:
+
+** Header
+Setting up =lexical-binding= for this file.
+#+begin_src emacs-lisp
+;;; ./config.el -*- lexical-binding: t; -*-
+#+end_src
+
+** Window title
 #+begin_src emacs-lisp
 ;; Fallback buffer names
 (setq doom-fallback-buffer-name "► Doom"
       +doom-dashboard-name "► Doom")
 #+end_src
 
-* Bookmarking
+** Bookmarking
 #+begin_src emacs-lisp
 (map! :leader
       :desc "List bookmarks"
@@ -45,29 +303,7 @@
       "b w" #'bookmark-save)
 #+end_src
 
-* Centaur tabs
-#+begin_src emacs-lisp
-(setq centaur-tabs-set-bar 'over
-      centaur-tabs-set-icons t
-      centaur-tabs-gray-out-icons 'buffer
-      centaur-tabs-height 24
-      centaur-tabs-set-modified-marker t
-      centaur-tabs-style "bar"
-      centaur-tabs-modified-marker "•")
-(map! :leader
-      :desc "Toggle tabs globally"
-      "t c" #'centaur-tabs-mode
-      :leader
-      :desc "Toggle tabs local display"
-      "t C" #'centaur-tabs-local-mode)
-(evil-define-key 'normal centaur-tabs-mode-map (kbd "g <right>") 'centaur-tabs-forward        ; default Doom binding is 'g t'
-                                               (kbd "g <left>")  'centaur-tabs-backward       ; default Doom binding is 'g T'
-                                               (kbd "g <down>")  'centaur-tabs-forward-group
-                                               (kbd "g <up>")    'centaur-tabs-backward-group)
-
-#+end_src
-
-* Dired directory manager
+** Dired directory manager
 #+begin_src emacs-lisp
 (map! :leader
       :desc "Dired"
@@ -98,7 +334,29 @@
                               ("mp4" . "mpv")))
 #+end_src
 
-* Theme!
+** Centaur tabs
+#+begin_src emacs-lisp
+(setq centaur-tabs-set-bar 'over
+      centaur-tabs-set-icons t
+      centaur-tabs-gray-out-icons 'buffer
+      centaur-tabs-height 24
+      centaur-tabs-set-modified-marker t
+      centaur-tabs-style "bar"
+      centaur-tabs-modified-marker "•")
+(map! :leader
+      :desc "Toggle tabs globally"
+      "t c" #'centaur-tabs-mode
+      :leader
+      :desc "Toggle tabs local display"
+      "t C" #'centaur-tabs-local-mode)
+(evil-define-key 'normal centaur-tabs-mode-map (kbd "g <right>") 'centaur-tabs-forward        ; default Doom binding is 'g t'
+                                               (kbd "g <left>")  'centaur-tabs-backward       ; default Doom binding is 'g T'
+                                               (kbd "g <down>")  'centaur-tabs-forward-group
+                                               (kbd "g <up>")    'centaur-tabs-backward-group)
+
+#+end_src
+
+** Theme!
 Looks a bit complex since linux distro detection has been implemented. (Maybe we need to add OS X case as well.) This part was purely due to my fanboysm on elementary OS' default theme! --> Solarized Light! At this moment, if it detects elementary OS, the theme will be doom-solarized-light instead of my usual favorite dark theme.
 
 #+begin_src emacs-lisp
@@ -132,7 +390,7 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
       "h t" #'counsel-load-theme)
 #+end_src
 
-* Undo/Redo
+** Undo/Redo
 #+begin_src emacs-lisp
 (map! :leader
       :desc "Winner redo"
@@ -142,7 +400,7 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
       "w <left>" #'winner-undo)
 #+end_src
 
-* Window Nav.
+** Window Navigation
 #+begin_src emacs-lisp
 (map! :map evil-window-map
       "SPC" #'rotate-layout
@@ -158,7 +416,7 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
       "C-<right>"       #'+evil/window-move-right)
 #+end_src
 
-* Line number manipulation
+** Line number manipulation
 #+begin_src emacs-lisp
 (setq display-line-numbers-type t)
 (map! :leader
@@ -178,7 +436,7 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
       "t t" #'toggle-truncate-lines)
 #+end_src
 
-* Quick edit shortcuts
+** Quick edit shortcuts
 
 | PATH TO FILE           | DESCRIPTION           | KEYBINDING |
 |------------------------+-----------------------+------------|
@@ -207,7 +465,7 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
       "t t" #'toggle-truncate-lines)
 #+end_src
 
-* Settings file shortcuts.
+** Settings file shortcuts.
 #+begin_src emacs-lisp
 (map! :leader
       :desc "Edit agenda file"
@@ -226,7 +484,7 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
       "- p" #'(lambda () (interactive) (find-file "~/.doom.d/packages.el")))
 #+end_src
 
-* Neotree
+** Neotree
 
 | COMMAND        | DESCRIPTION               | KEYBINDING |
 |----------------+---------------------------+------------|
@@ -247,7 +505,7 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
       "d n" #'neotree-dir)
 #+end_src
 
-* Org mode
+** Org mode
 #+begin_src emacs-lisp
 (after! org
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -280,7 +538,7 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
              "CANCELLED(c)" )))) ; Task has been cancelled
 #+end_src
 
-* Automatic Tangle!
+** Automatic Tangle!
 In fact, this is called 'asynchronous' tangle.
 
 #+begin_src emacs-lisp
@@ -305,14 +563,17 @@ In fact, this is called 'asynchronous' tangle.
   (dt/org-babel-tangle-async (buffer-file-name)))
 #+end_src
 
+#+RESULTS:
+: dt/org-babel-tangle-current-buffer-async
 
-* My credentials
+
+** My credentials
 #+begin_src emacs-lisp
 (setq user-full-name "Taylor Shin"
       user-mail-address "talezshin@gmail.com")
 #+end_src
 
-* Font configs
+** Font configs
 #+begin_src emacs-lisp
 (setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 16)
       doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
@@ -320,7 +581,7 @@ In fact, this is called 'asynchronous' tangle.
       doom-serif-font (font-spec :family "NanumGothic" :weight 'light))
 #+end_src
 
-* Registers (clipboard system.)
+** Registers (clipboard system.)
 
 | COMMAND                          | DESCRIPTION                      | KEYBINDING |
 |----------------------------------+----------------------------------+------------|
@@ -372,7 +633,7 @@ In fact, this is called 'asynchronous' tangle.
       "r SPC" #'point-to-register)
 #+end_src
 
-* Hangul stuff
+** Hangul stuff
 #+begin_src emacs-lisp
 (setq default-input-method "korean-hangul")
 (global-set-key (kbd "S-SPC") 'toggle-input-method)
@@ -385,7 +646,7 @@ In fact, this is called 'asynchronous' tangle.
   )
 #+end_src
 
-* Splits
+** Window Splits
 #+begin_src emacs-lisp
 (defun prefer-horizontal-split ()
   (set-variable 'split-height-threshold nil t)
@@ -396,7 +657,7 @@ In fact, this is called 'asynchronous' tangle.
       "b c" #'clone-indirect-buffer-other-window)
 #+end_src
 
-* Winner Mode
+** Winner Mode
 #+begin_src emacs-lisp
 (map! :leader
       :desc "Winner redo"
@@ -406,7 +667,7 @@ In fact, this is called 'asynchronous' tangle.
       "w <left>" #'winner-undo)
 #+end_src
 
-* Elfeed stuff
+** Elfeed stuff
 #+begin_src emacs-lisp
 (custom-set-variables
  '(elfeed-feeds
@@ -428,7 +689,7 @@ In fact, this is called 'asynchronous' tangle.
      ("https://distrowatch.com/news/dwd.xml" distrowatch linux)))))
 #+end_src
 
-* EMMS music player stuff
+** EMMS music player stuff
 #+begin_src emacs-lisp
 (emms-all)
 (emms-default-players)
@@ -471,7 +732,7 @@ In fact, this is called 'asynchronous' tangle.
       "e r" #'eval-region)
 #+end_src
 
-* EWS Web browser
+** EWS Web browser
 #+begin_src emacs-lisp
 (setq browse-url-browser-function 'eww-browse-url)
 (map! :leader
@@ -485,31 +746,40 @@ In fact, this is called 'asynchronous' tangle.
       "s w" #'eww-search-words)
 #+end_src
 
-* Misc stuffs
+** Misc stuffs
+*** File management stuff
 #+begin_src emacs-lisp
-
 ;; File management stuff
 (setq-default
  delete-by-moving-to-trash t
  window-combination-resize t
  x-stretch-cursor t)
-
+#+end_src
+*** More Undos!
+#+begin_src emacs-lisp
 ;; Moar undos!
 (setq undo-limit 800000000
       evil-want-fine-undo t
       truncate-string-ellipsis "…")
+#+end_src
 
+*** Tiling mode
+#+begin_src emacs-lisp
 ;; Tile mode!
 (display-time-mode 1)
+#+end_src
 
-;; Battery status show
+*** Show battery status
+#+begin_src emacs-lisp
 (if (equal "Batter status not available"
            (battery))
     (display-battery-mode 1)
   (setq password-cache-expiry nil))
-
 (global-subword-mode 1)
+#+end_src
 
+*** Smaller default window size
+#+begin_src emacs-lisp
 ;; Smaller default window size
 (add-to-list 'default-frame-alist '(height . 40))
 (add-to-list 'default-frame-alist '(width . 80))

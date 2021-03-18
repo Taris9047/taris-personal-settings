@@ -1,19 +1,4 @@
 ;;; init.el -*- lexical-binding: t; -*-
-
-;; This file controls what Doom modules are enabled and what order they load
-;; in. Remember to run 'doom sync' after modifying it!
-
-;; NOTE Press 'SPC h d h' (or 'C-h d h' for non-vim users) to access Doom's
-;;      documentation. There you'll find a "Module Index" link where you'll find
-;;      a comprehensive list of Doom's modules and what flags they support.
-
-;; NOTE Move your cursor over a module's name (or its flags) and press 'K' (or
-;;      'C-c c k' for non-vim users) to view its documentation. This works on
-;;      flags as well (those symbols that start with a plus).
-;;
-;;      Alternatively, press 'gd' (or 'C-c c d') on a module to browse its
-;;      directory (for easy access to its source code).
-
 (doom! :input
        ;;chinese
        ;;japanese
@@ -53,7 +38,7 @@
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        ;; (window-select
-        ;; +numbers); visually switch windows
+       ;; +numbers); visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
        zen               ; distraction-free coding or writing
 
@@ -213,6 +198,3 @@
        :config
        ;;literate
        (default +bindings +smartparens))
-
-(provide 'init)
-;;; init.el ends here
