@@ -240,6 +240,11 @@
 (setq doom-fallback-buffer-name "► Doom"
       +doom-dashboard-name "► Doom")
 
+;; Read in config.org file
+;; (require 'org)
+;; (org-babel-load-file
+;;   (expand-file-name "config.org"
+;;                     user-emacs-directory))
 
 (provide 'init)
 ;;; init.el ends here
