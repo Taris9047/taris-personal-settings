@@ -7,6 +7,7 @@
 - [[#init-file][Init file]]
 - [[#package-list][Package list]]
 - [[#packages-configuration][Packages Configuration]]
+  - [[#references][References...]]
   - [[#header][Header]]
   - [[#window-title][Window title]]
   - [[#bookmarking][Bookmarking]]
@@ -279,10 +280,21 @@
 :PROPERTIES:
 :header-args: :tangle config.el
 :END:
-Many settings were imported from DistroTube's repo.:
-[[https://gitlab.com/dwt1/dotfiles/-/blob/master/.doom.d/config.org][DistroTube's GitLab repo. doom.d/config.org]]
-Also referenced
-[[https://tecosaur.github.io/emacs-config/config.html][Tecosaur's github]]
+Many settings were imported from these sources.
+
+** References...
+1.  DistroTube's Gitlab.
+    [[https://gitlab.com/dwt1/dotfiles/-/blob/master/.doom.d/config.org][DistroTube's GitLab repo. doom.d/config.org]]
+
+2.  Also referenced
+    [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur's github]]
+
+3.  Hangul stuffs are referenced from...
+    [[https://m.blog.naver.com/PostView.nhn?blogId=jodi999&logNo=221256569685&proxyReferer=https:%2F%2Fwww.google.com%2F][멍's Naver blog]]
+
+4.  Distro detection elisp code was adopted from...
+    [[https://emacs.stackexchange.com/a/44292][Yong Cheng's Answer at Stack Exchange.]]
+
 
 ** Header
 Setting up =lexical-binding= for this file.
