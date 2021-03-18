@@ -100,18 +100,18 @@
 (package! org-appear :recipe (:host github :repo "awth13/org-appear")
   :pin "845be82b7a...")
 (package! org-pretty-tags :pin "5c7521651b...")
-(package! engrave-faces :recipe (:local-repo "lisp/engrave-faces"))
-(use-package! engrave-faces-latex
-  :after ox-latex)
+;; (package! engrave-faces :recipe (:local-repo "lisp/engrave-faces"))
+;; (use-package! engrave-faces-latex
+  ;; :after ox-latex)
 (package! ox-gfm :pin "99f93011b0...")
 (use-package! ox-gfm
   :after org)
 (package! org-ref :pin "7dbe3ace9b...")
 (package! org-graph-view :recipe (:host github :repo "alphapapa/org-graph-view") :pin "13314338d7...")
-(package! org-pandoc-import :recipe
-  (:local-repo "lisp/org-pandoc-import" :files ("*.el" "filters" "preprocessors")))
-(use-package! org-pandoc-import
-  :after org)
+;; (package! org-pandoc-import :recipe
+;;   (:local-repo "lisp/org-pandoc-import" :files ("*.el" "filters" "preprocessors")))
+;; (use-package! org-pandoc-import
+;;   :after org)
 
 ;; Editing systemd unit files
 (package! systemd :pin "b6ae63a236...")
