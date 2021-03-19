@@ -198,3 +198,6 @@
        :config
        ;;literate
        (default +bindings +smartparens))
+
+;; cl deprecation warning.
+(setq byte-compile-warnings '(cl-functions))
