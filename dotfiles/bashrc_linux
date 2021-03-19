@@ -18,7 +18,7 @@
 # Grabbing this script's absolute location...
 # This may not work on other shells.
 SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-source "$SCRIPTPATH/my_settings"
+source "$SCRIPTPATH/my_settings_bash"
 
 # For old stuffs
 if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Linux"* ]]; then
