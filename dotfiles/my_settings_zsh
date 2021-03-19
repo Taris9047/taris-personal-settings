@@ -269,13 +269,9 @@ if [ -d "$JAVA_HOME" ]; then
   export CLASSPATH=${JAVA_HOME}/lib
 fi
 
-# Custom emacs
-# Make sure put an emacs with gui capability for doomemacs.
-EMACS_HOME=$HOME/.emacs_local
-if [ -d "${EMACS_HOME}" ]; then
-  printf "${check_symbil} Custom emacs found at $EMACS_HOME\n"
-  sleep ${line_delay}
-  addpath "${EMACS_HOME}/bin"
+# Emacs situation on elementary OS
+if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
+  alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
 fi
 
 # Rust
