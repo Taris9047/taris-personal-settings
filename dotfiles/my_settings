@@ -311,7 +311,7 @@ export GOROOT=$HOMEBREW/.opt/go
 export GOPATH=$HOMEBREW/.opt/go/bin
 if [ -d $GOROOT ]; then
   printf "${check_symbol} Golang has been found at $GOROOT\n"
-  addpath "$GOROOT/bin"
+  addpath "$GOPATH/bin:$GOPATH"
 fi
 
 # Snapd stuff

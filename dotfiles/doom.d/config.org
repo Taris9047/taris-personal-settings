@@ -30,6 +30,7 @@
   - [[#winner-mode][Winner Mode]]
   - [[#elfeed-stuff][Elfeed stuff]]
   - [[#emms-music-player-stuff][EMMS music player stuff]]
+  - [[#evaluate-elisp-expressions][Evaluate Elisp expressions.]]
   - [[#ews-web-browser][EWS Web browser]]
   - [[#misc-stuffs][Misc stuffs]]
 
@@ -575,28 +576,6 @@ In fact, this is called 'asynchronous' tangle.
   :hook (org-mode . org-auto-tangle-mode)
   :config
   (setq org-auto-tangle-default t))
-
-;; DT's code, not sure why it doesn't work.
-;;'
-;; (defun dt/org-babel-tangle-async (file)
-;;   "Invoke `org-babel-tangle-file' asynchronously."
-;;   (message "Tangling %s..." (buffer-file-name))
-;;   (async-start
-;;    (let ((args (list file)))
-;;      `(lambda ()
-;;         (require 'org)
-;;         ;;(load "~/.emacs.d/init.el")
-;;         (let ((start-time (current-time)))
-;;           (apply #'org-babel-tangle-file ',args)
-;;           (format "%.2f" (float-time (time-since start-time))))))
-;;    (let ((message-string (format "Tangling %S completed after " file)))
-;;      `(lambda (tangle-time)
-;;         (message (concat ,message-string
-;;                          (format "%s seconds" tangle-time)))))))
-
-;; (defun dt/org-babel-tangle-current-buffer-async ()
-;;   "Tangle current buffer asynchronously."
-;;   (dt/org-babel-tangle-async (buffer-file-name)))
 #+end_src
 
 ** My credentials
@@ -718,6 +697,8 @@ We may not use Hanja key on Emacs... Maybe we need to find some other way later.
 
 ** Window Splits
 
+Setting up new window opening behavior. However, I usually prefer opening a new instance with Spc-o-f. But then again, console version may need this tuned well.
+
 #+begin_src emacs-lisp
 (defun prefer-horizontal-split ()
   (set-variable 'split-height-threshold nil t)
@@ -768,7 +749,7 @@ RSS Feed from DistroTube. I'll change them later but I do not really rely on the
 
 ** EMMS music player stuff
 
-Gotta be friendly with this player. But it doesn't work on homebrewed GccEmacs. Maybe try it later.
+MPV was mandatory for this. In fact, this player isn't actually a player but yet another front end for MPV. Huh.
 
 #+begin_src emacs-lisp
 (emms-all)
@@ -794,7 +775,13 @@ Gotta be friendly with this player. But it doesn't work on homebrewed GccEmacs. 
       :leader
       :desc "Emms play next track"
       "a n" #'emms-next)
+#+end_src
 
+** Evaluate Elisp expressions.
+
+Some handy dev assistant for emacs-lisp language. A must have for elisp addicts.
+
+#+begin_src emacs-lisp
 (map! :leader
       :desc "Evaluate elisp in buffer"
       "e b" #'eval-buffer
@@ -878,11 +865,17 @@ This code has not been tested since my financial situation cannot support any ne
 #+end_src
 
 *** Graphviz
+
+Plotting tool!
+
 #+begin_src emacs-lisp
 (use-package! graphviz-dot-mode)
 #+end_src
 
 *** iEdit settings
+
+Pattern matching edit mode. Pretty useful!
+
 #+begin_src emacs-lisp
 (use-package! iedit
   :defer
