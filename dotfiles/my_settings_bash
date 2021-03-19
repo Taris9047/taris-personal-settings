@@ -6,6 +6,7 @@
 #
 export TERM="xterm-256color"
 export HISTCONTROL=ignoredups:erasedups
+export LS_MODE='lsd' # This can be 'lsd', 'exa'
 
 if [ -x "$(command -v nvim)" ]; then
   export EDITOR="nvim"
@@ -109,10 +110,6 @@ right_arrow_symbol="\033[1;37m\u2192\033[0m"
 line_delay=0.12
 
 # Basic aliases
-alias ls='ls -p -F -h --color=auto --show-control-chars'
-alias ll='ls -la'
-alias l='ls -p -F -h --color=auto --show-control-chars'
-alias l.='ls -a | grep "^\."'
 alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
@@ -326,28 +323,76 @@ if [ -x "$(command -v vncserver)" ]; then
   alias vnckill="vncserver -kill :1"
 fi
 
-# Exa
-if [ -x "$(command -v exa)" ]; then
-  printf "${check_symbol} exa found! using it instead of ls\n"
-  sleep ${line_delay}
-  alias ls='exa -hF --color=always --group-directories-first'
-  alias ll='exa -lahF --color=always --group-directories-first'
-  alias l='exa -hF --color=always --group-directories-first'
-  alias lt='exa -aT --color=always --group-directories-first'
-  alias l.='exa -a | egrep "^\."'
+# Overriding du and dust
+if [ -x "$(command -v dust)" ]; then
+  printf "${check_symbol} dust found! Using it instead of du!\n"
+  alias du='dust -r'
+else
+  alias du='du -skh | sort -r'
 fi
 
-# Lsd
-if [ -x "$(command -v lsd)" ]; then
-  printf "${check_symbol} lsd found! using it instead of ls or exa\n"
-  sleep ${line_delay}
-  alias ls='lsd -hF --color=always --group-dirs=first'
-  alias ll='lsd -lahF --color=always --group-dirs=first'
-  alias lld='lsd -lahF --color=always --group-dirs=first --total-size'
-  alias l='lsd -hF --color=auto --group-dirs=first'
-  alias lt='lsd -a --tree --color=always --group-dirs=first'
-  alias l.='lsd -a | egrep "^\."'
-fi
+# Let's set up ls as lsd or exa (default is lsd as of now.)
+set_ls_as_ls() {
+  alias ls='ls -p -F -h --color=auto --show-control-chars'
+  alias ll='ls -la'
+  alias lld='du'
+  alias l='ls -p -F -h --color=auto --show-control-chars'
+  alias lt='tree'
+  alias l.='ls -a | grep "^\."'
+}
+
+set_exa_as_ls() {
+  if [ -x "$(command -v exa)" ]; then
+    sleep ${line_delay}
+    alias ls='exa -hF --color=always --group-directories-first'
+    alias ll='exa -lahF --color=always --group-directories-first'
+    alias lld='du'
+    alias l='exa -hF --color=always --group-directories-first'
+    alias lt='exa -aT --color=always --group-directories-first'
+    alias l.='exa -a | egrep "^\."'
+  fi
+}
+
+set_lsd_as_ls() {
+  if [ -x "$(command -v lsd)" ]; then
+    sleep ${line_delay}
+    alias ls='lsd -hF --color=always --group-dirs=first'
+    alias ll='lsd -lahF --color=always --group-dirs=first'
+    alias lld='du'
+    alias l='lsd -hF --color=auto --group-dirs=first'
+    alias lt='lsd -a --tree --color=fancy --group-dirs=first'
+    alias l.='lsd -a | egrep "^\."'
+  fi
+}
+
+set_ls () {
+  if [ -z "$@" ]; then
+    printf "${check_symbol} Current ls mode is: ${LS_MODE}\n"
+  else
+    LS_MODE="$1"
+  fi
+
+  case "$LS_MODE" in
+    "lsd")
+      echo "Activating '${LS_MODE}' mode."
+      set_lsd_as_ls
+      ;;
+    "exa")
+      echo "Activating '${LS_MODE}'' mode."
+      set_exa_as_ls
+      ;;
+    "ls")
+      echo "Activating '${LS_MODE}'' mode."
+      set_ls_as_ls
+      ;;
+    *)
+      echo "${LS_MODE} isn't available."
+      echo "Select on of: lsd, exa, ls"
+      ;;
+  esac
+}
+set_ls
+
 
 # Bat
 if [ -x "$(command -v bat)" ]; then
@@ -527,9 +572,8 @@ if [ -x "$(command -v starship)" ]; then
   printf "${check_symbol} Starship shell extension found! Let's start it!\n"
   sleep ${line_delay}
   if [[ "$(echo $0)" == *bash ]]; then
+    printf "  ${right_arrow_symbol} Running it as bash"
     eval "$(starship init bash)"
-  elif [[ "$(echo $0)" == *zsh ]]; then
-    eval "$(starship init zsh)"
   fi
 fi
 
