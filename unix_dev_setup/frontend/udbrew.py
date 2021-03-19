@@ -135,8 +135,13 @@ class GetPackages(object):
         this_dir = os.path.realpath(__file__)
         data_dir = os.path.realpath(os.path.join(os.path.dirname(this_dir), '..', 'data'))
 
-        gd = GetDistro()
-        self.pkg_list_file = DistroPkgMap()
+        dpm = DistroPkgMap()
+        self.pkg_list_file = os.path.join(data_dir, dpm.GetPackageFileName())
+
+    def GetPkgList(self):
+        if not os.path.exists(self.pkg_list_file):
+            raise FileNotFoundError:
+                print("Not a valid package list file!: {}".format(self.pkg_list_file))
 
 
 ### Help file
