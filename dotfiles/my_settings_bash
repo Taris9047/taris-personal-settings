@@ -6,6 +6,7 @@
 #
 export TERM="xterm-256color"
 export HISTCONTROL=ignoredups:erasedups
+export LS_MODE='lsd' # This can be 'lsd', 'exa'
 
 if [ -x "$(command -v nvim)" ]; then
   export EDITOR="nvim"
@@ -27,11 +28,6 @@ addpath ()
     *) export PATH="$1:$PATH";;
   esac
 }
-
-# Install spark if not exists.
-if [ ! -x "$(command -v spark)" ]; then
-  sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark"
-fi
 
 ### CHANGE TITLE OF TERMINALS
 case ${TERM} in
@@ -114,10 +110,6 @@ right_arrow_symbol="\033[1;37m\u2192\033[0m"
 line_delay=0.12
 
 # Basic aliases
-alias ls='ls -p -F -h --color=auto --show-control-chars'
-alias ll='ls -la'
-alias l='ls -p -F -h --color=auto --show-control-chars'
-alias l.='ls -a | grep "^\."'
 alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
@@ -272,13 +264,9 @@ if [ -d "$JAVA_HOME" ]; then
   export CLASSPATH=${JAVA_HOME}/lib
 fi
 
-# Custom emacs
-# Make sure put an emacs with gui capability for doomemacs.
-EMACS_HOME=$HOME/.emacs_local
-if [ -d "${EMACS_HOME}" ]; then
-  printf "${check_symbil} Custom emacs found at $EMACS_HOME\n"
-  sleep ${line_delay}
-  addpath "${EMACS_HOME}/bin"
+# Emacs situation on elementary OS
+if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
+  alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
 fi
 
 # Rust
@@ -331,28 +319,76 @@ if [ -x "$(command -v vncserver)" ]; then
   alias vnckill="vncserver -kill :1"
 fi
 
-# Exa
-if [ -x "$(command -v exa)" ]; then
-  printf "${check_symbol} exa found! using it instead of ls\n"
-  sleep ${line_delay}
-  alias ls='exa -hF --color=always --group-directories-first'
-  alias ll='exa -lahF --color=always --group-directories-first'
-  alias l='exa -hF --color=always --group-directories-first'
-  alias lt='exa -aT --color=always --group-directories-first'
-  alias l.='exa -a | egrep "^\."'
+# Overriding du and dust
+if [ -x "$(command -v dust)" ]; then
+  printf "${check_symbol} dust found! Using it instead of du!\n"
+  alias du='dust -r'
+else
+  alias du='du -skh | sort -r'
 fi
 
-# Lsd
-if [ -x "$(command -v lsd)" ]; then
-  printf "${check_symbol} lsd found! using it instead of ls or exa\n"
-  sleep ${line_delay}
-  alias ls='lsd -hF --color=always --group-dirs=first'
-  alias ll='lsd -lahF --color=always --group-dirs=first'
-  alias lld='lsd -lahF --color=always --group-dirs=first --total-size'
-  alias l='lsd -hF --color=auto --group-dirs=first'
-  alias lt='lsd -a --tree --color=always --group-dirs=first'
-  alias l.='lsd -a | egrep "^\."'
-fi
+# Let's set up ls as lsd or exa (default is lsd as of now.)
+set_ls_as_ls() {
+  alias ls='ls -p -F -h --color=auto --show-control-chars'
+  alias ll='ls -la'
+  alias lld='du'
+  alias l='ls -p -F -h --color=auto --show-control-chars'
+  alias lt='tree'
+  alias l.='ls -a | grep "^\."'
+}
+
+set_exa_as_ls() {
+  if [ -x "$(command -v exa)" ]; then
+    sleep ${line_delay}
+    alias ls='exa -hF --color=always --group-directories-first'
+    alias ll='exa -lahF --color=always --group-directories-first'
+    alias lld='du'
+    alias l='exa -hF --color=always --group-directories-first'
+    alias lt='exa -aT --color=always --group-directories-first'
+    alias l.='exa -a | egrep "^\."'
+  fi
+}
+
+set_lsd_as_ls() {
+  if [ -x "$(command -v lsd)" ]; then
+    sleep ${line_delay}
+    alias ls='lsd -hF --color=always --group-dirs=first'
+    alias ll='lsd -lahF --color=always --group-dirs=first'
+    alias lld='du'
+    alias l='lsd -hF --color=auto --group-dirs=first'
+    alias lt='lsd -a --tree --color=fancy --group-dirs=first'
+    alias l.='lsd -a | egrep "^\."'
+  fi
+}
+
+set_ls () {
+  if [ $# -eq 0 ]; then
+    printf "${check_symbol} Current ls mode is: ${LS_MODE}\n"
+  else
+    LS_MODE="$1"
+  fi
+
+  case "$LS_MODE" in
+    "lsd")
+      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+      set_lsd_as_ls
+      ;;
+    "exa")
+      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+      set_exa_as_ls
+      ;;
+    "ls")
+      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+      set_ls_as_ls
+      ;;
+    *)
+      printf "  ${right_arrow_symbol} is not available!\n"
+      printf "    Select one of: lsd, exa, ls\n"
+      ;;
+  esac
+}
+set_ls
+
 
 # Bat
 if [ -x "$(command -v bat)" ]; then
@@ -509,8 +545,8 @@ if [ -x "$(command -v $ROOT_DIR/bin/root)" ]; then
 fi
 
 # Doom-Emacs
-if [ -d "$HOME/.emacs.d/bin" ] && [ -d "$HOME/.doom.d" ]; then
-  printf "${ckeck_symbol} Doomemacs found! Adding to path!\n"
+if [ -x "$HOME/.emacs.d/bin/doom" ] && [ -d "$HOME/.doom.d" ]; then
+  printf "${check_symbol} Doomemacs found! Adding to path!\n"
   addpath "$HOME/.emacs.d/bin"
 fi
 
@@ -532,19 +568,28 @@ if [ -x "$(command -v starship)" ]; then
   printf "${check_symbol} Starship shell extension found! Let's start it!\n"
   sleep ${line_delay}
   if [[ "$(echo $0)" == *bash ]]; then
+    printf "  ${right_arrow_symbol} Running it as bash"
     eval "$(starship init bash)"
-  elif [[ "$(echo $0)" == *zsh ]]; then
-    eval "$(starship init zsh)"
   fi
 fi
 
+
+
 # Clean up the screen before loading good stuff.
+
+# Install spark if not exists.
+if [ ! -x "$(command -v spark)" ]; then
+  if [ ! -d "$HOMEBREW/bin" ]; then
+    mkdir -pv "$HOMEBREW/bin"
+  fi
+  sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark" || true
+fi
 
 # Before just cleaning up... let's implement some fun stuff lol
 if [ -x "$(command -v spark)" ] && [ -x "$(command -v lolcat)" ]; then
-  alias clear='clear; echo; echo; seq 1 $(tput cols) | sort -R | spark | lolcat; echo; echo'
+  alias clear='clear; echo; seq 1 $(tput cols) | sort -R | spark | lolcat; echo; echo'
 elif [ -x "$(command -v spark)" ] && [ ! -x "$(command -v lolcat)" ]; then
-  alias clear='clear; echo; echo; seq 1 $(tput cols) | sort -R | spark | echo; echo'
+  alias clear='clear; echo; seq 1 $(tput cols) | sort -R | spark; echo'
 fi
 clear
 

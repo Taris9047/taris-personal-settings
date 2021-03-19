@@ -221,7 +221,7 @@
 ;;       doom-serif-font (font-spec :family "NanumMyeongjo" :size 14))
 (setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 16)
       doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
-      doom-variable-pitch-font (font-spec :family "NanumSquareRound" :size 16)
+      doom-variable-pitch-font (font-spec :family "NanumSquare" :size 16)
       doom-serif-font (font-spec :family "NanumMyeongjo" :size 16))
 
 (map! :leader

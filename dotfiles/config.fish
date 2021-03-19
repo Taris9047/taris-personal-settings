@@ -7,6 +7,7 @@
 # set -Ua fish_user_paths $HOME/.local/bin $fish_user_paths
 set fish_greeting
 set TERM "xterm-256color"
+set -U LS_MODE 'lsd' # This can be 'lsd', 'exa'
 
 if type -q nvim
     set EDITOR "nvim"
@@ -39,7 +40,7 @@ set line_delay 0.12
 
 ### Prepend path
 function addpath
-    set -a fish_user_paths $argv[1]
+    set fish_user_paths $argv[1] $fish_user_paths
 end
 
 ### Set manpager ###
@@ -81,8 +82,8 @@ alias '.....'="cd ../../../.."
 #
 # A few more aliases
 #
-alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
-alias aptin='sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install'
+alias aptup='sudo apt-get -y update; sudo apt-get -y upgrade'
+alias aptin='sudo apt-get -y update; sudo apt-get -y upgrade; sudo apt-get install'
 alias dnfup='sudo dnf -y update'
 alias dnfin='sudo dnf -y install'
 alias pmyy='sudo pacman -Syyu'
@@ -100,11 +101,14 @@ alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
 alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
 
 ### Git related stuffs ###
-function gc
-    git commit -a -m "\"$argv[1]\"" && git push
+function gitc
+    git commit -a -m "\"$argv[1]\""
+    git push
 end
 function gcatchup
-    git fetch --all && git reset --hard origin/master && git pull
+    git fetch --all
+    git reset --hard origin/master
+    git pull
 end
 function gtag
     git tag -a "\"$argv[1]\""
@@ -124,12 +128,11 @@ end
 
 
 ### Switch between shells ###
-alias tobash="sudo -H chsh $USER -s bash && echo 'Now log out.'"
-if type -q zsh
-    alias tozsh="sudo -H chsh $USER -s zsh && echo 'Now log out.'"
+if type -q bash
+    alias tobash="sudo -H chsh $USER -s bash; echo 'Now log out.'"
 end
-if type -q fish
-    alias tofish="sudo -H chsh $USER -s fish && echo 'Now log out.'"
+if type -q zsh
+    alias tozsh="sudo -H chsh $USER -s zsh; echo 'Now log out.'"
 end
 
 ### Termbin ###
@@ -138,7 +141,7 @@ alias tb="nc termbin.com 9999"
 ### 'open' macro. Just like OS X ###
 function open
     if type -q xdg-open
-        xdg-open "$argv[1]" &>/dev/null &
+        xdg-open "$argv[1]" >/dev/null &
     else
         echo "open on this kind of file has not implemented yet!"
     end
@@ -209,8 +212,12 @@ if test -d "$HOME/.local"
     set HOMEBREW "$HOME/.local"
     printf "$check_symbol HOMEBREW directory is $HOMEBREW\n"
     sleep $line_delay
-    set -a fish_user_paths "$HOMEBREW/bin"
-    set -a fish_user_paths "$HOMEBREW/.opt/bin"
+    if test -d "$HOMEBREW/bin"
+        set fish_user_paths "$HOMEBREW/bin" $fish_user_paths
+    end
+    if test -d "$HOMEBREW/.opt/bin"
+        set fish_user_paths "$HOMEBREW/.opt/bin" $fish_user_paths
+    end
 end
 
 # JRE
@@ -221,12 +228,9 @@ if test -d "$JAVA_HOME"
     addpath "$JAVA_HOME/bin"
 end
 
-# Emacs
-set EMACS_HOME $HOME/.emacs_local
-if test -d "$EMACS_HOME"
-    printf "$check_symbol Custom emacs found at $EMACS_HOME\n"
-    sleep $line_delay
-    addpath "$EMACS_HOME/bin"
+# Emacs situation on elementary OS
+if test -n "(cat /etc/os-release | grep 'ID' | grep 'elementary')"
+    alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
 end
 
 # Rust
@@ -278,28 +282,71 @@ if type -q vncserver
     alias vnckill="vncserver -kill :1"
 end
 
-# exa
-if type -q exa
-    printf "$check_symbol exa found! using it instead of ls\n"
-    sleep $line_delay
-    alias ls='exa -hF --color=always --group-directories-first'
-    alias ll='exa -lahF --color=always --group-directories-first'
-    alias l='exa -hF --color=always --group-directories-first'
-    alias lt='exa -aT --color=always --group-directories-first'
-    alias l.='exa -a | egrep "^\."'
+# Overriding du and dust
+if type -q dust
+    printf "$check_symbol dust found! Using it instead of du!\n"
+    alias du='dust -r'
+else
+    alias du='du -skh | sort -r'
 end
 
-# lsd
-if type -q lsd
-    printf "$check_symbol lsd found! using it instead of ls or exa\n"
-    sleep $line_delay
-    alias ls='lsd -hF --color=always --group-dirs=first'
-    alias ll='lsd -lahF --color=always --group-dirs=first'
-    alias lld='lsd -lahF --color=always --group-dirs=first --total-size'
-    alias l='lsd -hF --color=auto --group-dirs=first'
-    alias lt='lsd -a --tree --color=always --group-dirs=first'
-    alias l.='lsd -a | egrep "^\."'
+# Let's set up ls as lsd or exa
+function set_ls_as_ls
+    alias ls='ls -p -F -h --color=auto --show-control-chars'
+    alias ll='ls -la'
+    alias lld='du'
+    alias l='ls -p -F -h --color=auto --show-control-chars'
+    alias lt='tree'
+    alias l.='ls -a | grep "^\."'
 end
+
+function set_exa_as_ls
+    if typq -q exa
+        sleep $line_delay
+        alias ls='exa -hF --color=always --group-directories-first'
+        alias ll='exa -lahF --color=always --group-directories-first'
+        alias lld='du'
+        alias l='exa -hF --color=always --group-directories-first'
+        alias lt='exa -aT --color=always --group-directories-first'
+        alias l.='exa -a | egrep "^\."'
+    end
+end
+
+function set_lsd_as_ls
+    if type -q lsd
+        sleep $line_delay
+        alias ls='lsd -hF --color=always --group-dirs=first'
+        alias ll='lsd -lahF --color=always --group-dirs=first'
+        alias lld='du'
+        alias l='lsd -hF --color=auto --group-dirs=first'
+        alias lt='lsd -a --tree --color=fancy --group-dirs=first'
+        alias l.='lsd -a | egrep "^\."'
+    end
+end
+
+function set_ls
+    if test (count $argv) -lt 2
+        printf "$check_symbol Current ls mode is: $LS_MODE\n"
+    else
+        set -U LS_MODE="$argv[1]"
+    end
+
+    switch "$LS_MODE"
+        case "lsd"
+            printf "  $right_arrow_symbol Activating $LS_MODE mode.\n"
+            set_lsd_as_ls
+        case "exa"
+            printf "  $right_arrow_symbol Activating $LS_MODE mode.\n"
+            set_exa_as_ls
+        case "ls"
+            printf "  $right_arrow_symbol Activating $LS_MODE mode.\n"
+            set_ls_as_ls
+        case "*"
+            printf "  $right_arrow_symbol $LS_MODE isn't available.\n"
+            echo "Select one of: lsd, exa, ls"
+    end
+end
+set_ls
 
 # bat
 if type -q bat
@@ -310,8 +357,8 @@ end
 
 # rip, rm-improved
 set trash_location "$HOME/.local/share/Trash/files/"
-if type -q
-    printf "$check_symbol rip, rm-improved found!\n $right_arrow_symbol Setting up graveyard at $trash_location"
+if type -q rip
+    printf "$check_symbol rip, rm-improved found!\n  $right_arrow_symbol Setting up graveyard at $trash_location\n"
     sleep $line_delay
     alias rip="rip --graveyard $trash_location"
 end
@@ -321,7 +368,7 @@ if type -q $HOMEBREW/bin/pip3
     and type -q $HOMEBREW/bin/bpytop
     printf "$check_symbol Locally installed bpytop found!\n"
     sleep $line_delay
-    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && $HOMEBREW/bin/bpytop"
+    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop; $HOMEBREW/bin/bpytop"
     alias htop="$HOMEBREW/bin/bpytop"
     alias top="$HOMEBREW/bin/bpytop"
 end
@@ -461,6 +508,14 @@ if type -q starship
     printf "$check_symbol Starship shell extension found! Let's start it!\n"
     sleep $line_delay
     starship init fish | source
+end
+
+# Install spark if not exists
+if not type -q spark
+    if not test -d "$HOMEBREW/bin"
+        mkdir -pv "$HOMEBREW/bin"
+    end
+    sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark; chmod +x $HOMEBREW/bin/spark" or true
 end
 
 # Clean up screen
