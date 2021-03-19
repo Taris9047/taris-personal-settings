@@ -28,11 +28,6 @@ addpath ()
   esac
 }
 
-# Install spark if not exists.
-if [ ! -x "$(command -v spark)" ]; then
-  sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark"
-fi
-
 ### CHANGE TITLE OF TERMINALS
 case ${TERM} in
   xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
@@ -539,6 +534,11 @@ if [ -x "$(command -v starship)" ]; then
 fi
 
 # Clean up the screen before loading good stuff.
+
+# Install spark if not exists.
+if [ ! -x "$(command -v spark)" ]; then
+  sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark"
+fi
 
 # Before just cleaning up... let's implement some fun stuff lol
 if [ -x "$(command -v spark)" ] && [ -x "$(command -v lolcat)" ]; then
