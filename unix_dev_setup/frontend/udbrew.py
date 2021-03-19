@@ -135,10 +135,60 @@ class GetPackages(object):
         this_dir = os.path.realpath(__file__)
         data_dir = os.path.realpath(os.path.join(os.path.dirname(this_dir), '..', 'data'))
 
-        gd = GetDistro()
-        self.pkg_list_file = DistroPkgMap()
+        dpm = DistroPkgMap()
+        self.pkg_list_file = \
+            os.path.join(data_dir, dpm.GetPackageFileName())
+        self.pkg_list = []
+        
+    def GetPkgNames(self):
+        if not os.path.exists(self.pkg_list_file):
+            raise FileNotExistError("Oh crap, {} is not found!".format(self.pkg_list_file))
 
+        with open(self.pkg_list_file, 'r') as fp:
+            self.pkg_list = fp.readlines()
 
+        return self.pkg_list
+
+### InstallPkgs ###
+###
+### Actually installs packages using proper package manager.
+###
+class InstallPkgs(object):
+    def __init__(self):
+        self.distro_info = GetDistro()
+        pkm = GetPackages()
+        self.pkgs_to_install = pkm.GetPkgNames()
+
+        self.InstallPackages()
+
+    def InstallPackages(self):
+        # Trying out switch-case python way.
+        self.switcher = {
+            'ubuntu': self.install_with_apt(),
+            'debian': self.install_with_apt(),
+            'fedora': self.install_with_dnf(),
+            'rhel': self.install_with_dnf(),
+            'opensuse': self.install_with_zypper(),
+            'arch': self.install_with_pacman()
+        }
+
+        installer_func = self.switcher[self.distro_info['Base']]
+        installer_func()
+
+    # TODO Implement those dummys into greatness!!
+    def install_with_apt(self):
+        print("Installing with apt-get")
+
+    def install_with_dnf(self):
+        print("Installing with dnf")
+
+    def install_with_zypper(self):
+        print("Installing with zypper")
+
+    def install_with_pacman(self):
+        print("Syncing with Pacman!")
+        
+        
 ### Help file
 def show_help():
     print('<Put help message here>')
