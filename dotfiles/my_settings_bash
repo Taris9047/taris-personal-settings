@@ -362,7 +362,7 @@ set_lsd_as_ls() {
 }
 
 set_ls () {
-  if [ -z "$@" ]; then
+  if [ $# -eq 0 ]; then
     printf "${check_symbol} Current ls mode is: ${LS_MODE}\n"
   else
     LS_MODE="$1"

@@ -7,6 +7,7 @@
 # set -Ua fish_user_paths $HOME/.local/bin $fish_user_paths
 set fish_greeting
 set TERM "xterm-256color"
+set -U LS_MODE='lsd' # This can be 'lsd', 'exa'
 
 if type -q nvim
     set EDITOR "nvim"
@@ -100,11 +101,11 @@ alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
 alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
 
 ### Git related stuffs ###
-function gc
-    git commit -a -m "\"$argv[1]\"" && git push
+function gitc
+    git commit -a -m "\"$argv[1]\"" & & git push
 end
 function gcatchup
-    git fetch --all && git reset --hard origin/master && git pull
+    git fetch --all & & git reset --hard origin/master & & git pull
 end
 function gtag
     git tag -a "\"$argv[1]\""
@@ -138,10 +139,10 @@ alias tb="nc termbin.com 9999"
 ### 'open' macro. Just like OS X ###
 function open
     if type -q xdg-open
-        xdg-open "$argv[1]" &>/dev/null &
-    else
-        echo "open on this kind of file has not implemented yet!"
-    end
+        xdg-open "$argv[1]" & > /dev/null &
+else
+echo "open on this kind of file has not implemented yet!"
+end
 end
 
 ### Extraction ###
@@ -221,12 +222,9 @@ if test -d "$JAVA_HOME"
     addpath "$JAVA_HOME/bin"
 end
 
-# Emacs
-set EMACS_HOME $HOME/.emacs_local
-if test -d "$EMACS_HOME"
-    printf "$check_symbol Custom emacs found at $EMACS_HOME\n"
-    sleep $line_delay
-    addpath "$EMACS_HOME/bin"
+# Emacs situation on elementary OS
+if test -n "(cat /etc/os-release | grep 'ID' | grep 'elementary')"
+    alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
 end
 
 # Rust
@@ -278,28 +276,71 @@ if type -q vncserver
     alias vnckill="vncserver -kill :1"
 end
 
-# exa
-if type -q exa
-    printf "$check_symbol exa found! using it instead of ls\n"
-    sleep $line_delay
-    alias ls='exa -hF --color=always --group-directories-first'
-    alias ll='exa -lahF --color=always --group-directories-first'
-    alias l='exa -hF --color=always --group-directories-first'
-    alias lt='exa -aT --color=always --group-directories-first'
-    alias l.='exa -a | egrep "^\."'
+# Overriding du and dust
+if type -q dust
+    printf "$check_symbol dust found! Using it instead of du!\n"
+    alias du='dust -r'
+else
+    alias du='du -skh | sort -r'
 end
 
-# lsd
-if type -q lsd
-    printf "$check_symbol lsd found! using it instead of ls or exa\n"
-    sleep $line_delay
-    alias ls='lsd -hF --color=always --group-dirs=first'
-    alias ll='lsd -lahF --color=always --group-dirs=first'
-    alias lld='lsd -lahF --color=always --group-dirs=first --total-size'
-    alias l='lsd -hF --color=auto --group-dirs=first'
-    alias lt='lsd -a --tree --color=always --group-dirs=first'
-    alias l.='lsd -a | egrep "^\."'
+# Let's set up ls as lsd or exa
+function set_ls_as_ls
+    alias ls='ls -p -F -h --color=auto --show-control-chars'
+    alias ll='ls -la'
+    alias lld='du'
+    alias l='ls -p -F -h --color=auto --show-control-chars'
+    alias lt='tree'
+    alias l.='ls -a | grep "^\."'
 end
+
+function set_exa_as_ls
+    if typq -q exa
+        sleep ${line_delay}
+        alias ls='exa -hF --color=always --group-directories-first'
+        alias ll='exa -lahF --color=always --group-directories-first'
+        alias lld='du'
+        alias l='exa -hF --color=always --group-directories-first'
+        alias lt='exa -aT --color=always --group-directories-first'
+        alias l.='exa -a | egrep "^\."'
+    end
+end
+
+function set_lsd_as_ls
+    if type -q lsd
+        sleep ${line_delay}
+        alias ls='lsd -hF --color=always --group-dirs=first'
+        alias ll='lsd -lahF --color=always --group-dirs=first'
+        alias lld='du'
+        alias l='lsd -hF --color=auto --group-dirs=first'
+        alias lt='lsd -a --tree --color=fancy --group-dirs=first'
+        alias l.='lsd -a | egrep "^\."'
+    end
+end
+
+function set_ls
+    if test (count $argv) -lt 2
+        printf "$check_symbol Current ls mode is: $LS_MODE\n"
+    else
+        set -U LS_MODE="$argv[1]"
+    end
+
+    switch "$LS_MODE"
+        case "lsd"
+            echo "Activating $LS_MODE mode."
+            set_lsd_as_ls
+        case "exa"
+            echo "Activating $LS_MODE mode."
+            set_exa_as_ls
+        case "ls"
+            echo "Activating $LS_MODE mode."
+            set_ls_as_ls
+        case "*"
+            echo "${LS_MODE} isn't available."
+            echo "Select on of: lsd, exa, ls"
+    end
+end
+set_ls
 
 # bat
 if type -q bat
