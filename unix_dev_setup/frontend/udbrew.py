@@ -4,8 +4,6 @@ import os
 import sys
 import re
 
-CWD = os.path.realpath(__file__)
-DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(CWD), '..', 'data'))
 
 ### Get distro crom /etc/os-release ###
 class GetDistro(object):
@@ -31,6 +29,9 @@ class GetDistro(object):
 
     def Version(self):
         return self.rel_data["VERSION_ID"]
+
+    def BaseDistro(self):
+        return self.rel_data["ID_LIKE"]
 
 ### Version Parsor ###
 class Version(object):
@@ -92,14 +93,61 @@ class Version(object):
     def __ge__(self, other):
         return self.ver_info >= other.ver_info
     
+
+### DistroPkgMap
+###
+### Selects pkglist file from given distro info.
+###
+class DistroPkgMap(object):
+    def __init__(self):
+        gd = GetDistro()
+        self.distro_info = {}
+        self.distro_info['Name'] = gd.Name()
+        self.distro_info['Version'] = gd.Version()
+        self.distro_info['Base'] = gd.BaseDistro()
+        
+    # Maps distro file with given distro information.
+    #
+    # TODO This is crappy preliminary code. Must re-write.
+    # 
+    def GetPackageFileName(self):
+        Ubuntu_20_04_based = ["Ubuntu" "Linuxmint"]
+        
+        if self.distro_info['Base'] == 'ubuntu':
+            if self.distro_info['Name'] == 'Linuxmint':
+                return 'ubuntu_pkgs'
+            elif self.distro_info['Name'] == 'elementary OS':
+                return 'ubuntu_18.04_pkgs'
     
+        elif self.distro_info['Base'] == 'fedora':
+            return 'fedora_pkgs'
+
+        elif self.distro_info['Base'] == 'arch':
+            return 'arch_pkgs'
+        
+### GetPackages ###
+###
+### Finds out the distro and version and fetches list of packages to
+### install via package manager.
+###
+class GetPackages(object):
+    def __init__(self):
+        this_dir = os.path.realpath(__file__)
+        data_dir = os.path.realpath(os.path.join(os.path.dirname(this_dir), '..', 'data'))
+
+        gd = GetDistro()
+        self.pkg_list_file = DistroPkgMap()
+
+
+### Help file
+def show_help():
+    print('<Put help message here>')
+
 ### The Main Function ###
 def main (ARGV):
 
-    if not ARGV:
-        sys.exit(1)
-
-    Distro = GetDistro()
+    if not len(ARGV) > 1:
+        self.show_help()
 
 ### Calling main function ###
 if __name__ == "__main__":
