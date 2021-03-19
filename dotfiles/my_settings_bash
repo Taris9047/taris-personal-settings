@@ -370,20 +370,20 @@ set_ls () {
 
   case "$LS_MODE" in
     "lsd")
-      echo "Activating '${LS_MODE}' mode."
+      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
       set_lsd_as_ls
       ;;
     "exa")
-      echo "Activating '${LS_MODE}'' mode."
+      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
       set_exa_as_ls
       ;;
     "ls")
-      echo "Activating '${LS_MODE}'' mode."
+      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
       set_ls_as_ls
       ;;
     *)
-      echo "${LS_MODE} isn't available."
-      echo "Select on of: lsd, exa, ls"
+      printf "  ${right_arrow_symbol} is not available!\n"
+      printf "    Select one of: lsd, exa, ls\n"
       ;;
   esac
 }
