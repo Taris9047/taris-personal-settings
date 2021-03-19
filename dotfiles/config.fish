@@ -428,7 +428,7 @@ if type -q rclone
         sleep $line_delay
     else
         if test -n (cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive\]")
-            printf "$check_symbol Mounting MS One Drive to $GOOGLE_DRIVE\n"
+            printf "$check_symbol Mounting MS One Drive to $ONE_DRIVE\n"
             rclone mount --vfs-cache-mode writes onedrive: $ONE_DRIVE &
             sleep 2
         end
@@ -479,6 +479,6 @@ function check_uptime
 end
 
 if type -q neofetch
-    and test (printf '%.0f' (check_uptime)) -lt 2400 
+    and test (printf '%.0f' (check_uptime)) -lt 2400
     neofetch
 end
