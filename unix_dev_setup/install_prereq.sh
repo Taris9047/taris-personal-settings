@@ -18,7 +18,8 @@ echo "... Looks like your distro is: $DISTRO"
 
 # Some Distro information
 Debian_base=("Debian GNU/Linux")
-Ubuntu_base=("Ubuntu" "Linuxmint" "Linux Mint" "Pop" "Pop\!_OS" "elementary OS")
+Ubuntu_base=("Ubuntu" "Linuxmint" "Linux Mint" "Pop" "Pop\!_OS")
+Ubuntu_1804_base=("elementary OS")
 Fedora_base=("Fedora" "CentOS Linux" "CentOS Stream" "Red Hat Enterprise Linux")
 openSUSE_base=("openSUSE" "openSUSE Leap")
 Arch_base=("ArchLinux" "Manjaro Linux")
@@ -28,6 +29,8 @@ Arch_base=("ArchLinux" "Manjaro Linux")
 MODE=''
 if [[ " ${Ubuntu_base[@]} " =~ " ${DISTRO} " ]]; then
   MODE="Ubuntu"
+elif [[ " ${Ubuntu_1804_base} " =~ " ${DISTRO} " ]]; then
+  MODE="Ubuntu18.04"
 elif [[ " ${Debian_base[@]} " =~ " ${DISTRO} " ]]; then
   MODE="Debian"
 elif [[ " ${Fedora_base[@]} " =~ " ${DISTRO} " ]]; then
@@ -42,6 +45,7 @@ echo "Current linux distribution seems $MODE based one."
 
 readarray -t Debian_packages < "$SCRIPTPATH/data/ubuntu_pkgs"
 readarray -t Ubuntu_packages < "$SCRIPTPATH/data/ubuntu_pkgs"
+readarray -t Ubuntu_1804_packages < "$SCRIPTPATH/data/ubuntu_18.04_pkgs"
 readarray -t Fedora_packages < "$SCRIPTPATH/data/fedora_pkgs"
 readarray -t RHEL_packages < "$SCRIPTPATH/data/rhel_pkgs"
 readarray -t Arch_packages < "$SCRIPTPATH/data/arch_pkgs"
@@ -52,6 +56,7 @@ Ruby_gems=( \
   "json" \
   "ruby-progressbar" \
   "tty-spinner" \
+  "lolcat" \
   )
 
 #
@@ -64,6 +69,7 @@ Ruby_gems_RHEL=( \
   "json" \
   "ruby-progressbar" \
   "tty-spinner" \
+  "lolcat" \
 )
 
 array_to_string ()
@@ -75,6 +81,15 @@ array_to_string ()
 install_prereq_Ubuntu ()
 {
   pkgs=$( array_to_string "${Ubuntu_packages[@]}")
+  gems=$( array_to_string "${Ruby_gems[@]}")
+  sudo -H apt-get -y update && sudo apt-get -y upgrade
+  sudo -H apt-get -y install $pkgs
+  sudo -H /usr/bin/gem install $gems
+}
+
+install_prereq_Ubuntu1804()
+{
+  pkgs=$( array_to_string "${Ubuntu_1804_packages[@]}")
   gems=$( array_to_string "${Ruby_gems[@]}")
   sudo -H apt-get -y update && sudo apt-get -y upgrade
   sudo -H apt-get -y install $pkgs
@@ -148,6 +163,9 @@ case ${MODE} in
 
   "Ubuntu")
     install_prereq_Ubuntu
+    ;;
+  "Ubuntu18.04")
+    install_prereq_Ubuntu1804
     ;;
   "Debian")
     install_prereq_Debian
