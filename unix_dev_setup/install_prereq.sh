@@ -51,7 +51,6 @@ readarray -t RHEL_packages < "$SCRIPTPATH/data/rhel_pkgs"
 readarray -t Arch_packages < "$SCRIPTPATH/data/arch_pkgs"
 
 Ruby_gems=( \
-  "rsense" \
   "open3" \
   "json" \
   "ruby-progressbar" \
@@ -65,7 +64,6 @@ Ruby_gems=( \
 # Let's hope they can work with my codes without too much problem.
 #
 Ruby_gems_RHEL=( \
-  "rsense" \
   "json" \
   "ruby-progressbar" \
   "tty-spinner" \
