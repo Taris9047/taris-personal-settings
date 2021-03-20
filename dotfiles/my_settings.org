@@ -2,6 +2,7 @@
 #+AUTHOR: Taylor Shin
 #+STARTUP: showeverything
 #+PROPERTY: header-args :tangle-mode
+
 * My Shell Settings
 Let's use Orgmode to construct and manage shell script files more effectively! Automatic tangling will populate my_settings_<shell_name> files automatically.
 
@@ -14,9 +15,26 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#some-warning-messages][Some Warning messages]]
   - [[#terminal-type-and-history-control][Terminal type and history control]]
   - [[#ls-mode-initial-set-up][ls mode initial set up]]
+  - [[#homebrew-directory-set][Homebrew directory set]]
+  - [[#cloud-directories][Cloud directories]]
+  - [[#texlive-home-directory-set][Texlive home directory set]]
+  - [[#some-decorative-stuffs][Some decorative stuffs]]
   - [[#default-cligui-editor-set][Default CLI/GUI editor set]]
+  - [[#change-terminal-titles][Change terminal titles]]
+- [[#hot-spot-installation][Hot Spot Installation]]
+  - [[#spark][Spark]]
+- [[#command-line-aliases][Command line aliases]]
+  - [[#binutils---linux][Binutils - Linux]]
+  - [[#package-manager-shortcuts][Package Manager shortcuts]]
+  - [[#quickly-exit-from-a-directory][Quickly exit from a directory]]
+  - [[#system-utilities-shortcuts][System utilities shortcuts]]
+  - [[#git-shortcuts][Git shortcuts]]
 - [[#basic-functions-for-everyday-use][Basic Functions for everyday use]]
   - [[#prepending-system-path-variable][Prepending system PATH variable.]]
+  - [[#extract-archive][Extract archive]]
+  - [[#navigate-upwards][Navigate upwards.]]
+- [[#settings-for-custom-installed-programs][Settings for Custom installed programs!]]
+  - [[#broot][Broot]]
 
 * Exports
 Fundamental variables to start with.
@@ -70,6 +88,9 @@ export HISTCONTROL=ignoredups:erasedups
 <<term_type_hist>>
 #+end_src
 *** Fish
+#+begin_src shell :tangle my_settings_fish
+set TERM "xterm-256color"
+#+end_src
 
 ** ls mode initial set up
 *** Bash
@@ -81,6 +102,83 @@ export LS_MODE='lsd'
 export LS_MODE='lsd'
 #+end_src
 *** Fish
+#+begin_src shell :tangle my_settings_fish
+set LS_MODE 'lsd'
+#+end_src
+
+** Homebrew directory set
+
+Custom compiled tools and libraries will be residing in this directory.
+
+*** Bash
+#+NAME: env_var_homebrew
+#+begin_src shell :tangle my_settings_bash
+HBREW_PATH="$HOME/.local"
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<env_var_homebrew>>
+#+end_src
+*** Fish
+#+begin_src shell :tangle my_settings_fish
+set HBREW_PATH "$HOME/.local"
+#+end_src
+
+** Cloud directories
+[[https://rclone.org/][RCLONE]] is a great tool for cloud service access. I'm using Google Drive and Microsoft's Onedrive. We can set up a remote drive access with RCLONE! These lines aren't actually installing or setting up the cloud services. But defines their mountpoints.
+
+*** Bash
+#+NAME: env_var_rclone
+#+begin_src shell :tangle my_settings_bash
+GOOGLE_DRIVE="$HOME/.google-drive"
+ONE_DRIVE="$HOME/.onedrive"
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<env_var_rclone>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish
+set GOOGLE_DRIVE "$HOME/.google-drive"
+set ONE_DRIVE "$HOME/.onedrive"
+#+end_src
+
+** Texlive home directory set
+*** Bash
+#+NAME: env_var_texlive
+#+begin_src shell :tangle my_settings_bash
+texlive_base_path="$HOME/.texlive"
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<env_var_texlive>>
+#+end_src
+*** Fish
+#+begin_src shell :tangle my_settings_fish
+set texlive_base_path "$HOME/.texlive"
+#+end_src
+
+** Some decorative stuffs
+*** Bash
+#+NAME: env_var_decor
+#+begin_src shell :tangle my_settings_bash
+check_symbol="\033[1;32m\u2713\033[0m"
+right_arrow_symbol="\033[1;37m\u2192\033[0m"
+line_delay=0.12
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<env_var_decor>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish
+set check_symbol "\033[1;32m\u2713\033[0m"
+set right_arrow_symbol "\033[1;37m\u2192\033[0m"
+set line_delay 0.12
+#+end_src
 
 ** Default CLI/GUI editor set
 Prioritizes Neovim first. But use VIM. VI is the last resort. I doubt any sane distribution manager would drop VI from default installation.
@@ -111,11 +209,185 @@ fi
 #+end_src
 
 *** Fish
+#+begin_src shell :tangle my_settings_fish
+
+#+end_src
 
 ** Change terminal titles
+*** Bash
+#+NAME: term_titles
 #+begin_src shell :tangle my_settings_bash
+case ${TERM} in
+  xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
+        ;;
+  screen*)
+    PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
+    ;;
+esac
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<term_titles>>
+#+end_src
+*** Fish
+#+begin_src shell :tangle my_settings_fish
 
+#+end_src
 
+* Hot Spot Installation
+** Spark
+*** Bash
+#+NAME: inst_spark
+#+begin_src shell :tangle my_settings_bash
+if [ ! -x "$(command -v spark)" ]; then
+  if [ ! -d "$HOMEBREW/bin" ]; then
+    mkdir -pv "$HOMEBREW/bin"
+  fi
+  sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark" || true
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<inst_spark>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish 
+if not typq -q spark
+  if not test -d "$HOMEBREW/bin"
+    mkdir -pv "$HOMEBREW/bin"
+  end
+  sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark" || true
+end
+#+end_src
+
+* Command line aliases
+
+Some basic aliases for linux binutils and other tools. OS X uses BSD based binutils has different options and acts a little bit differently and will be updated when I get an actually working Apple machine.
+
+** Binutils - Linux
+*** Bash
+#+NAME: alias_binutils
+#+begin_src shell :tangle my_settings_bash
+alias ls='ls -p -F -h --color=auto --show-control-chars'
+alias ll='ls -la'
+alias l='ls -p -F -h --color=auto --show-control-chars'
+alias l.='ls -a | grep "^\."'
+alias lt='tree'
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias df='df -h'
+alias rsync='rsync -azvh --info=progress2'
+alias sudo='sudo -H'
+alias free='free -m'
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_binutils>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish :noweb yes
+<<alias_binutils>>
+#+end_src
+
+** Package Manager shortcuts
+*** Bash
+#+NAME: alias_pkg_managers
+#+begin_src shell :tangle my_settings_bash
+alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
+alias aptin='sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install'
+alias dnfup='sudo dnf -y update'
+alias dnfin='sudo dnf -y install'
+alias pmyy='sudo pacman -Syyu'
+alias pmin='sudo pacman -Syyu'
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_pkg_managers>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish :noweb yes
+<<alias_pkg_managers>>
+#+end_src
+** Quickly exit from a directory
+*** Bash
+#+NAME: alias_cdupup
+#+begin_src shell :tangle my_settings_bash
+alias cd..='cd ..' # Just like MS-DOS
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+#+end_src
+
+*** Zsh
+#+begin_src sh :tangle my_settings_zsh :noweb yes
+<<alias_cdupup>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish :noweb yes
+<<alias_cdupup>>
+#+end_src
+
+** System utilities shortcuts
+*** Bash
+#+NAME: alias_sysutils
+#+begin_src shell :tangle my_settings_bash
+alias psmem='ps auxf | sort -nr -k 4'
+alias psmem10='ps auxf | sort -nr -k 4 | head -10'
+alias pscpu='ps auxf | sort -nr -k 3'
+alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
+alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
+alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
+alias battery_stat="upower -i `upower -e | grep 'BAT'`"
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_sysutils>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish :noweb yes
+<<alias_sysutils>>
+#+end_src
+
+** Git shortcuts
+*** Bash
+#+NAME: alias_git
+#+begin_src shell :tangle my_settings_bash
+gitc() {
+	git commit -a -m "\"$1\"" && git push
+}
+gcatchup() {
+  git fetch --all && git reset --hard origin/master && git pull
+}
+gtag() {
+  git tag -a "\"$1\""
+}
+alias gaddup='git add -u'
+alias gaddall='git add .'
+gitlog2w() {
+  for day in $(seq 14 -1 0); do
+    git log --before="${day} days" --after="$($day+1) days" --format=oneline | wc -l
+  done | spark
+}
+
+gitlog8h() {
+  for hour in $(seq 8 -1 0); do
+    git log --before="${hour} hours" --after="$($hour+1) hours" --format=oneline | wc -l
+  done | spark
+}
 #+end_src
 
 * Basic Functions for everyday use
@@ -137,3 +409,156 @@ addpath() {
 <<func_addpath>>
 #+end_src
 *** Fish
+#+begin_src shell :tangle my_settings_fish
+
+#+end_src
+
+** Extract archive
+Originally copied from Manjaro Linux. Just =ex <archive_file>= to extract any archive.
+
+*** Bash
+#+NAME: func_ex
+#+begin_src shell :tangle my_settings_bash
+ex ()
+{
+  if [ -f $1 ] ; then
+    case $1 in
+      *.tar.bz2)   tar xjf $1   ;;
+      *.tar.gz)    tar xzf $1   ;;
+      *.bz2)       bunzip2 $1   ;;
+      *.rar)       unrar x $1   ;;
+      *.gz)        gunzip $1    ;;
+      *.tar)       tar xf $1    ;;
+      *.tbz2)      tar xjf $1   ;;
+      *.tgz)       tar xzf $1   ;;
+      *.zip)       unzip $1     ;;
+      *.Z)         uncompress $1;;
+      *.7z)        7z x $1      ;;
+      *.deb)       ar x $1      ;;
+      *.tar.xz)    tar xf $1    ;;
+      *.tar.zst)   unzstd $1    ;;
+      *)           echo "'$1' cannot be extracted via ex()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<func_ex>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish
+
+#+end_src
+** Navigate upwards.
+Simple, =up <num_stage(?)_to_navigate_up>= to navigate upwards.
+*** Bash
+#+NAME: func_up
+#+begin_src shell :tangle my_settings_bash
+up () {
+  local d=""
+  local limit="$1"
+
+  # Default to limit of 1
+  if [ -z "$limit" ] || [ "$limit" -le 0 ]; then
+    limit=1
+  fi
+
+  for ((i=1;i<=limit;i++)); do
+    d="../$d"
+  done
+
+  # perform cd. Show error if cd fails
+  if ! cd "$d"; then
+    echo "Couldn't go up $limit dirs.";
+  fi
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<func_up>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish
+
+#+end_src
+
+** Recursively delete files
+*** Bash
+#+NAME: func_delete_recursive
+#+begin_src shell :tangle my_settings_bash
+delete_recursive ()
+{
+  echo "Querying files!!"
+  echo "================================"
+  if [ -x "$(command -v fd)" ]; then
+    fd -IH -g "$1" -tf
+  else
+    find . -name "$1" -type f
+  fi
+  echo "================================"
+  read -p "Do you wish to delete them? [yn]" yn
+  while true; do
+    case $yn in
+      [Yy]* )
+        if [ -x "$(command -v fd)" ]; then
+          if [ -x "$(command -v rip)"]; then
+            fd -IH -g "$1" -tf -X rip
+          else
+            fd -IH -g "$1" -tf -X rm
+          fi
+        else
+          find . -name "$1" -type f -delete
+        fi
+        echo "Deleted the files!!"
+        ;;
+    [Nn]* )
+      echo "Not deleting!!"; break
+      ;;
+    * )
+      echo "Please answer y or n."
+      ;;
+    esac
+  done
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes 
+<<func_delete_recursive>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish
+# To be implemented!!
+#+end_src
+
+* Settings for Custom installed programs!
+** Broot
+*** Bash
+#+NAME: prog_broot
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v broot)" ]; then
+  alias br='broot -dhp'
+  alias bs='broot --sizes'
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_broot>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish
+if type -q broot
+   alias br='broot -dhp'
+   alias br='broot --sizes'
+end
+#+end_src

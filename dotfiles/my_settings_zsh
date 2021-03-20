@@ -15,6 +15,17 @@ export HISTCONTROL=ignoredups:erasedups
 
 export LS_MODE='lsd'
 
+HBREW_PATH="$HOME/.local"
+
+GOOGLE_DRIVE="$HOME/.google-drive"
+ONE_DRIVE="$HOME/.onedrive"
+
+texlive_base_path="$HOME/.texlive"
+
+check_symbol="\033[1;32m\u2713\033[0m"
+right_arrow_symbol="\033[1;37m\u2192\033[0m"
+line_delay=0.12
+
 if [ -x "$(command -v nvim)" ]; then
     export EDITOR="nvim"
 else if [ -x "$(command -v vim)" ] && [ ! -x "$(command -v nvim)" ]; then
@@ -29,9 +40,145 @@ else
     export VISUAL="xdg-open"
 fi
 
+case ${TERM} in
+  xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
+        ;;
+  screen*)
+    PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
+    ;;
+esac
+
+if [ ! -x "$(command -v spark)" ]; then
+  if [ ! -d "$HOMEBREW/bin" ]; then
+    mkdir -pv "$HOMEBREW/bin"
+  fi
+  sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark" || true
+fi
+
+alias ls='ls -p -F -h --color=auto --show-control-chars'
+alias ll='ls -la'
+alias l='ls -p -F -h --color=auto --show-control-chars'
+alias l.='ls -a | grep "^\."'
+alias lt='tree'
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias df='df -h'
+alias rsync='rsync -azvh --info=progress2'
+alias sudo='sudo -H'
+alias free='free -m'
+
+alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
+alias aptin='sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install'
+alias dnfup='sudo dnf -y update'
+alias dnfin='sudo dnf -y install'
+alias pmyy='sudo pacman -Syyu'
+alias pmin='sudo pacman -Syyu'
+
+alias psmem='ps auxf | sort -nr -k 4'
+alias psmem10='ps auxf | sort -nr -k 4 | head -10'
+alias pscpu='ps auxf | sort -nr -k 3'
+alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
+alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
+alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
+alias battery_stat="upower -i `upower -e | grep 'BAT'`"
+
 addpath() {
     case ":$PATH:" in
         *":$1:"* ) ;;
         * ) export PATH="$1:$PATH" ;;
     esac
 }
+
+ex ()
+{
+  if [ -f $1 ] ; then
+    case $1 in
+      *.tar.bz2)   tar xjf $1   ;;
+      *.tar.gz)    tar xzf $1   ;;
+      *.bz2)       bunzip2 $1   ;;
+      *.rar)       unrar x $1   ;;
+      *.gz)        gunzip $1    ;;
+      *.tar)       tar xf $1    ;;
+      *.tbz2)      tar xjf $1   ;;
+      *.tgz)       tar xzf $1   ;;
+      *.zip)       unzip $1     ;;
+      *.Z)         uncompress $1;;
+      *.7z)        7z x $1      ;;
+      *.deb)       ar x $1      ;;
+      *.tar.xz)    tar xf $1    ;;
+      *.tar.zst)   unzstd $1    ;;
+      *)           echo "'$1' cannot be extracted via ex()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+up () {
+  local d=""
+  local limit="$1"
+
+  # Default to limit of 1
+  if [ -z "$limit" ] || [ "$limit" -le 0 ]; then
+    limit=1
+  fi
+
+  for ((i=1;i<=limit;i++)); do
+    d="../$d"
+  done
+
+  # perform cd. Show error if cd fails
+  if ! cd "$d"; then
+    echo "Couldn't go up $limit dirs.";
+  fi
+}
+
+delete_recursive ()
+{
+  echo "Querying files!!"
+  echo "================================"
+  if [ -x "$(command -v fd)" ]; then
+    fd -IH -g "$1" -tf
+  else
+    find . -name "$1" -type f
+  fi
+  echo "================================"
+  read -p "Do you wish to delete them? [yn]" yn
+  while true; do
+    case $yn in
+      [Yy]* )
+        if [ -x "$(command -v fd)" ]; then
+          if [ -x "$(command -v rip)"]; then
+            fd -IH -g "$1" -tf -X rip
+          else
+            fd -IH -g "$1" -tf -X rm
+          fi
+        else
+          find . -name "$1" -type f -delete
+        fi
+        echo "Deleted the files!!"
+        ;;
+    [Nn]* )
+      echo "Not deleting!!"; break
+      ;;
+    * )
+      echo "Please answer y or n."
+      ;;
+    esac
+  done
+}
+
+if [ -x "$(command -v broot)" ]; then
+  alias br='broot -dhp'
+  alias bs='broot --sizes'
+fi
+
+alias cd..='cd ..' # Just like MS-DOS
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'

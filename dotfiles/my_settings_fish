@@ -9,3 +9,78 @@
 # Refer this file to change or add/remove features. Changing this
 # file alone will not apply your changes permanently!!
 #
+
+set TERM "xterm-256color"
+
+set LS_MODE 'lsd'
+
+set HBREW_PATH "$HOME/.local"
+
+set GOOGLE_DRIVE "$HOME/.google-drive"
+set ONE_DRIVE "$HOME/.onedrive"
+
+set texlive_base_path "$HOME/.texlive"
+
+set check_symbol "\033[1;32m\u2713\033[0m"
+set right_arrow_symbol "\033[1;37m\u2192\033[0m"
+set line_delay 0.12
+
+
+
+
+
+if not typq -q spark
+  if not test -d "$HOMEBREW/bin"
+    mkdir -pv "$HOMEBREW/bin"
+  end
+  sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark" || true
+end
+
+alias ls='ls -p -F -h --color=auto --show-control-chars'
+alias ll='ls -la'
+alias l='ls -p -F -h --color=auto --show-control-chars'
+alias l.='ls -a | grep "^\."'
+alias lt='tree'
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias df='df -h'
+alias rsync='rsync -azvh --info=progress2'
+alias sudo='sudo -H'
+alias free='free -m'
+
+alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
+alias aptin='sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install'
+alias dnfup='sudo dnf -y update'
+alias dnfin='sudo dnf -y install'
+alias pmyy='sudo pacman -Syyu'
+alias pmin='sudo pacman -Syyu'
+
+alias cd..='cd ..' # Just like MS-DOS
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+
+alias psmem='ps auxf | sort -nr -k 4'
+alias psmem10='ps auxf | sort -nr -k 4 | head -10'
+alias pscpu='ps auxf | sort -nr -k 3'
+alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
+alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
+alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
+alias battery_stat="upower -i `upower -e | grep 'BAT'`"
+
+
+
+
+
+
+
+# To be implemented!!
+
+if type -q broot
+   alias br='broot -dhp'
+   alias br='broot --sizes'
+end
