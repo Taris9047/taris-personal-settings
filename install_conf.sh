@@ -62,7 +62,7 @@ if [ ! -d "$FISH_CONF_HOME" ]; then
   mkdir -pv "$FISH_CONF_HOME"
 fi
 rm -rf $FISH_CONF_HOME/config.fish
-ln -sfv $CURRENT_DIR/dotfiles/config.fish $FISH_CONF_HOME/config.fish
+ln -sfv $CURRENT_DIR/dotfiles/my_settings_fish $FISH_CONF_HOME/config.fish
 
 # Starship
 echo "Installing starship config file"

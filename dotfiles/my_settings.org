@@ -1,0 +1,8 @@
+* My Shell Settings
+Let's use Orgmode to construct and manage shell script files more effectively! Automatic tangling will populate my_settings_<shell_name> files automatically.
+
+* Table of Contents :toc:
+- [[#my-shell-settings][My Shell Settings]]
+- [[#exports][Exports]]
+
+* Exports
