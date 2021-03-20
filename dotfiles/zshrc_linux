@@ -5,5 +5,4 @@
 # Grabbing the absolute path of this file
 scriptpath=${0:a:h}
 
-source $scriptpath/my_settings_zsh
-
+source $scriptpath/my_settings_zsh.ref

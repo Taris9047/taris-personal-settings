@@ -51,12 +51,17 @@ export HISTCONTROL=ignoredups:erasedups
 #+begin_src shell :tangle my_settings_bash
 export LS_MODE='lsd'
 #+end_src
+*** Zsh
+*** Fish
 
 ** Default CLI/GUI editor set
 Prioritizes Neovim first. But use VIM. VI is the last resort. I doubt any sane distribution manager would drop VI from default installation.
 
+For a GUI editor, the situation differs. We can rely on 'xdg-open' in most cases for known mimetypes. But some flies, such as files withtout known extension, are not supported. So, we might need to find some 'fallback' editor.. such as Emacs? The default is [[https://www.sublimetext.com/][Sublime Text]], of course!
+
 *** Bash
 #+begin_src shell :tangle my_settings_bash
+# CLI situation
 if [ -x "$(command -v nvim)" ]; then
     export EDITOR="nvim"
 else if [ -x "$(command -v vim)" ] && [ ! -x "$(command -v nvim)" ]; then
@@ -64,5 +69,28 @@ else if [ -x "$(command -v vim)" ] && [ ! -x "$(command -v nvim)" ]; then
 else
     export EDITOR="vi"
 fi
+
+# GUI situation
+if [ -x "$(command -v subl)"]; then
+    export VISUAL="subl"
+else
+    export VISUAL="xdg-open"
+fi   
+#+end_src
+
+*** Zsh
+*** Fish
+
+** Prepending system PATH variable.
+Apparently, there are much better ways to handle this kind of job and many newer shell versions will provide some kind of macro or internal functions to do this. But I would rather stay safe.
+
+*** Bash
+#+begin_src shell :tangle my_settings_bash
+addpath() {
+    case ":$PATH:" in
+        *":$1:"* ) ;;
+        * ) export PATH="$1:$PATH" ;;
+    esac
+}
 
 #+end_src
