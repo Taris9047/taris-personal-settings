@@ -16,6 +16,84 @@ export HISTCONTROL=ignoredups:erasedups
 export LS_MODE='lsd'
 
 HBREW_PATH="$HOME/.local"
+if [ -d "${HBREW_PATH}" ]; then
+	export HOMEBREW="${HBREW_PATH}"
+	printf "${check_symbol} HOMEBREW directory is ${HOMEBREW}\n"
+	sleep ${line_delay}
+	addpath "$HOMEBREW/bin"
+	addpath "$HOMEBREW/.opt/bin"
+	if [ ! -d "${HOMEBREW}" ]; then
+		mkdir -p "${HOMEBREW}"
+	fi
+	if [ ! -d "${HOMEBREW}/bin" ]; then
+		mkdir -p "${HOMEBREW}/bin"
+	fi
+	if [ ! -d "${HOMEBREW}/.opt" ]; then
+		mkdir -p "${HOMEBREW}/.opt"
+	fi
+fi
+
+# Let's set up ls as lsd or exa (default is lsd as of now.)
+set_ls_as_ls() {
+  alias ls='ls -p -F -h --color=auto --show-control-chars'
+  alias ll='ls -la'
+  alias lld='du'
+  alias l='ls -p -F -h --color=auto --show-control-chars'
+  alias lt='tree'
+  alias l.='ls -a | grep "^\."'
+}
+
+set_exa_as_ls() {
+  if [ -x "$(command -v exa)" ]; then
+    sleep ${line_delay}
+    alias ls='exa -hF --color=always --group-directories-first'
+    alias ll='exa -lahF --color=always --group-directories-first'
+    alias lld='du'
+    alias l='exa -hF --color=always --group-directories-first'
+    alias lt='exa -aT --color=always --group-directories-first'
+    alias l.='exa -a | egrep "^\."'
+  fi
+}
+
+set_lsd_as_ls() {
+  if [ -x "$(command -v lsd)" ]; then
+    sleep ${line_delay}
+    alias ls='lsd -hF --color=always --group-dirs=first'
+    alias ll='lsd -lahF --color=always --group-dirs=first'
+    alias lld='du'
+    alias l='lsd -hF --color=auto --group-dirs=first'
+    alias lt='lsd -a --tree --color=fancy --group-dirs=first'
+    alias l.='lsd -a | egrep "^\."'
+  fi
+}
+
+set_ls () {
+  if [ $# -eq 0 ]; then
+    printf "${check_symbol} Current ls mode is: ${LS_MODE}\n"
+  else
+    LS_MODE="$1"
+  fi
+
+  case "$LS_MODE" in
+    "lsd")
+      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+      set_lsd_as_ls
+      ;;
+    "exa")
+      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+      set_exa_as_ls
+      ;;
+    "ls")
+      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+      set_ls_as_ls
+      ;;
+    *)
+      printf "  ${right_arrow_symbol} is not available!\n"
+      printf "    Select one of: lsd, exa, ls\n"
+      ;;
+  esac
+}
+set_ls
 
 GOOGLE_DRIVE="$HOME/.google-drive"
 ONE_DRIVE="$HOME/.onedrive"
@@ -27,17 +105,17 @@ right_arrow_symbol="\033[1;37m\u2192\033[0m"
 line_delay=0.12
 
 if [ -x "$(command -v nvim)" ]; then
-    export EDITOR="nvim"
-else if [ -x "$(command -v vim)" ] && [ ! -x "$(command -v nvim)" ]; then
-    export EDITOR="vim"
+	export EDITOR="nvim"
+elif [ -x "$(command -v vim)" ] && [ ! -x "$(command -v nvim)" ]; then
+	export EDITOR="vim"
 else
-    export EDITOR="vi"
+	export EDITOR="vi"
 fi
 
 if [ -x "$(command -v subl)" ]; then
-    export VISUAL="subl"
+	export VISUAL="subl"
 else
-    export VISUAL="xdg-open"
+	export VISUAL="xdg-open"
 fi
 
 case ${TERM} in
@@ -57,14 +135,9 @@ if [ ! -x "$(command -v spark)" ]; then
 fi
 
 if [ ! -x "$(command -v rclone)" ]; then
-    curl https://rclone.org/install.sh | sudo bash
+  curl https://rclone.org/install.sh | sudo bash
 fi
 
-alias ls='ls -p -F -h --color=auto --show-control-chars'
-alias ll='ls -la'
-alias l='ls -p -F -h --color=auto --show-control-chars'
-alias l.='ls -a | grep "^\."'
-alias lt='tree'
 alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
@@ -100,24 +173,25 @@ gitc() {
 	git commit -a -m "\"$1\"" && git push
 }
 gcatchup() {
-  git fetch --all && git reset --hard origin/master && git pull
+	git fetch --all && git reset --hard origin/master && git pull
 }
 gtag() {
-  git tag -a "\"$1\""
+	git tag -a "\"$1\""
 }
 alias gaddup='git add -u'
 alias gaddall='git add .'
 gitlog2w() {
-  for day in $(seq 14 -1 0); do
-    git log --before="${day} days" --after="$($day+1) days" --format=oneline | wc -l
-  done | spark
+	for day in $(seq 14 -1 0); do
+		git log --before="${day} days" --after="$($day+1) days" --format=oneline | wc -l
+	done | spark
+}
+gitlog8h() {
+	for hour in $(seq 8 -1 0); do
+		git log --before="${hour} hours" --after="$($hour+1) hours" --format=oneline | wc -l
+	done | spark
 }
 
-gitlog8h() {
-  for hour in $(seq 8 -1 0); do
-    git log --before="${hour} hours" --after="$($hour+1) hours" --format=oneline | wc -l
-  done | spark
-}
+alias tb="nc termbin.com 9999"
 
 if [ -x "$(command -v zsh)" ]; then
     alias tozsh="sudo chsh $USER -s $(command -v zsh) && echo 'Now log out.'"
@@ -212,7 +286,49 @@ delete_recursive ()
   done
 }
 
+open() {
+	for i in $*; do
+		setsid nohup xdg-open $i >/dev/null 2>/dev/null
+	done
+}
+
 if [ -x "$(command -v broot)" ]; then
-  alias br='broot -dhp'
-  alias bs='broot --sizes'
+	printf "${check_symbol} Broot found!\n"
+	alias br='broot -dhp'
+	alias bs='broot --sizes'
+fi
+
+JAVA_HOME=/opt/java
+if [ -d "$JAVA_HOME" ]; then
+  printf "${check_symbol} Java (Possibly Oracle) found at $JAVA_HOME\n"
+  sleep ${line_delay}
+  addpath "${JAVA_HOME}/bin"
+  export CLASSPATH=${JAVA_HOME}/lib
+fi
+
+if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
+  alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
+fi
+
+if [ -d $HOME/.cargo ]; then
+  printf "${check_symbol} Cargo directory detected at $HOME/.cargo\n"
+  sleep ${line_delay}
+  source $HOME/.cargo/env
+fi
+
+if [ -d $HOMEBREW/.opt/gcc-jit ]; then
+  printf "${check_symbol} Gcc with libgccjit found in the system!\n"
+  addpath "$HOMEBREW/.opt/gcc-jit/bin"
+fi
+if [ -d $HOMEBREW/.opt/gcc9 ]; then
+  printf "${check_symbol} Gcc9 found in the system!\n"
+  addpath "$HOMEBREW/.opt/gcc9/bin"
+fi
+if [ -d $HOMEBREW/.opt/gcc8 ]; then
+  printf "${check_symbol} Gcc8 found in the system!\n"
+  addpath "$HOMEBREW/.opt/gcc8/bin"
+fi
+if [ -d $HOMEBREW/.opt/gcc4 ]; then
+  printf "${check_symbol} Gcc4 found in the system!\n"
+  addpath "$HOMEBREW/.opt/gcc4/bin"
 fi
