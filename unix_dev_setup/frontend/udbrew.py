@@ -98,13 +98,13 @@ class Version(object):
 ###
 ### Selects pkglist file from given distro info.
 ###
-class DistroPkgMap(object):
+class DistroPkgMap(GetDistro):
+    GetDistro.__init__()
     def __init__(self):
-        gd = GetDistro()
         self.distro_info = {}
-        self.distro_info['Name'] = gd.Name()
-        self.distro_info['Version'] = gd.Version()
-        self.distro_info['Base'] = gd.BaseDistro()
+        self.distro_info['Name'] = self.Name()
+        self.distro_info['Version'] = self.Version()
+        self.distro_info['Base'] = self.BaseDistro()
         
     # Maps distro file with given distro information.
     #
@@ -130,14 +130,15 @@ class DistroPkgMap(object):
 ### Finds out the distro and version and fetches list of packages to
 ### install via package manager.
 ###
-class GetPackages(object):
+class GetPackages(DistroPkgMap):
+    DistroPkgMap.__init__()
+    
     def __init__(self):
         this_dir = os.path.realpath(__file__)
         data_dir = os.path.realpath(os.path.join(os.path.dirname(this_dir), '..', 'data'))
 
-        dpm = DistroPkgMap()
         self.pkg_list_file = \
-            os.path.join(data_dir, dpm.GetPackageFileName())
+            os.path.join(data_dir, self.GetPackageFileName())
         self.pkg_list = []
         
     def GetPkgNames(self):
@@ -153,28 +154,32 @@ class GetPackages(object):
 ###
 ### Actually installs packages using proper package manager.
 ###
-class InstallPkgs(object):
+class InstallPkgs(GetPackages):
     def __init__(self):
+        GetPackages.__init__()
+
         self.distro_info = GetDistro()
         pkm = GetPackages()
-        self.pkgs_to_install = pkm.GetPkgNames()
+        self.pkgs_to_install = self.GetPkgNames()
+        self.base = self.distro_info.BaseDistro()
 
+        self.distro_pkgman_map = {
+            'ubuntu': 'apt',
+            'fedora': 'dnf',
+            'rhel': 'dnf',
+            'opensuse': 'zypper',
+            'arch': 'pacman'
+        }
+        
         self.InstallPackages()
 
     def InstallPackages(self):
-        # Trying out switch-case python way.
-        self.switcher = {
-            'ubuntu': self.install_with_apt(),
-            'debian': self.install_with_apt(),
-            'fedora': self.install_with_dnf(),
-            'rhel': self.install_with_dnf(),
-            'opensuse': self.install_with_zypper(),
-            'arch': self.install_with_pacman()
-        }
+        self.switcher()
 
-        installer_func = self.switcher[self.distro_info['Base']]
-        installer_func()
-
+    def switcher(self):
+        return getattr(self, 'install_with_{}'.format(
+            self.distro_pkgman_map[self.base]))()
+    
     # TODO Implement those dummys into greatness!!
     def install_with_apt(self):
         print("Installing with apt-get")
