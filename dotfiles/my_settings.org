@@ -263,6 +263,27 @@ if not typq -q spark
 end
 #+end_src
 
+** RClone
+*** Bash
+#+NAME: inst_rclone
+#+begin_src shell :tangle my_settings_bash
+if [ ! -x "$(command -v rclone)" ]; then
+    curl https://rclone.org/install.sh | sudo bash
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<inst_rclone>>
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish
+if not type -q rclone
+   curl https://rclone.org/install.sh | sudo bash
+end
+#+end_src
+
 * Command line aliases
 
 Some basic aliases for linux binutils and other tools. OS X uses BSD based binutils has different options and acts a little bit differently and will be updated when I get an actually working Apple machine.
@@ -388,6 +409,33 @@ gitlog8h() {
     git log --before="${hour} hours" --after="$($hour+1) hours" --format=oneline | wc -l
   done | spark
 }
+#+end_src
+
+** Switching shells
+*** Bash
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v zsh)" ]; then
+    alias tozsh="sudo chsh $USER -s $(command -v zsh) && echo 'Now log out.'"
+fi
+if [ -x "$(command -v fish)" ]; then
+    alias tofish="sudo chsh $USER -s $(command -v fish) && echo 'Now log out.'"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh
+alias tobash="sudo chsh $USER -s $(command -v bash) && echo 'Now log out.'"
+if [ -x "$(command -v fish)" ]; then
+    alias tofish="sudo chsh $USER -s $(command -v fish) && echo 'Now log out.'"
+fi
+#+end_src
+
+*** Fish
+#+begin_src shell :tangle my_settings_fish
+alias tobash="sudo chsh $USER -s (command -v bash) && echo 'Now log out'"
+if type -q zsh
+   alias tozsh="sudo chsh $USER -s (command -v zsh) && echo 'Now log out'"
+end
 #+end_src
 
 * Basic Functions for everyday use

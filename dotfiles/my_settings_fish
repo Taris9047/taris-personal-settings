@@ -36,6 +36,10 @@ if not typq -q spark
   sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark" || true
 end
 
+if not type -q rclone
+   curl https://rclone.org/install.sh | sudo bash
+end
+
 alias ls='ls -p -F -h --color=auto --show-control-chars'
 alias ll='ls -la'
 alias l='ls -p -F -h --color=auto --show-control-chars'
@@ -71,6 +75,11 @@ alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
 alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
 alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
 alias battery_stat="upower -i `upower -e | grep 'BAT'`"
+
+alias tobash="sudo chsh $USER -s (command -v bash) && echo 'Now log out'"
+if type -q zsh
+   alias tozsh="sudo chsh $USER -s (command -v zsh) && echo 'Now log out'"
+end
 
 
 

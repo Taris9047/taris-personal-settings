@@ -56,6 +56,10 @@ if [ ! -x "$(command -v spark)" ]; then
   sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark" || true
 fi
 
+if [ ! -x "$(command -v rclone)" ]; then
+    curl https://rclone.org/install.sh | sudo bash
+fi
+
 alias ls='ls -p -F -h --color=auto --show-control-chars'
 alias ll='ls -la'
 alias l='ls -p -F -h --color=auto --show-control-chars'
@@ -114,6 +118,13 @@ gitlog8h() {
     git log --before="${hour} hours" --after="$($hour+1) hours" --format=oneline | wc -l
   done | spark
 }
+
+if [ -x "$(command -v zsh)" ]; then
+    alias tozsh="sudo chsh $USER -s $(command -v zsh) && echo 'Now log out.'"
+fi
+if [ -x "$(command -v fish)" ]; then
+    alias tofish="sudo chsh $USER -s $(command -v fish) && echo 'Now log out.'"
+fi
 
 addpath() {
     case ":$PATH:" in
