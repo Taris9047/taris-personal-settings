@@ -25,7 +25,23 @@ else
 fi
 
 # GUI situation
-if [ -x "$(command -v subl)"]; then
+if [ -x "$(command -v subl)" ]; then
+    export VISUAL="subl"
+else
+    export VISUAL="xdg-open"
+fi
+
+# CLI situation
+if [ -x "$(command -v nvim)" ]; then
+    export EDITOR="nvim"
+else if [ -x "$(command -v vim)" ] && [ ! -x "$(command -v nvim)" ]; then
+    export EDITOR="vim"
+else
+    export EDITOR="vi"
+fi
+
+# GUI situation
+if [ -x "$(command -v subl)" ]; then
     export VISUAL="subl"
 else
     export VISUAL="xdg-open"
