@@ -70,6 +70,7 @@ if [ -d "$HOME/.emacs.d" ] || [ -e "$HOME/.emacs" ] || [ -L "$HOME/.emacs.d" ]; 
 		echo "Wiping out previous emacs settings."
 		rm -rf "$HOME/.emacs"
 		rm -rf "$HOME/.emacs.d"
+		rm -rf "$HOME/.spacemacs"
 
 		echo "Let's install Doomemacs!!"
 		git clone --depth 1 https://github.com/hlissner/doom-emacs "$HOME/.emacs.d"
@@ -79,7 +80,6 @@ fi
 
 echo "Ok, updating the doom.d setting files!!"
 rm -rvf ${HOME}/.doom.d/*
-# cp -vfr $SCRIPTPATH/../dotfiles/doom.d/*.el $HOME/.doom.d/
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/init.el" "${HOME}/.doom.d/init.el" || true
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/config.el" "${HOME}/.doom.d/config.el" || true 
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/packages.el" "${HOME}/.doom.d/packages.el" || true
