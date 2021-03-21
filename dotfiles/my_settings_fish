@@ -36,18 +36,19 @@ if not test -d "$MYSETTINGSDIR"
     mkdir -p "$MYSETTINGSDIR"
 end
 
-if type -f "$LS_MODE_SAVE"
+set LS_MODE_SAVE "$MYSETTINGSDIR/ls_mode"
+if test -f "$LS_MODE_SAVE"
     set LS_MODE (cat "$LS_MODE_SAVE")
 else
     set LS_MODE 'lsd'
-    touch "$HOME/.ls_mode"
+    touch "$LS_MODE_SAVE"
     echo 'lsd' >"$LS_MODE_SAVE"
 end
 
-set BATTHEMESAVE="$MYSETTINGSDIR/bat_theme"
-set BATTHEME="Dracula"
+set BATTHEMESAVE "$MYSETTINGSDIR/bat_theme"
+set BATTHEME "Dracula"
 if test -f "$BATTHEMESAVE"
-    set BATTHEME="(cat "$BATTHEMESAVE")"
+    set BATTHEME (cat "$BATTHEMESAVE")
 else
     touch $BATTHEMESAVE
     echo $BATTHEME >"$BATTHEMESAVE"
@@ -339,15 +340,17 @@ if test -d $JAVA_HOME
     set CLASSPATH=$JAVA_HOME/lib
 end
 
-if test -z (cat /etc/os-release | grep 'ID' | grep 'elementary')
+if not test -z (cat /etc/os-release | grep 'ID' | grep 'elementary')
     alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
     alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
 end
 
-if not test -z "(ps -A | grep emacs)"
-    alias emacs='emacsclient -c'
-    alias emacst='emacsclient -t'
-end
+# if not test -z "(ps -A | grep emacs)"
+#     alias emacs='emacsclient -c'
+#     alias emacst='emacsclient -t'
+# end
+# set ALTERNATE_EDITOR ''
+# alias e='emacsclient -c'
 
 if test -d "$HOME/.cargo"
     printf "$check_symbol Cargo directory detected at $HOME/.cargo\n"

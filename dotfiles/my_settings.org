@@ -224,11 +224,12 @@ fi
 #+end_src
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-if type -f "$LS_MODE_SAVE"
+set LS_MODE_SAVE "$MYSETTINGSDIR/ls_mode"
+if test -f "$LS_MODE_SAVE"
     set LS_MODE (cat "$LS_MODE_SAVE")
 else
     set LS_MODE 'lsd'
-    touch "$HOME/.ls_mode"
+    touch "$LS_MODE_SAVE"
     echo 'lsd' >"$LS_MODE_SAVE"
 end
 #+end_src
@@ -255,10 +256,10 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-set BATTHEMESAVE="$MYSETTINGSDIR/bat_theme"
-set BATTHEME="Dracula"
+set BATTHEMESAVE "$MYSETTINGSDIR/bat_theme"
+set BATTHEME "Dracula"
 if test -f "$BATTHEMESAVE"
-    set BATTHEME="(cat "$BATTHEMESAVE")"
+    set BATTHEME (cat "$BATTHEMESAVE")
 else
     touch $BATTHEMESAVE
     echo $BATTHEME >"$BATTHEMESAVE"
@@ -1221,20 +1222,25 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-if test -z (cat /etc/os-release | grep 'ID' | grep 'elementary')
+if not test -z (cat /etc/os-release | grep 'ID' | grep 'elementary')
     alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
     alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
 end
 #+end_src
 
 ** Emacs as service alias
+Also deals with elementary OS situation.
 *** Bash
 #+NAME: prog_emacs_service
 #+begin_src shell :tangle my_settings_bash
-if [ ! -z "$(ps -A | grep emacs)" ]; then
-	alias emacs='emacsclient -c'
-	alias emacst='emacsclient -t'
-fi
+# if [ ! -z "$(ps -A | grep emacs)" ]; then
+#     if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
+#         alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacsclient -c'
+#         alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
+#     else
+#         alias emacs='emacsclient -c'
+#     fi
+# fi
 #+end_src
 
 *** Zsh
@@ -1244,10 +1250,12 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-if not test -z "(ps -A | grep emacs)"
-    alias emacs='emacsclient -c'
-    alias emacst='emacsclient -t'
-end
+# if not test -z "(ps -A | grep emacs)"
+#     alias emacs='emacsclient -c'
+#     alias emacst='emacsclient -t'
+# end
+# set ALTERNATE_EDITOR ''
+# alias e='emacsclient -c'
 #+end_src
 
 ** Rust (Cargo, actually.)
@@ -1973,8 +1981,8 @@ clear
 #+end_src
 
 *** Fish
-#+begin_src fish :tangle my_settings_fish :noweb yes
-<<autobat_clear>>
+#+begin_src fish :tangle my_settings_fish
+clear
 #+end_src
 
 ** Run Neofetch

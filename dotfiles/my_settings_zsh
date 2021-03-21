@@ -363,10 +363,14 @@ if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
 	alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
 fi
 
-if [ ! -z "$(ps -A | grep emacs)" ]; then
-	alias emacs='emacsclient -c'
-	alias emacst='emacsclient -t'
-fi
+# if [ ! -z "$(ps -A | grep emacs)" ]; then
+#     if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
+#         alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacsclient -c'
+#         alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
+#     else
+#         alias emacs='emacsclient -c'
+#     fi
+# fi
 
 if [ -d $HOME/.cargo ]; then
   printf "${check_symbol} Cargo directory detected at $HOME/.cargo\n"
