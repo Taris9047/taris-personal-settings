@@ -36,6 +36,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#termbin][Termbin]]
   - [[#switching-shells][Switching shells]]
   - [[#youtube-dl-shortcuts][youtube-dl shortcuts]]
+  - [[#clear-screen][Clear screen]]
 - [[#basic-functions-for-everyday-use][Basic Functions for everyday use]]
   - [[#prepending-system-path-variable][Prepending system PATH variable.]]
   - [[#extract-archive][Extract archive]]
@@ -73,7 +74,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
 - [[#shell-extension][Shell extension]]
   - [[#starship][Starship]]
 - [[#final-start-up][Final start-up]]
-  - [[#clear-screen][Clear screen]]
+  - [[#clear-screen-1][Clear screen]]
   - [[#run-neofetch][Run Neofetch]]
   - [[#clean-up-path][Clean up path]]
 
@@ -348,26 +349,26 @@ end
 
 function set_ls
     if not set -q $argv[1]
-        printf "${check_symbol} Current ls mode is: ${LS_MODE}\n"
+        printf "$check_symbol Current ls mode is: $LS_MODE\n"
     else
         set LS_MODE "$1"
     end
 
     switch "$LS_MODE"
         case "lsd"
-            printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+            printf "  $right_arrow_symbol Activating '$LS_MODE' mode.\n"
             set_lsd_as_ls
 
         case "exa"
-            printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+            printf "  $right_arrow_symbol Activating '$LS_MODE' mode.\n"
             set_exa_as_ls
 
         case "ls"
-            printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+            printf "  $right_arrow_symbol Activating '$LS_MODE' mode.\n"
             set_ls_as_ls
 
         case "*"
-            printf "  ${right_arrow_symbol} is not available!\n"
+            printf "  $right_arrow_symbol is not available!\n"
             printf "    Select one of: lsd, exa, ls\n"
     end
 end
@@ -501,13 +502,15 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-if not typq -q spark
-  printf "$check_symbol Installing spark!!\n"
-  printf "  $right_arrow_symbol Type in your password if you feel it's
-  if not test -d "$HOMEBREW/bin"
-    mkdir -pv "$HOMEBREW/bin"
-  end
-  sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark" || true
+if not type -q spark
+    printf "$check_symbol Installing spark!!\n"
+    printf "  $right_arrow_symbol Type in your password if you feel it's stuck!!\n"
+    if not test -d "$HOMEBREW/bin"
+        mkdir -pv "$HOMEBREW/bin"
+    end
+    sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark
+    chmod +x $HOMEBREW/bin/spark"
+    or true
 end
 #+end_src
 
@@ -584,7 +587,12 @@ alias pmin='sudo pacman -Syyu'
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish :noweb yes
-<<alias_pkg_managers>>
+alias aptup='sudo apt-get -y update; sudo apt-get -y upgrade'
+alias aptin='sudo apt-get -y update; sudo apt-get -y upgrade; sudo apt-get install'
+alias dnfup='sudo dnf -y update'
+alias dnfin='sudo dnf -y install'
+alias pmyy='sudo pacman -Syyu'
+alias pmin='sudo pacman -Syyu'
 #+end_src
 
 ** Quickly exit from a directory
@@ -647,7 +655,7 @@ gcatchup() {
 	git pull
 }
 gtag() {
-	git tag -a "\"$1\""
+	git tag -a "\"${1}\""
 }
 alias gaddup='git add -u'
 alias gaddall='git add .'
@@ -736,9 +744,9 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-alias tobash="sudo chsh $USER -s (command -v bash) && echo 'Now log out'"
+alias tobash="sudo chsh $USER -s (command -v bash); echo 'Now log out'"
 if type -q zsh
-    alias tozsh="sudo chsh $USER -s (command -v zsh) && echo 'Now log out'"
+    alias tozsh="sudo chsh $USER -s (command -v zsh); echo 'Now log out'"
 end
 #+end_src
 
@@ -785,6 +793,31 @@ if type -q youtube-dl
 end
 #+end_src
 
+** Clear screen
+*** Bash
+#+NAME: alias_clear
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v spark)" ] && [ -x "$(command -v lolcat)" ]; then
+  alias clear='clear; echo; seq 1 $(tput cols) | sort -R | spark | lolcat; echo; echo'
+elif [ -x "$(command -v spark)" ] && [ ! -x "$(command -v lolcat)" ]; then
+  alias clear='clear; echo; seq 1 $(tput cols) | sort -R | spark; echo'
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_clear>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q spark and type -q lolcat
+    alias clear='clear; echo; echo; seq 1 (tput cols) | sort -R | spark | lolcat; echo; echo' # Coloured
+else if type -q spark and not type -q lolcat
+    alias clear='clear; echo; echo; seq 1 (tput cols) | sort -R | spark | echo; echo' # Non-Coloured end clear
+end
+#+end_src
+
 * Basic Functions for everyday use
 ** Prepending system PATH variable.
 Apparently, there are much better ways to handle this kind of job and many newer shell versions will provide some kind of macro or internal functions to do this. But I would rather stay safe.
@@ -808,7 +841,7 @@ addpath() {
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 function addpath
-    switch "(echo "$PATH")"
+    switch "$PATH"
         case "\*":$1:"\*"
             pass
         case "*"
