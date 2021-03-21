@@ -17,12 +17,27 @@ check_symbol="\033[1;32m\u2713\033[0m"
 right_arrow_symbol="\033[1;37m\u2192\033[0m"
 line_delay=0.12
 
-if [ -f "$HOME/.ls_mode" ]; then
-	export LS_MODE="$(cat "$HOME/.ls_mode")"
+export MYSETTINGSDIR="$HOME/.config/my_settings"
+if [ ! -d "$MYSETTINGSDIR" ]; then
+    mkdir -p "$MYSETTINGSDIR"
+fi
+
+export LS_MODE_SAVE="$MYSETTINGSDIR/ls_mode"
+if [ -f "$LS_MODE_SAVE" ]; then
+	export LS_MODE="$(cat "$LS_MODE_SAVE")"
 else
 	export LS_MODE='lsd'
-  touch "$HOME/.ls_mode"
-	echo 'lsd' >"$HOME/.ls_mode"
+	touch "$LS_MODE_SAVE"
+	echo 'lsd' >"$LS_MODE_SAVE"
+fi
+
+export BATTHEMESAVE="$MYSETTINGSDIR/bat_theme"
+export BATTHEME="Dracula"
+if [ -f "$BATTHTMESAVE" ]; then
+	export BATTHEME="$(cat "$BATTHEMESAVE")"
+else
+	touch $BATTHEMESAVE
+	echo $BATTHEME >"$BATTHEMESAVE"
 fi
 
 HBREW_PATH="$HOME/.local"
@@ -51,7 +66,7 @@ set_ls_as_ls() {
 	alias l='ls -p -F -h --color=auto --show-control-chars'
 	alias lt='tree'
 	alias l.='ls -a | grep "^\."'
-	echo 'ls' >"$HOME/.ls_mode"
+	echo 'ls' >"$LS_MODE_SAVE"
 }
 
 set_exa_as_ls() {
@@ -63,7 +78,7 @@ set_exa_as_ls() {
 		alias l='exa -hF --color=always --group-directories-first'
 		alias lt='exa -aT --color=always --group-directories-first'
 		alias l.='exa -a | egrep "^\."'
-		echo 'exa' >"$HOME/.ls_mode"
+		echo 'exa' >"$LS_MODE_SAVE"
 	fi
 }
 
@@ -76,7 +91,7 @@ set_lsd_as_ls() {
 		alias l='lsd -hF --color=auto --group-dirs=first'
 		alias lt='lsd -a --tree --color=fancy --group-dirs=first'
 		alias l.='lsd -a | egrep "^\."'
-		echo 'lsd' >"$HOME/.ls_mode"
+		echo 'lsd' >"$LS_MODE_SAVE"
 	fi
 }
 
@@ -483,10 +498,24 @@ else
 fi
 
 if [ -x "$(command -v bat)" ]; then
-  printf "${check_symbol} bat found! using it instead of cat\n"
-  sleep ${line_delay}
-  alias cat='bat'
+	printf "${check_symbol} bat found! using it instead of cat\n"
+	sleep ${line_delay}
+	alias cat='bat --theme="$BATTHEME"'
 fi
+
+set_bat_theme() {
+	echo "$1" >"$BATTHEMESAVE"
+	export BATTHEME="$1"
+}
+
+bat_theme_light() {
+	echo "Solarized (light)" >"$BATTHEMESAVE"
+	export BATTHEME="Solarized (light)"
+}
+bat_theme_dark() {
+	echo "Dracula" >"$BATTHEMESAVE"
+	export BATTHEME="Dracula"
+}
 
 trash_location="$HOME/.local/share/Trash/files/"
 if [ -x "$(command -v rip)" ]; then

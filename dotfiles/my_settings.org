@@ -17,7 +17,9 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#some-decorative-stuffs][Some decorative stuffs]]
   - [[#autocompletion-color][Autocompletion color]]
   - [[#manpage-reader][Manpage reader]]
+  - [[#default-setting-directory][Default Setting directory]]
   - [[#ls-mode-initial-set-up][ls mode initial set up]]
+  - [[#bat-theme-initial-set-up][bat theme initial set up]]
   - [[#homebrew-directory-set][Homebrew directory set]]
   - [[#ls-mode-set---we-will-install-exa-and-lsd-later][ls mode set - We will install exa and lsd later.]]
   - [[#cloud-directories][Cloud directories]]
@@ -180,16 +182,40 @@ else if type -q nvim
 end
 #+end_src
 
+** Default Setting directory
+*** Bash
+#+NAME: config_my_set_dir
+#+begin_src shell :tangle my_settings_bash
+export MYSETTINGSDIR="$HOME/.config/my_settings"
+if [ ! -d "$MYSETTINGSDIR" ]; then
+    mkdir -p "$MYSETTINGSDIR"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<config_my_set_dir>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set MYSETTINGSDIR "$HOME/.config/my_settings"
+if not test -d "$MYSETTINGSDIR"
+    mkdir -p "$MYSETTINGSDIR"
+end
+#+end_src
+
 ** ls mode initial set up
 *** Bash
 #+NAME: config_ls_mode_init
 #+begin_src shell :tangle my_settings_bash
-if [ -f "$HOME/.ls_mode" ]; then
-	export LS_MODE="$(cat "$HOME/.ls_mode")"
+export LS_MODE_SAVE="$MYSETTINGSDIR/ls_mode"
+if [ -f "$LS_MODE_SAVE" ]; then
+	export LS_MODE="$(cat "$LS_MODE_SAVE")"
 else
 	export LS_MODE='lsd'
-  touch "$HOME/.ls_mode"
-	echo 'lsd' >"$HOME/.ls_mode"
+	touch "$LS_MODE_SAVE"
+	echo 'lsd' >"$LS_MODE_SAVE"
 fi
 #+end_src
 *** Zsh
@@ -198,12 +224,44 @@ fi
 #+end_src
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-if type -f "$HOME/.ls_mode"
-    set LS_MODE (cat "$HOME/.ls_mode")
+if type -f "$LS_MODE_SAVE"
+    set LS_MODE (cat "$LS_MODE_SAVE")
 else
     set LS_MODE 'lsd'
     touch "$HOME/.ls_mode"
-    echo 'lsd' >"$HOME/.ls_mode"
+    echo 'lsd' >"$LS_MODE_SAVE"
+end
+#+end_src
+
+
+** bat theme initial set up
+*** Bash
+#+NAME: config_bat_theme
+#+begin_src shell :tangle my_settings_bash
+export BATTHEMESAVE="$MYSETTINGSDIR/bat_theme"
+export BATTHEME="Dracula"
+if [ -f "$BATTHTMESAVE" ]; then
+	export BATTHEME="$(cat "$BATTHEMESAVE")"
+else
+	touch $BATTHEMESAVE
+	echo $BATTHEME >"$BATTHEMESAVE"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<config_bat_theme>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set BATTHEMESAVE="$MYSETTINGSDIR/bat_theme"
+set BATTHEME="Dracula"
+if test -f "$BATTHEMESAVE"
+    set BATTHEME="(cat "$BATTHEMESAVE")"
+else
+    touch $BATTHEMESAVE
+    echo $BATTHEME >"$BATTHEMESAVE"
 end
 #+end_src
 
@@ -262,7 +320,7 @@ set_ls_as_ls() {
 	alias l='ls -p -F -h --color=auto --show-control-chars'
 	alias lt='tree'
 	alias l.='ls -a | grep "^\."'
-	echo 'ls' >"$HOME/.ls_mode"
+	echo 'ls' >"$LS_MODE_SAVE"
 }
 
 set_exa_as_ls() {
@@ -274,7 +332,7 @@ set_exa_as_ls() {
 		alias l='exa -hF --color=always --group-directories-first'
 		alias lt='exa -aT --color=always --group-directories-first'
 		alias l.='exa -a | egrep "^\."'
-		echo 'exa' >"$HOME/.ls_mode"
+		echo 'exa' >"$LS_MODE_SAVE"
 	fi
 }
 
@@ -287,7 +345,7 @@ set_lsd_as_ls() {
 		alias l='lsd -hF --color=auto --group-dirs=first'
 		alias lt='lsd -a --tree --color=fancy --group-dirs=first'
 		alias l.='lsd -a | egrep "^\."'
-		echo 'lsd' >"$HOME/.ls_mode"
+		echo 'lsd' >"$LS_MODE_SAVE"
 	fi
 }
 
@@ -1662,10 +1720,24 @@ end
 #+NAME: prog_bat
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v bat)" ]; then
-  printf "${check_symbol} bat found! using it instead of cat\n"
-  sleep ${line_delay}
-  alias cat='bat'
+	printf "${check_symbol} bat found! using it instead of cat\n"
+	sleep ${line_delay}
+	alias cat='bat --theme="$BATTHEME"'
 fi
+
+set_bat_theme() {
+	echo "$1" >"$BATTHEMESAVE"
+	export BATTHEME="$1"
+}
+
+bat_theme_light() {
+	echo "Solarized (light)" >"$BATTHEMESAVE"
+	export BATTHEME="Solarized (light)"
+}
+bat_theme_dark() {
+	echo "Dracula" >"$BATTHEMESAVE"
+	export BATTHEME="Dracula"
+}
 #+end_src
 
 *** Zsh
@@ -1678,7 +1750,21 @@ fi
 if type -q bat
     printf "$check_symbol bat found! using it instead of cat\n"
     sleep $line_delay
-    alias cat='bat'
+    alias cat='bat --theme="$BATTHEME"'
+end
+
+function set_bat_theme
+    echo "$argv[1]" >"$BATTHEMESAVE"
+    set BATTHEME "$1"
+end
+
+function bat_theme_light
+    echo "Solariazed (light)" >"$BATTHEMESAVE"
+    set BATTHEME "Solarized (light)"
+end
+function bat_theme_dark
+    echo "Dracula" >"$BATTHEMESAVE"
+    set BATTHEME "Dracula"
 end
 #+end_src
 

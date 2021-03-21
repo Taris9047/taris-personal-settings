@@ -31,12 +31,26 @@ else if type -q nvim
     set -x MANPAGER "nvim -c 'set ft=man' -"
 end
 
-if type -f "$HOME/.ls_mode"
-    set LS_MODE (cat "$HOME/.ls_mode")
+set MYSETTINGSDIR "$HOME/.config/my_settings"
+if not test -d "$MYSETTINGSDIR"
+    mkdir -p "$MYSETTINGSDIR"
+end
+
+if type -f "$LS_MODE_SAVE"
+    set LS_MODE (cat "$LS_MODE_SAVE")
 else
     set LS_MODE 'lsd'
     touch "$HOME/.ls_mode"
-    echo 'lsd' >"$HOME/.ls_mode"
+    echo 'lsd' >"$LS_MODE_SAVE"
+end
+
+set BATTHEMESAVE="$MYSETTINGSDIR/bat_theme"
+set BATTHEME="Dracula"
+if test -f "$BATTHEMESAVE"
+    set BATTHEME="(cat "$BATTHEMESAVE")"
+else
+    touch $BATTHEMESAVE
+    echo $BATTHEME >"$BATTHEMESAVE"
 end
 
 set HBREW_PATH "$HOME/.local"
@@ -458,7 +472,21 @@ end
 if type -q bat
     printf "$check_symbol bat found! using it instead of cat\n"
     sleep $line_delay
-    alias cat='bat'
+    alias cat='bat --theme="$BATTHEME"'
+end
+
+function set_bat_theme
+    echo "$argv[1]" >"$BATTHEMESAVE"
+    set BATTHEME "$1"
+end
+
+function bat_theme_light
+    echo "Solariazed (light)" >"$BATTHEMESAVE"
+    set BATTHEME "Solarized (light)"
+end
+function bat_theme_dark
+    echo "Dracula" >"$BATTHEMESAVE"
+    set BATTHEME "Dracula"
 end
 
 set trash_location "$HOME/.local/share/Trash/files/"
