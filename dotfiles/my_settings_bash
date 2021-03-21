@@ -511,8 +511,8 @@ set_bat_theme() {
 }
 
 bat_theme_light() {
-	echo "Solarized (light)" >"$BATTHEMESAVE"
-	export BATTHEME="Solarized (light)"
+	echo 'Solarized (light)' >"$BATTHEMESAVE"
+	export BATTHEME='Solarized (light)'
 }
 bat_theme_dark() {
 	echo "Dracula" >"$BATTHEMESAVE"
