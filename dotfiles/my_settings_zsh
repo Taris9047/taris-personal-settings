@@ -494,16 +494,19 @@ if [ -x "$(command -v zoxide)" ]; then
 fi
 
 if [ -x "$(command -v rclone)" ]; then
-  if grep -qs $ONE_DRIVE /proc/mounts ; then
-    printf "${check_symbol} MS One Drive already mounted at $ONE_DRIVE\n"
-    sleep ${line_delay}
-  else
-    if [ ! -z "$(cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive\]")" ]; then
-      printf "${check_symbol} Mounting MS One Drive to $ONE_DRIVE\n"
-      rclone mount --vfs-cache-mode writes onedrive: $ONE_DRIVE &
-      sleep 2
-    fi
-  fi
+	if grep -qs $ONE_DRIVE /proc/mounts; then
+		printf "${check_symbol} MS One Drive already mounted at $ONE_DRIVE\n"
+		sleep ${line_delay}
+	elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
+		printf "${check_symbol} RClone for Onedrive was not set up yet!\n"
+	else
+		if [ ! -z "$(cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive\]")" ]; then
+			printf "${check_symbol} Mounting MS One Drive to $ONE_DRIVE\n"
+			rclone mount --vfs-cache-mode writes onedrive: $ONE_DRIVE &
+			sleep 2
+
+		fi
+	fi
 fi
 
 if [ -x "$(command -v starship)" ]; then
