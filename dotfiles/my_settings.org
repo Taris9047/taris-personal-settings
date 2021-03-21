@@ -638,10 +638,13 @@ alias battery_stat="upower -i `upower -e | grep 'BAT'`"
 #+NAME: alias_git
 #+begin_src shell :tangle my_settings_bash
 gitc() {
-	git commit -a -m "\"$1\"" && git push
+	git commit -a -m "\"${1}\""
+	git push
 }
 gcatchup() {
-	git fetch --all && git reset --hard origin/master && git pull
+	git fetch --all
+	git reset --hard origin/master
+	git pull
 }
 gtag() {
 	git tag -a "\"$1\""

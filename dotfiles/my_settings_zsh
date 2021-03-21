@@ -172,10 +172,13 @@ alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
 alias battery_stat="upower -i `upower -e | grep 'BAT'`"
 
 gitc() {
-	git commit -a -m "\"$1\"" && git push
+	git commit -a -m "\"${1}\""
+	git push
 }
 gcatchup() {
-	git fetch --all && git reset --hard origin/master && git pull
+	git fetch --all
+	git reset --hard origin/master
+	git pull
 }
 gtag() {
 	git tag -a "\"$1\""
