@@ -519,7 +519,6 @@ if [ -x "$(command -v rclone)" ]; then
 			printf "${check_symbol} Mounting MS One Drive to $ONE_DRIVE\n"
 			rclone mount --vfs-cache-mode writes onedrive: $ONE_DRIVE &
 			sleep 2
-
 		fi
 	fi
 fi

@@ -1735,12 +1735,9 @@ fi
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 if type -q zoxide
-    printf "$check_symbol zoxide found! activating it! (z replaces cd)\n"
+    printf "$check_symbol zoxide found! But Fish's cd also has similar history function! Not overriding cd\n"
     sleep $line_delay
     zoxide init fish | source
-    # On fish, cd has an alias! So, using yet another alias to alias is not a good idea!
-    # Just use z instead of cd
-    # alias cd='z'
 end
 #+end_src
 
@@ -1815,7 +1812,6 @@ if [ -x "$(command -v rclone)" ]; then
 			printf "${check_symbol} Mounting MS One Drive to $ONE_DRIVE\n"
 			rclone mount --vfs-cache-mode writes onedrive: $ONE_DRIVE &
 			sleep 2
-
 		fi
 	fi
 fi
@@ -1931,5 +1927,5 @@ export PATH=$(printf "%s" "$PATH" | awk -v RS=':' '!a[$1]++ { if (NR > 1) printf
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-# Fish don't need this...
+# Fish don't need to clean up the PATH
 #+end_src

@@ -469,12 +469,9 @@ if type -q rip
 end
 
 if type -q zoxide
-    printf "$check_symbol zoxide found! activating it! (z replaces cd)\n"
+    printf "$check_symbol zoxide found! But Fish's cd also has similar history function! Not overriding cd\n"
     sleep $line_delay
     zoxide init fish | source
-    # On fish, cd has an alias! So, using yet another alias to alias is not a good idea!
-    # Just use z instead of cd
-    # alias cd='z'
 end
 
 if type -q rclone
@@ -530,4 +527,4 @@ if type -q neofetch
     neofetch
 end
 
-# Fish don't need this...
+# Fish don't need to clean up the PATH
