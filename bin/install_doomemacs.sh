@@ -71,12 +71,13 @@ if [ -d "$HOME/.emacs.d" ] || [ -e "$HOME/.emacs" ] || [ -L "$HOME/.emacs.d" ]; 
 		rm -rf "$HOME/.emacs"
 		rm -rf "$HOME/.emacs.d"
 		rm -rf "$HOME/.spacemacs"
-
-		echo "Let's install Doomemacs!!"
-		git clone --depth 1 https://github.com/hlissner/doom-emacs "$HOME/.emacs.d"
-		"$HOME/.emacs.d/bin/doom" --yes install
 	fi
 fi
+
+echo "Let's install Doomemacs!!"
+git clone --depth 1 https://github.com/hlissner/doom-emacs "$HOME/.emacs.d"
+"$HOME/.emacs.d/bin/doom" --yes install
+
 
 echo "Ok, updating the doom.d setting files!!"
 rm -rvf ${HOME}/.doom.d/*
