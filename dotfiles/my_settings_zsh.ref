@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env zsh
 
 # Some settings adopted from Derek Taylor (DistroTube)
 #
@@ -572,10 +572,8 @@ fi
 if [ -x "$(command -v starship)" ]; then
   printf "${check_symbol} Starship shell extension found! Let's start it!\n"
   sleep ${line_delay}
-  if [[ "$(echo $0)" == *zsh ]]; then
-    printf "  ${right_arrow_symbol} Running it as zsh"
-    eval "$(starship init zsh)"
-  fi
+  printf "  ${right_arrow_symbol} Running it as zsh"
+  eval "$(starship init zsh)"
 fi
 
 # Clean up the screen before loading good stuff.

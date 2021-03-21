@@ -4,6 +4,6 @@
 #
 # Grabbing the absolute path of this file
 scriptpath=${0:a:h}
+echo $scriptpath
 
 source $scriptpath/my_settings_zsh
-
