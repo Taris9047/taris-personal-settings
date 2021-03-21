@@ -92,7 +92,7 @@ set_ls() {
 		set_ls_as_ls
 		;;
 	*)
-		printf "  ${right_arrow_symbol} is not available!\n"
+		printf "  ${right_arrow_symbol} ${LS_MODE} is not available!\n"
 		printf "    Select one of: lsd, exa, ls\n"
 		;;
 	esac

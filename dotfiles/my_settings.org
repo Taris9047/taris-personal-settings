@@ -298,7 +298,7 @@ set_ls() {
 		set_ls_as_ls
 		;;
 	*)
-		printf "  ${right_arrow_symbol} is not available!\n"
+		printf "  ${right_arrow_symbol} ${LS_MODE} is not available!\n"
 		printf "    Select one of: lsd, exa, ls\n"
 		;;
 	esac
@@ -348,7 +348,7 @@ function set_lsd_as_ls
 end
 
 function set_ls
-    if not set -q $argv[1]
+    if not count $argv >/dev/null
         printf "$check_symbol Current ls mode is: $LS_MODE\n"
     else
         set LS_MODE "$1"
@@ -368,7 +368,7 @@ function set_ls
             set_ls_as_ls
 
         case "*"
-            printf "  $right_arrow_symbol is not available!\n"
+            printf "  $right_arrow_symbol $LS_MODE is not available!\n"
             printf "    Select one of: lsd, exa, ls\n"
     end
 end
