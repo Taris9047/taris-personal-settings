@@ -158,7 +158,38 @@ class InstEmacsNC < InstallStuff
     ]
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.RunInstall( env: @env, cmd: cmds.join(" ") )
+    self.InstallSystemd()
     self.WriteInfo
+  end
+
+  def InstallSystemd
+  sd_txt = \
+%Q{[Unit]
+Description=Emacs: the extensible, self-documenting text editor
+
+[Service]
+Type=forking
+ExecStart=#{@prefix}/bin/emacs --daemon --user %u
+ExecStop=#{@prefix}/bin/emacsclient --eval "(progn (setq kill-emacs-hook 'nil) (kill-emacs))"
+Restart=always
+User=%i
+WorkingDirectory=%h
+
+[Install]
+WantedBy=multi-user.target
+}
+  
+  systemd_dir = File.join(ENV["HOME"],'.config','systemd','user')
+  FileUtils.mkdir_p(systemd_dir)
+  File.write(File.join(systemd_dir, 'emacs.service'), sd_txt)
+  
+  inst_cmd = [
+    "systemctl --user daemon-reload",
+    "systemctl enable --user emacs",
+    "systemctl start --user emacs",
+  ]
+  
+  self.Run(cmd: inst_cmd)
   end
 
 end # class InstEmacsNC
