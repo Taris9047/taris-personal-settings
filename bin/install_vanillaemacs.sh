@@ -8,7 +8,7 @@ rm -rf "$HOME/.emacs.d"
 rm -rf "$HOME/.doom.d"
 
 echo "Linking the vanilla emacs stuffs from $SCRIPTPATH"
-ln -sfv "$SCRIPTPATH/emacs" "$HOME/.emacs"
-ln -sfv "$SCRIPTPATH/emacs.d" "$HOME/.emacs.d"
+ln -sfv "$SCRIPTPATH/../dotfiles/emacs" "$HOME/.emacs"
+ln -sfv "$SCRIPTPATH/../dotfiles/emacs.d" "$HOME/.emacs.d"
 
 echo "Done. Enjoy your lightweight (but not fun) emacs."

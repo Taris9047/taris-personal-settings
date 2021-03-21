@@ -34,6 +34,17 @@ class InstEmacs < InstallStuff
     @conf_options += [
       # This may not work.. on 27
       '--with-modules',
+      '--with-xft',
+      '--with-file-notification=inotify',
+      '--with-x=yes',
+      '--with-x-toolkit=gtk3',
+      '--with-xwidgets',
+      '--with-lcms2',
+      '--with-giflib',
+      '--with-imagemagick',
+      '--with-mailutils',
+      '--with-pop',
+      '--with-native-compilation',
       '--with-mailutils',
       '--with-pop',
     #  '--with-xwidgets'    # needs webkitgtk4-dev
@@ -43,7 +54,7 @@ class InstEmacs < InstallStuff
     @env["CXX"] = "g++"
     @env["CFLAGS"] = "-O3 -fomit-frame-pointer -march=native -pipe -I#{@prefix}/include"
     @env["CXXLAGS"] = "-O3 -fomit-frame-pointer -march=native -pipe -I#{@prefix}/include"
-    @env["LDFLAGS"] = "-Wl,-rpath=#{@prefix}/lib -Wl,-rpath=#{@prefix}/lib64 -L#{@prefix}/lib -L#{@prefix}/lib64"
+    @env["LDFLAGS"] = "-Wl,-rpath=#{@prefix}/lib -Wl,-rpath=#{@prefix}/lib64"
 
   end
 

@@ -88,10 +88,11 @@ install_prereq_Ubuntu ()
 install_prereq_Ubuntu1804()
 {
   pkgs=$( array_to_string "${Ubuntu_1804_packages[@]}")
-  gems=$( array_to_string "${Ruby_gems[@]}")
+  gems=$( array_to_string "${Ruby_gems_RHEL[@]}")
   sudo -H apt-get -y update && sudo apt-get -y upgrade
   sudo -H apt-get -y install $pkgs
   sudo -H /usr/bin/gem install $gems
+  sudo -H /usr/bin/gem install open3 -v 0.1.0
 }
 
 install_prereq_Debian ()

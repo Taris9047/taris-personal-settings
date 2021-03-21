@@ -40,6 +40,14 @@ class InstEmacsNC < InstallStuff
     # Checking up qt5
     @conf_options += [
       '--with-modules',
+      '--with-xft',
+      '--with-file-notification=inotify',
+      '--with-x=yes',
+      '--with-x-toolkit=gtk3',
+      '--with-xwidgets',
+      '--with-lcms2',
+      '--with-giflib',
+      '--with-imagemagick',
       '--with-mailutils',
       '--with-pop',
       '--with-native-compilation',
@@ -88,6 +96,7 @@ class InstEmacsNC < InstallStuff
       # further since they keep them in pretty peculiar places.
       search_result = `find #{@gcc_prefix} | grep libgccjit`
       if search_result.include? 'libgccjit'
+        @env["LDFLAGS"] += " "+["-Wl,-rpath=#{@gcc_prefix}/lib/x86_64-linux-gnu"].join(' ')
         libgccjit_found = true
         return libgccjit_found
       end
