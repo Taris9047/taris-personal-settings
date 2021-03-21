@@ -31,7 +31,13 @@ else if type -q nvim
     set -x MANPAGER "nvim -c 'set ft=man' -"
 end
 
-set LS_MODE 'lsd'
+if type -f "$HOME/.ls_mode"
+    set LS_MODE (cat "$HOME/.ls_mode")
+else
+    set LS_MODE 'lsd'
+    touch "$HOME/.ls_mode"
+    echo 'lsd' >"$HOME/.ls_mode"
+end
 
 set HBREW_PATH "$HOME/.local"
 if test -d $HBREW_PATH
@@ -49,6 +55,7 @@ function set_ls_as_ls
     alias l='ls -p -F -h --color=auto --show-control-chars'
     alias lt='tree'
     alias l.='ls -a | grep "^\."'
+    echo 'ls' >"$HOME/.ls_mode"
 end
 
 function set_exa_as_ls
@@ -60,6 +67,7 @@ function set_exa_as_ls
         alias l='exa -hF --color=always --group-directories-first'
         alias lt='exa -aT --color=always --group-directories-first'
         alias l.='exa -a | egrep "^\."'
+        echo 'exa' >"$HOME/.ls_mode"
     end
 end
 
@@ -72,6 +80,7 @@ function set_lsd_as_ls
         alias l='lsd -hF --color=auto --group-dirs=first'
         alias lt='lsd -a --tree --color=fancy --group-dirs=first'
         alias l.='lsd -a | egrep "^\."'
+        echo 'lsd' >"$HOME/.ls_mode"
     end
 end
 

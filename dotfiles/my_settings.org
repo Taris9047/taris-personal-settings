@@ -182,16 +182,29 @@ end
 
 ** ls mode initial set up
 *** Bash
+#+NAME: config_ls_mode_init
 #+begin_src shell :tangle my_settings_bash
-export LS_MODE='lsd'
+if [ -f "$HOME/.ls_mode" ]; then
+	export LS_MODE="$(cat "$HOME/.ls_mode")"
+else
+	export LS_MODE='lsd'
+  touch "$HOME/.ls_mode"
+	echo 'lsd' >"$HOME/.ls_mode"
+fi
 #+end_src
 *** Zsh
-#+begin_src shell :tangle my_settings_zsh
-export LS_MODE='lsd'
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<config_ls_mode_init>>
 #+end_src
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-set LS_MODE 'lsd'
+if type -f "$HOME/.ls_mode"
+    set LS_MODE (cat "$HOME/.ls_mode")
+else
+    set LS_MODE 'lsd'
+    touch "$HOME/.ls_mode"
+    echo 'lsd' >"$HOME/.ls_mode"
+end
 #+end_src
 
 ** Homebrew directory set
@@ -219,9 +232,6 @@ if [ -d "${HBREW_PATH}" ]; then
 	fi
 fi
 #+end_src
-
-#+RESULTS: env_var_homebrew
-: HOMEBREW directory is /home/taris/.local
 
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh :noweb yes
@@ -252,6 +262,7 @@ set_ls_as_ls() {
 	alias l='ls -p -F -h --color=auto --show-control-chars'
 	alias lt='tree'
 	alias l.='ls -a | grep "^\."'
+	echo 'ls' >"$HOME/.ls_mode"
 }
 
 set_exa_as_ls() {
@@ -263,6 +274,7 @@ set_exa_as_ls() {
 		alias l='exa -hF --color=always --group-directories-first'
 		alias lt='exa -aT --color=always --group-directories-first'
 		alias l.='exa -a | egrep "^\."'
+		echo 'exa' >"$HOME/.ls_mode"
 	fi
 }
 
@@ -275,6 +287,7 @@ set_lsd_as_ls() {
 		alias l='lsd -hF --color=auto --group-dirs=first'
 		alias lt='lsd -a --tree --color=fancy --group-dirs=first'
 		alias l.='lsd -a | egrep "^\."'
+		echo 'lsd' >"$HOME/.ls_mode"
 	fi
 }
 
@@ -298,7 +311,7 @@ set_ls() {
 		printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
 		set_ls_as_ls
 		;;
-	*)
+	"*")
 		printf "  ${right_arrow_symbol} ${LS_MODE} is not available!\n"
 		printf "    Select one of: lsd, exa, ls\n"
 		;;
@@ -322,6 +335,7 @@ function set_ls_as_ls
     alias l='ls -p -F -h --color=auto --show-control-chars'
     alias lt='tree'
     alias l.='ls -a | grep "^\."'
+    echo 'ls' >"$HOME/.ls_mode"
 end
 
 function set_exa_as_ls
@@ -333,6 +347,7 @@ function set_exa_as_ls
         alias l='exa -hF --color=always --group-directories-first'
         alias lt='exa -aT --color=always --group-directories-first'
         alias l.='exa -a | egrep "^\."'
+        echo 'exa' >"$HOME/.ls_mode"
     end
 end
 
@@ -345,6 +360,7 @@ function set_lsd_as_ls
         alias l='lsd -hF --color=auto --group-dirs=first'
         alias lt='lsd -a --tree --color=fancy --group-dirs=first'
         alias l.='lsd -a | egrep "^\."'
+        echo 'lsd' >"$HOME/.ls_mode"
     end
 end
 

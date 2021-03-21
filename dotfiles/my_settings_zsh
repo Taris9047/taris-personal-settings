@@ -17,7 +17,13 @@ check_symbol="\033[1;32m\u2713\033[0m"
 right_arrow_symbol="\033[1;37m\u2192\033[0m"
 line_delay=0.12
 
-export LS_MODE='lsd'
+if [ -f "$HOME/.ls_mode" ]; then
+	export LS_MODE="$(cat "$HOME/.ls_mode")"
+else
+	export LS_MODE='lsd'
+  touch "$HOME/.ls_mode"
+	echo 'lsd' >"$HOME/.ls_mode"
+fi
 
 HBREW_PATH="$HOME/.local"
 if [ -d "${HBREW_PATH}" ]; then
@@ -45,6 +51,7 @@ set_ls_as_ls() {
 	alias l='ls -p -F -h --color=auto --show-control-chars'
 	alias lt='tree'
 	alias l.='ls -a | grep "^\."'
+	echo 'ls' >"$HOME/.ls_mode"
 }
 
 set_exa_as_ls() {
@@ -56,6 +63,7 @@ set_exa_as_ls() {
 		alias l='exa -hF --color=always --group-directories-first'
 		alias lt='exa -aT --color=always --group-directories-first'
 		alias l.='exa -a | egrep "^\."'
+		echo 'exa' >"$HOME/.ls_mode"
 	fi
 }
 
@@ -68,6 +76,7 @@ set_lsd_as_ls() {
 		alias l='lsd -hF --color=auto --group-dirs=first'
 		alias lt='lsd -a --tree --color=fancy --group-dirs=first'
 		alias l.='lsd -a | egrep "^\."'
+		echo 'lsd' >"$HOME/.ls_mode"
 	fi
 }
 
@@ -91,7 +100,7 @@ set_ls() {
 		printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
 		set_ls_as_ls
 		;;
-	*)
+	"*")
 		printf "  ${right_arrow_symbol} ${LS_MODE} is not available!\n"
 		printf "    Select one of: lsd, exa, ls\n"
 		;;
