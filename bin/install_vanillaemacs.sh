@@ -11,4 +11,4 @@ echo "Linking the vanilla emacs stuffs from $SCRIPTPATH"
 ln -sfv "$SCRIPTPATH/../dotfiles/emacs" "$HOME/.emacs"
 ln -sfv "$SCRIPTPATH/../dotfiles/emacs.d" "$HOME/.emacs.d"
 
-echo "Done. Enjoy your lightweight (but not fun) emacs."
+echo "Done. Enjoy your lightweight (but not so fun) emacs."
