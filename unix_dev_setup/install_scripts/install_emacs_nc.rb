@@ -1,15 +1,20 @@
 #!/usr/bin/env ruby
 # this will handle emacs with native-compiler
 
-# Additional deps for Ubuntu
+# Additional deps for Ubuntu 20.04
 #
 # libgccjit0 libgccjit10-dev texinfo
 #
+# Ubuntu 18.04 needs
+#
+# libgccjit0 libgccjit-7-devs
 
 # Additional deps for Fedora
 #
 # libgccjit-devel texinfo
 # 
+
+$newest_gcc_ver = '10'
 
 require 'fileutils'
 require_relative '../utils/utils.rb'
@@ -55,8 +60,8 @@ class InstEmacsNC < InstallStuff
       @env["CC"] = 'gcc-jit'
       gcc_jit_found = true
       libgccjit_found = true
-    elsif UTILS.which('gcc-10')
-      @env["CC"] = 'gcc-10'
+    elsif UTILS.which("gcc-#{$newest_gcc_ver}")
+      @env["CC"] = "gcc-#{$newest_gcc_ver}"
     else
       @env["CC"] = 'gcc'
     end
@@ -64,8 +69,8 @@ class InstEmacsNC < InstallStuff
       @env["CXX"] = 'g++-jit'
       gcc_jit_found = true
       libgccjit_found = true
-    elsif UTILS.which('g++-10')
-      @env["CXX"] = 'g++-10'
+    elsif UTILS.which("gcc-#{$newest_gcc_ver}")
+      @env["CXX"] = "gcc-#{$newest_gcc_ver}"
     else
       @env["CXX"] = 'g++'
     end
@@ -86,19 +91,6 @@ class InstEmacsNC < InstallStuff
         libgccjit_found = true
         return libgccjit_found
       end
-      # gcc_libdirs = \
-      #   [ File.join(@gcc_prefix, 'lib'), File.join(@gcc_prefix, 'lib64') ]
-      # 
-      
-      # gcc_libdirs.each do |lib_dir|
-      #   lib_list = Dir[File.join(lib_dir, '*.so')]
-      #   lib_list.each do |libso|
-      #     if libso.include? 'libgccjit' and libso.include? '.so'
-      #       libgccjit_found = true
-      #       return libgccjit_found
-      #     end
-      #   end
-      # end
 
       unless libgccjit_found
         puts "Oops, current compiler #{@env["CC"]} cannot support jit!!"
