@@ -13,6 +13,10 @@
 export TERM="xterm-256color"
 export HISTCONTROL=ignoredups:erasedups
 
+check_symbol="\033[1;32m\u2713\033[0m"
+right_arrow_symbol="\033[1;37m\u2192\033[0m"
+line_delay=0.12
+
 export LS_MODE='lsd'
 
 HBREW_PATH="$HOME/.local"
@@ -20,8 +24,8 @@ if [ -d "${HBREW_PATH}" ]; then
 	export HOMEBREW="${HBREW_PATH}"
 	printf "${check_symbol} HOMEBREW directory is ${HOMEBREW}\n"
 	sleep ${line_delay}
-	addpath "$HOMEBREW/bin"
-	addpath "$HOMEBREW/.opt/bin"
+	export PATH="$HOMEBREW/bin:$PATH"
+	export PATH="$HOMEBREW/.opt/bin:$PATH"
 	if [ ! -d "${HOMEBREW}" ]; then
 		mkdir -p "${HOMEBREW}"
 	fi
@@ -35,63 +39,63 @@ fi
 
 # Let's set up ls as lsd or exa (default is lsd as of now.)
 set_ls_as_ls() {
-  alias ls='ls -p -F -h --color=auto --show-control-chars'
-  alias ll='ls -la'
-  alias lld='du'
-  alias l='ls -p -F -h --color=auto --show-control-chars'
-  alias lt='tree'
-  alias l.='ls -a | grep "^\."'
+	alias ls='ls -p -F -h --color=auto --show-control-chars'
+	alias ll='ls -la'
+	alias lld='du'
+	alias l='ls -p -F -h --color=auto --show-control-chars'
+	alias lt='tree'
+	alias l.='ls -a | grep "^\."'
 }
 
 set_exa_as_ls() {
-  if [ -x "$(command -v exa)" ]; then
-    sleep ${line_delay}
-    alias ls='exa -hF --color=always --group-directories-first'
-    alias ll='exa -lahF --color=always --group-directories-first'
-    alias lld='du'
-    alias l='exa -hF --color=always --group-directories-first'
-    alias lt='exa -aT --color=always --group-directories-first'
-    alias l.='exa -a | egrep "^\."'
-  fi
+	if [ -x "$(command -v exa)" ]; then
+		sleep ${line_delay}
+		alias ls='exa -hF --color=always --group-directories-first'
+		alias ll='exa -lahF --color=always --group-directories-first'
+		alias lld='du'
+		alias l='exa -hF --color=always --group-directories-first'
+		alias lt='exa -aT --color=always --group-directories-first'
+		alias l.='exa -a | egrep "^\."'
+	fi
 }
 
 set_lsd_as_ls() {
-  if [ -x "$(command -v lsd)" ]; then
-    sleep ${line_delay}
-    alias ls='lsd -hF --color=always --group-dirs=first'
-    alias ll='lsd -lahF --color=always --group-dirs=first'
-    alias lld='du'
-    alias l='lsd -hF --color=auto --group-dirs=first'
-    alias lt='lsd -a --tree --color=fancy --group-dirs=first'
-    alias l.='lsd -a | egrep "^\."'
-  fi
+	if [ -x "$(command -v lsd)" ]; then
+		sleep ${line_delay}
+		alias ls='lsd -hF --color=always --group-dirs=first'
+		alias ll='lsd -lahF --color=always --group-dirs=first'
+		alias lld='du'
+		alias l='lsd -hF --color=auto --group-dirs=first'
+		alias lt='lsd -a --tree --color=fancy --group-dirs=first'
+		alias l.='lsd -a | egrep "^\."'
+	fi
 }
 
-set_ls () {
-  if [ $# -eq 0 ]; then
-    printf "${check_symbol} Current ls mode is: ${LS_MODE}\n"
-  else
-    LS_MODE="$1"
-  fi
+set_ls() {
+	if [ $# -eq 0 ]; then
+		printf "${check_symbol} Current ls mode is: ${LS_MODE}\n"
+	else
+		LS_MODE="$1"
+	fi
 
-  case "$LS_MODE" in
-    "lsd")
-      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
-      set_lsd_as_ls
-      ;;
-    "exa")
-      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
-      set_exa_as_ls
-      ;;
-    "ls")
-      printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
-      set_ls_as_ls
-      ;;
-    *)
-      printf "  ${right_arrow_symbol} is not available!\n"
-      printf "    Select one of: lsd, exa, ls\n"
-      ;;
-  esac
+	case "$LS_MODE" in
+	"lsd")
+		printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+		set_lsd_as_ls
+		;;
+	"exa")
+		printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+		set_exa_as_ls
+		;;
+	"ls")
+		printf "  ${right_arrow_symbol} Activating '${LS_MODE}' mode.\n"
+		set_ls_as_ls
+		;;
+	*)
+		printf "  ${right_arrow_symbol} is not available!\n"
+		printf "    Select one of: lsd, exa, ls\n"
+		;;
+	esac
 }
 set_ls
 
@@ -99,10 +103,6 @@ GOOGLE_DRIVE="$HOME/.google-drive"
 ONE_DRIVE="$HOME/.onedrive"
 
 texlive_base_path="$HOME/.texlive"
-
-check_symbol="\033[1;32m\u2713\033[0m"
-right_arrow_symbol="\033[1;37m\u2192\033[0m"
-line_delay=0.12
 
 if [ -x "$(command -v nvim)" ]; then
 	export EDITOR="nvim"
@@ -128,14 +128,16 @@ case ${TERM} in
 esac
 
 if [ ! -x "$(command -v spark)" ]; then
-  if [ ! -d "$HOMEBREW/bin" ]; then
-    mkdir -pv "$HOMEBREW/bin"
-  fi
-  sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark" || true
+	printf "$check_symbol Installing spark!!\n"
+	if [ ! -d "$HOMEBREW/bin" ]; then
+		mkdir -pv "$HOMEBREW/bin"
+	fi
+	sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark && chmod +x $HOMEBREW/bin/spark" || true
 fi
 
 if [ ! -x "$(command -v rclone)" ]; then
-  curl https://rclone.org/install.sh | sudo bash
+  printf "$check_symbol Installing RClone!!\n"
+  curl https://rclone.org/install.sh | sudo -H bash
 fi
 
 alias rm='rm -i'
@@ -198,6 +200,21 @@ if [ -x "$(command -v zsh)" ]; then
 fi
 if [ -x "$(command -v fish)" ]; then
     alias tofish="sudo chsh $USER -s $(command -v fish) && echo 'Now log out.'"
+fi
+
+if [ -x $(command -v youtube-dl) ]; then
+  printf "${check_symbol} youtube-dl found! setting up yta(ytv)-* commands.\n"
+  alias yta-help="echo 'yta-aac yta-best yta-flac yta-m4a yta-mp3 yta-opus yta-vorbis yta-wav ytv-best'"
+  alias yta-aac="youtube-dl --extract-audio --audio-format aac "
+  alias yta-best="youtube-dl --extract-audio --audio-format best "
+  alias yta-flac="youtube-dl --extract-audio --audio-format flac "
+  alias yta-m4a="youtube-dl --extract-audio --audio-format m4a "
+  alias yta-mp3="youtube-dl --extract-audio --audio-format mp3 "
+  alias yta-opus="youtube-dl --extract-audio --audio-format opus "
+  alias yta-vorbis="youtube-dl --extract-audio --audio-format vorbis "
+  alias yta-wav="youtube-dl --extract-audio --audio-format wav "
+  alias ytv-best="youtube-dl -f bestvideo+bestaudio "
+  sleep ${line_delay}
 fi
 
 addpath() {
@@ -292,6 +309,10 @@ open() {
 	done
 }
 
+check_uptime() {
+  echo "$(awk '{print $1}' /proc/uptime)"
+}
+
 if [ -x "$(command -v broot)" ]; then
 	printf "${check_symbol} Broot found!\n"
 	alias br='broot -dhp'
@@ -355,11 +376,88 @@ if [ -x "$(command -v vncserver)" ]; then
   alias vnckill="vncserver -kill :1"
 fi
 
+if [ -x "$(command -v $HOMEBREW/bin/pip3)" ]; then
+  if [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
+    printf "${check_symbol} Locally installed bpytop found!\n"
+    sleep ${line_delay}
+    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
+    alias htop=bpytop
+    alias top=bpytop
+  fi
+fi
+
+ROOT_DIR=$HOMEBREW/.opt/ROOT
+if [ -x "$(command -v $ROOT_DIR/bin/root)" ]; then
+  printf "${check_symbol} ROOT Found! Applying its shell env.\n"
+  alias thisroot="$ROOT_DIR/bin/thisroot.sh"
+fi
+
+if [ -x "$(command -v nvim)" ]; then
+  printf "${check_symbol} Neovim found! replacing vim!\n"
+  sleep ${line_delay}
+  alias vim="nvim"
+  alias vi="nvim"
+fi
+
+texlive_year="2020"
+texlive_arch=x86_64-linux
+texlive_bin_dir=$texlive_base_path/$texlive_year/bin/$texlive_arch/
+texlive_bin_dir_woyear=$texlive_base_path/bin/$texlive_arch/
+if [ -d $texlive_bin_dir ]; then
+  printf "${check_symbol} Texlive found at $texlive_bin_dir directory!!\n"
+  export PATH=$texlive_bin_dir:$PATH
+elif [ -d $texlive_bin_dir_woyear ]; then
+  printf "${check_symbol} Texlive found at $texlive_bin_dir_woyear directory!!\n"
+  export PATH=$texlive_bin_dir_woyear:$PATH
+fi
+
+if [ -x "$(command -v $HOMEBREW/.opt/pypy/bin/pypy3)" ]; then
+  printf "${check_symbol} pypy3 found in $HOMEBREW/.opt/pypy/bin/pypy3!!\n"
+  sleep ${line_delay}
+  export PATH=$HOMEBREW/.opt/pypy/bin:$PATH
+fi
+
+if [ -x "$(command -v n)" ]; then
+  printf "${check_symbol} n found!, Setting up N_PREFIX environment variable.\n"
+  sleep ${line_delay}
+  export N_PREFIX=$(command -v n | sed -E 's/\/bin\/n//')
+fi
+
+iview64_path=$HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe
+run_iview ()
+{
+  wine "$iview64_path" `winepath --windows $@`
+}
+if [ -x "$(command -v wine)" ]; then
+  if [ -f "$iview64_path" ]; then
+    printf "${check_symbol} Irfanview found!!\n"
+    printf "  ${right_arrow_symbol} Usage: iview <files>\n"
+    alias iview=run_iview
+    sleep ${line_delay}
+  fi
+fi
+
+if [ -x "$HOME/.emacs.d/bin/doom" ] && [ -d "$HOME/.doom.d" ]; then
+  printf "${check_symbol} Doomemacs found! Adding to path!\n"
+  addpath "$HOME/.emacs.d/bin"
+fi
+
+if [ -d "/usr/local/cuda-6.5" ]; then
+  printf "${check_symbol} CUDA 6.5 found! Doing some env stuff for it.\n"
+  export LD_LIBRARY_PATH="/usr/local/cuda-6.5/lib64":$LD_LIBRARY_PATH
+  export PATH=$PATH:"/usr/local/cuda-6.5/bin"
+fi
+
+if [ -x "$(command -v jq)" ]; then
+	echo "${check_symbol} jq found, we can use geolocation alias as: geoloc"
+	alias geoloc="curl -s https://ipvigilante.com/$(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
+fi
+
 if [ -x "$(command -v dust)" ]; then
-  printf "${check_symbol} dust found! Using it instead of du!\n"
-  alias du='dust -r'
+	printf "${check_symbol} dust found! Using it instead of du!\n"
+	alias du='dust -r'
 else
-  alias du='du -skh | sort -r'
+	alias du='du -skh | sort -r'
 fi
 
 if [ -x "$(command -v bat)" ]; then
@@ -367,3 +465,89 @@ if [ -x "$(command -v bat)" ]; then
   sleep ${line_delay}
   alias cat='bat'
 fi
+
+trash_location="$HOME/.local/share/Trash/files/"
+if [ -x "$(command -v rip)" ]; then
+  printf "${check_symbol} rip, rm-improved found!\n  ${right_arrow_symbol} Setting up graveyard at $trash_location\n"
+  sleep ${line_delay}
+  alias rip="rip --graveyard $trash_location"
+fi
+
+if [ -x "$(command -v zoxide)" ]; then
+  printf "${check_symbol} zoxide found! activating it!\n"
+  sleep ${line_delay}
+  if [[ "$(echo $0)" == *bash ]]; then
+    eval "$(zoxide init bash)"
+  elif [[ "$(echo $0)" == *zsh ]]; then
+    eval "$(zoxide init zsh)"
+  else
+    eval "$(zoxide init posix --hook prompt)"
+  fi
+  alias cd='z'
+fi
+
+if [ -x "$(command -v rclone)" ]; then
+
+	if [ ! -d $GOOGLE_DRIVE ]; then
+		printf "${check_symbol} Google drive mount point not found! making one..\n"
+		mkdir -pv $GOOGLE_DRIVE
+	fi
+
+	if grep -qs $GOOGLE_DRIVE /proc/mounts; then
+		printf "${check_symbol} Google Drive already mounted at $GOOGLE_DRIVE\n"
+		sleep ${line_delay}
+	else
+		if [ ! -z "$(cat $HOME/.config/rclone/rclone.conf | grep "\[google-drive\]")" ]; then
+			printf "${check_symbol} Mounting Google Drive to $GOOGLE_DRIVE\n"
+			rclone mount google-drive: $GOOGLE_DRIVE &
+			sleep 2
+		fi
+	fi
+fi
+
+if [ -x "$(command -v rclone)" ]; then
+
+	if [ ! -d $GOOGLE_DRIVE ]; then
+		printf "${check_symbol} Google drive mount point not found! making one..\n"
+		mkdir -pv $GOOGLE_DRIVE
+	fi
+
+	if grep -qs $GOOGLE_DRIVE /proc/mounts; then
+		printf "${check_symbol} Google Drive already mounted at $GOOGLE_DRIVE\n"
+		sleep ${line_delay}
+	else
+		if [ ! -z "$(cat $HOME/.config/rclone/rclone.conf | grep "\[google-drive\]")" ]; then
+			printf "${check_symbol} Mounting Google Drive to $GOOGLE_DRIVE\n"
+			rclone mount google-drive: $GOOGLE_DRIVE &
+			sleep 2
+		fi
+	fi
+fi
+
+if [ -x "$(command -v rclone)" ]; then
+  if grep -qs $ONE_DRIVE /proc/mounts ; then
+    printf "${check_symbol} MS One Drive already mounted at $ONE_DRIVE\n"
+    sleep ${line_delay}
+  else
+    if [ ! -z "$(cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive\]")" ]; then
+      printf "${check_symbol} Mounting MS One Drive to $ONE_DRIVE\n"
+      rclone mount --vfs-cache-mode writes onedrive: $ONE_DRIVE &
+      sleep 2
+    fi
+  fi
+fi
+
+if [ -x "$(command -v starship)" ]; then
+  printf "${check_symbol} Starship shell extension found! Let's start it!\n"
+  sleep ${line_delay}
+  printf "  ${right_arrow_symbol} Running it as zsh"
+  eval "$(starship init zsh)"
+fi
+
+clear
+
+if [ -x "$(command -v neofetch)" ] && [ $(printf '%.0f' $(check_uptime)) -lt 2400 ]; then
+	neofetch
+fi
+
+export PATH=$(printf "%s" "$PATH" | awk -v RS=':' '!a[$1]++ { if (NR > 1) printf RS; printf $1 }')

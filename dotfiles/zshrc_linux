@@ -6,4 +6,4 @@
 scriptpath=${0:a:h}
 echo $scriptpath
 
-source $scriptpath/my_settings_zsh.ref
+source $scriptpath/my_settings_zsh
