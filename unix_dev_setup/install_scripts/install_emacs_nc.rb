@@ -79,17 +79,26 @@ class InstEmacsNC < InstallStuff
       @env["LDFLAGS"] = "-Wl,-rpath=#{@gcc_prefix}/lib -Wl,-rpath=#{@gcc_prefix}/lib64 "+@env["LDFLAGS"]
       return true
     else
-      gcc_libdirs = \
-        [ File.join(@gcc_prefix, 'lib'), File.join(@gcc_prefix, 'lib64') ]
-      gcc_libdirs.each do |lib_dir|
-        lib_list = Dir[File.join(lib_dir, '*.so')]
-        lib_list.each do |libso|
-          if libso.include? 'libgccjit' and libso.include? '.so'
-            libgccjit_found = true
-            return libgccjit_found
-          end
-        end
+      # Since we are working with system installed gcc, we can browse it even
+      # further since they keep them in pretty peculiar places.
+      search_result = `find #{@gcc_prefix} | grep libgccjit`
+      if search_result.include? 'libgccjit'
+        libgccjit_found = true
+        return libgccjit_found
       end
+      # gcc_libdirs = \
+      #   [ File.join(@gcc_prefix, 'lib'), File.join(@gcc_prefix, 'lib64') ]
+      # 
+      
+      # gcc_libdirs.each do |lib_dir|
+      #   lib_list = Dir[File.join(lib_dir, '*.so')]
+      #   lib_list.each do |libso|
+      #     if libso.include? 'libgccjit' and libso.include? '.so'
+      #       libgccjit_found = true
+      #       return libgccjit_found
+      #     end
+      #   end
+      # end
 
       unless libgccjit_found
         puts "Oops, current compiler #{@env["CC"]} cannot support jit!!"
