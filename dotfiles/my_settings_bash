@@ -332,3 +332,38 @@ if [ -d $HOMEBREW/.opt/gcc4 ]; then
   printf "${check_symbol} Gcc4 found in the system!\n"
   addpath "$HOMEBREW/.opt/gcc4/bin"
 fi
+
+export GOROOT=$HOMEBREW/.opt/go
+export GOPATH=$HOMEBREW/.opt/go/bin
+if [ -d $GOROOT ]; then
+  printf "${check_symbol} Golang has been found at $GOROOT\n"
+  addpath "$GOPATH/bin:$GOPATH"
+fi
+
+SNAP_BIN=/snap/bin
+if [ -d "$SNAP_BIN" ]; then
+	printf "${check_symbol} Snap executables have been found at $SNAP_BIN\n"
+	addpath "$SNAP_BIN"
+fi
+
+if [ -x "$(command -v vncserver)" ]; then
+  echo "*** VNC server found! ***"
+  echo " To start: vncstart"
+  echo " To end: vnckill"
+  echo ""
+  alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+  alias vnckill="vncserver -kill :1"
+fi
+
+if [ -x "$(command -v dust)" ]; then
+  printf "${check_symbol} dust found! Using it instead of du!\n"
+  alias du='dust -r'
+else
+  alias du='du -skh | sort -r'
+fi
+
+if [ -x "$(command -v bat)" ]; then
+  printf "${check_symbol} bat found! using it instead of cat\n"
+  sleep ${line_delay}
+  alias cat='bat'
+fi

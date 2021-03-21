@@ -14,6 +14,8 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#she-bang-preambles][She-bang preambles]]
   - [[#some-warning-messages][Some Warning messages]]
   - [[#terminal-type-and-history-control][Terminal type and history control]]
+  - [[#autocompletion-color][Autocompletion color]]
+  - [[#manpage-reader][Manpage reader]]
   - [[#ls-mode-initial-set-up][ls mode initial set up]]
   - [[#homebrew-directory-set][Homebrew directory set]]
   - [[#ls-mode-set---we-will-install-exa-and-lsd-later][ls mode set - We will install exa and lsd later.]]
@@ -45,6 +47,11 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#emacs-situation-on-elementary-os-5][EMACS situation on elementary OS 5]]
   - [[#rust-cargo-actually][Rust (Cargo, actually.)]]
   - [[#homebrewed-gcc][Homebrewed GCC]]
+  - [[#golang][Golang]]
+  - [[#snapd-stuff][Snapd stuff]]
+  - [[#vnc-setup][VNC setup]]
+  - [[#du-dust---du-replacement-by-rust][Du-dust - du replacement by Rust]]
+  - [[#bat---cat-replacement-by-rust][Bat - cat replacement by Rust]]
 
 * Exports
 Fundamental variables to start with.
@@ -61,6 +68,7 @@ Fundamental variables to start with.
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 #!/usr/bin/env fish
+set fish_greeting
 #+end_src
 
 ** Some Warning messages
@@ -100,6 +108,28 @@ export HISTCONTROL=ignoredups:erasedups
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 set TERM "xterm-256color"
+#+end_src
+
+** Autocompletion color
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set fish_color_normal brcyan
+set fish_color_autosuggestion '#7d7d7d'
+set fish_color_command brcyan
+set fish_color_error '#ff6c6b'
+set fish_color_param brcyan
+#+end_src
+
+** Manpage reader
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q bat
+    set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
+else if type -q vim and not type -q nvim
+    set -x MANPAGER '/bin/bash -c "vim -MRn -c \"set buftype=nofile showtabline=0 ft=man ts=8 nomod nolist norelativenumber nonu noma\" -c \"normal L\" -c \"nmap q :qa<CR>\"</dev/tty <(col -b)"'
+else if type -q nvim
+    set -x MANPAGER "nvim -c 'set ft=man' -"
+end
 #+end_src
 
 ** ls mode initial set up
@@ -310,7 +340,6 @@ ONE_DRIVE="$HOME/.onedrive"
 #+begin_src shell :tangle my_settings_zsh :noweb yes
 <<env_var_rclone>>
 #+end_src
-
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
@@ -747,7 +776,44 @@ ex ()
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-
+function ex
+    if test -f $argv[1]
+        switch $argv[1]
+            case '*.tar.bz2'
+                tar xjf $argv[1]
+            case '*.tar.gz'
+                tar xzf $argv[1]
+            case '*.bz2'
+                bunzip2 $argv[1]
+            case '*.rar'
+                unrar x $argv[1]
+            case '*.gz'
+                gunzip $argv[1]
+            case '*.tar'
+                tar xf $argv[1]
+            case '*.tbz2'
+                tar xjf $argv[1]
+            case '*.tgz'
+                tar xzf $argv[1]
+            case '*.zip'
+                unzip $argv[1]
+            case '*.Z'
+                uncompress $argv[1]
+            case '*.7z'
+                7z x $argv[1]
+            case '*.deb'
+                ar x $argv[1]
+            case '*.tar.xz'
+                tar xf $argv[1]
+            case '*.tar.zst'
+                unzstd $argv[1]
+            case '*'
+                echo "$argv[1] cannot be extracted via ex() yet."
+        end
+    else
+        echo "$argv[1] is not a valid file!"
+    end
+end
 #+end_src
 ** Navigate upwards.
 Simple, =up <num_stage(?)_to_navigate_up>= to navigate upwards.
@@ -781,7 +847,22 @@ up () {
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
+function up
+    set d ""
+    set limit "$argv[1]"
 
+    if test -z "$limit" -o "$limit" -le 0
+        set limit 1
+    end
+
+    for i in (seq 0 "$limit")
+        set d "../$d"
+    end
+
+    if ! cd "$d"
+        echo "Couldn't go up $limit dirs."
+    end
+end
 #+end_src
 
 ** Recursively delete files
@@ -953,7 +1034,11 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-
+if test -d "$HOME/.cargo"
+    printf "$check_symbol Cargo directory detected at $HOME/.cargo\n"
+    sleep $line_delay
+    addpath "$HOME/.cargo/bin"
+end
 #+end_src
 
 ** Homebrewed GCC
@@ -987,5 +1072,152 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
+if test -d "$HOMEBREW/.opt/gcc-jit"
+    printf "$check_symbol Gcc with libgccjit found in the system!\n"
+    addpath "$HOMEBREW/.opt/gcc-jit/bin"
+end
+if test -d "$HOMEBREW/.opt/gcc9"
+    printf "$check_symbol Gcc9 found in the system!\n"
+    addpath "$HOMEBREW/.opt/gcc9/bin"
+end
+if test -d "$HOMEBREW/.opt/gcc8"
+    printf "$check_symbol Gcc8 found in the system!\n"
+    addpath "$HOMEBREW/.opt/gcc8/bin"
+end
+if test -d "$HOMEBREW/.opt/gcc4"
+    printf "$check_symbol Gcc4 found in the system!\n"
+    addpath "$HOMEBREW/.opt/gcc4/bin"
+end
+#+end_src
 
+** Golang
+*** Bash
+#+NAME: prog_golang
+#+begin_src shell :tangle my_settings_bash
+export GOROOT=$HOMEBREW/.opt/go
+export GOPATH=$HOMEBREW/.opt/go/bin
+if [ -d $GOROOT ]; then
+  printf "${check_symbol} Golang has been found at $GOROOT\n"
+  addpath "$GOPATH/bin:$GOPATH"
+fi
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_golang>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set GOROOT "$HOMEBREW/.opt/go"
+set GOPATH "$HOMEBREW/.opt/go/bin"
+if test -d "$GOROOT"
+    printf "$check_symbol Golang has been found at $GOROOT\n"
+    addpath "$GOPATH"
+end
+#+end_src
+
+** Snapd stuff
+
+*** Bash
+#+NAME: prog_snapd
+#+begin_src shell :tangle my_settings_bash
+SNAP_BIN=/snap/bin
+if [ -d "$SNAP_BIN" ]; then
+	printf "${check_symbol} Snap executables have been found at $SNAP_BIN\n"
+	addpath "$SNAP_BIN"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_snapd>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set SNAP_BIN /snap/bin
+if test -d "$SNAP_BIN"
+    printf "$check_symbol Snap executables have been found at $SNAP_BIN\n"
+    addpath "$SNAP_BIN"
+end
+#+end_src
+
+** VNC setup
+*** Bash
+#+NAME: prog_vnc
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v vncserver)" ]; then
+  echo "*** VNC server found! ***"
+  echo " To start: vncstart"
+  echo " To end: vnckill"
+  echo ""
+  alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+  alias vnckill="vncserver -kill :1"
+fi
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_vnc>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q vncserver
+    echo "$check_symbol VNC server found!"
+    echo "  To start: vncstart"
+    echo "  To end: vnckill"
+    alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+    alias vnckill="vncserver -kill :1"
+end
+#+end_src
+
+** Du-dust - du replacement by Rust
+*** Bash
+#+NAME: prog_dust
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v dust)" ]; then
+  printf "${check_symbol} dust found! Using it instead of du!\n"
+  alias du='dust -r'
+else
+  alias du='du -skh | sort -r'
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_dust>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q dust
+    printf "$check_symbol dust found! Using it instead of du!\n"
+    alias du='dust -r'
+else
+    alias du='du -skh | sort -r'
+end
+#+end_src
+
+** Bat - cat replacement by Rust
+*** Bash
+#+NAME: prog_bat
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v bat)" ]; then
+  printf "${check_symbol} bat found! using it instead of cat\n"
+  sleep ${line_delay}
+  alias cat='bat'
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_bat>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q bat
+    printf "$check_symbol bat found! using it instead of cat\n"
+    sleep $line_delay
+    alias cat='bat'
+end
 #+end_src
