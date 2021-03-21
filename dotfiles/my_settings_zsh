@@ -335,7 +335,13 @@ if [ -d "$JAVA_HOME" ]; then
 fi
 
 if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
-  alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
+	alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
+	alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
+fi
+
+if [ ! -z "$(ps -A | grep emacs)" ]; then
+	alias emacs='emacsclient -c'
+	alias emacst='emacsclient -t'
 fi
 
 if [ -d $HOME/.cargo ]; then

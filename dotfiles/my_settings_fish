@@ -318,6 +318,12 @@ end
 
 if test -z (cat /etc/os-release | grep 'ID' | grep 'elementary')
     alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
+    alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
+end
+
+if not test -z "(ps -A | grep emacs)"
+    alias emacs='emacsclient -c'
+    alias emacst='emacsclient -t'
 end
 
 if test -d "$HOME/.cargo"

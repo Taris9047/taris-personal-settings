@@ -48,6 +48,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#broot][Broot]]
   - [[#java-runtime-environment-or-java-development-kit][Java Runtime Environment (or Java Development Kit)]]
   - [[#emacs-situation-on-elementary-os-5][EMACS situation on elementary OS 5]]
+  - [[#emacs-as-service-alias][Emacs as service alias]]
   - [[#rust-cargo-actually][Rust (Cargo, actually.)]]
   - [[#homebrewed-gcc][Homebrewed GCC]]
   - [[#golang][Golang]]
@@ -1134,7 +1135,8 @@ There is a gtk bug that hampers running emacs on elementary OS's GUI environment
 #+NAME: prog_emacs_elemOS
 #+begin_src shell :tangle my_settings_bash
 if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
-  alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
+	alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
+	alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
 fi
 #+end_src
 
@@ -1147,6 +1149,30 @@ fi
 #+begin_src fish :tangle my_settings_fish
 if test -z (cat /etc/os-release | grep 'ID' | grep 'elementary')
     alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
+    alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
+end
+#+end_src
+
+** Emacs as service alias
+*** Bash
+#+NAME: prog_emacs_service
+#+begin_src shell :tangle my_settings_bash
+if [ ! -z "$(ps -A | grep emacs)" ]; then
+	alias emacs='emacsclient -c'
+	alias emacst='emacsclient -t'
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_emacs_service>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if not test -z "(ps -A | grep emacs)"
+    alias emacs='emacsclient -c'
+    alias emacst='emacsclient -t'
 end
 #+end_src
 
