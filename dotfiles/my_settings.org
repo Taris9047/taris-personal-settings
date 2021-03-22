@@ -240,12 +240,9 @@ end
 #+NAME: config_bat_theme
 #+begin_src shell :tangle my_settings_bash
 export BATTHEMESAVE="$MYSETTINGSDIR/bat_theme"
-export BATTHEME="Dracula"
-if [ -f "$BATTHTMESAVE" ]; then
-	export BATTHEME="$(cat "$BATTHEMESAVE")"
-else
-	touch $BATTHEMESAVE
-	echo $BATTHEME >"$BATTHEMESAVE"
+if [ ! -f "$BATTHEMESAVE" ]; then
+    touch $BATTHEMESAVE
+	  echo "Dracula" >"$BATTHEMESAVE"
 fi
 #+end_src
 
@@ -257,12 +254,9 @@ fi
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 set BATTHEMESAVE "$MYSETTINGSDIR/bat_theme"
-set BATTHEME "Dracula"
-if test -f "$BATTHEMESAVE"
-    set BATTHEME (cat "$BATTHEMESAVE")
-else
+if not test -f "$BATTHEMESAVE"
     touch $BATTHEMESAVE
-    echo $BATTHEME >"$BATTHEMESAVE"
+    echo Dracula >"$BATTHEMESAVE"
 end
 #+end_src
 
@@ -1726,21 +1720,25 @@ end
 if [ -x "$(command -v bat)" ]; then
 	printf "${check_symbol} bat found! using it instead of cat\n"
 	sleep ${line_delay}
-	alias cat='bat --theme="$BATTHEME"'
+  bat_theme="$(cat $BATTHEMESAVE)"
+	alias cat='bat --theme="$bat_theme"'
 fi
 
 set_bat_theme() {
 	echo "$1" >"$BATTHEMESAVE"
-	export BATTHEME="$1"
+  bat_theme="$(cat $BATTHEMESAVE)"
+	alias cat='bat --theme="$bat_theme"'
 }
 
 bat_theme_light() {
 	echo 'Solarized (light)' >"$BATTHEMESAVE"
-	export BATTHEME='Solarized (light)'
+  bat_theme="$(cat $BATTHEMESAVE)"
+	alias cat='bat --theme="$bat_theme"'
 }
 bat_theme_dark() {
 	echo "Dracula" >"$BATTHEMESAVE"
-	export BATTHEME="Dracula"
+  bat_theme="$(cat $BATTHEMESAVE)"
+	alias cat='bat --theme="$bat_theme"'
 }
 #+end_src
 
@@ -1754,21 +1752,25 @@ bat_theme_dark() {
 if type -q bat
     printf "$check_symbol bat found! using it instead of cat\n"
     sleep $line_delay
-    alias cat='bat --theme="$BATTHEME"'
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
 end
 
 function set_bat_theme
     echo "$argv[1]" >"$BATTHEMESAVE"
-    set BATTHEME "$1"
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
 end
 
 function bat_theme_light
     echo "Solariazed (light)" >"$BATTHEMESAVE"
-    set BATTHEME "Solarized (light)"
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
 end
 function bat_theme_dark
-    echo "Dracula" >"$BATTHEMESAVE"
-    set BATTHEME "Dracula"
+    echo Dracula >"$BATTHEMESAVE"
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
 end
 #+end_src
 

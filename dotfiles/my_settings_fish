@@ -46,12 +46,9 @@ else
 end
 
 set BATTHEMESAVE "$MYSETTINGSDIR/bat_theme"
-set BATTHEME "Dracula"
-if test -f "$BATTHEMESAVE"
-    set BATTHEME (cat "$BATTHEMESAVE")
-else
+if not test -f "$BATTHEMESAVE"
     touch $BATTHEMESAVE
-    echo $BATTHEME >"$BATTHEMESAVE"
+    echo Dracula >"$BATTHEMESAVE"
 end
 
 set HBREW_PATH "$HOME/.local"
@@ -475,21 +472,25 @@ end
 if type -q bat
     printf "$check_symbol bat found! using it instead of cat\n"
     sleep $line_delay
-    alias cat='bat --theme="$BATTHEME"'
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
 end
 
 function set_bat_theme
     echo "$argv[1]" >"$BATTHEMESAVE"
-    set BATTHEME "$1"
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
 end
 
 function bat_theme_light
     echo "Solariazed (light)" >"$BATTHEMESAVE"
-    set BATTHEME "Solarized (light)"
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
 end
 function bat_theme_dark
-    echo "Dracula" >"$BATTHEMESAVE"
-    set BATTHEME "Dracula"
+    echo Dracula >"$BATTHEMESAVE"
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
 end
 
 set trash_location "$HOME/.local/share/Trash/files/"

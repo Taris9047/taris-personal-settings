@@ -32,12 +32,9 @@ else
 fi
 
 export BATTHEMESAVE="$MYSETTINGSDIR/bat_theme"
-export BATTHEME="Dracula"
-if [ -f "$BATTHTMESAVE" ]; then
-	export BATTHEME="$(cat "$BATTHEMESAVE")"
-else
-	touch $BATTHEMESAVE
-	echo $BATTHEME >"$BATTHEMESAVE"
+if [ ! -f "$BATTHEMESAVE" ]; then
+    touch $BATTHEMESAVE
+	  echo "Dracula" >"$BATTHEMESAVE"
 fi
 
 HBREW_PATH="$HOME/.local"
@@ -500,21 +497,25 @@ fi
 if [ -x "$(command -v bat)" ]; then
 	printf "${check_symbol} bat found! using it instead of cat\n"
 	sleep ${line_delay}
-	alias cat='bat --theme="$BATTHEME"'
+  bat_theme="$(cat $BATTHEMESAVE)"
+	alias cat='bat --theme="$bat_theme"'
 fi
 
 set_bat_theme() {
 	echo "$1" >"$BATTHEMESAVE"
-	export BATTHEME="$1"
+  bat_theme="$(cat $BATTHEMESAVE)"
+	alias cat='bat --theme="$bat_theme"'
 }
 
 bat_theme_light() {
 	echo 'Solarized (light)' >"$BATTHEMESAVE"
-	export BATTHEME='Solarized (light)'
+  bat_theme="$(cat $BATTHEMESAVE)"
+	alias cat='bat --theme="$bat_theme"'
 }
 bat_theme_dark() {
 	echo "Dracula" >"$BATTHEMESAVE"
-	export BATTHEME="Dracula"
+  bat_theme="$(cat $BATTHEMESAVE)"
+	alias cat='bat --theme="$bat_theme"'
 }
 
 trash_location="$HOME/.local/share/Trash/files/"
