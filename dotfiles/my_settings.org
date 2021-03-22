@@ -887,9 +887,11 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-if type -q spark and type -q lolcat
+if type -q spark
+    and type -q lolcat
     alias clear='clear; echo; echo; seq 1 (tput cols) | sort -R | spark | lolcat; echo; echo' # Coloured
-else if type -q spark and not type -q lolcat
+else if type -q spark
+    and not type -q lolcat
     alias clear='clear; echo; echo; seq 1 (tput cols) | sort -R | spark | echo; echo' # Non-Coloured end clear
 end
 #+end_src
@@ -1172,8 +1174,8 @@ fi
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 if type -q broot
-   alias br='broot -dhp'
-   alias br='broot --sizes'
+    alias br='broot -dhp'
+    alias bs='broot --sizes'
 end
 #+end_src
 
@@ -1675,7 +1677,7 @@ end
 #+NAME: prog_jq
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v jq)" ]; then
-	echo "${check_symbol} jq found, we can use geolocation alias as: geoloc"
+	printf "${check_symbol} jq found, we can use geolocation alias as: geoloc\n"
 	alias geoloc="curl -s https://ipvigilante.com/$(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
 fi
 #+end_src
@@ -1688,7 +1690,7 @@ fi
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 if type -q jq
-    echo "$check_symbol jq found, we can use geolocation alias as: geoloc"
+    printf "$check_symbol jq found, we can use geolocation alias as: geoloc\n"
     alias geoloc="curl -s https://ipvigilante.com/(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
 end
 #+end_src

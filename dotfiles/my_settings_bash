@@ -492,7 +492,7 @@ if [ -d "/usr/local/cuda-6.5" ]; then
 fi
 
 if [ -x "$(command -v jq)" ]; then
-	echo "${check_symbol} jq found, we can use geolocation alias as: geoloc"
+	printf "${check_symbol} jq found, we can use geolocation alias as: geoloc\n"
 	alias geoloc="curl -s https://ipvigilante.com/$(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
 fi
 
