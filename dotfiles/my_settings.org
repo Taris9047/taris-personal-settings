@@ -889,10 +889,10 @@ fi
 #+begin_src fish :tangle my_settings_fish
 if type -q spark
     and type -q lolcat
-    alias clear='clear; echo; echo; seq 1 (tput cols) | sort -R | spark | lolcat; echo; echo' # Coloured
+    alias clear='command clear; echo; echo; seq 1 (tput cols) | sort -R | spark | lolcat; echo; echo' # Coloured
 else if type -q spark
     and not type -q lolcat
-    alias clear='clear; echo; echo; seq 1 (tput cols) | sort -R | spark | echo; echo' # Non-Coloured end clear
+    alias clear='command clear; echo; echo; seq 1 (tput cols) | sort -R | spark | echo; echo' # Non-Coloured end clear
 end
 #+end_src
 
