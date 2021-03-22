@@ -1866,7 +1866,7 @@ fi
 #+end_src
 
 *** Zsh
-#+begin_src shell :tangle my_settings_bash :noweb yes
+#+begin_src shell :tangle my_settings_zsh :noweb yes
 <<mount_google_drive>>
 #+end_src
 
