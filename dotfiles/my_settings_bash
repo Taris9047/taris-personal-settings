@@ -366,12 +366,8 @@ if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
 fi
 
 # if [ ! -z "$(ps -A | grep emacs)" ]; then
-#     if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
-#         alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacsclient -c'
-#         alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
-#     else
-#         alias emacs='emacsclient -c'
-#     fi
+#     alias emacs='emacsclient -c'
+#     alias emacst='emacsclient -t'
 # fi
 
 if [ -d $HOME/.cargo ]; then
@@ -583,7 +579,7 @@ fi
 if [ -x "$(command -v starship)" ]; then
   printf "${check_symbol} Starship shell extension found! Let's start it!\n"
   sleep ${line_delay}
-  printf "  ${right_arrow_symbol} Running it as zsh"
+  printf "  ${right_arrow_symbol} Running it as bash"
   eval "$(starship init bash)"
 fi
 

@@ -1225,23 +1225,19 @@ fi
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 if not test -z (cat /etc/os-release | grep 'ID' | grep 'elementary')
-    alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
-    alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
+    alias emacs='XLIB_SKIP_ARGB_VISUALS=1 command emacs'
+    alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 command emacsclient'
 end
 #+end_src
 
 ** Emacs as service alias
-Also deals with elementary OS situation.
+Also deals with elementary OS situation. However, a pesky bug in Emacs itself is preventing to running it as a daemon if it was compiled with gtk2/3 which is a mandatory to use Widgets. Therefore, we are dropping this functionality.
 *** Bash
 #+NAME: prog_emacs_service
 #+begin_src shell :tangle my_settings_bash
 # if [ ! -z "$(ps -A | grep emacs)" ]; then
-#     if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
-#         alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacsclient -c'
-#         alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
-#     else
-#         alias emacs='emacsclient -c'
-#     fi
+#     alias emacs='emacsclient -c'
+#     alias emacst='emacsclient -t'
 # fi
 #+end_src
 
@@ -1256,8 +1252,6 @@ Also deals with elementary OS situation.
 #     alias emacs='emacsclient -c'
 #     alias emacst='emacsclient -t'
 # end
-# set ALTERNATE_EDITOR ''
-# alias e='emacsclient -c'
 #+end_src
 
 ** Rust (Cargo, actually.)
@@ -1950,7 +1944,7 @@ end
 if [ -x "$(command -v starship)" ]; then
   printf "${check_symbol} Starship shell extension found! Let's start it!\n"
   sleep ${line_delay}
-  printf "  ${right_arrow_symbol} Running it as zsh"
+  printf "  ${right_arrow_symbol} Running it as bash"
   eval "$(starship init bash)"
 fi
 #+end_src
@@ -1968,7 +1962,7 @@ fi
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 if type -q starship
-    printf "$check_symbol Starship shell extension found! Let's start it!\n"
+    printf "$check_symbol Starship shell extension found! Let's start it as fish!\n"
     sleep $line_delay
     starship init fish | source
 end
@@ -1993,6 +1987,9 @@ clear
 #+end_src
 
 ** Run Neofetch
+
+Neofetch is cool. But seeing this every time running a terminal window is cumbersome. So, It won't run once system uptime passes 2400 seconds.
+
 *** Bash
 #+NAME: autobat_neofetch
 #+begin_src shell :tangle my_settings_bash

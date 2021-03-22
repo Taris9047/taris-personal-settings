@@ -343,16 +343,14 @@ if test -d $JAVA_HOME
 end
 
 if not test -z (cat /etc/os-release | grep 'ID' | grep 'elementary')
-    alias emacs='XLIB_SKIP_ARGB_VISUALS=1 emacs'
-    alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 emacsclient'
+    alias emacs='XLIB_SKIP_ARGB_VISUALS=1 command emacs'
+    alias emacsclient='XLIB_SKIP_ARGB_VISUALS=1 command emacsclient'
 end
 
 # if not test -z "(ps -A | grep emacs)"
 #     alias emacs='emacsclient -c'
 #     alias emacst='emacsclient -t'
 # end
-# set ALTERNATE_EDITOR ''
-# alias e='emacsclient -c'
 
 if test -d "$HOME/.cargo"
     printf "$check_symbol Cargo directory detected at $HOME/.cargo\n"
@@ -548,7 +546,7 @@ if type -q rclone
 end
 
 if type -q starship
-    printf "$check_symbol Starship shell extension found! Let's start it!\n"
+    printf "$check_symbol Starship shell extension found! Let's start it as fish!\n"
     sleep $line_delay
     starship init fish | source
 end

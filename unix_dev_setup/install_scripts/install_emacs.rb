@@ -113,7 +113,7 @@ class InstEmacs < InstallStuff
     ]
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.RunInstall( env: @env, cmd: cmds.join(" ") )
-    self.InstallSystemd
+    # self.InstallSystemd
     self.WriteInfo
   end
 
