@@ -2,6 +2,9 @@
 #+TITLE: elementary OS Setting up Hangul Input guide.
 #+AUTHOR: Taylor Shin
 
+* Heads up Note
+This walkthrough is not designed for the 'long' way. Installing GccEmacs and setting the environment up is not in the scope of this script! If you want to take this 'grandeur' way, better work with the homebrew compilation scripts!
+
 * At first, installing 'new' emacs needs a repo.
 #+begin_src sh
 sudo add-apt-repository ppa:kellyk/emacs

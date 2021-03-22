@@ -277,7 +277,7 @@
 (package! ob-cfengine3)
 (package! iedit)
 (package! annotate)
-
+;; (package! org-tempo)
 #+end_src
 
 
@@ -547,21 +547,73 @@ Winner Mode. Windows configuration management. If you were looking for text edit
         ;; ex. of org-link-abbrev-alist in action
         ;; [[arch-wiki:Name_of_Page][Description]]
         org-link-abbrev-alist    ; This overwrites the default Doom org-link-abbrev-list
-          '(("google" . "http://www.google.com/search?q=")
-            ("arch-wiki" . "https://wiki.archlinux.org/index.php/")
-            ("ddg" . "https://duckduckgo.com/?q=")
-            ("wiki" . "https://en.wikipedia.org/wiki/"))
+        '(("google" . "http://www.google.com/search?q=")
+          ("arch-wiki" . "https://wiki.archlinux.org/index.php/")
+          ("ddg" . "https://duckduckgo.com/?q=")
+          ("wiki" . "https://en.wikipedia.org/wiki/"))
         org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
-          '((sequence
-             "TODO(t)"           ; A task that is ready to be tackled
-             "BLOG(b)"           ; Blog writing assignments
-             "GYM(g)"            ; Things to accomplish at the gym
-             "PROJ(p)"           ; A project that contains other tasks
-             "VIDEO(v)"          ; Video assignments
-             "WAIT(w)"           ; Something is holding up this task
-             "|"                 ; The pipe necessary to separate "active" states and "inactive" states
-             "DONE(d)"           ; Task has been completed
-             "CANCELLED(c)" )))) ; Task has been cancelled
+        '((sequence
+           "TODO(t)"           ; A task that is ready to be tackled
+           "BLOG(b)"           ; Blog writing assignments
+           "GYM(g)"            ; Things to accomplish at the gym
+           "PROJ(p)"           ; A project that contains other tasks
+           "VIDEO(v)"          ; Video assignments
+           "WAIT(w)"           ; Something is holding up this task
+           "|"                 ; The pipe necessary to separate "active" states and "inactive" states
+           "DONE(d)"           ; Task has been completed
+           "CANCELLED(c)" )))) ; Task has been cancelled
+
+
+;; Setup code block templates.
+;; For Org-mode < 9.2
+(setq old-structure-template-alist
+      '(("py" "#+BEGIN_SRC python :results output\n?\n#+END_SRC" "")
+        ("ipy" "#+BEGIN_SRC ipython :results output\n?\n#+END_SRC" "")
+        ("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "")
+        ("hs" "#+BEGIN_SRC haskell\n?\n#+END_SRC" "")
+        ("laeq" "#+BEGIN_LaTeX\n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}\n#+END_LaTeX" "")
+        ("sh" "#+BEGIN_SRC shell\n?\n#+END_SRC" "")
+        ("r" "#+BEGIN_SRC R\n?\n#+END_SRC" "")
+        ("js" "#+BEGIN_SRC js\n?\n#+END_SRC" "")
+        ("http" "#+BEGIN_SRC http\n?\n#+END_SRC" "")
+        ("ditaa" "#+BEGIN_SRC ditaa :file\n?\n#+END_SRC" "")
+        ("dot" "#+BEGIN_SRC dot :file\n?\n#+END_SRC" "")
+        ("rp" "#+BEGIN_SRC R :results output graphics :file \n?\n#+END_SRC" "")
+        ("plantuml" "#+BEGIN_SRC plantuml :file\n?\n#+END_SRC" "")
+        ("n" "#+NAME: ?")
+        ("cap" "#+CAPTION: ?")))
+;; For Org-mode >= 9.2
+(setq new-structure-template-alist
+      '(("py" . "src python :results output")
+        ("ipy" . "src ipython :results output")
+        ("el" . "src emacs-lisp")
+        ("hs" . "src haskell")
+        ("laeq" . "latex \n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}")
+        ("sh" . "src shell")
+        ("r" . "src R")
+        ("js" . "src js")
+        ("http" . "src http")
+        ("ditaa" . "src ditaa :file")
+        ("dot" . "src dot :file")
+        ("rp" . "src R :results output graphics :file ")
+        ("plantuml" . "src plantuml :file")
+        ))
+;; Keyword expansion also changed in 9.2
+(setq my-tempo-keywords-alist
+      '(("n" . "NAME")
+        ("cap" . "CAPTION")))
+
+(when (version< (org-version) "9.2")
+  (add-to-list 'org-modules 'org-tempo))
+(require 'org-tempo)
+(if (version<  (org-version) "9.2")
+    (dolist (ele old-structure-template-alist)
+      (add-to-list 'org-structure-template-alist ele))
+  (dolist (ele new-structure-template-alist)
+    (add-to-list 'org-structure-template-alist ele))
+  (dolist (ele my-tempo-keywords-alist)
+    (add-to-list 'org-tempo-keywords-alist ele))
+  )
 #+end_src
 
 ** Automatic Tangle!

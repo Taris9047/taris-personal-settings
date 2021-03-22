@@ -34,6 +34,17 @@ class InstEmacs < InstallStuff
     @conf_options += [
       # This may not work.. on 27
       '--with-modules',
+      '--with-xft',
+      '--with-file-notification=inotify',
+      '--with-x=yes',
+      '--with-x-toolkit=gtk3',
+      '--with-xwidgets',
+      '--with-lcms2',
+      '--with-giflib',
+      '--with-imagemagick',
+      '--with-mailutils',
+      '--with-pop',
+      '--with-native-compilation',
       '--with-mailutils',
       '--with-pop',
     #  '--with-xwidgets'    # needs webkitgtk4-dev
@@ -43,7 +54,7 @@ class InstEmacs < InstallStuff
     @env["CXX"] = "g++"
     @env["CFLAGS"] = "-O3 -fomit-frame-pointer -march=native -pipe -I#{@prefix}/include"
     @env["CXXLAGS"] = "-O3 -fomit-frame-pointer -march=native -pipe -I#{@prefix}/include"
-    @env["LDFLAGS"] = "-Wl,-rpath=#{@prefix}/lib -Wl,-rpath=#{@prefix}/lib64 -L#{@prefix}/lib -L#{@prefix}/lib64"
+    @env["LDFLAGS"] = "-Wl,-rpath=#{@prefix}/lib -Wl,-rpath=#{@prefix}/lib64"
 
   end
 
@@ -102,7 +113,38 @@ class InstEmacs < InstallStuff
     ]
     puts "Compiling (with #{@Processors} processors) and Installing ..."
     self.RunInstall( env: @env, cmd: cmds.join(" ") )
+    # self.InstallSystemd
     self.WriteInfo
+  end
+
+  def InstallSystemd
+  sd_txt = \
+%Q{[Unit]
+Description=Emacs: the extensible, self-documenting text editor
+
+[Service]
+Type=forking
+ExecStart=#{@prefix}/bin/emacs --daemon --user %u
+ExecStop=#{@prefix}/bin/emacsclient --eval "(progn (setq kill-emacs-hook 'nil) (kill-emacs))"
+Restart=always
+User=%i
+WorkingDirectory=%h
+
+[Install]
+WantedBy=multi-user.target
+}
+  
+  systemd_dir = File.join(ENV["HOME"],'.config','systemd','user')
+  FileUtils.mkdir_p(systemd_dir)
+  File.write(File.join(systemd_dir, 'emacs.service'), sd_txt)
+  
+  inst_cmd = [
+    "systemctl --user daemon-reload",
+    "systemctl enable --user emacs",
+    "systemctl start --user emacs",
+  ]
+  
+  self.Run(cmd: inst_cmd)
   end
 
 end # class InstEmacs
