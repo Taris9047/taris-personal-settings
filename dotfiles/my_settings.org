@@ -1951,13 +1951,18 @@ if [ -x "$(command -v starship)" ]; then
   printf "${check_symbol} Starship shell extension found! Let's start it!\n"
   sleep ${line_delay}
   printf "  ${right_arrow_symbol} Running it as zsh"
-  eval "$(starship init zsh)"
+  eval "$(starship init bash)"
 fi
 #+end_src
 
 *** Zsh
-#+begin_src shell :tangle my_settings_zsh :noweb yes
-<<shellext_starship>>
+#+begin_src shell :tangle my_settings_zsh
+if [ -x "$(command -v starship)" ]; then
+  printf "${check_symbol} Starship shell extension found! Let's start it!\n"
+  sleep ${line_delay}
+  printf "  ${right_arrow_symbol} Running it as zsh"
+  eval "$(starship init zsh)"
+fi
 #+end_src
 
 *** Fish

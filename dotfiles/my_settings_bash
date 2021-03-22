@@ -584,7 +584,7 @@ if [ -x "$(command -v starship)" ]; then
   printf "${check_symbol} Starship shell extension found! Let's start it!\n"
   sleep ${line_delay}
   printf "  ${right_arrow_symbol} Running it as zsh"
-  eval "$(starship init zsh)"
+  eval "$(starship init bash)"
 fi
 
 clear
