@@ -1,0 +1,4 @@
+bin/ffmpeg_convert_all/build
+bin/ffmpeg_convert_all/dist
+unix_dev_setup
+*.exe

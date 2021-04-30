@@ -1,0 +1,19 @@
+{
+    "*.org": {
+        "tabsize": 2
+    },
+    "*.rb": {
+        "tabsize": 2
+    },
+    "*.sh": {
+        "tabsize": 2
+    },
+    "autosave": 500,
+    "autosu": true,
+    "backup": false,
+    "colorcolumn": 80,
+    "colorscheme": "material-tc",
+    "savecursor": true,
+    "saveundo": true,
+    "softwrap": true
+}

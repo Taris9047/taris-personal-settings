@@ -1,0 +1,28 @@
+# MySQL 5.1
+export MACOSX_DEPLOYMENT_TARGET=10.7 
+CFLAGS="-O3 -arch x86_64" \
+CXXFLAGS="-O3 -arch x86_64" \
+./configure -prefix=/usr/local/mysql \
+ -with-server-suffix=-standard \
+ -enable-thread-safe-client \
+ -enable-local-infile \
+ -enable-shared \
+ -with-zlib-dir=bundled \
+ -with-big-tables \
+ -with-readline \
+ -with-plugins=all \
+ -without-docs
+
+## MySQL 5.5
+export MACOSX_DEPLOYMENT_TARGET=10.7 
+CFLAGS="-O3 -arch x86_64" \
+CXXFLAGS="-O3 -arch x86_64" \
+cmake . \
+ -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+ -DDEFAULT_CHARSET=utf8 \
+ -DWITH_EXTRA_CHARSETS=all \
+ -DMYSQL_MAINTAINER_MODE=false \
+ -DWITH_ZLIB=bundled \
+ -DENABLED_LOCAL_INFILE=true \
+ -DWITH_READLINE=true \
+ -DWITH_SSL=yes 

@@ -1,0 +1,63 @@
+# MySQL 5.1
+#CFLAGS="-O3 -arch x86_64" \
+#CXXFLAGS="-O3 -arch x86_64" \
+CFLAGS="-O3 " \
+CXXFLAGS="-O3 " \
+./configure --prefix=/usr/local/php5 \
+  --mandir=/usr/share/man \
+  --infodir=/usr/share/info \
+  --sysconfdir=/etc \
+  --with-config-file-path=/etc/php.ini \
+  --with-curl \
+  --with-zlib \
+  --with-zlib-dir=/usr \
+  --with-openssl \
+  --without-iconv \
+  --enable-exif \
+  --enable-ftp \
+  --enable-mbstring \
+  --enable-mbregex \
+  --enable-sockets \
+  --with-gd \
+  --with-jpeg-dir=/usr/local/lib \
+  --with-png-dir=/usr/X11R6 \
+  --with-freetype-dir=/usr/X11R6 \
+  --with-xpm-dir=/usr/X11R6 \
+  --with-mysql=/usr/local/mysql \
+  --with-pdo-mysql=/usr/local/mysql \
+  --with-mysqli=/usr/local/mysql/bin/mysql_config \
+  --with-apxs2=/usr/local/apache2/bin/apxs \
+  --with-mcrypt \
+  --with-gettext=/usr/local/Cellar/gettext/0.18.3.1
+	
+# MySQL 5.5 (now usable with OS X 10.9)
+#CFLAGS="-O3 -arch x86_64" \
+#CXXFLAGS="-O3 -arch x86_64" \
+CFLAGS="-O3 -arch x86_64" \
+CXXFLAGS="-O3 -arch x86_64" \
+./configure --prefix=/usr/local/php5 \
+  --mandir=/usr/share/man \
+  --infodir=/usr/share/info \
+  --sysconfdir=/etc \
+  --with-config-file-path=/etc/php.ini \
+  --with-curl=shared \
+  --with-zlib \
+  --with-zlib-dir=/usr \
+  --without-iconv \
+  --enable-exif \
+  --enable-ftp \
+  --enable-mbstring \
+  --enable-mbregex \
+  --enable-sockets \
+  --with-gd \
+  --with-jpeg-dir=/usr/local/lib \
+  --with-png-dir=/usr/X11R6 \
+  --with-freetype-dir=/usr/X11R6 \
+  --with-xpm-dir=/usr/X11R6 \
+  --with-mysql=mysqlnd \
+  --with-pdo-mysql=mysqlnd \
+  --with-mysqli=mysqlnd \
+  --with-apxs2=/usr/local/apache2/bin/apxs \
+  --with-mcrypt \
+  --with-iconv \
+  --with-gettext=/usr/local/Cellar/gettext/0.18.3.1

@@ -1,0 +1,70 @@
+// CMC Command File
+//
+//     Game Title: Micrisoft Flight
+//     Written By: Taylor Shin
+//           Date: 10-29-2012
+//
+//
+// General Gameplay
+Fly_With_Mouse_Toggle					SPC
+Pause_Menu								ESC
+Skip_to_Waypoint						n
+Checklist_Toggle						q
+Map										m
+Text_Chat								t
+Voice_Chat_All							TAB
+Capture_Screenshot						v
+
+// On the Ground
+Walk_Forward							w
+Walk_Backward							s
+Walk_Left								a
+Walk_Right								d
+Aircraft_Enter_Exit						e
+Door_Open_Close							q
+Fuel 									f
+
+// Camera Views
+Camera_Next								F7
+Camera_Chaseview						F8
+Camera_Cockpit							F9
+Camera_Flyby							F10
+Camera_Free_Look						F11
+Camera_TopDown							F12
+Camera_Reset_Position					BKSPC
+
+// Control Surfaces
+Aleron_Left								KBLEFT
+Aleron_Right							KBRIGHT
+Elevator_Up								KBDOWN
+Elevator_Down							KBUP
+Rudder_Left								a
+Rudder_Right							d
+
+// Stop and Go
+Throttle_Decrease						s
+Throttle_Decrease_Alt					F2
+Throttle_Increase						w
+Throttle_Increase_Alt					F3
+Throttle_Max							F4
+Throttle_Min							F1
+Brakes_Both								x
+Brake_Right								c
+Brake_Left								z
+Landing_Gear_Toggle						g
+
+// In the Cockpit
+Flaps_Decrease							F5
+Flaps_Increase							F6
+Mixture_Min								HOLD SHF F1
+Mixture_Decrease						HOLD SHF F2
+Mixture_Increase						HOLD SHF F3
+Mixture_Max								HOLD SHF F4
+Trim_Down								HOLD SHF KBUP
+Trim_Up									HOLD SHF KBDOWN
+Min_Prop_RPM							HOLD CTL F1
+Decrease_Prop_RPM						HOLD CTL F2
+Increase_Prop_RPM						HOLD CTL F3
+Max_Prop_RPM							HOLD CTL F4
+
+

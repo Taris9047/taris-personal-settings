@@ -1,0 +1,6 @@
+{
+    "Alt-/": "lua:comment.comment",
+    "Ctrl-/": "lua:comment.comment",
+    "Ctrl-Shift-z": "Redo",
+    "CtrlUnderscore": "lua:comment.comment"
+}

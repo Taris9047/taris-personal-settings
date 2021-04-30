@@ -1,0 +1,164 @@
+
+//
+//     Game Title: Flaming Cliffs 2.0
+//     Written By: ----ruggbutt-->   
+//           Date: 27 March 2010
+//
+
+script
+
+/////////////////////////////////////////////////////////////////////
+//Toebrake Script, the farther you push the pedal the more times per second the brakes go on/off.  Feels like progressive braking.
+/////////////////////////////////////////////////////////////////////
+
+                   B11         = ( [ JS3.A1 >= 250 ] )                                                OR ( [ JS3.A2 >= 250 ] );
+TIMER ( INTERVAL, D1, 1, 1 ) = ( [ JS3.A1 >= 200 ] AND [ JS3.A1 < 250 ] AND NOT [ JS3.A2 >= 250 ] ) OR ( [ JS3.A2 >= 200 ] AND [ JS3.A2 < 250 ] AND NOT [ JS3.A1 >= 250 ] );
+TIMER ( INTERVAL, D2, 1, 2 ) = ( [ JS3.A1 >= 150 ] AND [ JS3.A1 < 200 ] AND NOT [ JS3.A2 >= 200 ] ) OR ( [ JS3.A2 >= 150 ] AND [ JS3.A2 < 200 ] AND NOT [ JS3.A1 >= 200 ] );
+TIMER ( INTERVAL, D3, 1, 3 ) = ( [ JS3.A1 >= 100 ] AND [ JS3.A1 < 150 ] AND NOT [ JS3.A2 >= 150 ] ) OR ( [ JS3.A2 >= 100 ] AND [ JS3.A2 < 150 ] AND NOT [ JS3.A1 >= 150 ] );
+TIMER ( INTERVAL, D4, 1, 4 ) = ( [ JS3.A1 >=  50 ] AND [ JS3.A1 < 100 ] AND NOT [ JS3.A2 >= 100 ] ) OR ( [ JS3.A2 >=  50 ] AND [ JS3.A2 < 100 ] AND NOT [ JS3.A1 >= 100 ] );
+
+              CMS.B11         = ( B11 OR D1 OR D2 OR D3 OR D4 );
+
+/////////////////////////////////////////////////////////////////////
+//                          Mini Joystick
+/////////////////////////////////////////////////////////////////////
+
+CMS.B1 = [JS2.A1 > 200]; 
+CMS.B2 = [JS2.A1 < 50];
+CMS.B3 = [JS2.A2 > 200];
+CMS.B4 = [JS2.A2 < 50];
+
+/////////////////////////////////////////////////////////////////////
+//                 Airbrake Closes at Full Throttle
+/////////////////////////////////////////////////////////////////////
+CMS.B12 = [JS2.A3 <= 12];  
+
+/////////////////////////////////////////////////////////////////////
+//                        MFD Zoom Command
+/////////////////////////////////////////////////////////////////////
+
+SEQUENCE
+// // First Command Operates on the first press of Joystick 1 Button 10
+WHILE( JS1.B10 );
+CMS.B15 = TRUE;
+DELAY( 3 );
+CMS.B15 = FALSE;
+DELAY( 3 );
+// // Second Command Operates on the second press of Joystick 1 Button 10
+WHILE( JS1.B10 );
+CMS.B16 = TRUE;
+DELAY( 3 );
+CMS.B16 = FALSE;
+DELAY( 3 );
+ENDSEQUENCE
+
+/////////////////////////////////////////////////////////////////////
+//                       Radar Azimuth Command
+/////////////////////////////////////////////////////////////////////
+
+SEQUENCE
+// // First Command Operates on the first press of Joystick 5 Button 2
+WHILE( JS5.B2 );
+CMS.B53 = TRUE;
+DELAY( 3 );
+CMS.B53 = FALSE;
+DELAY( 3 );
+// // Second Command Operates on the second press of Joystick 5 Button 2
+WHILE( JS5.B2 );
+CMS.B54 = TRUE;
+DELAY( 3 );
+CMS.B54 = FALSE;
+DELAY( 3 );
+ENDSEQUENCE
+
+/////////////////////////////////////////////////////////////////////
+//                    Attitude Hold-Off Commands
+/////////////////////////////////////////////////////////////////////
+
+timer( PERIOD, D1, 4 ) = js2.B12;
+cms.B37 = D1 AND NOT js2.B12;
+cms.B36 = NOT D1 AND js2.B12;
+
+/////////////////////////////////////////////////////////////////////
+//         AP Route Following-Off and AP Roll Hold-Off Commands
+/////////////////////////////////////////////////////////////////////
+
+timer( PERIOD, D1, 4 ) = js2.B9;
+cms.B39 = D1 AND NOT js2.B9;
+cms.B38 = NOT D1 AND js2.B9;
+
+/////////////////////////////////////////////////////////////////////
+//                Transition Flight Level-Off Commands
+/////////////////////////////////////////////////////////////////////
+
+timer( PERIOD, D1, 4 ) = js2.B10;
+cms.B41 = D1 AND NOT js2.B10;
+cms.B40 = NOT D1 AND js2.B10;
+
+/////////////////////////////////////////////////////////////////////
+//          AP Radio Alt-Off and Barometric Alt-Off Commands
+/////////////////////////////////////////////////////////////////////
+
+timer( PERIOD, D1, 4 ) = js2.B11;
+cms.B43 = D1 AND NOT js2.B11;
+cms.B42 = NOT D1 AND js2.B11;
+
+/////////////////////////////////////////////////////////////////////
+//                  Snap View HUD Command
+/////////////////////////////////////////////////////////////////////
+timer( PERIOD, D1, 4 ) = js1.B14;
+cms.B44 = D1 AND NOT js1.B14;
+cms.B45 = NOT D1 AND js1.B14;
+
+/////////////////////////////////////////////////////////////////////
+//            Airbrake Toggle/Hold/Release Command
+/////////////////////////////////////////////////////////////////////
+
+timer( PERIOD, D1, 4 ) = js2.B16;
+cms.B46 = D1 AND NOT js2.B16;
+cms.B47 = NOT D1 AND js2.B16;
+
+/////////////////////////////////////////////////////////////////////
+//         Return to Main Cockpit Center/Left MFD View
+/////////////////////////////////////////////////////////////////////
+
+timer( PERIOD, D1, 4 ) = js1.B16;
+cms.B48 = D1 AND NOT js1.B16;
+cms.B49 = NOT D1 AND js1.B16;
+
+/////////////////////////////////////////////////////////////////////
+//                         Auto Chaff
+/////////////////////////////////////////////////////////////////////
+
+TOGGLE( D5 ) = JS2.B4;
+
+SEQUENCE
+
+  WHILE( D5 ) ;
+
+    CMS.B50 = TRUE ;
+      DELAY( 1 ) ;
+    CMS.B50 = FALSE;
+      DELAY( 20) ;
+
+ENDSEQUENCE
+
+/////////////////////////////////////////////////////////////////////
+//                         Auto Flare
+/////////////////////////////////////////////////////////////////////
+
+TOGGLE( D6 ) = JS2.B2;
+
+SEQUENCE
+
+  WHILE( D6 ) ;
+
+    CMS.B51 = TRUE ;
+      DELAY( 1 ) ;
+    CMS.B51 = FALSE;
+      DELAY( 27 ) ;
+
+ENDSEQUENCE
+
+
+endScript

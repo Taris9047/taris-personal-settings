@@ -1,0 +1,46 @@
+// CMS Script File
+//
+//     Game Title:
+//     Written By:
+//           Date:
+//
+script
+
+////////////////////////////////////////////////////////////////////////////
+// Set Mode
+////////////////////////////////////////////////////////////////////////////
+
+%DEFINE M1 ( NOT JS1.B4 AND NOT JS2.B4 )
+%DEFINE M2 ( JS1.B4 AND NOT JS2.B4 )
+%DEFINE M3 ( NOT JS1.B4 AND JS2.B4 )
+%DEFINE M4 ( JS1.B4 AND JS2.B4 )
+
+IF (M2) THEN
+	CURRENTMODE = MODE2;
+ENDIF
+IF (M3) THEN
+	CURRENTMODE = MODE3;
+ENDIF
+IF (M4) THEN
+	CURRENTMODE = MODE4;
+ENDIF
+IF (M1) THEN
+	CURRENTMODE = MODE1;
+ENDIF
+
+/////////////////////////////////////////////////////////
+// Mini Joystick
+/////////////////////////////////////////////////////////
+CMS.B1 = [JS2.A1 > 200]; // Right
+CMS.B2 = [JS2.A1 < 50];  // Left
+CMS.B3 = [JS2.A2 > 200]; // Down
+CMS.B4 = [JS2.A2 < 50];  // Up
+
+/////////////////////////////////////////////////////////
+// Toggle Wheelbrakes (Push any toe brakes to toggle)
+/////////////////////////////////////////////////////////
+CMS.B11 = [JS3.A1 >= 175];
+CMS.B12 = [JS3.A2 >= 175];
+
+
+endScript

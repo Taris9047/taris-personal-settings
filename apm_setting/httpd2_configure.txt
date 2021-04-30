@@ -1,0 +1,18 @@
+CFLAGS="-O3 -arch x86_64" \
+CXXFLAGS="-O3 -arch x86_64" \
+./configure -enable-layout=DIYMacServer \
+ -enable-mods-shared=all \
+ --enable-nonportable-atomics \
+ -with-ssl=/usr \
+ -with-mpm=worker \
+ -disable-unique-id \
+ -enable-ssl \
+ -enable-dav \
+ -enable-cache \
+ -enable-proxy \
+ -enable-logio \
+ -enable-deflate \
+ -with-included-apr \
+ -enable-cgi \
+ -enable-cgid \
+ -enable-suexec

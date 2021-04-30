@@ -1,0 +1,2372 @@
+#+TITLE: Taris' Doom Emacs Config
+#+AUTHOR: Taylor Shin
+#+STARTUP: showeverything
+#+PROPERTY: header-args :tangle-mode
+
+* My Shell Settings
+Let's use Orgmode to construct and manage shell script files more effectively! Automatic tangling will populate my_settings_<shell_name> files automatically.
+
+My main shell is of course Bash but I'm trying to expand out into other shells such as Zsh and Fish. Especially for Zsh, [[https://apple.stackexchange.com/questions/361870/what-are-the-practical-differences-between-bash-and-zsh][this guide on StackExchange]] was especially helpful.
+
+* Table of Contents :toc:
+- [[#my-shell-settings][My Shell Settings]]
+- [[#exports][Exports]]
+  - [[#she-bang-preambles][She-bang preambles]]
+  - [[#some-warning-messages-and-interactive-session-check][Some Warning messages and Interactive Session Check]]
+  - [[#some-decorative-stuffs][Some decorative stuffs]]
+  - [[#prefer-tmux-if-available][Prefer Tmux if available.]]
+  - [[#shell-options][Shell options]]
+  - [[#terminal-type-and-history-control][Terminal type and history control]]
+  - [[#autocompletion-color---fish-only][Autocompletion color - Fish only]]
+  - [[#manpage-reader][Manpage reader]]
+  - [[#default-setting-directory][Default Setting directory]]
+  - [[#ls-mode-initial-set-up][ls mode initial set up]]
+  - [[#bat-theme-initial-set-up][bat theme initial set up]]
+  - [[#homebrew-directory-set][Homebrew directory set]]
+  - [[#ls-mode-set---we-will-install-exa-and-lsd-later][ls mode set - We will install exa and lsd later.]]
+  - [[#cloud-directories][Cloud directories]]
+  - [[#texlive-home-directory-set][Texlive home directory set]]
+  - [[#default-cligui-editor-set][Default CLI/GUI editor set]]
+  - [[#change-terminal-titles][Change terminal titles]]
+- [[#hot-spot-installation][Hot Spot Installation]]
+  - [[#spark][Spark]]
+  - [[#rclone][RClone]]
+- [[#command-line-aliases][Command line aliases]]
+  - [[#binutils---linux][Binutils - Linux]]
+  - [[#package-manager-shortcuts][Package Manager shortcuts]]
+  - [[#quickly-exit-from-a-directory][Quickly exit from a directory]]
+  - [[#system-utilities-shortcuts][System utilities shortcuts]]
+  - [[#git-shortcuts][Git shortcuts]]
+  - [[#git-completions-for-zsh][Git Completions for Zsh]]
+  - [[#termbin][Termbin]]
+  - [[#switching-shells][Switching shells]]
+  - [[#youtube-dl-shortcuts][youtube-dl shortcuts]]
+  - [[#clear-screen][Clear screen]]
+- [[#basic-functions-for-everyday-use][Basic Functions for everyday use]]
+  - [[#prepending-system-path-variable][Prepending system PATH variable.]]
+  - [[#extract-archive][Extract archive]]
+  - [[#navigate-upwards][Navigate upwards.]]
+  - [[#recursively-delete-files][Recursively delete files]]
+  - [[#universal-open-function][Universal 'open' function]]
+  - [[#check-uptime][Check uptime]]
+- [[#settings-for-custom-installed-programs][Settings for Custom installed programs!]]
+  - [[#broot][Broot]]
+  - [[#java-runtime-environment-or-java-development-kit][Java Runtime Environment (or Java Development Kit)]]
+  - [[#emacs-aliases][EMACS Aliases]]
+  - [[#rust-cargo-actually][Rust (Cargo, actually.)]]
+  - [[#homebrewed-gcc][Homebrewed GCC]]
+  - [[#golang][Golang]]
+  - [[#julia][Julia]]
+  - [[#snapd-stuff][Snapd stuff]]
+  - [[#vnc-setup][VNC setup]]
+  - [[#root][ROOT]]
+  - [[#neovim][Neovim]]
+  - [[#texlive][Texlive]]
+  - [[#pypy---homebrewed-pypy3][PyPy - Homebrewed pypy3]]
+  - [[#pyenv---manage-multiple-python-versions][Pyenv - Manage multiple python versions]]
+  - [[#bpytop---top-htop-and-bashtop-replacement-by-python3][Bpytop - top, htop, and bashtop replacement by Python3]]
+  - [[#n---homebrewed-nodejss-update-tool][n - Homebrewed Node.JS's update tool]]
+  - [[#irfanview---what-yeah-wine][IrfanView - What? yeah, wine!]]
+  - [[#ltspice---yet-another-wine-program][LTSpice - Yet another wine program]]
+  - [[#doomemacs-doom-and-evil][Doomemacs! DOOM! and EVIL!]]
+  - [[#cuda-for-nvidia-96009400m][Cuda for NVIDIA 9600/9400m]]
+  - [[#geolocation][Geolocation]]
+- [[#rust-replacements][Rust replacements]]
+  - [[#du-dust---du-replacement][Du-dust - du replacement]]
+  - [[#bat---cat-replacement][Bat - cat replacement]]
+  - [[#rip---rm-improved][Rip - rm-improved]]
+  - [[#zoxide---z-replacement][Zoxide - z replacement]]
+- [[#mount-clouds][Mount Clouds]]
+  - [[#google-drive][Google Drive]]
+  - [[#onedrive][Onedrive]]
+- [[#shell-extension][Shell extension]]
+  - [[#starship][Starship]]
+- [[#final-start-up][Final start-up]]
+  - [[#clear-screen-1][Clear screen]]
+  - [[#run-neofetch][Run Neofetch]]
+  - [[#clean-up-path][Clean up path]]
+  - [[#set-ls-finally][Set ls, finally!]]
+
+* Exports
+Fundamental variables to start with.
+
+** She-bang preambles
+For Bash and Zsh.. we are considering to change them to POSIX compliant ones rather than those heavy shells themselves.
+
+*** Bash
+#+begin_src shell :tangle my_settings_bash
+#!/bin/sh
+
+MYSHELL="$(ps -hp $$ | awk '{print $5}')"
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh
+#!/bin/sh
+
+MYSHELL="$(ps -hp $$ | awk '{print $5}')"
+#+end_src
+
+Also, install oh-my-zsh if possible!
+#+begin_src shell :tangle my_settings_zsh
+# Installing oh-my-zsh
+[ ! -d "$HOME/.oh-my-zsh" ] && "$HOME/.settings/bin/install_ohmyzsh.sh"
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+#!/usr/bin/env fish
+
+set fish_greeting
+set MYSHELL "fish"
+#+end_src
+
+** Some Warning messages and Interactive Session Check
+Also includes no-run line if the session is not interactive.
+*** Bash
+#+NAME: do_not_edit_info
+#+begin_src shell :tangle my_settings_bash
+#
+# -*- Do NOT EDIT THIS FILE DIRECTLY!! -*-
+# This file is automatically generated by Orgmode from
+#
+# ./my_settings.org
+#
+# Refer this file to change or add/remove features. Changing this
+# file alone will not apply your changes permanently!!
+#
+#+end_src
+#+NAME: interactive_check
+#+begin_src shell :tangle my_settings_bash
+# [[ $- != *i* ]] && return
+fd=0
+if ! "$(command -v test)" -t "$fd"; then
+    return
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<do_not_edit_info>>
+#+end_src
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+# [[ ! -o interactive ]] && return
+<<interactive_check>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish :noweb yes
+<<do_not_edit_info>>
+#+end_src
+
+#+begin_src fish :tangle my_settings_fish
+if not status --is-interactive
+    exit 0
+end
+#+end_src
+
+** Some decorative stuffs
+*** Bash
+#+NAME: env_var_decor
+#+begin_src shell :tangle my_settings_bash
+check_symbol="\033[1;32m\u2713\033[0m"
+right_arrow_symbol="\033[1;37m\u2192\033[0m"
+line_delay=0.12
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<env_var_decor>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set check_symbol "\033[1;32m\u2713\033[0m"
+set right_arrow_symbol "\033[1;37m\u2192\033[0m"
+set line_delay 0.12
+#+end_src
+
+** Prefer Tmux if available.
+Tmux is a great terminal interface for any situation, even your favorite Xorg terminal emulator can crash and screw up everything you were doing. Tmux saves it! This part also referenced some other people's contribution at [[https://unix.stackexchange.com/questions/43601/how-can-i-set-my-default-shell-to-start-up-tmux][Stack Exchange]].
+*** Bash
+#+NAME: prefer_tmux_session
+#+begin_src shell :tangle my_settings_bash
+stringcontain() {
+	[ -z "$1" ] || { [ -z "${2##*$1*}" ] && [ -n "$2" ]; }
+}
+
+if [ -x "$(command -v tmux)" ] && ! stringcontain 'screen' "$TERM" && ! stringcontain 'tmux' "$TERM" && [ -z "$TMUX" ]; then
+	printf '%b tmux has found!! Running it!\n' "${check_symbol}"
+	tmux
+	builtin exit
+fi
+#+end_src
+
+In fact, forcing to run tmux as a mandatory shell environment makes some stupid hurdle when exiting the shell. So, let's try to mitigate it.
+#+NAME: tmux_exit_gracefully
+#+begin_src shell :tangle my_settings_bash
+# if [ -x "$(command -v tmux)" ] && stringcontain 'xterm' "$TERM"; then
+#     builtin exit
+# fi
+#+end_src
+
+Also, we're adding some aliases for tmux
+#+NAME: tmux_aliases
+#+begin_src shell :tangle my_settings_bash
+alias tmuxkillall='tmux kill-server'
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prefer_tmux_session>>
+<<tmux_exit_gracefully>>
+<<tmux_aliases>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+alias tmuxkillall='tmux kill-server'
+if type -q tmux
+    if test "$TERM" != "*screen*" -a "$TERM" != "*tmux*" -a -z "$TMUX"
+        tmux new
+    end
+    builtin exit
+end
+#+end_src
+** Shell options
+Some handy options!!
+#+NAME: shopt_settings
+#+begin_src shell :tangle my_settings_bash
+case $(echo $MYSHELL) in
+,*"bash")
+	shopt -s autocd
+	shopt -s cdspell
+	shopt -s cmdhist
+	shopt -s dotglob
+	shopt -s histappend
+	shopt -s expand_aliases
+	shopt -s checkwinsize
+	;;
+,*) ;;
+esac
+#+end_src
+
+** Terminal type and history control
+*** Bash
+#+NAME: term_type_hist
+#+begin_src shell :tangle my_settings_bash
+export TERM="xterm-256color"
+export HISTCONTROL="ignoredups:erasedups"
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<term_type_hist>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set TERM "xterm-256color"
+#+end_src
+
+
+** Autocompletion color - Fish only
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set fish_color_normal brcyan
+set fish_color_autosuggestion '#7d7d7d'
+set fish_color_command brcyan
+set fish_color_error '#ff6c6b'
+set fish_color_param brcyan
+#+end_src
+
+** Manpage reader
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q bat
+    set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
+else if type -q vim and not type -q nvim
+    set -x MANPAGER '/bin/bash -c "vim -MRn -c \"set buftype=nofile showtabline=0 ft=man ts=8 nomod nolist norelativenumber nonu noma\" -c \"normal L\" -c \"nmap q :qa<CR>\"</dev/tty <(col -b)"'
+else if type -q nvim
+    set -x MANPAGER "nvim -c 'set ft=man' -"
+end
+#+end_src
+
+** Default Setting directory
+*** Bash
+#+NAME: config_my_set_dir
+#+begin_src shell :tangle my_settings_bash
+export MYSETTINGSDIR="$HOME/.config/my_settings"
+[ ! -d "$MYSETTINGSDIR" ] && mkdir -p "$MYSETTINGSDIR"
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<config_my_set_dir>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set MYSETTINGSDIR "$HOME/.config/my_settings"
+if not test -d "$MYSETTINGSDIR"
+    mkdir -p "$MYSETTINGSDIR"
+end
+#+end_src
+
+** ls mode initial set up
+*** Bash
+#+NAME: config_ls_mode_init
+#+begin_src shell :tangle my_settings_bash
+export LS_MODE_SAVE="$MYSETTINGSDIR/ls_mode"
+if [ -f "$LS_MODE_SAVE" ]; then
+    ls_mode="$(cat "$LS_MODE_SAVE")"
+    export LS_MODE=$ls_mode
+else
+    export LS_MODE='lsd'
+    touch "$LS_MODE_SAVE"
+    echo 'lsd' >"$LS_MODE_SAVE"
+fi
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<config_ls_mode_init>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set LS_MODE_SAVE "$MYSETTINGSDIR/ls_mode"
+if test -f "$LS_MODE_SAVE"
+    set LS_MODE (cat "$LS_MODE_SAVE")
+else
+    set LS_MODE 'lsd'
+    touch "$LS_MODE_SAVE"
+    echo 'lsd' >"$LS_MODE_SAVE"
+end
+#+end_src
+
+** bat theme initial set up
+*** Bash
+#+NAME: config_bat_theme
+#+begin_src shell :tangle my_settings_bash
+export BATTHEMESAVE="$MYSETTINGSDIR/bat_theme"
+if [ ! -f "$BATTHEMESAVE" ]; then
+    touch "$BATTHEMESAVE"
+    echo "Dracula" >"$BATTHEMESAVE"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<config_bat_theme>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set BATTHEMESAVE "$MYSETTINGSDIR/bat_theme"
+if not test -f "$BATTHEMESAVE"
+    touch "$BATTHEMESAVE"
+    echo Dracula >"$BATTHEMESAVE"
+end
+#+end_src
+
+** Homebrew directory set
+
+Custom compiled tools and libraries will be residing in this directory.
+
+*** Bash
+#+NAME: env_var_homebrew
+#+begin_src shell :tangle my_settings_bash
+HBREW_PATH="$HOME/.local"
+if [ -d "${HBREW_PATH}" ]; then
+    export HOMEBREW="${HBREW_PATH}"
+    printf "%b HOMEBREW directory is %s\n" "${check_symbol}" "${HOMEBREW}"
+
+    sleep "${line_delay}"
+    export PATH="$HOMEBREW/bin:$PATH"
+    export PATH="$HOMEBREW/.opt/bin:$PATH"
+    [ ! -d "${HOMEBREW}" ] && mkdir -p "${HOMEBREW}"
+    [ ! -d "${HOMEBREW}/bin" ] && mkdir -p "${HOMEBREW}/bin"
+    [ ! -d "${HOMEBREW}/.opt" ] && mkdir -p "${HOMEBREW}/.opt"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<env_var_homebrew>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set HBREW_PATH "$HOME/.local"
+if test -d "$HBREW_PATH"
+    set -U HOMEBREW "$HBREW_PATH"
+end
+printf "%b HOMEBREW directory is %s\n" "$check_symbol" "$HOMEBREW"
+sleep "$line_delay"
+set fish_user_paths "$HOMEBREW/bin" "$fish_user_paths"
+#+end_src
+
+** ls mode set - We will install exa and lsd later.
+
+*** Bash
+#+NAME: env_ls_mode
+#+begin_src shell :tangle my_settings_bash
+# Let's set up ls as lsd or exa (default is lsd as of now.)
+set_ls_as_ls() {
+    unalias ls ll lld l lt l. 2> /dev/null
+    alias ls='ls -p -F -h --color=auto --show-control-chars'
+    alias ll='ls -la'
+    alias lld='du'
+    alias l='ls -p -F -h --color=auto --show-control-chars'
+    alias lt='tree'
+    alias l.='ls -a | grep "^\."'
+    echo 'ls' >"$LS_MODE_SAVE"
+}
+
+set_exa_as_ls() {
+    if [ -x "$(command -v exa)" ]; then
+        sleep "${line_delay}"
+        unalias ls ll lld l lt l. 2> /dev/null
+        alias ls='exa -hF --color=always --group-directories-first'
+        alias ll='exa -lahF --color=always --group-directories-first'
+        alias lld='du'
+        alias l='exa -hF --color=always --group-directories-first'
+        alias lt='exa -aT --color=always --group-directories-first'
+        alias l.='exa -a | egrep "^\."'
+        echo 'exa' >"$LS_MODE_SAVE"
+    fi
+}
+
+set_lsd_as_ls() {
+    if [ -x "$(command -v lsd)" ]; then
+        sleep "${line_delay}"
+        unalias ls ll lld l lt l. 2> /dev/null
+        alias ls='lsd -hF --color=always --group-dirs=first'
+        alias ll='lsd -lahF --color=always --group-dirs=first'
+        alias lld='du'
+        alias l='lsd -hF --color=auto --group-dirs=first'
+        alias lt='lsd -a --tree --color=fancy --group-dirs=first'
+        alias l.='lsd -a | egrep "^\."'
+        echo 'lsd' >"$LS_MODE_SAVE"
+    fi
+}
+
+set_ls() {
+    if [ "$#" -eq 0 ]; then
+        sleep 0
+        # printf "%b Current ls mode is: %s\n" "${check_symbol}" "${LS_MODE}"
+    else
+        LS_MODE="$1"
+    fi
+
+    case "$LS_MODE" in
+    "lsd")
+        printf "  %b Activating '%s' mode.\n" "${right_arrow_symbol}" "${LS_MODE}"
+        set_lsd_as_ls
+        ;;
+    "exa")
+        printf "  %b Activating '%s' mode.\n" "${right_arrow_symbol}" "${LS_MODE}"
+        set_exa_as_ls
+        ;;
+    "ls")
+        printf "  %b Activating '%s' mode.\n" "${right_arrow_symbol}" "${LS_MODE}"
+        set_ls_as_ls
+        ;;
+    "*")
+        printf "  %b Activating '%s' mode.\n" "${right_arrow_symbol}" "${LS_MODE}"
+        printf "    Select one of: lsd, exa, ls\n"
+        ;;
+    esac
+}
+
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<env_ls_mode>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+# Let's set up ls as lsd or exa (default is lsd as of now.)
+function set_ls_as_ls
+    alias ls='ls -p -F -h --color=auto --show-control-chars'
+    alias ll='ls -la'
+    alias lld='du'
+    alias l='ls -p -F -h --color=auto --show-control-chars'
+    alias lt='tree'
+    alias l.='ls -a | grep "^\."'
+    echo 'ls' >"$HOME/.ls_mode"
+end
+
+function set_exa_as_ls
+    if type -q "exa"
+        sleep "$line_delay"
+        alias ls='exa -hF --color=always --group-directories-first'
+        alias ll='exa -lahF --color=always --group-directories-first'
+        alias lld='du'
+        alias l='exa -hF --color=always --group-directories-first'
+        alias lt='exa -aT --color=always --group-directories-first'
+        alias l.='exa -a | egrep "^\."'
+        echo 'exa' >"$HOME/.ls_mode"
+    end
+end
+
+function set_lsd_as_ls
+    if type -q "lsd"
+        sleep "$line_delay"
+        alias ls='lsd -hF --color=always --group-dirs=first'
+        alias ll='lsd -lahF --color=always --group-dirs=first'
+        alias lld='du'
+        alias l='lsd -hF --color=auto --group-dirs=first'
+        alias lt='lsd -a --tree --color=fancy --group-dirs=first'
+        alias l.='lsd -a | egrep "^\."'
+        echo 'lsd' >"$HOME/.ls_mode"
+    end
+end
+
+function set_ls
+    if not count "$argv" >/dev/null
+        printf "$check_symbol Current ls mode is: $LS_MODE\n"
+    else
+        set LS_MODE "$1"
+    end
+
+    switch "$LS_MODE"
+        case "lsd"
+            printf "  $right_arrow_symbol Activating '$LS_MODE' mode.\n"
+            set_lsd_as_ls
+
+        case "exa"
+            printf "  $right_arrow_symbol Activating '$LS_MODE' mode.\n"
+            set_exa_as_ls
+
+        case "ls"
+            printf "  $right_arrow_symbol Activating '$LS_MODE' mode.\n"
+            set_ls_as_ls
+
+        case "*"
+            printf "  $right_arrow_symbol $LS_MODE is not available!\n"
+            printf "    Select one of: lsd, exa, ls\n"
+    end
+end
+set_ls
+#+end_src
+
+** Cloud directories
+[[https://rclone.org/][RCLONE]] is a great tool for cloud service access. I'm using Google Drive and Microsoft's Onedrive. We can set up a remote drive access with RCLONE! These lines aren't actually installing or setting up the cloud services. But defines their mountpoints.
+
+*** Bash
+#+NAME: env_var_rclone
+#+begin_src shell :tangle my_settings_bash
+GOOGLE_DRIVE="$HOME/.google-drive"
+ONE_DRIVE="$HOME/.onedrive"
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<env_var_rclone>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set GOOGLE_DRIVE "$HOME/.google-drive"
+set ONE_DRIVE "$HOME/.onedrive"
+#+end_src
+
+** Texlive home directory set
+
+*** Bash
+#+NAME: env_var_texlive
+#+begin_src shell :tangle my_settings_bash
+texlive_base_path="$HOME/.texlive"
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<env_var_texlive>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set texlive_base_path "$HOME/.texlive"
+#+end_src
+
+** Default CLI/GUI editor set
+Prioritizes Neovim first. But use VIM. VI is the last resort. I doubt any sane distribution manager would drop VI from default installation.
+
+For a GUI editor, the situation differs. We can rely on 'xdg-open' in most cases for known mimetypes. But some flies, such as files withtout known extension, are not supported. So, we might need to find some 'fallback' editor.. such as Emacs? The default is [[https://www.sublimetext.com/][Sublime Text]], of course!
+
+*** Bash
+#+NAME: cli_gui_edit_set
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v nvim)" ]; then
+    export EDITOR="nvim"
+elif [ -x "$(command -v vim)" ] && [ ! -x "$(command -v nvim)" ]; then
+    export EDITOR="vim"
+else
+    export EDITOR="vi"
+fi
+
+if [ -x "$(command -v subl)" ]; then
+    export VISUAL="subl"
+else
+    export VISUAL="xdg-open"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<cli_gui_edit_set>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q nvim
+    set EDITOR "nvim"
+else if type -q vim and not type -q nvim
+    set EDITOR "vim"
+else
+    set EDITOR "vi"
+end
+
+if type -q subl
+    set VISUAL "subl"
+else
+    set VISUAL "xdg-open"
+end
+#+end_src
+
+** Change terminal titles
+*** Bash
+#+NAME: term_titles
+#+begin_src shell :tangle my_settings_bash
+case ${TERM} in
+  xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
+        ;;
+  screen*)
+    PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
+    ;;
+esac
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<term_titles>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+function fish_title
+    hostname
+end
+#+end_src
+
+* Hot Spot Installation
+** Spark
+*** Bash
+#+NAME: inst_spark
+#+begin_src shell :tangle my_settings_bash
+if [ ! -x "$(command -v spark)" ]; then
+	printf "%b Installing spark!!\n" "$check_symbol"
+	[ ! -d "$HOMEBREW/bin" ] && mkdir -pv "$HOMEBREW/bin"
+	sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark" && "chmod +x $HOMEBREW/bin/spark" || true
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<inst_spark>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if not type -q spark
+    printf "%b Installing spark!!\n" "$check_symbol"
+    printf "  %b Type in your password if you feel it's stuck!!\n" "$right_arrow_symbol"
+    if not test -d "$HOMEBREW/bin"
+        mkdir -pv "$HOMEBREW/bin"
+    end
+    sh -c "curl \'https://raw.githubusercontent.com/holman/spark/master/spark\' -o $HOMEBREW/bin/spark
+    chmod +x $HOMEBREW/bin/spark"
+    or true
+end
+#+end_src
+
+** RClone
+*** Bash
+#+NAME: inst_rclone
+#+begin_src shell :tangle my_settings_bash
+if [ ! -x "$(command -v rclone)" ]; then
+    printf "%b Installing RClone!!\n" "$check_symbol"
+    echo; echo; curl 'https://rclone.org/install.sh' | sudo -H bash
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<inst_rclone>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if not type -q rclone
+    printf "$check_symbol Installing RClone!!\n"
+    printf "  $right_arrow_symbol Type in your password if you feel it's halted!!\n"
+    echo
+    echo
+    curl https://rclone.org/install.sh | sudo -H bash
+end
+#+end_src
+
+* Command line aliases
+
+Some basic aliases for linux binutils and other tools. OS X uses BSD based binutils has different options and acts a little bit differently and will be updated when I get an actually working Apple machine.
+
+** Binutils - Linux
+*** Bash
+#+NAME: alias_binutils
+#+begin_src shell :tangle my_settings_bash
+unalias rm mv cp grep egrep fgrep df rsync sudo free 2> /dev/null || true
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias df='df -h'
+alias rsync='rsync -azvh --info=progress2'
+alias sudo='sudo -H'
+alias free='free -m'
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_binutils>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish :noweb yes
+<<alias_binutils>>
+#+end_src
+
+** Package Manager shortcuts
+*** Bash
+#+NAME: alias_pkg_managers
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v apt)" ] && [ -x "$(command -v apt-get)" ]; then
+	alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
+	alias aptin='sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install'
+fi
+if [ -x "$(command -v dnf)" ]; then
+	alias dnfup='sudo dnf -y update'
+	alias dnfin='sudo dnf -y install'
+fi
+if [ -x "$(command -v pacman)" ] && [ -x "$(command -v pamac)" ] && [ -x "$(command -v pacman-mirrors)" ]; then
+	alias pmyy='sudo pacman-mirrors --continent && sudo pacman -Syyu && sudo pamac upgrade -a'
+	alias pmin='sudo pacman -Syyu'
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_pkg_managers>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish :noweb yes
+if type -q apt and type -q apt-get
+    alias aptup='sudo apt-get -y update; sudo apt-get -y upgrade'
+    alias aptin='sudo apt-get -y update; sudo apt-get -y upgrade; sudo apt-get install'
+end
+if type -q dnf
+    alias dnfup='sudo dnf -y update'
+    alias dnfin='sudo dnf -y install'
+end
+if type -q pacman and type -q pamac and type -q pacman-mirrors
+    alias pmyy='sudo pacman-mirrors --continent && sudo pacman -Syyu && sudo pamac upgrade -a'
+    alias pmin='sudo pacman -Syyu && sudo pamac upgrade -a'
+end
+#+end_src
+
+** Quickly exit from a directory
+*** Bash
+#+NAME: alias_cdupup
+#+begin_src shell :tangle my_settings_bash
+alias cd..='cd ..' # Just like MS-DOS
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_cdupup>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish :noweb yes
+<<alias_cdupup>>
+#+end_src
+
+** System utilities shortcuts
+*** Bash
+#+NAME: alias_sysutils
+#+begin_src shell :tangle my_settings_bash
+alias psmem='ps auxf | sort -nr -k 4'
+alias psmem10='ps auxf | sort -nr -k 4 | head -10'
+alias pscpu='ps auxf | sort -nr -k 3'
+alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
+alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
+alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
+alias battery_stat='upower -i "$( upower -e | grep BAT )"'
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_sysutils>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish :noweb yes
+alias psmem='ps auxf | sort -nr -k 4'
+alias psmem10='ps auxf | sort -nr -k 4 | head -10'
+alias pscpu='ps auxf | sort -nr -k 3'
+alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
+alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
+alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
+alias battery_stat='upower -i "( upower -e | grep BAT )"'
+#+end_src
+
+** Git shortcuts
+*** Bash
+#+NAME: alias_git
+#+begin_src shell :tangle my_settings_bash
+gitc() {
+    git commit -a -m "\"${1}\""
+    git push
+}
+gcatchup() {
+    git fetch --all
+    git reset --hard origin/master
+    git pull
+}
+gtag() {
+    git tag -a "\"${1}\""
+}
+alias gaddup='git add -u'
+alias gaddall='git add .'
+gitlog2w() {
+    for day in $(seq 14 -1 0); do
+        git log --before="${day} days" --after="$("$day"+1) days" --format=oneline | wc -l
+    done | spark
+}
+gitlog8h() {
+    for hour in $(seq 8 -1 0); do
+        git log --before="${hour} hours" --after="$("$hour"+1) hours" --format=oneline | wc -l
+    done | spark
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_git>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish :noweb yes
+function gitc
+    git commit -a -m "\"$argv[1]\""
+    git push
+end
+function gcatchup
+    git fetch --all
+    git reset --hard origin/master
+    git pull
+end
+function gtag
+    git tag -a "\"$argv[1]\""
+end
+alias gaddup='git add -u'
+alias gaddall='git add .'
+function gitlog2w
+    for day in (seq 14 -1 0)
+        git log --before="$day days" --after="($day+1) days" --format=oneline | wc -l
+        done | spark
+    end
+end
+function gitlog8h
+    for hour in (seq 8 -1 0)
+        git log --before="$hour hours" --after="($hour+1) hours" --format=oneline | wc -l
+        done | spark
+    end
+end
+#+end_src
+
+** Git Completions for Zsh
+Somehow, zsh in many distro packages does not come with git completions and makes it a bit clunky to use with git. So, let's install zsh git-completion from git's Github repo! Referenced [[https://oliverspryn.medium.com/adding-git-completion-to-zsh-60f3b0e7ffbc][Oliver Spryn's web site]].
+
+TODO We might deprecate this part? Oh-my-zsh does everything this part provides...
+
+#+begin_src shell :tangle my_settings_zsh
+[ ! -d "$HOME/.zsh" ] && mkdir -p "$HOME/.zsh"
+
+[ ! -f "$HOME/.zsh/git-completion.bash" ] && curl -o "$HOME/.zsh/git-completion.bash" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
+
+[ ! -f "$HOME/.zsh/_git" ] && curl -o "$HOME/.zsh/_git" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh
+
+zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
+fpath=(~/.zsh $fpath)
+
+autoload -Uz compinit && compinit
+#+end_src
+
+#+RESULTS:
+
+** Termbin
+*** Bash
+#+NAME: alias_termbin
+#+begin_src shell :tangle my_settings_bash
+alias tb='nc termbin.com 9999'
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_termbin>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish :noweb yes
+<<alias_termbin>>
+#+end_src
+
+** Switching shells
+*** Bash
+#+begin_src shell :tangle my_settings_bash
+[ -x "$(command -v zsh)" ] && alias tozsh='sudo chsh "$USER" -s "$(command -v zsh)" && echo "Now log out."'
+[ -x "$(command -v fish)" ] && alias tofish='sudo chsh "$USER" -s "$(command -v fish)" && echo "Now log out."'
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh
+alias tobash='sudo chsh "$USER" -s "$(command -v bash)" && echo "Now log out."'
+[ -x "$(command -v fish)" ] && alias tofish='sudo chsh "$USER" -s "$(command -v fish)" && echo "Now log out."'
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+alias tobash='sudo chsh $USER -s (command -v bash); echo "Now log out"'
+if type -q zsh
+    alias tozsh='sudo chsh $USER -s (command -v zsh); echo "Now log out"'
+end
+#+end_src
+
+** youtube-dl shortcuts
+*** Bash
+#+NAME: alias_youtube-dl
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v youtube-dl)" ]; then
+    printf "%b youtube-dl found! setting up yta(ytv)-* commands.\n" "${check_symbol}"
+    alias yta-help="echo 'yta-aac yta-best yta-flac yta-m4a yta-mp3 yta-opus yta-vorbis yta-wav ytv-best'"
+    alias yta-aac="youtube-dl --extract-audio --audio-format aac "
+    alias yta-best="youtube-dl --extract-audio --audio-format best "
+    alias yta-flac="youtube-dl --extract-audio --audio-format flac "
+    alias yta-m4a="youtube-dl --extract-audio --audio-format m4a "
+    alias yta-mp3="youtube-dl --extract-audio --audio-format mp3 "
+    alias yta-opus="youtube-dl --extract-audio --audio-format opus "
+    alias yta-vorbis="youtube-dl --extract-audio --audio-format vorbis "
+    alias yta-wav="youtube-dl --extract-audio --audio-format wav "
+    alias ytv-best="youtube-dl -f bestvideo+bestaudio "
+    sleep ${line_delay}
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_youtube-dl>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q youtube-dl
+    printf "$check_symbol youtube-dl found! setting up yta(ytv)-* commands.\n"
+    alias yta-help="echo 'yta-aac yta-best yta-flac yta-m4a yta-mp3 yta-opus yta-vorbis yta-wav ytv-best'"
+    alias yta-aac="youtube-dl --extract-audio --audio-format aac "
+    alias yta-best="youtube-dl --extract-audio --audio-format best "
+    alias yta-flac="youtube-dl --extract-audio --audio-format flac "
+    alias yta-m4a="youtube-dl --extract-audio --audio-format m4a "
+    alias yta-mp3="youtube-dl --extract-audio --audio-format mp3 "
+    alias yta-opus="youtube-dl --extract-audio --audio-format opus "
+    alias yta-vorbis="youtube-dl --extract-audio --audio-format vorbis "
+    alias yta-wav="youtube-dl --extract-audio --audio-format wav "
+    alias ytv-best="youtube-dl -f bestvideo+bestaudio "
+    sleep $line_delay
+end
+#+end_src
+
+** Clear screen
+*** Bash
+#+NAME: alias_clear
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v spark)" ] && [ -x "$(command -v lolcat)" ]; then
+    alias clear='clear; echo; seq 1 $(tput cols) | sort -R | spark | lolcat; echo; echo'
+elif [ -x "$(command -v spark)" ] && [ ! -x "$(command -v lolcat)" ]; then
+    alias clear='clear; echo; seq 1 $(tput cols) | sort -R | spark; echo'
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<alias_clear>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q spark
+    and type -q lolcat
+    alias clear='command clear; echo; echo; seq 1 (tput cols) | sort -R | spark | lolcat; echo; echo' # Coloured
+else if type -q spark
+    and not type -q lolcat
+    alias clear='command clear; echo; echo; seq 1 (tput cols) | sort -R | spark | echo; echo' # Non-Coloured end clear
+end
+#+end_src
+
+* Basic Functions for everyday use
+** Prepending system PATH variable.
+Apparently, there are much better ways to handle this kind of job and many newer shell versions will provide some kind of macro or internal functions to do this. But I would rather stay safe.
+
+*** Bash
+#+NAME: func_addpath
+#+begin_src shell :tangle my_settings_bash
+addpath() {
+    case ":$PATH:" in
+        *":$1:"* ) ;;
+        * ) export PATH="$1:$PATH" ;;
+    esac
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<func_addpath>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+function addpath
+    switch "$PATH"
+        case "*:$1:*"
+            pass
+        case "*"
+            set fish_user_paths "$argv[1]" $fish_user_paths
+    end
+end
+#+end_src
+
+** Extract archive
+Originally copied from Manjaro Linux. Just =ex <archive_file>= to extract any archive.
+
+*** Bash
+#+NAME: func_ex
+#+begin_src shell :tangle my_settings_bash
+ex() {
+	if [ -z "$1" ]; then
+		# display usage if no parameters given
+		echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+		echo "       extract <path/file_name_1.ext> [path/file_name_2.ext] [path/file_name_3.ext]"
+	else
+		for n in "$@"; do
+			if [ -f "$n" ]; then
+				case "$n" in
+				*.cbt | *.tar.bz2 | *.tar.gz | *.tar.xz | *.tbz2 | *.tgz | *.txz | *.tar)
+					tar xvf "$n"
+					;;
+				*.lzma) unlzma ./"$n" ;;
+				*.bz2) bunzip2 ./"$n" ;;
+				*.cbr | *.rar) unrar x -ad ./"$n" ;;
+				*.gz) gunzip ./"$n" ;;
+				*.cbz | *.epub | *.zip) unzip ./"$n" ;;
+				*.z) uncompress ./"$n" ;;
+				*.7z | *.arj | *.cab | *.cb7 | *.chm | *.deb | *.dmg | *.iso | *.lzh | *.msi | *.pkg | *.rpm | *.udf | *.wim | *.xar)
+					7z x ./"$n"
+					;;
+				*.xz) unxz ./"$n" ;;
+				*.exe) cabextract ./"$n" ;;
+				*.cpio) cpio -id <./"$n" ;;
+				*.cba | *.ace) unace x ./"$n" ;;
+				*)
+					echo "extract: '$n' - unknown archive method"
+					return 1
+					;;
+				esac
+			else
+				echo "'$n' - file does not exist"
+				return 1
+			fi
+		done
+	fi
+
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<func_ex>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+function ex
+    if test -f $argv[1]
+        switch $argv[1]
+            case '*.tar.bz2'
+                tar xjf $argv[1]
+            case '*.tar.gz'
+                tar xzf $argv[1]
+            case '*.bz2'
+                bunzip2 $argv[1]
+            case '*.rar'
+                unrar x $argv[1]
+            case '*.gz'
+                gunzip $argv[1]
+            case '*.tar'
+                tar xf $argv[1]
+            case '*.tbz2'
+                tar xjf $argv[1]
+            case '*.tgz'
+                tar xzf $argv[1]
+            case '*.zip'
+                unzip $argv[1]
+            case '*.Z'
+                uncompress $argv[1]
+            case '*.7z'
+                7z x $argv[1]
+            case '*.deb'
+                ar x $argv[1]
+            case '*.tar.xz'
+                tar xf $argv[1]
+            case '*.tar.zst'
+                unzstd $argv[1]
+            case '*'
+                echo "$argv[1] cannot be extracted via ex() yet."
+        end
+    else
+        echo "$argv[1] is not a valid file!"
+    end
+end
+#+end_src
+** Navigate upwards.
+Simple, =up <num_stage(?)_to_navigate_up>= to navigate upwards.
+*** Bash
+#+NAME: func_up
+#+begin_src shell :tangle my_settings_bash
+up () {
+    local d=""
+    local limit="$1"
+
+    # Default to limit of 1
+    ([ -z "$limit" ] || [ "$limit" -le 0 ]) && limit=1
+
+    #for ((i=1;i<=limit;i++)); do
+    #    d="../$d"
+    #done
+    j=0
+    while [ "$j" -lt "$limit" ]; do
+        d="../$d"
+        j=$(( j+1 ))
+    done
+
+    # perform cd. Show error if cd fails
+    if ! cd "$d"; then
+        echo "Couldn't go up $limit dirs.";
+    fi
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<func_up>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+function up
+    set d ""
+    set limit "$argv[1]"
+
+    if test -z "$limit" -o "$limit" -le 0
+        set limit 1
+    end
+
+    for i in (seq 0 "$limit")
+        set d "../$d"
+    end
+
+    if ! cd "$d"
+        echo "Couldn't go up $limit dirs."
+    end
+end
+#+end_src
+
+** Recursively delete files
+*** Bash
+#+NAME: func_delete_recursive
+#+begin_src shell :tangle my_settings_bash
+delete_recursive ()
+{
+    echo "Querying files!!"
+    echo "================================"
+    if [ -x "$(command -v fd)" ]; then
+        fd -IH -g "$1" -tf
+    else
+        find . -name "$1" -type f
+    fi
+    echo "================================"
+    read -p "Do you wish to delete them? [yn]" yn
+    while true; do
+        case "$yn" in
+        [Yy]* )
+            if [ -x "$(command -v fd)" ]; then
+            if [ -x "$(command -v rip)" ]; then
+                fd -IH -g "$1" -tf -X rip
+            else
+                fd -IH -g "$1" -tf -X rm
+            fi
+            else
+            find . -name "$1" -type f -delete
+            fi
+            echo "Deleted the files!!"
+            ;;
+        [Nn]* )
+        echo "Not deleting!!"; break
+        ;;
+        * )
+        echo "Please answer y or n."
+        ;;
+        esac
+    done
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes 
+<<func_delete_recursive>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+function delete_recursive
+    echo "Querying files!!"
+    echo "================================"
+    if type -q fd
+        fd -IH -g "$argv[1]" -tf
+    else
+        find . -name "$argv[1]" -type f
+    end
+    echo "================================"
+    read -p "Do you wish to delete them? [yn]" yn
+
+    while true
+        switch "$yn"
+            case "[Yy]*"
+                if type -q fd
+                    if type -q rip
+                        fd -IH -g "$1" -tf -X rip
+                    else
+                        fd -IH -g "$1" -tf -X rm
+                    end
+                else
+                    find . -name "$1" -type f -delete
+                end
+                echo "Deleted the files!!"
+
+            case "[Nn]*"
+                echo "Not deleting!!"
+                break
+
+            case '*'
+                echo "Please answer y or n."
+        end
+    end
+end
+#+end_src
+
+** Universal 'open' function
+Not fully implemented yet. It detects Xorg desktop's MIME association but not really versatile.
+
+*** Bash
+#+NAME: func_open
+#+begin_src shell :tangle my_settings_bash
+open() {
+for i in "$*"; do
+    xdg-open "$i" >/dev/null 2>/dev/null
+done
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<func_open>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish :noweb yes
+function open
+    for i in $argv
+        setsid nohup xdg-open $i > /dev/null 2> /dev/null
+    end
+end
+#+end_src
+
+** Check uptime
+*** Bash
+#+NAME: func_uptime
+#+begin_src shell :tangle my_settings_bash
+check_uptime() {
+    echo "$(awk '{print $1}' /proc/uptime)"
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<func_uptime>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+function check_uptime
+    echo (awk '{print $1}' /proc/uptime)
+end
+#+end_src
+
+* Settings for Custom installed programs!
+** Broot
+*** Bash
+#+NAME: prog_broot
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v broot)" ]; then
+    printf "%b Broot found!\n" "${check_symbol}"
+    alias br='broot -dhp'
+    alias bs='broot --sizes'
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_broot>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q broot
+    alias br='broot -dhp'
+    alias bs='broot --sizes'
+end
+#+end_src
+
+** Java Runtime Environment (or Java Development Kit)
+*** Bash
+#+NAME: prog_java
+#+begin_src shell :tangle my_settings_bash
+JAVA_HOME=/opt/java
+if [ -d "$JAVA_HOME" ]; then
+    printf "%b Java (Possibly Oracle) found at %s\n" "${check_symbol}" "${JAVA_HOME}"
+    sleep "${line_delay}"
+    addpath "${JAVA_HOME}/bin"
+    export CLASSPATH="${JAVA_HOME}/lib"
+fi
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_java>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set JAVA_HOME /opt/java
+if test -d $JAVA_HOME
+    printf "$check_symbol Java (Possibley Oracle) found at $JAVA_HOME\n"
+    sleep $line_delay
+    addpath "$JAVA_HOME/bin"
+    set CLASSPATH=$JAVA_HOME/lib
+end
+#+end_src
+
+** EMACS Aliases
+Emacs runs much faster with emacsclient which runs a daemon. Also, we are trying to avoid gtk3 bug on elementary OS.
+
+*** Bash
+#+NAME: prog_emacs
+#+begin_src shell :tangle my_settings_bash
+emacs_cmd="$(command -v emacs)"
+emacsclient_cmd="$(command -v emacsclient)"
+unalias em emacs emacsclient 2> /dev/null
+if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
+    alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a 'emacs' "
+    alias em="${emacs_cmd} -nw"
+else
+    alias emacs="${emacsclient_cmd} -c -a 'emacs' "
+    alias em="${emacs_cmd} -nw"
+fi
+#+end_src
+
+#+begin_src shell :tangle my_settings_bash
+# Aaaaand some shortcut for emacs
+emc() {
+	if [ $# -eq 0 ]; then
+		emacsclient &
+		>/dev/null &
+	else
+		emacsclient "$1" &
+		>/dev/null &
+	fi
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_emacs>>
+#+end_src
+
+#+begin_src shell :tangle my_settings_zsh
+emc() {
+	if [ $# -eq 0 ]; then
+		emacsclient &
+		disown
+	else
+		emacsclient "$1" &
+		disown
+	fi
+}
+#+end_src
+
+*** Fish
+
+At this moment, fish shell cannot run any aliases or functions background. We need to rather write a few dedicated scripts then run them. So, those implementations do not return you back to shell as of now. What a bummer.
+
+#+begin_src fish :tangle my_settings_fish
+set emacs_cmd (command -v emacs)
+set emacsclient_cmd (command -v emacsclient)
+
+unalias em emacs emacsclient 2> /dev/null
+function emacs
+    if not test -z (cat /etc/os-release | grep 'ID' | grep 'elementary')
+        env XLIB_SKIP_ARGB_VISUALS=1 $emacsclient_cmd -t -a emacs $argv
+    else
+        $emacsclient_cmd -t -a emacs $argv
+    end
+end
+#+end_src
+
+** Rust (Cargo, actually.)
+Apparently, this part NEEDs the bash shell. We might have to consider splitting the shell script.
+
+*** Bash
+#+NAME: prog_rust
+#+begin_src shell :tangle my_settings_bash
+if [ -d "$HOME/.cargo" ]; then
+    printf "%b Cargo directory detected at %s\n" "${check_symbol}" "${HOME}/.cargo"
+    sleep ${line_delay}
+    . "$HOME/.cargo/env"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_rust>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -d "$HOME/.cargo"
+    printf "$check_symbol Cargo directory detected at $HOME/.cargo\n"
+    sleep $line_delay
+    addpath "$HOME/.cargo/bin"
+end
+#+end_src
+
+** Homebrewed GCC
+These are default gccs compiled by =../unix_dev_setup= script. They were implemented due to CUDA needing a bit old gcc. Especially, my MBP can only install CUDA 6.5 which relies on gcc 4.8 or less.
+
+*** Bash
+#+NAME: prog_homebrew_gcc
+#+begin_src shell :tangle my_settings_bash
+if [ -d "$HOMEBREW/.opt/gcc-jit" ]; then
+    printf "%b Gcc with libgccjit found in the system!\n" "${check_symbol}"
+    addpath "$HOMEBREW/.opt/gcc-jit/bin"
+fi
+if [ -d "$HOMEBREW/.opt/gcc9" ]; then
+    printf "%b Gcc9 found in the system!\n" "${check_symbol}"
+    addpath "$HOMEBREW/.opt/gcc9/bin"
+fi
+if [ -d "$HOMEBREW/.opt/gcc8" ]; then
+    printf "%b Gcc8 found in the system!\n" "${check_symbol}"
+    addpath "$HOMEBREW/.opt/gcc8/bin"
+fi
+if [ -d "$HOMEBREW/.opt/gcc4" ]; then
+    printf "%b Gcc4 found in the system!\n" "${check_symbol}"
+    addpath "$HOMEBREW/.opt/gcc4/bin"
+fi
+#+end_src
+
+#+RESULTS: prog_homebrew_gcc
+: Gcc with libgccjit found in the system!
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_homebrew_gcc>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -d "$HOMEBREW/.opt/gcc-jit"
+    printf "$check_symbol Gcc with libgccjit found in the system!\n"
+    addpath "$HOMEBREW/.opt/gcc-jit/bin"
+end
+if test -d "$HOMEBREW/.opt/gcc9"
+    printf "$check_symbol Gcc9 found in the system!\n"
+    addpath "$HOMEBREW/.opt/gcc9/bin"
+end
+if test -d "$HOMEBREW/.opt/gcc8"
+    printf "$check_symbol Gcc8 found in the system!\n"
+    addpath "$HOMEBREW/.opt/gcc8/bin"
+end
+if test -d "$HOMEBREW/.opt/gcc4"
+    printf "$check_symbol Gcc4 found in the system!\n"
+    addpath "$HOMEBREW/.opt/gcc4/bin"
+end
+#+end_src
+
+** Golang
+*** Bash
+#+NAME: prog_golang
+#+begin_src shell :tangle my_settings_bash
+export GOROOT="$HOMEBREW/.opt/go"
+export GOPATH="$HOMEBREW/.opt/go/bin"
+if [ -d "$GOROOT" ]; then
+    printf "%b Golang has been found at %s\n" "${check_symbol}" "${GROOT}"
+    addpath "$GOPATH/bin:$GOPATH"
+fi
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_golang>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set GOROOT "$HOMEBREW/.opt/go"
+set GOPATH "$HOMEBREW/.opt/go/bin"
+if test -d "$GOROOT"
+    printf "$check_symbol Golang has been found at $GOROOT\n"
+    addpath "$GOPATH"
+end
+#+end_src
+
+** Julia
+Julia, the high performance scripting language. Will it replace Python? Who konws?
+*** Bash
+#+NAME: prog_julia
+#+begin_src shell :tangle my_settings_bash
+JULIA_ROOT="$HOMEBREW/.opt/julia"
+JULIA_BIN="$JULIA_ROOT/bin"
+if [ -d "$JULIA_ROOT" ] && [ -f "$JULIA_BIN/julia" ]; then
+    printf "%b Julia has been found at %s\n" "${check_symbol}" "${JULIA_ROOT}"
+    addpath "$JULIA_BIN"
+fi
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_julia>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set JULIA_ROOT "$HOMEBREW/.opt/julia"
+set JULIA_BIN "$JULIA_ROOT/bin"
+if test -d "$JULIA_ROOT"
+    and test -f "$JULIA_BIN/julia"
+    printf "%b Julia has been found at %s\n" "${check_symbol}" "${JULIA_ROOT}"
+    addpath "$JULIA_BIN"
+end
+#+end_src
+
+** Snapd stuff
+*** Bash
+#+NAME: prog_snapd
+#+begin_src shell :tangle my_settings_bash
+SNAP_BIN="/snap/bin"
+if [ -d "$SNAP_BIN" ]; then
+    printf "%b Snap executables have been found at %s\n" "${check_symbol}" "${SNAP_BIN}"
+    addpath "$SNAP_BIN"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_snapd>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set SNAP_BIN /snap/bin
+if test -d "$SNAP_BIN"
+    printf "$check_symbol Snap executables have been found at $SNAP_BIN\n"
+    addpath "$SNAP_BIN"
+end
+#+end_src
+
+** VNC setup
+*** Bash
+#+NAME: prog_vnc
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v vncserver)" ]; then
+    echo "*** VNC server found! ***"
+    echo " To start: vncstart"
+    echo " To end: vnckill"
+    echo ""
+    alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+    alias vnckill="vncserver -kill :1"
+fi
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_vnc>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q vncserver
+    echo "$check_symbol VNC server found!"
+    echo "  To start: vncstart"
+    echo "  To end: vnckill"
+    alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+    alias vnckill="vncserver -kill :1"
+end
+#+end_src
+
+
+** ROOT
+*** Bash
+#+NAME: prog_ROOT
+#+begin_src shell :tangle my_settings_bash
+ROOT_DIR=$HOMEBREW/.opt/ROOT
+if [ -x "$(command -v $ROOT_DIR/bin/root)" ]; then
+    printf "%b ROOT Found! Applying its shell env.\n" "${check_symbol}"
+    alias thisroot="$ROOT_DIR/bin/thisroot.sh"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_ROOT>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set ROOT_DIR "$HOMEBREW/.opt/ROOT"
+if type -q "$ROOT_DIR/bin/root"
+    printf "$check_symbol ROOT Found! Applying its shell env.\n"
+    alias thisroot="$ROOT_DIR/bin/thisroot.fish"
+end
+#+end_src
+
+** Neovim
+*** Bash
+#+NAME: prog_neovim
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v nvim)" ]; then
+	printf "%b Neovim found! replacing vim!\n" "${check_symbol}"
+	sleep "${line_delay}"
+	unalias vi vim 2>/dev/null || true
+	alias vim="nvim"
+	alias vi="nvim"
+	if [ -x "$(command -v nvim-gtk)" ]; then
+		unalias gvim 2>/dev/null || true
+		alias gvim="nvim-gtk"
+	fi
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_neovim>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q nvim
+    printf "$check_symbol Neovim found! replacing vim!\n"
+    sleep $line_delay
+    unalias vim vi 2> /dev/null
+    alias vim='nvim'
+    alias vi='nvim'
+    if type -q nvim-gtk
+        alias gvim='nvim-gtk'
+    end
+end
+#+end_src
+
+** Texlive
+*** Bash
+#+NAME: prog_texlive
+#+begin_src shell :tangle my_settings_bash
+texlive_year="2020"
+texlive_arch=x86_64-linux
+texlive_bin_dir=$texlive_base_path/$texlive_year/bin/$texlive_arch/
+texlive_bin_dir_woyear=$texlive_base_path/bin/$texlive_arch/
+if [ -d "$texlive_bin_dir" ]; then
+    printf "%b Texlive found at $texlive_bin_dir directory!!\n" "${check_symbol}"
+    export PATH=$texlive_bin_dir:$PATH
+elif [ -d "$texlive_bin_dir_woyear" ]; then
+    printf "%b Texlive found at $texlive_bin_dir_woyear directory!!\n" "${check_symbol}"
+    export PATH=$texlive_bin_dir_woyear:$PATH
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_texlive>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set texlive_year "2020"
+set texlive_arch "x86_64-linux"
+set texlive_bin_dir "$texlive_base_path/$texlive_year/bin/$texlive_arch"
+set texlive_bin_dir_woyear "$texlive_base_path/bin/$texlive_arch"
+if test -d "$texlive_bin_dir"
+    printf "$check_symbol Texlive found at $texlive_bin_dir directory!!\n"
+    addpath "$texlive_bin_dir"
+else if test -d "$texlive_bin_dir_woyear"
+    printf "$check_symbol Texlive found at $texlive_bin_dir_woyear directory!!\n"
+    addpath "$texlive_bin_dir_woyear"
+end
+#+end_src
+
+** PyPy - Homebrewed pypy3
+*** Bash
+#+NAME: prog_pypy
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v $HOMEBREW/.opt/pypy/bin/pypy3)" ]; then
+	printf "%b pypy3 found in $HOMEBREW/.opt/pypy/bin/pypy3!!\n" "${check_symbol}"
+	sleep "${line_delay}"
+	export PATH="$HOMEBREW/.opt/pypy/bin:$PATH"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_pypy>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q "$HOMEBREW/.opt/pypy/bin/pypy3"
+    printf "$check_symbol pypy3 found in $HOMEBREW/.opt/pypy/bin/pypy3"
+    sleep $line_delay
+    addpath "$HOMEBREW/.opt/pypy/bin"
+end
+#+end_src
+
+** Pyenv - Manage multiple python versions
+*** Bash
+#+NAME: prog_pyenv
+#+begin_src shell :tangle my_settings_bash
+PYENV_DIR="$HOME/.pyenv"
+if [ -d "$PYENV_DIR" ]; then
+    printf '%b Pyenv found!! Extending environments\n' "${check_symbol}"
+    export PYENV_ROOT="$PYENV_DIR"
+    export PATH="$PYENV_DIR/bin:$PATH"
+    eval "$(pyenv init -)"
+fi
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_pyenv>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set PYENV_DIR "$HOME/.pyenv"
+if test -d "$PYENV_DIR"
+  printf '%b Pyenv found!! Extending environments\n' "$check_symbol"
+  set PYENV_ROOT "$PYENV_DIR"
+  set -Ua PATH "$PYENV_DIR/bin" $fish_user_paths
+  pyenv init -
+end
+#+end_src
+
+** Bpytop - top, htop, and bashtop replacement by Python3
+We can install bpytop through the pyenv's python. But these kind of tools are best to be paired with system python rather than home directory dev environment. So, let's just keep it this way.
+
+*** Bash
+#+NAME: prog_bashtop
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v $HOMEBREW/bin/pip3)" ] && [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
+    printf "%b Locally installed bpytop found!\n" "${check_symbol}"
+    sleep ${line_delay}
+    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
+    alias htop="$HOMEBREW/bin/bpytop"
+    alias top="$HOMEBREW/bin/bpytop"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_bashtop>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q $HOMEBREW/bin/pip3
+    and type -q $HOMEBREW/bin/bpytop
+    printf "$check_symbol Locally installed bpytop found!\n"
+    sleep $line_delay
+    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop; $HOMEBREW/bin/bpytop"
+    alias htop="$HOMEBREW/bin/bpytop"
+    alias top="$HOMEBREW/bin/bpytop"
+end
+#+end_src
+
+** n - Homebrewed Node.JS's update tool
+*** Bash
+#+NAME: prog_n
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v n)" ]; then
+    printf "%b n found!, Setting up N_PREFIX environment variable.\n" "${check_symbol}"
+    sleep "${line_delay}"
+    export N_PREFIX="$(command -v n | sed -E 's/\/bin\/n//')"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_n>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q n
+    printf "$check_symbol n found!, Setting up N_PREFIX for it!\n"
+    sleep "$line_delay"
+    set -U N_PREFIX "(type -p n | sed -E 's/\/bin\/n//g')"
+end
+#+end_src
+
+** IrfanView - What? yeah, wine!
+*** Bash
+#+NAME: prog_irfanview
+#+begin_src shell :tangle my_settings_bash
+iview64_path="$HOME/.wine/drive_c/Program\\ Files/IrfanView/i_view64.exe"
+run_iview() {
+	wine "$iview64_path" "$(winepath --windows "$@")"
+}
+if [ -x "$(command -v wine)" ]; then
+	if [ -f "$iview64_path" ]; then
+		printf "%b Irfanview found!!\n" "${check_symbol}"
+		printf "  %b Usage: iview <files>\n" "${right_arrow_symbol}"
+		alias iview=run_iview
+		sleep ${line_delay}
+	fi
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_irfanview>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set iview64_path "$HOME/.wine/drive_c/Program\ Files/IrfanView/i_view64.exe"
+function run_iview
+    wine "$iview64_path" (winepath --windows $argv[@])
+end
+if type -q wine
+    and test -f "$iview64_path"
+    printf "$check_symbol Irfanveiw found!\n"
+    printf "  $right_arrow_symbol Usage: iview <files>\n"
+    alias iview='run_iview'
+    sleep $line_dealy
+end
+#+end_src
+
+** LTSpice - Yet another wine program
+*** Bash
+#+NAME: prog_irfanview
+#+begin_src shell :tangle my_settings_bash
+ltspice_path="$HOME/.wine/drive_c/Program\\ Files/LTC/LTspiceXVII/XVIIx64.exe"
+run_ltspice ()
+{
+    wine "$ltspice_path" "$(winepath --windows "$@")"
+}
+if [ -x "$(command -v wine)" ]; then
+    if [ -f "$ltspice_path" ]; then
+        printf "%b LTSpice found!!\n" "${check_symbol}"
+        printf "  %b Usage: ltspice \n" "${right_arrow_symbol}"
+        alias ltspice=run_ltspice
+        sleep ${line_delay}
+    fi
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_irfanview>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set ltspice_path "$HOME/.wine/drive_c/Program\\ Files/LTC/LTspiceXVII/XVIIx64.exe"
+function run_ltspice
+    wine "$ltspice_path" (winepath --windows $argv[@])
+end
+if type -q wine
+    and test -f "$ltspice_path"
+    printf "$check_symbol LTSpice found!\n"
+    printf "  $right_arrow_symbol Usage: ltspice \n"
+    alias ltspice='run_ltspice'
+    sleep $line_dealy
+end
+#+end_src
+
+** Doomemacs! DOOM! and EVIL!
+*** Bash
+#+NAME: prog_doomemacs
+#+begin_src shell :tangle my_settings_bash
+if [ -f "$HOME/.emacs.d/bin/doom" ]; then
+    printf "%b Doomemacs found! Adding to path!\n" "${check_symbol}"
+    addpath "$HOME/.emacs.d/bin"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_doomemacs>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -f "$HOME/.emacs.d/bin/doom"
+    printf "$check_symbol Doomemacs found! Adding to path!\n"
+    addpath "$HOME/.emacs.d/bin"
+end
+#+end_src
+
+** Cuda for NVIDIA 9600/9400m
+*** Bash
+#+NAME: prog_cuda_old
+#+begin_src shell :tangle my_settings_bash
+if [ -d "/usr/local/cuda-6.5" ]; then
+    printf "%b CUDA 6.5 found! Doing some env stuff for it.\n" "${check_symbol}"
+    export LD_LIBRARY_PATH="/usr/local/cuda-6.5/lib64":$LD_LIBRARY_PATH
+    export PATH=$PATH:"/usr/local/cuda-6.5/bin"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_cuda_old>>
+#+end_src
+
+*** Fish
+#+begin_src fish :my_settings_fish
+if test -d "/usr/local/cuda-6.5"
+    printf "$check_symbol CUDA 6.5 found! Doing some env stuff for it.\n"
+    set -Ua LD_LIBRARY_PATH "/usr/local/cuda-6.5/lib64"
+    set -Up fish_user_paths "/usr/local/cuda-6.5/bin"
+end
+#+end_src
+
+** Geolocation
+*** Bash
+#+NAME: prog_jq
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v jq)" ]; then
+    printf "%b jq found, we can use geolocation alias as: geoloc\n" "${check_symbol}"
+    alias geoloc="curl -s http://ip-api.com/json/$(curl -s https://ipinfo.io/ip) | jq '.lat, .lon, .city, .country'"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_jq>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q jq
+    printf "$check_symbol jq found, we can use geolocation alias as: geoloc\n"
+    alias geoloc="curl -s https://ipvigilante.com/(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
+end
+#+end_src
+
+* Rust replacements
+** Du-dust - du replacement
+*** Bash
+#+NAME: prog_dust
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v dust)" ]; then
+    printf "%b dust found! Using it instead of du!\n" "${check_symbol}"
+    alias du='dust -r'
+else
+    alias du='du -skh | sort -r'
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_dust>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q dust
+    printf "$check_symbol dust found! Using it instead of du!\n"
+    alias du='dust -r'
+else
+    alias du='du -skh | sort -r'
+end
+#+end_src
+
+** Bat - cat replacement
+*** Bash
+#+NAME: prog_bat
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v bat)" ]; then
+    printf "%b bat found! using it instead of cat\n" "${check_symbol}"
+    sleep "${line_delay}"
+    bat_theme="$(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
+fi
+
+set_bat_theme() {
+    echo "$1" >"$BATTHEMESAVE"
+    bat_theme="$(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
+}
+
+bat_theme_light() {
+    echo 'Solarized (light)' >"$BATTHEMESAVE"
+    bat_theme="$(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
+}
+bat_theme_dark() {
+    echo "Dracula" >"$BATTHEMESAVE"
+    bat_theme="$(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
+}
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_bat>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q bat
+    printf "$check_symbol bat found! using it instead of cat\n"
+    sleep "$line_delay"
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
+end
+
+function set_bat_theme
+    echo "$argv[1]" >"$BATTHEMESAVE"
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
+end
+
+function bat_theme_light
+    echo "Solariazed (light)" >"$BATTHEMESAVE"
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
+end
+function bat_theme_dark
+    echo Dracula >"$BATTHEMESAVE"
+    set bat_theme "(cat $BATTHEMESAVE)"
+    alias cat='bat --theme="$bat_theme"'
+end
+#+end_src
+
+** Rip - rm-improved
+*** Bash
+#+NAME: prog_rip
+#+begin_src shell :tangle my_settings_bash
+trash_location="$HOME/.local/share/Trash/files/"
+if [ -x "$(command -v rip)" ]; then
+    printf "%b rip, rm-improved found!\n  ${right_arrow_symbol} Setting up graveyard at $trash_location\n" "${check_symbol}"
+    sleep "${line_delay}"
+    alias rip="rip --graveyard $trash_location"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_rip>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set trash_location "$HOME/.local/share/Trash/files/"
+if type -q rip
+    printf "$check_symbol rip, rm-improved found!\n  $right_arrow_symbol Setting up graveyard at $trash_location\n"
+    sleep "$line_delay"
+    alias rip="rip --graveyard $trash_location"
+end
+#+end_src
+
+** Zoxide - z replacement
+*** Bash
+#+NAME: prog_zoxide
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v zoxide)" ]; then
+    printf "%b zoxide found! activating it!\n" "${check_symbol}"
+    sleep "${line_delay}"
+    case "$(echo $MYSHELL)" in
+        ,*"bash") eval "$(zoxide init bash)"; alias cd='z' ;;
+        ,*"zsh") eval "$(zoxide init zsh)" ;;
+        ,*) eval "$(zoxide init posix --hook prompt)" ;;
+    esac
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_zoxide>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q zoxide
+    printf "$check_symbol zoxide found! But Fish's cd also has similar history function! Not overriding cd\n"
+    sleep "$line_delay"
+    zoxide init fish | source
+end
+#+end_src
+
+* Mount Clouds
+** Google Drive
+*** Bash
+#+NAME: mount_google_drive
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v rclone)" ]; then
+
+	if [ ! -d "$GOOGLE_DRIVE" ]; then
+		printf "%b Google drive mount point not found! making one..\n" "${check_symbol}"
+		mkdir -pv "$GOOGLE_DRIVE"
+	fi
+
+	if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'; then
+		printf "%b Google Drive already mounted at $GOOGLE_DRIVE\n" "${check_symbol}"
+		sleep "${line_delay}"
+	elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
+		printf "%b RClone was for Google drive not set up yet!\n" "${check_symbol}"
+	else
+		if [ ! -z "$(grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
+			printf '%b Mounting Google Drive to %s\n' "${check_symbol}" "${GOOGLE_DRIVE}"
+			rclone mount google-drive: "$GOOGLE_DRIVE" &
+			sleep 2
+		fi
+	fi
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<mount_google_drive>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q rclone
+    if not test -d "$GOOGLE_DRIVE"
+        printf "$check_symbol Google drive mount point not found! making one...\n"
+        mkdir -pv "$GOOGLE_DRIVE"
+    end
+
+    if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'
+        printf "$check_symbol Google drive already mounted at $GOOGLE_DRIVE\n"
+        sleep $line_delay
+    else if not test -f "$HOME/.config/rclone/rclone.conf"
+        printf "$check_symbol RClone for Google drive has not set yet!\n"
+    else
+        if test -n (grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")
+            printf "$check_symbol Mounting Google Drive to $GOOGLE_DRIVE\n"
+            rclone mount google-drive: "$GOOGLE_DRIVE" &
+            sleep 2
+        end
+    end
+end
+#+end_src
+
+** Onedrive
+*** Bash
+#+NAME: cloud_onedrive
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v rclone)" ]; then
+    if grep -qs "$ONE_DRIVE" '/proc/mounts'; then
+        printf "%b MS One Drive already mounted at $ONE_DRIVE\n" "${check_symbol}"
+        sleep "${line_delay}"
+    elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
+        printf "%b RClone for Onedrive was not set up yet!\n" "${check_symbol}"
+    else
+        if [ ! -z "$(grep -i "\[onedrive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
+            printf "%b Mounting MS One Drive to %s\n" "${check_symbol}" "${ONE_DRIVE}"
+            rclone mount --vfs-cache-mode writes onedrive: "$ONE_DRIVE" &
+            sleep 2
+        fi
+    fi
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<cloud_onedrive>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q rclone
+    if not test -d "$ONE_DRIVE"
+        printf "$check_symbol MS One Drive mount point not found! making one...\n"
+        mkdir -pv "$ONE_DRIVE"
+    end
+
+    if grep -qs "$ONE_DRIVE" /proc/mounts
+        printf "$check_symbol MS One drive already mounted at $ONE_DRIVE\n"
+        sleep "$line_delay"
+    else if not test -f "$HOME/.config/rclone/rclone.conf"
+        printf "$check_symbol RClone for Onedrive has not set yet!\n"
+    else
+        if test -n (cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive\]")
+            printf "$check_symbol Mounting MS One Drive to $ONE_DRIVE\n"
+            rclone mount --vfs-cache-mode writes onedrive: "$ONE_DRIVE" &
+            sleep 2
+        end
+    end
+end
+#+end_src
+
+* Shell extension
+** Starship
+This part is also super duper dependent on shell type. Gotta isolate it when we finally move to POSIX shell for initialization.
+
+*** Bash
+#+NAME: shellext_starship
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v starship)" ]; then
+    printf "%b Starship shell extension found! Let's start it!\n" "${check_symbol}"
+    sleep "${line_delay}"
+
+    case "$(echo $MYSHELL)" in
+        ,*"bash")
+            printf "  %b Running it as bash" "${right_arrow_symbol}"
+            eval "$(starship init bash)"
+            ;;
+        ,*"zsh")
+            printf "  %b Running it as zsh" "${right_arrow_symbol}"
+            eval "$(starship init zsh)"
+            ;;
+        ,*) ;;
+    esac
+fi
+#+end_src
+
+*** Zsh
+Come to think of Starship... We may not need it on Zsh if we have oh-my-zsh already installed on it. So, let's skip it!
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+[ -x "$(command -v starship)" ] && [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ] && eval "$(starship init zsh)"
+#+end_src
+
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q starship
+    printf "$check_symbol Starship shell extension found! Let's start it as fish!\n"
+    sleep "$line_delay"
+    starship init fish | source
+end
+#+end_src
+
+* Final start-up
+** Clear screen
+*** Bash
+#+NAME: autobat_clear
+#+begin_src shell :tangle my_settings_bash
+clear
+if [ -x "$(command -v figlet)" ]; then
+    if [ -x $(command -v lolcat) ]; then
+        figlet -w "$(tput cols)" "$HOST" | lolcat
+    else
+        figlet -w "$(tput cols)" "$HOST"
+    fi
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<autobat_clear>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+clear
+if type -q figlet
+    if type -q lolcat
+        figlet -w (tput cols) "$hostname" | lolcat
+    else
+        figlet -w (tput cols) "$hostname"
+    end
+end
+#+end_src
+
+** Run Neofetch
+
+Neofetch is cool. But seeing this every time running a terminal window is cumbersome. So, It won't run once system uptime passes 2400 seconds.
+
+*** Bash
+#+NAME: autobat_neofetch
+#+begin_src shell :tangle my_settings_bash
+([ -x "$(command -v neofetch)" ] && [ "$(printf '%.0f' "$(check_uptime)")" -lt 2400 ]) && neofetch
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<autobat_neofetch>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q neofetch
+    and test (printf '%.0f' (check_uptime)) -lt 2400
+    neofetch
+end
+#+end_src
+
+** Clean up path
+*** Bash
+#+NAME: autobat_path_cleaup
+#+begin_src shell :tangle my_settings_bash
+path_sanitized=$(printf "%s" "$PATH" | awk -v RS=':' '!a[$1]++ { if (NR > 1) printf RS; printf $1 }')
+export PATH="$path_sanitized"
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<autobat_path_cleaup>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+# Fish don't need to clean up the PATH
+#+end_src
+
+** Set ls, finally!
+Not sure why setting up ls aliases does not work out on some cases. Especially on Debian. Anyway, let's try this...
+
+*** Bash
+#+NAME: set_ls_finally
+#+begin_src shell :tangle my_settings_bash
+set_ls
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<set_ls_finally>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set_ls
+#+end_src

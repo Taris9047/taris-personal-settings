@@ -1,0 +1,18 @@
+#+TITLE: Dotfiles TODO list.
+#+AUTHOR: Taylor Shin
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+
+* DONE Let's re-write bash initialization script to be more compliant to the POSIX standard since =/bin/sh= are not usually actual bash in some distributions.
+CLOSED: [2021-04-22 Thu 04:58]
+** As the Luke guy said, many linux distributions employ faster variant of bash shells for initializing system and user's space. And my start-up script is already getting bloated a lot! So, why not!
+** Bash surely provide a lot of handy features. But sometimes, old versions of bash does not provide grammars that are almost became standard to newer versions. Some distributions even use pre 4.X version of bash!
+** This is not impossible job since most of my init scripts are super simple in terms of functionality.
+* TODO RClone job (mainly, mounting those cloud storage drives) seems to be done when booting up the system not when running terminal emulator.
+** Let's implement RClone mounting when rebooting the computer or system initializing stage. Not when running the terminal emulator for the first time after reboot.
+** But keep the RClone set up part in tact in the separate script. Throwing in those set-up scripts when booting up isn't really comfortable to handle.
+* TODO [#B] Find out more elegant way to handle gitconfig.local. This file contains my own Github token which must not be uploaded to any non-secure locations. But copying and pasting this file every time from my personal e-mail account is not really efficient.
+** Privacy vs. convenience. That is the question.
+** Certainly, there are ways to access private storage. But that also requries revealing my credentials anyway.
+** Gotta think about using those cryptography tools.
+* TODO Write a curl based installation script for this entire repository. Checking out every time makes me feel boring!
+* TODO Need to figure ot how to exit tmux session more gracefully...

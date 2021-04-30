@@ -1,0 +1,268 @@
+// CMC Command File
+//
+//     Game Title: IL-2 Sturmovik Forgotten Battles
+//     Written By: Michael Sexton	
+//           Date: 10-12-2003
+//
+// Aircraft Controls	
+Elevator_Up								KBDOWN
+Elevator_Down							KBUP
+Aileron_Left							KBLEFT
+Aileron_Right							KBRIGHT
+Rudder_Left_Full						z
+Rudder_Right_Full						x
+Level_Stabilizer						KP0
+Rudder_Left								,
+Rudder_Neutral							/
+Rudder_Right							.
+Elevator_Trim_Negative					CTL KBUP
+Elevator_Trim_Neutral					SHF KBUP
+Elevator_Trim_Positive					CTL KBDOWN
+Aileron_Trim_Left						CTL KBLEFT
+Aileron_Trim_Neutral					SHF KBLEFT
+Aileron_Trim_Right						CTL KBRIGHT
+Rudder_Trim_Left						CTL z
+Rudder_Trim_Neutral						SHF z
+Rudder_Trim_Right						CTL x
+
+Toggle_Engine							i
+Increase_Engine_Power					=
+Decrease_Engine_Power					-
+Boost_(WEP)_On/Off						w
+Power_0									1
+Power_10%
+Power_20%								2
+Power_30%								3
+Power_40%								4
+Power_50%								5
+Power_60%								6
+Power_70%								7				
+Power_80%								8
+Power_90%								9
+Power_100%								0
+
+Prop_Pitch_0							
+Prop_Pitch_10%
+Prop_pitch_20%
+Prop_Pitch_30%							
+Prop_Pitch_40%
+Prop_Pitch_50%
+Prop_Pitch_60%							
+Prop_Pitch_70%
+Prop_Pitch_80%
+Prop_Pitch_90%							
+Prop_Pitch_100%
+Prop_Pitch_Auto							SHF 3
+Increase_Prop_Pitch						SHF 1
+Decrease_Prop_Pitch						SHF 2
+
+Mixture_0
+Mixture_10%
+Mixture_20%
+Mixture_30%
+Mixture_40%
+Mixture_50%
+Mixture_60%
+Mixture_70%
+Mixture_80%
+Mixture_90%
+Mixture_100%_Auto_Rich					SHF 6
+Increase_Mixture						SHF 4
+Decrease_Mixture						SHF 5
+
+Magneto_Next
+Magneto_Previous
+
+Supercharger_Next_Stage					SHF 7
+Supercharger_Previous_Stage				SHF 8
+
+Select_All_Engines						SHF KP5
+Unselect_All_Engines
+Select_Left_Engines						SHF KP0
+Select_Right_Engines					SHF KP.
+Select_Engine_1							SHF KP1
+Select_Engine_2							SHF KP2
+Select_Engine_3							SHF KP3
+Select_Engine_4							SHF KP4
+Select_Engine_5
+Select_Engine_6
+Select_Engine_7
+Select_Engine_8
+Toggle_Selection_For_All_Engines
+Toggle_Left_Engines
+Toggle_Right_Engines
+Select_Unselect_Engine_1				
+Select_Unselect_Engine_2				
+Select_Unselect_Engine_3				
+Select_Unselect_Engine_4				
+Select_Unselect_Engine_5
+Select_Unselect_Engine_6
+Select_Unselect_Engine_7
+Select_Unselect_Engine_8
+
+Fire_Extinguisher						SHF KP6
+Feather_Prop							
+
+Flaps_Up								f
+Flaps_Down								v
+Gear_Up/Down							g
+Raise_Gear_Manually						SHF g
+Lower_Gear_Manually						CTL g
+Cowl_or_Armor_Flaps						r
+Airbrake								SHF b
+Wheel_Brakes							b
+Lock_Tail_Wheel							ALT b
+Jettison_Drop_Tanks						CTL t
+
+Attach_Detach_Aircraft					ALT d
+Toggle_Wing_Fold						ALT w
+Toggle_Arrestor_Hook					h
+Toggle_Chocks							ALT c
+Open_Close_Canopy						CTL c
+
+Weapon_1								ENT
+Weapon_2								BKSPC
+Weapon_3								SPC
+Weapon_4								ALT SPC
+Weapon_1_And_2
+Toggle_Gun_Pods_On_Off
+
+//Gunsight/Bombsight Controls
+Toggle_Sight_Mode_Auto					KP5
+Increase_Sight_Distance					KP+
+Decrease_Sight_Distance					KP-
+Adjust_Sight_Control_To_Right
+Adjust_Sight_Control_To_Left
+Increase_Sight_Altitude					KP8
+Decrease_Sight_Altitude					KP2
+Increase_Sight_Velocity					KP*
+Decrease_Sight_Velocity					KP/
+
+//Gunner Controls
+Fire									MOUSE1
+Turret_Aiming_Control
+
+//Views
+Pilot_or_Gunner_Position				c
+Jump_To_Cockpit_1_Pilot
+Jump_To_Cockpit_2
+Jump_To_Cockpit_3
+Jump_To_Cockpit_4
+Jump_To_Cockpit_5
+Jump_To_Cockpit_6
+Jump_To_Cockpit_7
+Jump_To_Cockpit_8
+Jump_To_Cockpit_9
+Jump_To_Cockpit_10
+Rotate_View
+Zoom_In_External
+Zoom_Out_External
+Wide_View								KBPGDN
+FOV_85
+FOV_80
+FOV_75
+Normal_View								KBEND
+FOV_65
+FOV_60
+FOV_55
+FOV_50
+FOV_45
+FOV_40
+FOV_35
+Gunsight_View							KBDEL
+Toggle_FOV
+Increase_FOV
+Decrease_FOV
+Cockpit_View							F1
+No_Cockpit_View							CTL F1
+External_View							F2
+Next_Friendly_View						SHF F2
+Next_Enemy_View							CTL F2
+Fly-By_View								F3
+Padlock_Enemy							F4
+Padlock_Friendly						SHF F4
+Padlock_Enemy_Ground					F5
+Padlock_Friendly_Ground					SHF F5
+Padlock_Next							u
+Padlock_Previous						y
+Instant_View_Forward_with_Padlock
+External_Padlock_Enemy_Air				F6
+Exteranl_Padlock_Friendly_Air			SHF F6
+External_Padlock_Closest_Enemy_Air		ALT F6
+External_Padlock_Enemy_Ground			F7
+External_Padlock_Friendly_Ground		SHF F7
+External_Padlock_Closest_Enemy_Ground	ALT F7
+Chase_View								F8
+Next_Friendly_Chase_View				SHF F8
+Next_Enemy_Chase_View					CTL F8
+Toggle_Gunsight							SHF F1
+Toggle_Seat_Position					ALT F1
+
+//Snap Views
+Toggle_Snap/Pan_View					F9
+Look_Forward
+Look_Front_Up
+Look_Front_Down
+Look_Front_Left							KP7
+Look_Front_Right						KP9
+Look_Front_Up_Left
+Look_Front_Up_Right
+Look_Front_Down_Left
+Look_Front_Down_Right
+Look_Back_Left							KP1
+Look_Back_Right							KP3
+Look_Back_Up_Right
+Look_Back_Up_Left
+Look_Back_Down_Right
+Look_Back_Down_Left
+Look_Up
+Look_Up_left
+Look_Up_Right
+Look_Down
+Look_Down_Left
+Look_Down_Right
+Look_Left								KP4
+Look_Right								KP6
+
+//Pan Views
+Center_View_TrackIR						F12
+Pan_View_Up
+Pan_View_Down
+Pan_View_Left							KP4
+Pan_View_Right							KP6
+Pan_View_Up_Left						KP7
+Pan_View_Up_Right						KP9
+Pan_View_Down_Left						KP1
+Pan_View_Down_Right						KP3
+
+//Comms
+Toggle_Comms							TAB
+Voice_Comms_Key                         \
+Whisper_Comms             SHF \
+
+//Misc	
+Toggle_Auto_Pilot						a
+Toggle_Level_Autopilot
+Bailout									CTL e
+Tinted_Reticle_Dimmer(German_Planes)	CTL d
+Cockpit_Lights							CTL l
+Toggle_Nav_Lights						SHF l
+Toggle_Landing_Lights					l
+Toggle_Wingtip_Smoke					t
+Toggle_Map								m
+Chat									`
+Online_Rating							s
+Toggle_Speed_Bar
+Toggle_Icon_Types
+Toggle_Mirrors_Show_Mode
+
+Quick_Start_Save_Track
+Radio_Mute_Key
+Radio_Channels_Switch
+
+//Time Compression						
+Accelerate_Time_x2/x4/x8				]
+Normal_Time								'
+Decelerate_Time_x2/x4					[
+Pause_Game								p				
+

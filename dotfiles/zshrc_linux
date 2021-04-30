@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+# TODO - consider adding oh-my-zsh settings and its plugins here.
+#
+# Grabbing the absolute path of this file
+scriptpath=${0:a:h}
+# echo $scriptpath
+
+[ -d "$HOME/.oh-my-zsh" ] && source $scriptpath/ohmyzsh
+source $scriptpath/my_settings_zsh

@@ -1,0 +1,265 @@
+///
+/// General Commands
+///
+EXIT_FLIGHT ESC
+QUIT_GAME ALT q
+PAUSE_FLIGHT ALT p
+MAP m
+SCREEN_SHOT PRTSC
+TIME_COMPRESSION ALT t
+NORMAL_TIME ALT r
+CHANGE_TIME ALT c
+SKIP_TO_NEXT ALT n
+CYCLE_THROUGH_INFO_MODES ALT d
+///
+/// Flight Control
+///
+PITCH_UP KBDOWN
+PITCH_DOWN KBUP
+ROLL_RIGHT KBRIGHT
+ROLL_LEFT KBLEFT
+YAW_RIGHT .
+YAW_LEFT , 
+THROTTLE_UP =
+THROTTLE_DOWN -
+FLAPS_DOWN f
+FLAPS_UP v
+AIRBRAKES_TOGGLE s
+WHEELBRAKES_TOGGLE b
+LANDING_GEARS_TOGGLE g
+ARRESTER_HOOK_TOGGLE h
+CYCLE_NAV_LIGHT CTL l
+DRAG_CHUTE CTL b
+EJECT SHF ESC
+WING_LEVELER SHF a
+NEXT_WAYPOINT w
+PREV_WAYPOINT SHF w
+AUTO_PILOT a
+///
+/// Weapon Commands
+///
+FIRE_PRIMARY_GUN SPC
+FIRE_WEAPON ENT
+OPEN_BOMBBAY_DOOR CTL o
+DROP_TANKS CTL d
+JETTISON_STORES CTL j
+CHAFF c
+FLARE x
+ECM_TOGGLE z
+NEXT_AA_WEAPONS BKSPC
+PREV_AA_WEAPONS SHF BKSPC
+NEXT_AG_WEAPONS \ 
+PREV_AG_WEAPONS SHF \
+NEXT_RIPPLE_QUANTITY ]
+PREV_RIPPLE_QUANTITY SHF ]
+NEXT_RIPPLE_INTERVAL [
+PREV_RIPPLE_INTERVAL SHF [
+NEXT_HUD_MODE '
+PREV_HUD_MODE SHF '
+NEXT_GUNGROUP ;
+PREV_GUNGROUP SHF ;
+///
+/// Radar Commands
+///
+TOGGLE_RADAR CTL KBPGUP
+NEXT_RADAR_MODE KBPGUP
+PREV_RADAR_MODE SHF KBPGUP
+NEXT_RADAR_RANGE KBPGDN
+PREV_RADAR_RANGE SHF KBPGDN
+SELECT_NEXT_RADAR_TARGET KBHOME
+SELECT_PREV_RADAR_TARGET SHF KBHOME
+ACQUIRE_RADAR_TARGET KBINS
+ACQUIRE_VISUAL_TARGET_ON_RADAR SHF KBINS
+REJECT_RADAR_TARGET KBDEL
+SELECT_CLOSEST_CENTER KP*
+SELECT_TARGET t
+SELECT_PREV_TARGET SHF t
+SELECT_CLOSEST_TARGET CTL t
+SELECT_FRIENDLY y
+SELECT_PREV_FRIENDLY SHF y
+SELECT_CLOSEST_FRIENDLY CTL y
+SELECT_GROUND e
+SELECT_PREV_GROUND SHF e 
+SELECT_CLOSEST_GROUND CTL e
+SELECT_LAST_RADIO r
+SELECT_LAST_RADIO_CALLER SHF r
+SELECT_RADAR_TARGET CTL r
+SELECT_WAYPOINT CTL w
+///
+/// View Control
+///
+GOTO_COCKPIT_FRONT_VIEW F1
+GOTO_COCKPIT_FRONT_VIEW_LARGE_POV F2
+GOTO_COCKPIT_FRONT_VIEW_GUNSIGHT_POV F3
+GOTO_COCKPIT_UP_VIEW SHF F1
+GOTO_VIEW_PADLOCK F4
+TOGGLE_COCKPIT KP.
+SNAP_VIEW_FRONT KP8
+SNAP_VIEW_FRONT_RIGHT KP9
+SNAP_VIEW_RIGHT KP6
+SNAP_VIEW_REAR_RIGHT KP3
+SNAP_VIEW_REAR_LEFT KP1
+SNAP_VIEW_LEFT KP4
+SNAP_VIEW_FRONT_LEFT KP7
+SNAP_VIEW_UP KP5
+SNAP_VIEW_DOWN KP0
+GOTO_VIEW_SHOULDER F5
+GOTO_VIEW_OBJECT_NEXT F6
+GOTO_VIEW_OBJECT_PREV SHF F6
+GOTO_VIEW_GROUND_OBJECT_NEXT F7
+GOTO_VIEW_GROUND_OBJECT_PREV SHF F7
+GOTO_VIEW_TARGET F8
+GOTO_VIEW_PLAYER_TO_TARGET SHF F8
+GOTO_VIEW_TARGET_TO_PLAYER CTL F8
+GOTO_VIEW_WEAPON F9
+GOTO_VIEW_PLAYER_TO_WEAPON SHF F9
+GOTO_VIEW_WEAPON_TO_PLAYER CTL F9
+GOTO_VIEW_FLYBY F10
+GOTO_VIEW_FLYBY_PREV SHF F10
+GOTO_VIEW_TOWER F11
+GOTO_VIEW_TOWER_PREV SHF F11
+CAMERA_PITCH_UP ALT KBUP
+CAMERA_PITCH_DOWN ALT KBDOWN
+CAMERA_YAW_RIGHT ALT KBRIGHT
+CAMERA_YAW_LEFT ALT KBLEFT
+CAMERA_ZOOM_IN KP+
+CAMERA_ZOOM_OUT KP-
+//
+// Wingman Commands
+//
+WM-Attack-My-Target				   TAB 1 1
+WM-Cover-Me						       TAB 1 2
+WM-Break							       TAB 1 3
+WM-Rejoin-Formation				   TAB 1 4
+WM-Radar-On/Off					     TAB 1 5
+WM-Jettison-Drop-Tanks			 TAB 1 6
+WM-Status-Check					     TAB 1 7
+WM-Return-to-Base					   TAB 1 8
+//
+// Flight One Commands
+//
+F1-Engage-Aircraft					 TAB 2 1
+F1-Engage-Ground-Targets		 TAB 2 2
+F1-Break							       TAB 2 3
+F1-Rejoin-Formation				   TAB 2 4
+F1-Radar-On/Off					     TAB 2 5
+F1-Jettison-Drop-Tanks			 TAB 2 6
+F1-Return-to-Base					   TAB 2 8
+F1-Change-Formation-Spread-Out		TAB 2 7 1
+F1-Change-Formation-Close-Up		  TAB 2 7 2
+F1-Change-Formation-Fluid-Four		TAB 2 7 3
+F1-Change-Formation-Wall			    TAB 2 7 4
+F1-Change-Formation-Box			  TAB 2 7 5
+F1-Change-Formation-Arrowhead	TAB 2 7 6
+F1-Change-Formation-Wedge			TAB 2 7 7
+//
+// Flight Two Commands
+//
+F2-Engage-Aircraft					  TAB 3 1
+F2-Engage-Ground-Targets			TAB 3 2
+F2-Break							        TAB 3 3
+F2-Rejoin-Formation				    TAB 3 4
+F2-Radar-On/Off					      TAB 3 5
+F2-Jettison-Drop-Tanks				TAB 3 6
+F2-Return-to-Base					    TAB 3 8
+F2-Change-Formation-Spread-Out		TAB 3 7 1
+F2-Change-Formation-Close-Up		  TAB 3 7 2
+F2-Change-Formation-Fluid-Four		TAB 3 7 3
+F2-Change-Formation-Wall			TAB 3 7 4
+F2-Change-Formation-Box			  TAB 3 7 5
+F2-Change-Formation-Arrowhead	TAB 3 7 6
+F2-Change-Formation-Wedge			TAB 3 7 7
+//
+// Flight Three Commands
+//
+F3-Engage-Aircraft					  TAB 4 1
+F3-Engage-Ground-Targets			TAB 4 2
+F3-Break							        TAB 4 3
+F3-Rejoin-Formation				    TAB 4 4
+F3-Radar-On/Off					      TAB 4 5
+F3-Jettison-Drop-Tanks				TAB 4 6
+F3-Return-to-Base					    TAB 4 8
+F3-Change-Formation-Spread-Out		TAB 4 7 1
+F3-Change-Formation-Close-Up		  TAB 4 7 2
+F3-Change-Formation-Fluid-Four		TAB 4 7 3
+F3-Change-Formation-Wall			TAB 4 7 4
+F3-Change-Formation-Box			  TAB 4 7 5
+F3-Change-Formation-Arrowhead	TAB 4 7 6
+F3-Change-Formation-Wedge			TAB 4 7 7
+//
+// Flight Four Commands
+//
+F4-Engage-Aircraft					  TAB 5 1
+F4-Engage-Ground-Targets			TAB 5 2
+F4-Break							        TAB 5 3
+F4-Rejoin-Formation				    TAB 5 4
+F4-Radar-On/Off					      TAB 5 5
+F4-Jettison-Drop-Tanks				TAB 5 6
+F4-Return-to-Base					    TAB 5 8
+F4-Change-Formation-Spread-Out		TAB 5 7 1
+F4-Change-Formation-Close-Up		  TAB 5 7 2
+F4-Change-Formation-Fluid-Four		TAB 5 7 3
+F4-Change-Formation-Wall			TAB 5 7 4
+F4-Change-Formation-Box			  TAB 5 7 5
+F4-Change-Formation-Arrowhead	TAB 5 7 6
+F4-Change-Formation-Wedge			TAB 5 7 7
+//
+// Squadron Commands
+//
+SQ-Engage-Aircraft					  TAB 6 1
+SQ-Engage-Ground-Targets			TAB 6 2
+SQ-Break							        TAB 6 3
+SQ-Rejoin-Formation				    TAB 6 4
+SQ-Radar-On/Off					      TAB 6 5
+SQ-Jettison-Drop-Tanks				TAB 6 6
+SQ-Return-to-Base					    TAB 6 8
+SQ-Change-Formation-Spread-Out		TAB 6 7 1
+SQ-Change-Formation-Close-Up		  TAB 6 7 2
+SQ-Change-Formation-Fluid-Four		TAB 6 7 3
+SQ-Change-Formation-Wall			TAB 6 7 4
+SQ-Change-Formation-Box			  TAB 6 7 5
+SQ-Change-Formation-Arrowhead	TAB 6 7 6
+SQ-Change-Formation-Wedge			TAB 6 7 7
+//
+// Tactical Air Command Center Commands
+//
+TAC-Request-Help					    TAB 7 1
+TAC-Request-Vector-Nearest-Target	TAB 7 2
+TAC-Request-Vector-Primary-Target	TAB 7 3
+TAC-Request-Vector-Home-Base	TAB 7 4
+TAC-Repeat-Mission-Status			TAB 7 5
+///
+/// Comms Commands
+///
+RADIO_COMM TAB 
+CHAT_ALL `
+CHAT_ENEMY SHF `
+CHAT_FRIENDLY CTL `
+CHAT_TARGET ALT `
+VOICE_COMMS_PTT_KEY KP/
+///
+/// TrackIR commands
+///
+TIR_Centre F12
+TIR_Pause F9
+TIR_Mode F8
+//
+// Animations
+//
+ANIMATION_1 !
+ANIMATION_2 @
+ANIMATION_3 #
+ANIMATION_4 $
+ANIMATION_5 %
+ANIMATION_6 ^
+ANIMATION_7 &
+ANIMATION_8 *
+ANIMATION_9 (
+ANIMATION_10 )
+
+
+
+
+
+
+

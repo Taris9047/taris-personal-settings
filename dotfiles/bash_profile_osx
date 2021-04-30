@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# abs_path() {
+#   perl -MCwd -le '
+#     for (@ARGV) {
+#       if ($p = Cwd::abs_path $_) {
+#         print $p;
+#       } else {
+#         warn "abs_path: $_: $!\n";
+#         $ret = 1;
+#       }
+#     }
+#     exit $ret' "$@"
+# }
+
+# My settings
+
+# Grabbing this script's absolute location...
+# This may not work on other shells.
+SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+source "$SCRIPTPATH/my_settings_osx"

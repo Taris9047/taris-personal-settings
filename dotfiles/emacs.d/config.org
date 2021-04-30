@@ -1,0 +1,1094 @@
+#+TITLE: Taris' GNU/Emacs Config
+#+AUTHOR: Taylor Shin
+#+STARTUP: showeverything
+
+* Table of Contents :toc:
+- [[#introduction][Introduction]]
+- [[#package-management-stuffs][Package Management Stuffs]]
+  - [[#setup-packageel-to-work-with-melpa][Setup package.el to work with MELPA]]
+  - [[#installing-use-package][Installing use-package]]
+- [[#essential-stuffs][Essential Stuffs..]]
+  - [[#the-essential---evil-mode][the essential - Evil Mode!!]]
+  - [[#general-keybindings][General Keybindings]]
+  - [[#icons-icons][Icons! Icons!]]
+  - [[#buffers-and-bookmarks][Buffers and bookmarks]]
+  - [[#company-mode][Company Mode]]
+  - [[#code-editing-shortcuts][Code editing shortcuts]]
+  - [[#turn-off-backup-and-auto-save][Turn off Backup and Auto Save]]
+  - [[#turn-off-selection-mode][Turn off Selection mode]]
+- [[#dashboard][Dashboard]]
+  - [[#disabling-default-welcome-screens][Disabling Default Welcome Screens]]
+  - [[#configuring-dashboard][Configuring Dashboard]]
+  - [[#dashboard-in-emacsclient][Dashboard in Emacsclient]]
+  - [[#dired-file-manager][Dired File Manager]]
+  - [[#file-related-key-bindings][File related Key bindings]]
+  - [[#file-related-modules][File related Modules]]
+  - [[#useful-file-functions][Useful File Functions]]
+- [[#fonts][Fonts]]
+  - [[#settings-the-font-face][Settings the font face!!]]
+  - [[#emojify][Emojify]]
+  - [[#zoom-in-and-out][Zoom in and out]]
+- [[#unicode-fonts][Unicode Fonts]]
+- [[#general-keybindings-1][General Keybindings!!]]
+- [[#gui-tweaks][GUI tweaks]]
+  - [[#disable-menu-toolbars-scrollbars][Disable menu, toolbars, scrollbars]]
+  - [[#display-line-numbers-and-truncated-lines][Display line numbers and truncated lines]]
+  - [[#change-modeline-to-doomemacss-modeline][Change Modeline to Doomemacs's Modeline]]
+- [[#ivy-counselswiper][IVY (Counsel/Swiper)]]
+  - [[#installing-ivy-and-basic-setup][Installing Ivy and Basic Setup]]
+  - [[#m-x-tweaks][M-x Tweaks]]
+  - [[#ivy-posframe][IVY-posframe]]
+- [[#language-support][Language Support!!]]
+  - [[#flycheck][Flycheck]]
+  - [[#fish-shell][Fish Shell]]
+  - [[#haskell][Haskell]]
+  - [[#python][Python]]
+  - [[#ruby][Ruby]]
+  - [[#javascript][Javascript]]
+  - [[#lua][Lua]]
+  - [[#markdown][Markdown]]
+- [[#magit][Magit]]
+  - [[#setup-magit][Setup Magit]]
+  - [[#hotkeys-for-magit][Hotkeys for Magit]]
+- [[#neotree][Neotree]]
+- [[#the-org-mode][The ORG MODE!!!!]]
+  - [[#a-few-things-like-doomemacs][A few things like Doomemacs!]]
+  - [[#bullets][Bullets]]
+  - [[#org-link-abbreviations][Org Link abbreviations]]
+  - [[#automatic-tangle][Automatic Tangle]]
+  - [[#org-todo-keywords][Org TODO Keywords]]
+  - [[#source-block-tag-expansion][Source Block Tag Expansion]]
+  - [[#source-code-block-syntax-highlighting][Source Code Block Syntax highlighting]]
+  - [[#automatically-create-toc][Automatically create TOC]]
+  - [[#make-m-ret-not-add-blank-lines][Make M-RET not add blank lines]]
+  - [[#org-export-to-manpage-format][Org Export to Manpage format]]
+- [[#perspective][Perspective]]
+- [[#projectile][Projectile]]
+- [[#registers][Registers]]
+- [[#scrolling][Scrolling]]
+- [[#shells][Shells]]
+  - [[#eshell][Eshell]]
+  - [[#vterm][VTerm]]
+- [[#splits-and-window-management][Splits and Window Management]]
+  - [[#split-settings][Split Settings]]
+  - [[#hotkeys][Hotkeys]]
+- [[#theme-settings---lets-use-doomtheme][Theme Settings - Let's use Doomtheme!]]
+  - [[#detect-linux-distribution][Detect Linux distribution]]
+  - [[#finally-set-up-theme][Finally Set up Theme]]
+- [[#frame-management][Frame Management]]
+  - [[#hotkeys-1][Hotkeys]]
+- [[#korean-language-stuffs][Korean Language Stuffs]]
+  - [[#input-method-settings][Input Method Settings]]
+  - [[#font-size-matching][Font Size Matching]]
+- [[#misc-stuffs][Misc Stuffs]]
+  - [[#file-management-stuff][File management stuff]]
+  - [[#more-undos][More Undos!]]
+  - [[#show-battery-status][Show battery status]]
+  - [[#graphviz][Graphviz]]
+  - [[#iedit-settings][iEdit settings]]
+  - [[#measure-time-macro][measure-time macro]]
+- [[#which-key][Which Key]]
+- [[#writeroom-mode][Writeroom Mode]]
+- [[#lastly-wakku-stuff][Lastly, Wakku stuff]]
+
+* Introduction
+Doomemacs is heavy! So does Spacemacs and other spin-off emacs related projects. So, I was always wondering if I can nit-pick some stuffs that I was mainly using on Doomemacs. It seemed DistroTube also thought the same thing. So, apparently, this effort is yet again heavily copycat of [[https://gitlab.com/dwt1/dotfiles/-/blob/master/.emacs.d/config.org#important-put-this-in-your-initel][his config.org]]!! I'll make this config as default Emacs setting for freshly installed Linux environment and low-spec systems.
+
+* Package Management Stuffs
+** Setup package.el to work with MELPA
+#+begin_src emacs-lisp
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(package-refresh-contents)
+(package-initialize)
+#+end_src
+
+** Installing use-package
+#+begin_src emacs-lisp
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+(setq use-package-always-ensure t)
+#+end_src
+
+* Essential Stuffs..
+** the essential - Evil Mode!!
+#+begin_src emacs-lisp
+(use-package evil
+  :init      ;; tweak evil's configuration before loading it
+  (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+  (setq evil-want-keybinding nil)
+  (setq evil-vsplit-window-right t)
+  (setq evil-split-window-below t)
+  (evil-mode))
+(use-package evil-collection
+  :after evil
+  :config
+  (setq evil-collection-mode-list '(dashboard dired ibuffer))
+  (evil-collection-init))
+#+end_src
+
+** General Keybindings
+Let's not stick to C-x C-... blah blah anymore!
+#+begin_src emacs-lisp
+(use-package general
+  :config
+  (general-evil-setup t))
+#+end_src
+
+** Icons! Icons!
+#+begin_src emacs-lisp
+(use-package all-the-icons)
+#+end_src
+
+** Buffers and bookmarks
+#+begin_src emacs-lisp
+(nvmap :prefix "SPC"
+       "b b"   '(ibuffer :which-key "Ibuffer")
+       "b c"   '(clone-indirect-buffer-other-window :which-key "Clone indirect buffer other window")
+       "b k"   '(kill-current-buffer :which-key "Kill current buffer")
+       "b n"   '(next-buffer :which-key "Next buffer")
+       "b p"   '(previous-buffer :which-key "Previous buffer")
+       "b B"   '(ibuffer-list-buffers :which-key "Ibuffer list buffers")
+       "b K"   '(kill-buffer :which-key "Kill buffer"))
+#+end_src
+
+** Company Mode
+#+begin_src emacs-lisp
+(use-package company)
+(add-hook 'after-init-hook 'global-company-mode)
+#+end_src
+
+** Code editing shortcuts
+#+begin_src emacs-lisp
+(nvmap :prefix "SPC"
+  "TAB TAB" '(comment-line :which-key "Comment/Uncomment lines")
+  "t h" '(hl-line-mode :which-key "Toggle line highlighting in frame")
+  "t H" '(global-hl-line-mode :which-key "Toggle line highlighting globally")
+  "t t" '(toggle-truncate-lines :which-key "Toggle truncate lines")
+)
+#+end_src
+
+** Turn off Backup and Auto Save
+Just turn off pesky ~ files!!
+
+#+begin_src emacs-lisp
+(setq make-backup-files nil)
+#+end_src
+
+And then turn off #autosave# files!!
+#+begin_src emacs-lisp
+(setq auto-save-default nil)
+(setq create-lockfiles nil)
+#+end_src
+** Turn off Selection mode
+#+begin_src emacs-lisp
+(delete-selection-mode t)
+#+end_src
+
+* Dashboard
+** Disabling Default Welcome Screens
+#+begin_src emacs-lisp
+(setq inhibit-splash-screen t)
+(setq inhibit-startup-message t)
+#+end_src
+
+** Configuring Dashboard
+#+begin_src emacs-lisp
+(use-package dashboard
+  :init      ;; tweak dashboard config before loading it
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-banner-logo-title "Emacs Is More Than A Text Editor!")
+  ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+  (setq dashboard-startup-banner "/home/taris/.settings/dotfiles/emacs.d/emacs-logo.png")  ;; use custom image as banner
+  (setq dashboard-center-content nil) ;; set to 't' for centered content
+  (setq dashboard-items '((recents . 5)
+                          (agenda . 5 )
+                          (bookmarks . 3)
+                          (projects . 3)
+                          (registers . 3)))
+  :config
+  (dashboard-setup-startup-hook)
+  (dashboard-modify-heading-icons '((recents . "file-text")
+			 (bookmarks . "book"))))
+#+end_src
+
+** Dashboard in Emacsclient
+This line causes error. Not sure why. We are supposed to find *dashboard* buffer as soon as the loading finished. But it doesn't make the dashboard at all.
+
+#+begin_src emacs-lisp
+;; (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+#+end_src
+
+** Dired File Manager
+#+begin_src emacs-lisp
+(use-package all-the-icons-dired)
+(use-package dired-open)
+(use-package peep-dired)
+
+(nvmap :states '(normal visual) :keymaps 'override :prefix "SPC"
+               "d d" '(dired :which-key "Open dired")
+               "d j" '(dired-jump :which-key "Dired jump to current")
+               "d p" '(peep-dired :which-key "Peep-dired"))
+
+(with-eval-after-load 'dired
+  ;;(define-key dired-mode-map (kbd "M-p") 'peep-dired)
+  (evil-define-key 'normal dired-mode-map (kbd "h") 'dired-up-directory)
+  (evil-define-key 'normal dired-mode-map (kbd "l") 'dired-open-file) ; use dired-find-file instead if not using dired-open package
+  (evil-define-key 'normal peep-dired-mode-map (kbd "j") 'peep-dired-next-file)
+  (evil-define-key 'normal peep-dired-mode-map (kbd "k") 'peep-dired-prev-file))
+
+(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
+;; Get file icons in dired
+(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+;; With dired-open plugin, you can launch external programs for certain extensions
+;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
+(setq dired-open-extensions '(("gif" . "sxiv")
+                              ("jpg" . "sxiv")
+                              ("png" . "sxiv")
+                              ("mkv" . "mpv")
+                              ("mp4" . "mpv")))
+#+end_src
+
+** File related Key bindings
+#+begin_src emacs-lisp
+(nvmap :states '(normal visual) :keymaps 'override :prefix "SPC"
+       "."     '(find-file :which-key "Find file")
+       "f f"   '(find-file :which-key "Find file")
+       "f r"   '(counsel-recentf :which-key "Recent files")
+       "f s"   '(save-buffer :which-key "Save file")
+       "f u"   '(sudo-edit-find-file :which-key "Sudo find file")
+       "f y"   '(dt/show-and-copy-buffer-path :which-key "Yank file path")
+       "f C"   '(copy-file :which-key "Copy file")
+       "f D"   '(delete-file :which-key "Delete file")
+       "f R"   '(rename-file :which-key "Rename file")
+       "f S"   '(write-file :which-key "Save file as...")
+       "f U"   '(sudo-edit :which-key "Sudo edit file"))
+#+end_src
+
+** File related Modules
+#+begin_src emacs-lisp
+(use-package recentf
+  :config
+  (recentf-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package sudo-edit) ;; Utilities for opening files with sudo
+#+end_src
+
+** Useful File Functions
+#+begin_src emacs-lisp
+(defun dt/show-and-copy-buffer-path ()
+  "Show and copy the full path to the current file in the minibuffer."
+  (interactive)
+  ;; list-buffers-directory is the variable set in dired buffers
+  (let ((file-name (or (buffer-file-name) list-buffers-directory)))
+    (if file-name
+        (message (kill-new file-name))
+      (error "Buffer not visiting a file"))))
+(defun dt/show-buffer-path-name ()
+  "Show the full path to the current file in the minibuffer."
+  (interactive)
+  (let ((file-name (buffer-file-name)))
+    (if file-name
+        (progn
+          (message file-name)
+          (kill-new file-name))
+      (error "Buffer not visiting a file"))))
+#+end_src
+
+* Fonts
+** Settings the font face!!
+#+begin_src emacs-lisp
+(set-face-attribute 'default nil
+                    :font "mononoki Nerd Font Mono"
+                    :height 110
+                    :weight 'medium)
+(set-face-attribute 'variable-pitch nil
+                    :font "NanumSquare"
+                    :height 120
+                    :weight 'medium)
+(set-face-attribute 'fixed-pitch nil
+                    :font "mononoki Nerd Font Mono"
+                    :height 110
+                    :weight 'medium)
+;; Makes commented text and keywords italics.
+;; This is working in emacsclient but not emacs.
+;; Your font must have an italic face available.
+(set-face-attribute 'font-lock-comment-face nil
+                    :slant 'italic)
+(set-face-attribute 'font-lock-keyword-face nil
+                    :slant 'italic)
+
+;; Uncomment the following line if line spacing needs adjusting.
+(setq-default line-spacing 0.12)
+
+;; Needed if using emacsclient. Otherwise, your fonts will be smaller than expected.
+(add-to-list 'default-frame-alist '(font . "mononoki Nerd Font Mono-11"))
+;; changes certain keywords to symbols, such as lamda!
+(setq global-prettify-symbols-mode t)
+#+end_src
+
+** Emojify
+#+begin_src emacs-lisp
+(use-package emojify
+  :hook (after-init . global-emojify-mode))
+#+end_src
+** Zoom in and out
+#+begin_src emacs-lisp
+;; zoom in/out like we do everywhere else.
+(global-set-key (kbd "C-=") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+(global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
+(global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
+#+end_src
+
+* Unicode Fonts
+#+begin_src emacs-lisp
+(use-package unicode-fonts
+   :ensure t
+   :config
+    (unicode-fonts-setup))
+#+end_src
+
+* General Keybindings!!
+#+begin_src emacs-lisp
+(nvmap :keymaps 'override :prefix "SPC"
+       "SPC"   '(counsel-M-x :which-key "M-x")
+       "c c"   '(compile :which-key "Compile")
+       "c C"   '(recompile :which-key "Recompile")
+       "h r r" '((lambda () (interactive) (load-file "~/.emacs.d/init.el")) :which-key "Reload emacs config")
+       "t t"   '(toggle-truncate-lines :which-key "Toggle truncate lines"))
+(nvmap :keymaps 'override :prefix "SPC"
+       "m *"   '(org-ctrl-c-star :which-key "Org-ctrl-c-star")
+       "m +"   '(org-ctrl-c-minus :which-key "Org-ctrl-c-minus")
+       "m ."   '(counsel-org-goto :which-key "Counsel org goto")
+       "m e"   '(org-export-dispatch :which-key "Org export dispatch")
+       "m f"   '(org-footnote-new :which-key "Org footnote new")
+       "m h"   '(org-toggle-heading :which-key "Org toggle heading")
+       "m i"   '(org-toggle-item :which-key "Org toggle item")
+       "m n"   '(org-store-link :which-key "Org store link")
+       "m o"   '(org-set-property :which-key "Org set property")
+       "m t"   '(org-todo :which-key "Org todo")
+       "m x"   '(org-toggle-checkbox :which-key "Org toggle checkbox")
+       "m B"   '(org-babel-tangle :which-key "Org babel tangle")
+       "m I"   '(org-toggle-inline-images :which-key "Org toggle inline imager")
+       "m T"   '(org-todo-list :which-key "Org todo list")
+       "o a"   '(org-agenda :which-key "Org agenda")
+       )
+#+end_src
+
+* GUI tweaks
+** Disable menu, toolbars, scrollbars
+#+begin_src emacs-lisp
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+#+end_src
+
+** Display line numbers and truncated lines
+#+begin_src emacs-lisp
+(global-display-line-numbers-mode 1)
+(global-visual-line-mode t)
+#+end_src
+
+** Change Modeline to Doomemacs's Modeline
+#+begin_src emacs-lisp
+(use-package doom-modeline)
+(doom-modeline-mode 1)
+#+end_src
+
+* IVY (Counsel/Swiper)
+** Installing Ivy and Basic Setup
+#+begin_src emacs-lisp
+(use-package counsel
+  :after ivy
+  :config (counsel-mode))
+(use-package ivy
+  :defer 0.1
+  :diminish
+  :bind
+  (("C-c C-r" . ivy-resume)
+   ("C-x B" . ivy-switch-buffer-other-window))
+  :custom
+  (setq ivy-count-format "(%d/%d) ")
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  :config
+  (ivy-mode))
+(use-package ivy-rich
+  :after ivy
+  :custom
+  (ivy-virtual-abbreviate 'full
+   ivy-rich-switch-buffer-align-virtual-buffer t
+   ivy-rich-path-style 'abbrev)
+  :config
+  (ivy-set-display-transformer 'ivy-switch-buffer
+                               'ivy-rich-switch-buffer-transformer)
+  (ivy-rich-mode 1)) ;; this gets us descriptions in M-x.
+(use-package swiper
+  :after ivy
+  :bind (("C-s" . swiper)
+         ("C-r" . swiper)))
+#+end_src
+
+** M-x Tweaks
+Let's at least remove '^' in counsel-M-x! And also make M-x remember history!
+#+begin_src emacs-lisp
+(setq ivy-initial-inputs-alist nil)
+(use-package smex)
+(smex-initialize)
+#+end_src
+
+** IVY-posframe
+Showing the candidate menu from IVY.
+
+#+begin_src emacs-lisp
+(use-package ivy-posframe
+  :init
+  (setq ivy-posframe-display-functions-alist
+	'((swiper                     . ivy-posframe-display-at-point)
+	  (complete-symbol            . ivy-posframe-display-at-point)
+	  (counsel-M-x                . ivy-display-function-fallback)
+	  (counsel-esh-history        . ivy-posframe-display-at-window-center)
+	  (counsel-describe-function  . ivy-display-function-fallback)
+	  (counsel-describe-variable  . ivy-display-function-fallback)
+	  (counsel-find-file          . ivy-display-function-fallback)
+	  (counsel-recentf            . ivy-display-function-fallback)
+	  (counsel-register           . ivy-posframe-display-at-frame-bottom-window-center)
+	  (dmenu                      . ivy-posframe-display-at-frame-top-center)
+	  (nil                        . ivy-posframe-display))
+	ivy-posframe-height-alist
+	'((swiper . 20)
+	  (dmenu . 20)
+	  (t . 10)))
+  :config
+  (ivy-posframe-mode 1)) ; 1 enables posframe-mode, 0 disables it.
+#+end_src
+
+* Language Support!!
+Beef up this part with my own set of language.
+** Flycheck
+#+begin_src emacs-lisp
+(use-package flycheck)
+(global-flycheck-mode)
+#+end_src
+
+** Fish Shell
+#+begin_src emacs-lisp
+(use-package fish-mode)
+#+end_src
+
+** Haskell
+#+begin_src emacs-lisp
+(use-package haskell-mode)
+#+end_src
+
+** Python
+*** Setting up Interpreter
+#+begin_src emacs-lisp
+(setq python-shell-interpreter "python"
+      python-shell-interpreter-args "-i")
+#+end_src
+
+*** Elpy
+#+begin_src emacs-lisp
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
+
+(when (load "flycheck" t t)
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'elpy-mode-hook 'flycheck-mode))
+
+(setq elpy-remove-modeline-lighter t)
+
+(advice-add 'elpy-modules-remove-modeline-lighter
+            :around (lambda (fun &rest args)
+                      (unless (eq (car args) 'flymake-mode)
+                        (apply fun args))))
+
+(add-hook 'elpy-mode-hook (lambda ()
+                            (add-hook 'before-save-hook
+                                      'elpy-format-code nil t)))
+#+end_src
+
+*** Ob-ipython - Jupyter in Orgmode
+#+begin_src emacs-lisp
+(use-package ob-ipython)
+(org-babel-do-load-languages
+  'org-babel-load-languages
+  '((ipython . t)
+  ))
+#+end_src
+
+*** Prettify Mode
+#+begin_src emacs-lisp
+(add-hook
+ 'elpy-mode-hook
+ (lambda ()
+   (mapc (lambda (pair) (push pair prettify-symbols-alist))
+         '(;; Syntax
+           ("def" .      #x2131)
+           ("not" .      #x2757)
+           ("in" .       #x2208)
+           ("not in" .   #x2209)
+           ("return" .   #x27fc)
+           ("yield" .    #x27fb)
+           ("for" .      #x2200)
+           ;; Base Types
+           ("int" .      #x2124)
+           ("float" .    #x211d)
+           ("str" .      #x1d54a)
+           ("True" .     #x1d54b)
+           ("False" .    #x1d53d)
+           ;; Mypy
+           ("Dict" .     #x1d507)
+           ("List" .     #x2112)
+           ("Tuple" .    #x2a02)
+           ("Set" .      #x2126)
+           ("Iterable" . #x1d50a)
+           ("Any" .      #x2754)
+           ("Union" .    #x22c3)))))
+#+end_src
+
+** Ruby
+*** Installing Ruby Mode
+#+begin_src emacs-lisp
+(use-package ruby-mode)
+(use-package ruby-electric)
+#+end_src
+*** Setting it up
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist
+               '("\\.\\(?:cap\\|gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist
+               '("\\(?:Brewfile\\|Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
+
+(add-hook 'ruby-mode-hook 'ruby-electric-mode)
+#+end_src
+
+** Javascript
+*** Install
+#+begin_src emacs-lisp
+(use-package js-comint)
+#+end_src
+
+*** Config
+#+begin_src emacs-lisp
+(defun inferior-js-mode-hook-setup ()
+  (add-hook 'comint-output-filter-functions 'js-comint-process-output))
+(add-hook 'inferior-js-mode-hook 'inferior-js-mode-hook-setup t)
+
+(setq js-comint-program-command "node")
+(setq js-comint-program-arguments '("--interactive"))
+
+;; NVM support
+(js-do-use-nvm)
+
+;; Some excellent keybindings
+(add-hook 'js2-mode-hook
+          (lambda ()
+            (local-set-key (kbd "C-x C-e") 'js-send-last-sexp)
+            (local-set-key (kbd "C-c b") 'js-send-buffer)
+            (local-set-key (kbd "C-c C-b") 'js-send-buffer-and-go)))
+#+end_src
+
+** Lua
+#+begin_src emacs-lisp
+(use-package lua-mode)
+#+end_src
+
+** Markdown
+#+begin_src emacs-lisp
+(use-package markdown-mode)
+#+end_src
+
+* Magit
+Git client!
+
+** Setup Magit
+#+begin_src emacs-lisp
+(use-package magit)
+(use-package magit-todos
+  :config (magit-todos-mode))
+#+end_src
+
+** Hotkeys for Magit
+#+begin_src emacs-lisp
+(nvmap :prefix "SPC"
+       "g /" '(magit-status-here :which-key "Runs Magit on Current Directory")
+       "g c" '(magit-commit :whick-key "Commits current changes")
+       "g p" '(magit-push :which-key "Push current status")
+)
+#+end_src
+
+* Neotree
+Well, let's use it!!
+#+begin_src emacs-lisp
+;; Function for setting a fixed width for neotree.
+;; Defaults to 25 but I make it a bit longer (35) in the 'use-package neotree'.
+(defcustom neo-window-width 25
+  "*Specifies the width of the NeoTree window."
+  :type 'integer
+  :group 'neotree)
+
+(use-package neotree
+  :config
+  (setq neo-smart-open t
+        neo-window-width 30
+        neo-theme (if (display-graphic-p) 'icons 'arrow)
+        ;;neo-window-fixed-size nil
+        inhibit-compacting-font-caches t
+        projectile-switch-project-action 'neotree-projectile-action) 
+        ;; truncate long file names in neotree
+        (add-hook 'neo-after-create-hook
+           #'(lambda (_)
+               (with-current-buffer (get-buffer neo-buffer-name)
+                 (setq truncate-lines t)
+                 (setq word-wrap nil)
+                 (make-local-variable 'auto-hscroll-mode)
+                 (setq auto-hscroll-mode nil)))))
+
+;; show hidden files
+(setq-default neo-show-hidden-files t)
+
+(nvmap :prefix "SPC"
+       "t n"   '(neotree-toggle :which-key "Toggle neotree file viewer")
+       "d n"   '(neotree-dir :which-key "Open directory in neotree"))
+#+end_src
+* The ORG MODE!!!!
+** A few things like Doomemacs!
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook 'org-indent-mode)
+(setq org-directory "~/Org/"
+      ;; org-agenda-files '("~/Org/agenda.org")
+      org-default-notes-file (expand-file-name "notes.org" org-directory)
+      org-ellipsis " ▼ "
+      org-log-done 'time
+      org-journal-dir "~/Org/journal/"
+      org-journal-date-format "%B %d, %Y (%A) "
+      org-journal-file-format "%Y-%m-%d.org"
+      org-hide-emphasis-markers t)
+(setq org-src-preserve-indentation nil
+      org-src-tab-acts-natively t
+      org-edit-src-content-indentation 0)
+#+end_src
+
+** Bullets
+#+begin_src emacs-lisp
+(use-package org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+end_src
+
+** Org Link abbreviations
+#+begin_src emacs-lisp
+;; An example of how this works.
+;; [[arch-wiki:Name_of_Page][Description]]
+(setq org-link-abbrev-alist    ; This overwrites the default Doom org-link-abbrev-list
+        '(("google" . "http://www.google.com/search?q=")
+          ("arch-wiki" . "https://wiki.archlinux.org/index.php/")
+          ("ddg" . "https://duckduckgo.com/?q=")
+          ("wiki" . "https://en.wikipedia.org/wiki/")))
+#+end_src
+
+** Automatic Tangle
+#+begin_src emacs-lisp
+(use-package org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
+#+end_src
+
+** Org TODO Keywords
+#+begin_src emacs-lisp
+(setq org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
+        '((sequence
+           "TODO(t)"           ; A task that is ready to be tackled
+           "BLOG(b)"           ; Blog writing assignments
+           "GYM(g)"            ; Things to accomplish at the gym
+           "PROJ(p)"           ; A project that contains other tasks
+           "VIDEO(v)"          ; Video assignments
+           "WAIT(w)"           ; Something is holding up this task
+           "|"                 ; The pipe necessary to separate "active" states and "inactive" states
+           "DONE(d)"           ; Task has been completed
+           "CANCELLED(c)" )))  ; Task has been cancelled
+#+end_src
+
+** Source Block Tag Expansion
+#+begin_src emacs-lisp
+(setq old-structure-template-alist
+      '(("py" "#+BEGIN_SRC python :results output\n?\n#+END_SRC" "")
+        ("ipy" "#+BEGIN_SRC ipython :results output\n?\n#+END_SRC" "")
+        ("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "")
+        ("hs" "#+BEGIN_SRC haskell\n?\n#+END_SRC" "")
+        ("laeq" "#+BEGIN_LaTeX\n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}\n#+END_LaTeX" "")
+        ("sh" "#+BEGIN_SRC shell\n?\n#+END_SRC" "")
+        ("r" "#+BEGIN_SRC R\n?\n#+END_SRC" "")
+        ("js" "#+BEGIN_SRC js\n?\n#+END_SRC" "")
+        ("http" "#+BEGIN_SRC http\n?\n#+END_SRC" "")
+        ("ditaa" "#+BEGIN_SRC ditaa :file\n?\n#+END_SRC" "")
+        ("dot" "#+BEGIN_SRC dot :file\n?\n#+END_SRC" "")
+        ("rp" "#+BEGIN_SRC R :results output graphics :file \n?\n#+END_SRC" "")
+        ("plantuml" "#+BEGIN_SRC plantuml :file\n?\n#+END_SRC" "")
+        ("n" "#+NAME: ?")
+        ("cap" "#+CAPTION: ?")))
+;; For Org-mode >= 9.2
+(setq new-structure-template-alist
+      '(("py" . "src python :results output")
+        ("ipy" . "src ipython :results output")
+        ("el" . "src emacs-lisp")
+        ("hs" . "src haskell")
+        ("laeq" . "latex \n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}")
+        ("sh" . "src shell")
+        ("r" . "src R")
+        ("js" . "src js")
+        ("http" . "src http")
+        ("ditaa" . "src ditaa :file")
+        ("dot" . "src dot :file")
+        ("rp" . "src R :results output graphics :file ")
+        ("plantuml" . "src plantuml :file")
+        ))
+;; Keyword expansion also changed in 9.2
+(setq my-tempo-keywords-alist
+      '(("n" . "NAME")
+        ("cap" . "CAPTION")))
+
+(when (version< (org-version) "9.2")
+  (add-to-list 'org-modules 'org-tempo))
+(require 'org-tempo)
+(if (version<  (org-version) "9.2")
+    (dolist (ele old-structure-template-alist)
+      (add-to-list 'org-structure-template-alist ele))
+  (dolist (ele new-structure-template-alist)
+    (add-to-list 'org-structure-template-alist ele))
+  (dolist (ele my-tempo-keywords-alist)
+    (add-to-list 'org-tempo-keywords-alist ele))
+  )
+#+end_src
+
+** Source Code Block Syntax highlighting
+#+begin_src emacs-lisp
+(setq org-src-fontify-natively t
+      org-src-tab-acts-natively t
+      org-confirm-babel-evaluate nil
+      org-edit-src-content-indentation 0)
+#+end_src
+
+** Automatically create TOC
+#+begin_src emacs-lisp
+(use-package toc-org
+  :commands toc-org-enable
+  :init (add-hook 'org-mode-hook 'toc-org-enable))
+#+end_src
+
+** Make M-RET not add blank lines
+#+begin_src emacs-lisp
+(setq org-blank-before-new-entry (quote ((heading . nil)
+                                         (plain-list-item . nil))))
+#+end_src
+** Org Export to Manpage format
+#+begin_src emacs-lisp
+(use-package ox-man
+  :ensure nil)
+#+end_src
+* Perspective
+#+begin_src emacs-lisp
+(use-package perspective
+  :bind
+  ("C-x C-b" . persp-list-buffers)   ; or use a nicer switcher, see below
+  :config
+  (persp-mode))
+#+end_src
+* Projectile
+#+begin_src emacs-lisp
+(use-package projectile
+  :config
+  (projectile-global-mode 1))
+#+end_src
+
+* Registers
+#+begin_src emacs-lisp
+(nvmap :prefix "SPC"
+       "r c"   '(copy-to-register :which-key "Copy to register")
+       "r f"   '(frameset-to-register :which-key "Frameset to register")
+       "r i"   '(insert-register :which-key "Insert register")
+       "r j"   '(jump-to-register :which-key "Jump to register")
+       "r l"   '(list-registers :which-key "List registers")
+       "r n"   '(number-to-register :which-key "Number to register")
+       "r r"   '(counsel-register :which-key "Choose a register")
+       "r v"   '(view-register :which-key "View a register")
+       "r w"   '(window-configuration-to-register :which-key "Window configuration to register")
+       "r +"   '(increment-register :which-key "Increment register")
+       "r SPC" '(point-to-register :which-key "Point to register"))
+#+end_src
+* Scrolling
+#+begin_src emacs-lisp
+(setq scroll-conservatively 101) ;; value greater than 100 gets rid of half page jumping
+(setq mouse-wheel-scroll-amount '(3 ((shift) . 3))) ;; how many lines at a time
+(setq mouse-wheel-progressive-speed t) ;; accelerate scrolling
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+#+end_src
+
+* Shells
+** Eshell
+#+begin_src emacs-lisp
+(nvmap :prefix "SPC"
+       "e h"   '(counsel-esh-history :which-key "Eshell history")
+       "e s"   '(eshell :which-key "Eshell"))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package eshell-syntax-highlighting
+  :after esh-mode
+  :config
+  (eshell-syntax-highlighting-global-mode +1))
+(setq eshell-aliases-file "~/.config/doom/aliases"
+      eshell-history-size 5000
+      eshell-buffer-maximum-lines 5000
+      eshell-hist-ignoredups t
+      eshell-scroll-to-bottom-on-input t
+      eshell-destroy-buffer-when-process-dies t
+      eshell-visual-commands'("bash" "fish" "htop" "ssh" "top" "zsh"))
+#+end_src
+
+** VTerm
+#+begin_src emacs-lisp
+(use-package vterm)
+(setq shell-file-name "/usr/bin/zsh"
+      vterm-max-scrollback 5000)
+
+;; Setting up VTerm to be opened on new window or frame.
+(defun vterm-other-window ()
+  (interactive)
+  (let ((buf (vterm)))
+    (switch-to-buffer (other-buffer buf))
+    (switch-to-buffer-other-window buf)))
+(defun vterm-other-frame ()
+  (interactive)
+  (let ((buf (vterm)))
+    (switch-to-buffer (other-buffer buf))
+    (switch-to-buffer-other-frame buf)))
+;; Shortcuts for VTerm
+(nvmap :prefix "SPC"
+       "o T" '(vterm-other-frame :which-key "Open VTerm on a new frame")
+       "o t" '(vterm-other-window :which-key "Open VTerm on a new window"))
+
+#+end_src
+
+* Splits and Window Management
+** Split Settings
+Not sure where to put this thing in yet... Mostly, the Hotkeys does the job.
+
+#+begin_src emacs-lisp
+(defun prefer-horizontal-split ()
+  (set-variable 'split-height-threshold nil t)
+  (set-variable 'split-width-threshold 40 t)) ; make this as low as needed
+#+end_src
+
+** Hotkeys
+#+begin_src emacs-lisp
+(nvmap :prefix "SPC"
+       ;; Window splits
+       "w c"   '(evil-window-delete :which-key "Close window")
+       "w n"   '(evil-window-new :which-key "New window")
+       "w s"   '(evil-window-split :which-key "Horizontal split window")
+       "w v"   '(evil-window-vsplit :which-key "Vertical split window")
+       ;; Window motions
+       "w h"   '(evil-window-left :which-key "Window left")
+       "w j"   '(evil-window-down :which-key "Window down")
+       "w k"   '(evil-window-up :which-key "Window up")
+       "w l"   '(evil-window-right :which-key "Window right")
+       "w w"   '(evil-window-next :which-key "Goto next window"))
+#+end_src
+
+* Theme Settings - Let's use Doomtheme!
+** Detect Linux distribution
+#+begin_src emacs-lisp
+(defun guess-linux-release(regexp)
+  "Guess linux release"
+  (let ((maybe-get-dis-str (shell-command-to-string "cat /etc/*release")))
+    (with-temp-buffer
+      (insert maybe-get-dis-str)
+      (beginning-of-buffer)
+      (condition-case nil
+          (progn
+            (search-forward-regexp regexp)
+            (downcase (buffer-substring (match-beginning 1) (match-end 1))))
+        (search-failed nil)))))
+
+(defun guess-linux-based-distribution()
+  "Guess linux distribution family"
+  (guess-linux-release "^ID_LIKE=\"?\\([a-zA-Z ]*\\)\"?$"))
+
+(defun guess-linux-distribution()
+  "Guess linux distribution"
+  (guess-linux-release "^ID=\"?\\(\\w*\\)\"?$"))
+#+end_src
+
+** Finally Set up Theme
+#+begin_src emacs-lisp
+(use-package doom-themes
+:config
+(setq doom-themes-enable-bold t
+	  doom-themes-enable-italic t)
+
+(cond
+ ((string= (guess-linux-distribution) "elementary")
+  (load-theme 'doom-solarized-light t))
+ ((string= (guess-linux-distribution) "hamonikr")
+  (load-theme 'doom-moonlight t))
+ ((string= (guess-linux-distribution) "linuxmint")
+  (load-theme 'doom-henna t))
+ ((string= (guess-linux-distribution) "rhel")
+  (load-theme 'doom-horizon t))
+ ((string= (guess-linux-distribution) "opensuse-leap")
+  (load-theme 'doom-oceanic-next t))
+ ((string= (guess-linux-distribution) "debian")
+  (load-theme 'doom-monokai-pro t))
+ (t (load-theme 'doom-palenight t)))
+)
+
+(nvmap :prefix "SPC"
+       "h t" '(counsel-load-theme :which-key "Load New Theme"))
+#+end_src
+
+#+RESULTS:
+
+* Frame Management
+To be frankly, there's not much to manage frames.. But I found interesting [[http://ergoemacs.org/emacs/emacs_customize_default_window_size.html][site called Xah Emacs]] which provided a few helpful settings...
+
+** Hotkeys
+#+begin_src emacs-lisp
+(nvmap :prefix "SPC"
+       ;; Frame stuffs
+       "o f" '(make-frame :which-key "Make a new Frame")
+)
+#+end_src
+
+* Korean Language Stuffs
+
+Font Test
+| Font Test English | 한글 폰트 크기 |
+|-------------------+----------------|
+| English font!     | 한글 폰트 예시 |
+
+** Input Method Settings
+#+begin_src emacs-lisp
+(setq default-input-method "korean-hangul")
+(global-set-key (kbd "S-SPC") 'toggle-input-method)
+;; Be sure to enable hardware Hangul key from Keyboard(XKB) Options to use this.
+(global-set-key (kbd "<Hangul>") 'toggle-input-method)
+;; (global-set-key (kbd "<Ctrl_R>") 'toggle-input-method)
+(global-set-key (kbd "<Alt_R>") 'toggle-input-method)
+(when (eq system-type 'gnu/linux)
+  (set-fontset-font t 'hangul (font-spec :family "Noto Sans CJK KR" :size 16))
+  )
+#+end_src
+
+** Font Size Matching
+Well, it needs a lot of iterative effort to make it work... Check up the table width above to find out the best size ratio.
+
+#+begin_src emacs-lisp
+(setq face-font-rescale-alist
+      '((".*hiragino.*" . 1.25)
+        ("Noto Sans CJK KR" . 1.25)))
+#+end_src
+
+Even though you successfully match the width.. the height difference will be pretty drastic... and ugly.
+
+* Misc Stuffs
+** File management stuff
+#+begin_src emacs-lisp
+;; File management stuff
+(setq-default
+ delete-by-moving-to-trash t
+ window-combination-resize t
+ x-stretch-cursor t)
+#+end_src
+** More Undos!
+#+begin_src emacs-lisp
+;; Moar undos!
+(setq undo-limit 800000000
+      evil-want-fine-undo t
+      truncate-string-ellipsis "…")
+#+end_src
+
+** Show battery status
+#+begin_src emacs-lisp
+(if (equal "Batter status not available"
+           (battery))
+    (display-battery-mode 1)
+  (setq password-cache-expiry nil))
+(global-subword-mode 1)
+#+end_src
+
+** Graphviz
+
+#+begin_src emacs-lisp
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(use-package graphviz-dot-mode
+  :ensure t
+  :config
+  (setq graphviz-dot-indent-width 4))
+;; Not working.. why?
+;;(use-package company-graphviz-dot)
+#+end_src
+
+
+** iEdit settings
+Pattern matching edit mode. Pretty useful!
+
+#+begin_src emacs-lisp
+(use-package iedit
+  :defer
+  :config
+  (set-face-background 'iedit-occurrence "Magneta")
+  :bind
+  ("C-;" . iedit-mode))
+#+end_src
+
+** measure-time macro
+#+begin_src emacs-lisp
+(defmacro ts/measure-time (&rest body)
+  "Measure the time it takes to evaluate BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (float-time (time-since time))))
+#+end_src
+
+* Which Key
+#+begin_src emacs-lisp
+(use-package which-key
+  :init
+  (setq which-key-side-window-location 'bottom
+        which-key-sort-order #'which-key-key-order-alpha
+        which-key-sort-uppercase-first nil
+        which-key-add-column-padding 1
+        which-key-max-display-columns nil
+        which-key-min-display-lines 6
+        which-key-side-window-slot -10
+        which-key-side-window-max-height 0.25
+        which-key-idle-delay 0.8
+        which-key-max-description-length 25
+        which-key-allow-imprecise-window-fit t
+        which-key-separator " → " ))
+(which-key-mode)
+#+end_src
+
+* Writeroom Mode
+#+begin_src emacs-lisp
+(use-package writeroom-mode)
+#+end_src
+
+* Lastly, Wakku stuff
+#+begin_src emacs-lisp
+(provide 'emacs)
+;;; emacs ends here
+#+end_src

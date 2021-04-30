@@ -1,0 +1,350 @@
+// CMS Script File
+//
+//     Game Title:
+//     Written By:
+//           Date:
+//
+script
+
+// ==================================================================================
+//	Define Shift State
+//	s1 = Shift 1 and not Shift 2
+//	s2 = Shift 2 and not Shift 1
+//	s0 = not Shift 1 and not Shift 2
+// ==================================================================================
+
+%define s0 ( not (js1.b4 or js2.b4) and not (js1.b3 or js2.b3) and not js2.b2 )
+%define s1 ( (js1.b4 or js2.b4) and not (js1.b3 or js2.b3) and not js2.b2 )
+%define s2 ( not (js1.b4 or js2.b4) and (js1.b3 or js2.b3) and not js2.b2 )
+%define s3 ( (js1.b4 or js2.b4) and (js1.b3 or js2.b3) and not js2.b2 )
+%define rs1 js1.b4
+%define rs2 js1.b3
+%define ls1 js2.b4
+%define ls2 js2.b3
+%define cs js2.b2
+
+// ==================================================================================
+//  Set Mode
+// ==================================================================================
+
+%define m1 ( not (js1.b4 or js2.b4) and not (js1.b3 or js2.b3) )
+%define m2 ( (js1.b4 or js2.b4) and not (js1.b3 or js2.b3) )
+%define m3 ( not (js1.b4 or js2.b4) and (js1.b3 or js2.b3) )
+%define m4 ( (js1.b4 or js2.b4) and (js1.b3 or js2.b3) )
+
+if (m2) then
+	CURRENTMODE = MODE2;
+else 
+	if (m3) then
+		CURRENTMODE = MODE3;
+	else
+		if (m4) then
+			CURRENTMODE = MODE4;
+		else
+			if (m1) then
+				CURRENTMODE = MODE1;
+			endif
+		endif
+	endif
+endif
+
+// ==================================================================================
+//	Fighterstick Button #4 (s1):  FOV
+//  		Timers: d1
+//			Bits: cms.b1 - b7
+//	
+//		s0: Cycle FOV
+//		s1: + Range Zoom
+//		s2: - Range Zoom
+//		s3: Toggle Wide Zoom
+// ==================================================================================
+
+timer(period, d1, 4) = rs1 and not d1;
+
+// No Shift: Cycle FOV
+sequence
+	wait( d1 and not rs1 and not rs2 and not ls1 and not ls2 and not cs );
+	cms.b5 = TRUE;			// Cycle FOV (7)
+	delay(3);
+	cms.b5 = FALSE;
+	wait( d1 and not rs1 and not rs2 and not ls1 and not ls2 and not cs );
+	cms.b6 = TRUE;			// Cycle FOV (8)
+	delay(3);
+	cms.b6 = FALSE;
+	wait( d1 and not rs1 and not rs2 and not ls1 and not ls2 and not cs );
+	cms.b7 = TRUE;			// Cycle FOV (9)
+	delay(3);
+	cms.b7 = FALSE;
+endsequence
+
+// Shift 1: + Range Zoom
+sequence
+	wait(d1 and not js1.b4 and (ls1 and not ls2 and not rs2 and not cs ) );
+	cms.b1 = TRUE;			// + Range Zoom
+	delay(3);						
+	cms.b1 = FALSE;
+endsequence
+
+// Shift 2: - Range Zoom
+sequence
+	wait(d1 and not js1.b4 and ((ls2 or rs2) and not ls1) and not cs);
+	cms.b2 = TRUE;			// - Range Zoom
+	delay(3);						
+	cms.b2 = FALSE;
+endsequence
+
+// Shift 3: Toggle Wide View
+sequence
+	wait(d1 and not js1.b4 and ((ls2 or rs2) and ls1) and not cs);
+	cms.b3 = TRUE;			// Toggle Wide View
+	delay(3);						
+	cms.b3 = FALSE;
+endsequence
+
+// No Shift (but COMM/SHIFT): Radio Menu
+sequence
+	wait(d1 and not rs1 and not rs2 and not ls1 and not ls2 and cs);
+	cms.b4 = TRUE;			// Radio Menu
+	delay(3);
+	cms.b4 = FALSE;
+endsequence
+
+// ==================================================================================
+//	Fighterstick Button #3 (s2):  Pilot-CP/G -- Hover Hold
+//  		Timers: d2
+//			Bits: cms.b8 - b12
+//	
+//		s0: Toggle Pilot-CP/G
+//		s0/cs: Exit Radio Menu
+//		s1: Hover Hold
+//		s2: Stable Hover Hold
+//		s3: FREE
+// ==================================================================================
+
+timer(period, d2, 4) = rs2 and not d2;
+
+// No Shift: Toggle Pilot-CP/G
+sequence
+	wait( d2 and not rs2 and not rs1 and not ls1 and not ls2 and not cs );
+	cms.b8 = TRUE;			// Toggle Pilot-CP/G
+	delay(3);
+	cms.b8 = FALSE;
+endsequence
+
+// No Shift (but COMM/SHIFT): Exit Radio Menu
+sequence
+	wait( d2 and not rs2 and not rs1 and not ls1 and not ls2 and cs );
+	cms.b9 = TRUE;			// Exit Radio Menu
+	delay(3);
+	cms.b9 = FALSE;
+endsequence
+
+// Shift 1: Hover Hold
+sequence
+	wait( d2 and not rs2 and (ls1 or rs1) and not ls2 and not cs );
+	cms.b10 = TRUE;			// Hover Hold
+	delay(3);						
+	cms.b10 = FALSE;
+endsequence
+
+// Shift 2: Stable Hover Hold
+sequence
+	wait( d2 and not rs2 and ls2 and not ls1 and not rs1 and not cs );
+	cms.b11 = TRUE;			// Stable Hover Hold
+	delay(3);						
+	cms.b11 = FALSE;
+endsequence
+
+// Shift 3: FREE
+sequence
+	wait(d2 and not rs2 and ls2 and (ls1 or rs1) and not cs );
+	cms.b12 = TRUE;			// FREE
+	delay(3);						
+	cms.b12 = FALSE;
+endsequence
+
+// ==================================================================================
+//	Pro Throttle Button #2:  COMMS
+//  		Timers: d5
+//			Bits: cms.b29-32
+//	
+//		s0: Attack My Target
+//		s1: Weapons Hold
+//		s2: Hold Position
+//		s3: Rejoin Formation
+// ==================================================================================
+
+timer(period, d5, 4) = cs and not d5;
+
+// No Shift: Attack My Target (COMMS)
+sequence
+	wait( d5 and not cs and s0 );
+	cms.b29 = TRUE;			
+	delay(3);
+	cms.b29 = FALSE;
+endsequence
+
+// Shift 1: Weapons Hold (COMMS)
+sequence
+	wait( d5 and not cs and s1 );
+	cms.b30 = TRUE;			
+	delay(3);						
+	cms.b30 = FALSE;
+endsequence
+
+// Shift 2: Hold Position (COMMS)
+sequence
+	wait( d5 and not cs and s2 );
+	cms.b31 = TRUE;			
+	delay(3);						
+	cms.b31 = FALSE;
+endsequence
+
+// Shift 3: Rejoin Formation (COMMS)
+sequence
+	wait(d5 and not cs and s3 );
+	cms.b32 = TRUE;			
+	delay(3);						
+	cms.b32 = FALSE;
+endsequence
+
+// ==================================================================================
+//	Pro Throttle Button #3 (s2):  TrackIR/COMMS
+//  		Timers: d3
+//			Bits: cms.b13-16
+//	
+//		s0: TrackIR Center
+//		s1: TrackIR Enable
+//		s2: Weapons Free (COMMS)
+//		s3: Bob Up (COMMS)
+// ==================================================================================
+
+timer(period, d3, 4) = ls2 and not d3;
+
+// No Shift: TrackIR Center
+sequence
+	wait( d3 and not ls2 and not rs1 and not ls1 and not rs2 and not cs );
+	cms.b13 = TRUE;			
+	delay(3);
+	cms.b13 = FALSE;
+endsequence
+
+// Shift 1: TrackIR Enable
+sequence
+	wait( d3 and not ls2 and (ls1 or rs1) and not rs2 and not cs );
+	cms.b14 = TRUE;			
+	delay(3);						
+	cms.b14 = FALSE;
+endsequence
+
+// Shift 2: Weapons Free (COMMS)
+sequence
+	wait( d3 and not ls2 and rs2 and not ls1 and not rs1 and not cs );
+	cms.b15 = TRUE;			
+	delay(3);						
+	cms.b15 = FALSE;
+endsequence
+
+// Shift 3: Bob Up (COMMS)
+sequence
+	wait(d3 and not ls2 and rs2 and (ls1 or rs1) and not cs );
+	cms.b16 = TRUE;			
+	delay(3);						
+	cms.b16 = FALSE;
+endsequence
+
+// ==================================================================================
+//	Pro Throttle Button #4 (s1):  Trim/COMMS
+//  		Timers: d4
+//			Bits: cms.b17-20
+//	
+//		s0: Cyclic Trim
+//		s1: Clear Cyclic Trim
+//		s2: Help Me (COMMS)
+//		s3: FREE
+// ==================================================================================
+
+timer(period, d4, 4) = ls1 and not d4;
+
+// No Shift: Cyclic Trim
+sequence
+	wait( d4 and not ls1 and not rs1 and not ls2 and not rs2 and not cs );
+	cms.b17 = TRUE;			
+	delay(3);
+	cms.b17 = FALSE;
+endsequence
+
+// Shift 1: Clear Cyclic Trim
+sequence
+	wait( d4 and not ls1 and rs1 and not ls2 and not rs2 and not cs );
+	cms.b18 = TRUE;			
+	delay(3);						
+	cms.b18 = FALSE;
+endsequence
+
+// Shift 2: Help Me (COMMS)
+sequence
+	wait( d4 and not ls1 and (ls2 or rs2) and not rs1 and not cs );
+	cms.b19 = TRUE;			
+	delay(3);						
+	cms.b19 = FALSE;
+endsequence
+
+// Shift 3: FREE
+sequence
+	wait(d4 and not ls1 and rs1 and (ls2 or rs2) and not cs );
+	cms.b20 = TRUE;			
+	delay(3);						
+	cms.b20 = FALSE;
+endsequence
+
+// ==================================================================================
+//	Fighterstick Hat #1:  Air and Ground Radar Toggles
+//  		Timers: None
+//			Bits: cms.b21-23
+// 
+//		Up:  Toggle Air Radar
+//		Dn:	 Toggle Ground Radar
+// ==================================================================================
+
+sequence
+	wait(js1.b5 and s0 and not cs);
+	cms.b21 = TRUE;									// Air Radar
+	delay(3);
+	cms.b21 = FALSE;
+	wait(js1.b5 and s0 and not cs);
+	cms.b22 = TRUE;									// Radar Off
+	delay(3);
+	cms.b22 = FALSE;
+endsequence
+
+sequence
+	wait(js1.b7 and s0 and not cs);
+	cms.b23 = TRUE;									// Ground Radar
+	delay(3);
+	cms.b23 = FALSE;
+	wait(js1.b7 and s0 and not cs);
+	cms.b22 = TRUE;									// Radar Off
+	delay(3);
+	cms.b22 = FALSE;
+endsequence
+
+// ==================================================================================
+//	Ministick:  Pan TADS/Scan Radar
+//  		Timers: None
+//			Bits: cms.b24-28
+// ==================================================================================
+
+%define Up    [js2.a2 < 40]
+%define Down  [js2.a2 > 215]
+%define Right [js2.a1 > 215]
+%define Left  [js2.a1 < 40]
+
+cms.b24 = s1 and Up;				// Pan/Scan Up (KP8)
+cms.b25 = s1 and Right;		// Pan/Scan Right (KP6)
+cms.b26 = s1 and Down;			// Pan/Scan Down (KP2)
+cms.b27 = s1 and Left;			// Pan/Scan Left (KP4)
+cms.b28 = s2 and (Up or Down or Left or Right);		// Pan/Scan Center (KP5)
+
+
+endScript

@@ -1,0 +1,466 @@
+///
+///      Falcon4 FF5 CMC File
+///                by
+///             ACEWEEPOP
+///            30/07/2009
+///
+///
+/// Ground Handling
+///
+Open/Close_Canopy HOLD SHF CTL c
+Arm_Ejection_Seat HOLD SHF e
+Kneeboard_Page HOLD ALT k
+Parking_Brake HOLD ALT p
+Nose_Wheel_Steering HOLD SHF /
+Landing_Gear HOLD g
+Landing_Light HOLD CTL ALT l
+Alt_Landing_Gear HOLD ALT g
+Reset_Alt_Landing_Gear HOLD SHF CTL g
+Wheel_Brakes k
+Drag_Chute HOLD SHF d
+Hook HOLD CTL k
+///
+/// Warnings
+///
+F-ACK HOLD CTL f
+Warning_Reset HOLD SHF CTL ALT w
+Mute_Gear_Horn HOLD CTL g
+Mute_Master_Caution HOLD CTL c
+VMS_Inhibit HOLD CTL v
+ALOW_Altitude_Dec HOLD ALT ,
+ALOW_Altitude_Inc HOLD ALT .
+///
+/// Jettison
+///
+CAT_I/III HOLD SHF c
+Jettison_All HOLD CTL j
+Ground_Jett_Enable HOLD ALT j
+Eject HOLD CTL e
+///
+/// Engine/Fuel
+///
+EPU_Step HOLD ALT e
+JFS_Switch HOLD SHF j
+Fuel_Switch_Dec HOLD SHF CTL F1
+Fuel_Switch_Inc HOLD SHF CTL F2
+Air_Source_Dec HOLD SHF CTL F3
+Air_Source_Inc HOLD SHF CTL F4
+Fuel_Pump_Switch_Dec HOLD SHF CTL F5
+Fuel_Pump_Switch_Inc HOLD SHF CTL F6
+Fuel_Master_Switch HOLD SHF CTL F7
+Fuel_Door HOLD SHF r
+Fuel_Dump HOLD ALT d
+Cycle_Engine HOLD CTL o
+Toggle_Engine_Display HOLD SHF CTL h
+///
+/// Electric Power
+///
+Power_Main_Dec HOLD CTL ALT F1
+Power_Main_Inc HOLD CTL ALT F2
+Power_Laser HOLD SHF ALT F1
+Power_HUD HOLD SHF ALT F2
+Power_Left_Hpt HOLD SHF ALT F3
+Power_Right_Hpt HOLD SHF ALT F4
+Power_FCR SHF ALT F5
+Power_FCC SHF ALT F6
+Power_SMS SHF ALT F7
+Power_MFD SHF ALT F8
+Power_UFC SHF ALT F9
+Power_GPS SHF ALT F10
+Power_Datalink SHF ALT F11
+Power_Map SHF ALT F12
+IFF_Power CTL i
+INS_Dec CTL ALT F7
+INS_Inc CTL ALT F8
+Radar_Altimeter_OFF ALT a
+Radar_Altimeter_STDBY CTL a
+Radar_Altimeter_ON SHF a
+///
+/// Flight Controls
+///
+Nose_Down SHF CTL KBDOWN
+Nose_Up SHF CTL KBUP
+Roll_Left SHF CTL KBLEFT
+Roll_Right SHF CTL KBRIGHT
+Rudder_Left ,
+Rudder_Right .
+Throttle_Forward =
+Throttle_Back - 
+Step_Throttle_Up SHF =
+Step_Throttle_Down SHF -
+Full_Afterburner CTL =
+Min_Afterburner CTL -
+Throttle_Idle HOLD ALT -
+Throttle_Idle_Detent HOLD ALT i
+Trim_Aileron_Left HOLD SHF KBLEFT
+Trim_Aileron_Right HOLD SHF KBRIGHT
+Trim_Elevator_Down HOLD ALT KBDOWN
+Trim_Elevator_Up HOLD ALT KBUP
+Trim_Rudder_Left HOLD ALT KBLEFT
+Trim_Rudder_Right HOLD ALT KBRIGHT
+Trim_Reset HOLD SHF KBUP
+Trim_AP_Disc HOLD CTL 4
+Trim_Manual_Nose_Down HOLD SHF ALT KBEND
+Trim_Manual_Nose_Up HOLD SHF ALT KBHOME
+Trim_Manual_Roll_Left HOLD SHF ALT KBDEL
+Trim_Manual_Roll_Right HOLD SHF ALT KBPGDN
+Trim_Manual_Yaw_Left HOLD SHF ALT KBINS
+Trim_Manual_Yaw_Right HOLD SHF ALT KBPGUP
+Airbrake_Toggle b
+Airbrake_Open HOLD SHF b
+Airbrake_Close HOLD CTL b
+Flaps_Decrease HOLD CTL F11
+Flaps_Decrease_LEFs HOLD ALT F11
+Flaps_Increase HOLD CTL F12
+Flaps_Increase_LEFs HOLD ALT F12
+Flaps_Lock_LEFs HOLD CTL 5
+Flaps_Set_LEFs_Full HOLD ALT F10
+Flaps_Set_LEFs_Null HOLD ALT F9
+Flaps_Full HOLD CTL F10
+Flaps_Null HOLD CTL F9
+Flaps_Display HOLD ALT q
+Autopilot a
+AP_Switch_Left HOLD CTL 1
+AP_Switch_Right HOLD CTL 2
+AP_Override HOLD CTL 3
+Manual_Pitch_Override o
+///
+/// Defensive Systems
+///
+RWR_Handoff HOLD SHF KBPGDN
+RWR_Low KBHOME
+RWR_Naval HOLD SHF KBPGUP
+RWR_Priority HOLD KBINS
+RWR_Search HOLD SHF KBINS
+RWR_Target_Separate HOLD KBPGUP
+RWR_Unknown HOLD SHF KBHOME
+EWS_Chaff_Power HOLD CTL ALT F3
+EWS_Flare_Power HOLD CTL ALT F4
+EWS_Jammer_Power HOLD CTL ALT F5
+EWS_RWR_Power HOLD CTL ALT F6
+EWS_Mode_Dec HOLD SHF z
+EWS_Mode_Inc HOLD SHF x
+EWS_Program_Dec HOLD SHF q
+EWS_Program_Inc HOLD SHF w
+ECM j
+Drop_Chaff x
+Drop_Flare z
+Chaff/Flare_Auto/Manual ALT z
+///
+/// ACMI
+///
+AVTR f
+AVTR_Switch ALT f
+///
+/// Navigation
+///
+Next_Steerpoint s
+Previous_Steerpoint HOLD SHF s
+HSD_Range_Decrease F11
+HSD_Range_Increase F12
+HSI_Modes_Toggle i
+HSI_Course_Decrement HOLD CTL ALT v
+HSI_Course_Increment HOLD CTL ALT b
+HSI_Heading_Decrement HOLD CTL ALT n
+HSI_Heading_Increment HOLD CTL ALT m
+AuxComm_Lft_Digit HOLD ALT F1
+AuxComm_Ctr_Digit HOLD ALT F2
+AuxComm_Rt_Digit HOLD ALT F3
+AuxComm_Band_X/Y HOLD ALt F4
+Auxcomm_UFC/Backup HOLD ALT F5
+Auxcomm_AA/TR HOLD ALT F6
+UHF_Normal/Backup HOLD ALt F7
+Terrain_Following_Radar HOLD SHF CTL a
+///
+/// Lights
+///
+Instrument_Lights HOLD SHF CTL i
+Cockpit_Flood HOLD SHF CTL l
+Aircraft_Lights HOLD SHF ALT l
+Lights_Extl_Power HOLD CTL ALT F9
+Lights_Extl_Anti_Coll HOLD CTL ALT F10
+Lights_Extl_Wing HOLD CTL ALT F11
+Lights_Extl_Steady/Flash HOLD CTL ALT F12
+Test_Warning_Lights HOLD CTL t
+///
+/// HUD
+///
+Brightness_Down HOLD SHF CTL ALT z
+Brightness_Up HOLD SHF CTL ALT x
+Altimeter_Type HOLD SHF CTL ALT a
+Brightness HOLD SHF CTL ALT b
+Colour HOLD SHF CTL ALT c
+Declutter h
+Display_DED HOLD SHF CTL ALT d
+Display_FLIR HOLD SHF h
+FPM HOLD SHF CTL ALT f
+Heading_Scales HOLD SHF CTL ALT s
+Pitch_Ladder HOLD SHF CTL ALT p
+Scale_Type HOLD SHF CTL ALT h
+Velocity_Cues HOLD SHF CTL ALT v
+ManualBomberRecticle_Down HOLD CTL [
+ManualBomberRecticle_Up HOLD CTL ]
+///
+/// ICP
+///
+ICP_COM1 SHF KP/
+ICP_COM2 SHF KP*
+ICP_IFF SHF KP7
+ICP_List SHF KP9
+ICP_A-A SHF KP0
+ICP_A-G SHF KP.
+ICP_NAV SHF KPENT
+///
+ICP_0-M-SEL CTL KP0
+ICP_1-ILS CTL KP7
+ICP_2-ALOW CTL KP8
+ICP_3 CTL KP9
+ICP_4-STPT CTL KP4
+ICP_5-CRUS CTL KP5
+ICP_6-TIME CTL KP6
+ICP_7-MARK CTL KP1
+ICP_8-FIX CTL KP2
+ICP_9-A-CAL CTL KP3
+///
+ICP_DCS-Down CTL KBEND
+ICP_DCS-Return CTL KBINS
+ICP_DCS-Seq CTL KBPGUP
+ICP_DCS-Up CTL KBHOME
+ICP_D-LINK CTL d
+ICP_Enter CTL KPENT
+ICP_NExt CTL KP+
+ICP_Previous CTL KP-
+ICP_Reset_(RCL) CTL KBDEL
+ICP_DriftC/O CTL KBPGDN
+///
+/// Radar
+///
+A-A_Mode F1
+A-G_Mode F2
+Radar_Range_Decrease F3
+Radar_Range_Increase F4
+Radar_Cursor_Down KBDOWN
+Radar_Cursor_Left KBLEFT
+Radar_Cursor_Right KBRIGHT
+Radar_Cursor_Up KBUP
+Radar_Cursor_Reset SHF KBDOWN
+Radar_Designate_Target KP0
+Radar_Return_To_Search KP.
+Antenna_Tilt_Down F5
+Antenna_Centre F6
+Antenna_Tilt_Up F7
+Radar-Submodes/Azimuth F8
+GM_FOV F9
+GM_Picture_Freeze F10
+GM_Snowplow SHF F10
+ACM_Boresight HOLD CTL F5
+ACM_30x20 HOLD CTL F6
+ACM_Slewable HOLD CTL F7
+ACM_Vertical HOLD CTL F8
+Radar_Gain_Decrease HOLD SHF F3
+Radar_Gain_Increase HOLD SHF F4
+Radar_Bar_Scan HOLD SHF F8
+Radar-RF_Inhibit HOLD SHF ALT r
+Radar-Standby HOLD CTL r
+Lock_Previous_Target KBDEL
+Lock_Next_Target KBPGDN
+///
+/// Weapons
+///
+Fire_Gun /
+Pickle SPC
+Cycle_A-A_Hardpoints ENT
+Cycle_A-G_Hardpoints BKSPC
+Dogfight_Override_Mode d
+MRM_Override_Mode m
+MRM/DF_Override_Cancel c
+Master_Arm_Cycle HOLD SHF CTL ALT M
+Master_Arm_On HOLD SHF m
+Master_Arm_Safe HOLD CTL m
+Master_Arm_Sim HOLD ALT m
+Laser_Arm HOLD ALT l
+SOI_FOV v
+Maverick_FOV HOLD SHF v
+FCC_Submodes '
+Missile_Bore/Slave HOLD CTL u
+Missile_Hardpoints_Cycle SHF /
+Missile_TD/BP HOLD ALT u
+Sidewinder_Spot/Scan HOLD SHF u
+Maverick/Sidewinder_Cage/Uncage u
+MAN_Recticle HOLD SHF CTL m
+Release_Bombs_In_Pairs HOLD ALT '
+Release_Bombs_Singly HOLD ALT ;
+Bomb_Ripple_Decrease HOLD SHF ;
+Bomb_Ripple_Increase HOLD SHF '
+Bomb_Interval_Decrease HOLD CTL ;
+Bomb_Interval_Increase HOLD CTL '
+CBU_Burst_Altitude_Decrease HOLD CTL ,
+CBU_Burst_Altitude_Increase HOLD CTL .
+///
+/// Views
+///
+Zoom_View_In KP1
+Zoom_View_Out KP7
+Rotate_View_Left KP4
+Rotate_View_Right KP6
+Rotate_View_Up KP8
+Rotate_View_Down KP2
+Glance_Backward KP3
+Glance_Forward KP9
+Cockpit_Wide/Normal_View SHF 2
+Cockpit_Ghost_MFD_Zoom SHF 1
+Look_Closer l
+Night_Vision_Goggles n
+Satellite_Camera `
+Orbit 0
+HUD_Only 1
+Cockpit_2D 2
+Virtual_Cockpit 3
+Padlock 4
+Padlock_Previous KP-
+Padlock_Next KP+
+Padlock_Previous_AA HOLD SHF KP-
+Padlock_Next_AA HOLD SHF KP+
+Padlock_Previous_AG HOLD ALT KP-
+Padlock_Next_AG HOLD ALT KP+
+Extended_FOV 5
+Tracking_View 6
+Incoming_View 7
+Friendly_View 8
+Chase_View 9
+Action_Camera_View HOLD SHF `
+Toggle_SA_Bar HOLD SHF 3
+Target_View HOLD SHF 6
+Weapon_View HOLD SHF 7
+Friendly_Ground_Unit HOLD SHF 8
+Flyby_View HOLD SHF 9
+Enemy_Aircraft_View HOLD CTL 8
+Weapons_Target_View HOLD ALT 7
+Enemy_Vehicle HOLD ALT 8
+Previous_Object HOLD SHF ,
+Next_Object HOLD SHF .
+Cockpit_HUD_View HOLD SHF CTL ALT KP/
+Cockpit_Lower_Left_View HOLD SHF CTL ALT KP0
+Cockpit_8_Oclock_View HOLD SHF CTL ALT KP1
+Cockpit_Lower_Right_View HOLD SHF CTL ALT KP2
+Cockpit_4_Oclock_View HOLD SHF CTL ALT KP3
+View_Reset HOLD SHF CTL ALT KP5
+Cockpit_10_Oclock_View HOLD SHF CTL ALT KP7
+Cockpit_2_Oclock_View HOLD SHF CTL ALT KP9
+///
+/// Audio
+///
+Sound_On/Off HOLD ALT s
+Missile_Volume_+ HOLD SHF CTL ]
+Missile_Volume_- HOLD SHF CTL [
+Threat_Volume_+ HOLD SHF ALT ]
+Threat_Volume_- HOLD SHF ALT [
+Com1_Volume_+ HOLD CTL ALT ]
+Com1_Volume_- HOLD CTL ALT [
+Com2_Volume_+ HOLD SHF CTL ALT ]
+Com2_Volume_- HOLD SHF CTL ALT [
+///
+/// HOTAS
+///
+First_Trigger_Detent HOLD CTL /
+Second_Trigger_Detent HOLD ALT /
+Pinky_Switch HOLD ALT v
+TMS_Down HOLD CTL KBDOWN
+TMS_Left HOLD CTL KBLEFT
+TMS_Right HOLD CTL KBRIGHT
+TMS_Up HOLD CTL KBUP
+DMS_Down HOLD SHF KP2
+DMS_Left HOLD SHF KP4
+DMS_Right HOLD SHF KP6
+DMS_Up HOLD SHF KP8
+Cursor_Enable HOLD SHF n
+Radar_Range_Knob_Down HOLD CTL F3
+Radar_Range_Knob_Up HOLD CTL F4
+///
+/// Comms
+///
+Radio_AWACS q
+Radio_Flight_Command r
+Radio_Element_Command e
+Radio_Wingmen_Command w
+Radio_Tanker_Message y
+Radio_ATC_Message t
+Radio_Channel_Cycle HOLD ALT y
+Radio_Check_In_With_FAC HOLD SHF f
+Voice_Transmit_Com1 HOLD ALT 1
+Voice_Transmit_Com2 HOLD ALT 2
+Chat HOLD SHF t
+///
+/// MFD's
+///
+MFD_1 [
+MFD_2 ]
+MFD_3 SHF ]
+MFD_4 SHF [
+///
+LMFD_OSB_1 CTL ALT 1
+LMFD_OSB_2 CTL ALT 2
+LMFD_OSB_3 CTL ALT 3
+LMFD_OSB_4 CTL ALT 4
+LMFD_OSB_5 CTL ALT 5
+LMFD_OSB_6 CTL ALT 6
+LMFD_OSB_7 CTL ALT 7
+LMFD_OSB_8 CTL ALT 8
+LMFD_OSB_9 CTL ALT 9
+LMFD_OSB_10 CTL ALT 0
+LMFD_OSB_11 CTL ALT KP1
+LMFD_OSB_12 CTL ALT KP2
+LMFD_OSB_13 CTL ALT KP3
+LMFD_OSB_14 CTL ALT KP4
+LMFD_OSB_15 CTL ALT KP5
+LMFD_OSB_16 CTL ALT KP6
+LMFD_OSB_17 CTL ALT KP7
+LMFD_OSB_18 CTL ALT KP8
+LMFD_OSB_19 CTL ALT KP9
+LMFD_OSB_20 CTL ALT KP0
+LMFD_Brightness_Down CTL ALT f
+LMFD_Brightness_Up CTL ALT g
+///
+RMFD_OSB_1 SHF ALT 1
+RMFD_OSB_2 SHF ALT 2
+RMFD_OSB_3 SHF ALT 3
+RMFD_OSB_4 SHF ALT 4
+RMFD_OSB_5 SHF ALT 5
+RMFD_OSB_6 SHF ALT 6
+RMFD_OSB_7 SHF ALT 7
+RMFD_OSB_8 SHF ALT 8
+RMFD_OSB_9 SHF ALT 9
+RMFD_OSB_10 SHF ALT 0
+RMFD_OSB_11 SHF ALT KP1
+RMFD_OSB_12 SHF ALT KP2
+RMFD_OSB_13 SHF ALT KP3
+RMFD_OSB_14 SHF ALT KP4
+RMFD_OSB_15 SHF ALT KP5
+RMFD_OSB_16 SHF ALT KP6
+RMFD_OSB_17 SHF ALT KP7
+RMFD_OSB_18 SHF ALT KP8
+RMFD_OSB_19 SHF ALT KP9
+RMFD_OSB_20 SHF ALT KP0
+RMFD_Brightness_Down SHF ALT f
+RMFD_Brightness_Up SHF ALT g
+///
+/// Simulation
+///
+Exit ESC
+Pause p
+Freeze HOLD SHF p
+Time_Compression_2X TAB
+Time_Compression_4X CAPS
+Time_Accelerate_Decrease HOLD SHF CAPS
+Time_Accelerate_Increase HOLD SHF TAB
+Labels_Near HOLD SHF i
+Labels_Far HOLD CTL i
+Cockpit_Setup_Load HOLD ALT c l
+Cockpit_Setup_Save HOLD ALT c s
+Screenshot_Key HOLD SHF o
+Sound_on/off HOLD ALT s
+Show_Score HOLD ALT r
+Smoke_Toggle HOLD CTL s
+
+
+

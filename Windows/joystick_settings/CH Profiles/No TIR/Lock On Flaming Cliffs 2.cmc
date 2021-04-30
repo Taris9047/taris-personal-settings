@@ -1,0 +1,319 @@
+// CMC Command File
+//
+//     Game Title: Flaming Cliffs 2.0
+//     Written By: ----ruggbutt-->
+//           Date: April 2, 2010
+//
+
+// General
+End_Mission      					ESC
+Pause            					PAUSE
+Time_Accelerate 				 	HOLD LCTL z
+Time_Decelerate  					HOLD LALT z
+Time_Normal      					HOLD LSHF z
+Score_Window     					'
+Chat_All         					`
+Chat_Allies      					HOLD RCTL `
+Respawn         					HOLD RCTL HOLD RSHF TAB
+Carrier_TakeOff  					u
+Jump_Into_Plane 					HOLD RALT j
+Screenshot      					PRTSC
+Frame_Rate       					HOLD RCTL PAUSE
+Info_Bar         					HOLD LALT y
+Mouse_Cursor_Mode 					HOLD LALT c
+Toggle_Sound     					HOLD LCTL s
+
+// Flight Controls
+Up          						KBUP
+Down        						KBDOWN
+Bank_L       						KBLEFT
+Bank_R       						KBRIGHT
+Rudder_L    						z
+Rudder_R     						x
+Trim_Up      						HOLD RCTL .
+Trim_Down    						HOLD RCTL ;
+Trim_L       						HOLD RCTL ,
+Trim_R       						/
+Trim_L_Rudder 						HOLD RCTL z
+Trim_R_Rudder 						HOLD RCTL x
+Trim_Reset   						HOLD LCTL t
+Power_Up     						KP+
+Power_Down   						KP-
+Thrust_Up    						KBPGUP
+Thrust_Down  						KBPGDN
+Power_Up_L    						HOLD RALT KP+
+Power_Down_L  						HOLD RALT KP-
+Thrust_Up_L  					 	HOLD RALT KBPGUP
+Thrust_Down_L 						RALT KBPGDN
+Power_Up_R    						HOLD RSHF KP+
+Power_Down_R  						HOLD RSHF KP-
+Thrust_Up_R   						HOLD RSHF KBPGUP
+Thrust_Down_R 						HOLD RSHF KBPGDN
+
+// Autopilot
+Autopilot           				a
+Autothrust							j
+AP_Baro_Alt_Hold_H     				h
+AP_Override							HOLD LALT `
+AP_Attitude_Hold      				HOLD LALT 1
+AP_Alt/Roll_Hold      				HOLD LALT 2
+AP_Trans_Lvl_Flight  				HOLD LALT 3
+AP_Baro_Alt_Hold       				HOLD LALT 4
+AP_Radar_HOLD       				HOLD LALT 5
+AP_Route_Following    				HOLD LALT 6
+AP_Disengage         				HOLD LALT 9
+
+// Systems
+Airbrake_Toggle        		     	b
+Airbrake_Out            			HOLD LSHF b
+Airbrake_In           				HOLD LCTL b
+Fuel_Dump              				r
+Refuel_Bay/Boom						HOLD LCTL r
+Jettison_Fuel_Tanks					HOLD LALT r
+Smoke                 				t
+Electric_Power_Switch				HOLD RSHF l
+Cockpit_Lights         				l
+Nav_Lights             				HOLD RCTL l
+Gear_Light_Near/Far/Off 			HOLD RALT l
+Flaps_Up/Down           			f
+Flaps_Landing          				HOLD LSHF f
+Flaps_Up               				HOLD LCTL f
+Gear_Toggle            				g
+Gear_Up                				HOLD LCTL g
+Gear_Down              				HOLD LSHF g
+Wheel_Brake_On          			w
+Tail_Hook							HOLD LALT g
+Fold_Wings							HOLD RCTL p
+Canopy_Open/Close					HOLD LCTL c
+Drogue_Chute						p
+Reset_Audible_Warning   			HOLD RSHF n
+Jettison_Weapons       				HOLD LCTL w
+Eject(x3)             				HOLD LCTL e
+Flight_Clock_Start/Stop/Reset		HOLD RSHF c
+Altimeter_Pressure_Inc				HOLD RSHF =
+Altimeter_Pressure_Dec				HOLD RSHF -
+Engines_Start          				HOLD RSHF KBHOME
+Engines_Stop           				HOLD RSHF KBEND
+Left_Engine_Start       			HOLD RALT KBHOME
+Left_Engine_Stop        			HOLD RALT KBEND
+Right_Engine_Start      			HOLD RCTL KBHOME
+Right_Engine_Stop       			HOLD RCTL KBEND
+HUD_Color             				HOLD RCTL h
+
+// Modes
+Next_Waypoint/AF/Tgt   				HOLD LCTL `
+Nav_Modes              				1
+BVR_Mode               				2
+Close_Air_Vert_Scan_Mode     		3
+Close_Air_Bore_Mode      			4
+Close_Air_Helmet_Mode				5
+Longitudinal_Aim_Mode  				6
+Air_To_Ground_Mode       			7
+Gunsight_Reticule					8
+
+// Sensors
+Lock_TGT               				ENT
+Unlock_TGT             				BKSPC
+RADAR/ELINT_Pod   					i
+RWS/TWS_Mode           				HOLD RALT i
+Designator_To_Center    			HOLD RCTL i
+Pulse_Freq_Select/Tgt_Desig_Center	HOLD RSHF i
+EOS      							o
+CCRP      							o
+Laser_On/Off						HOLD RSHF o
+LLTV/FLIR							HOLD RCTL o
+TGT_Designator_Up       			;
+TGT_Designator_Down     			.
+TGT_Designator_L        			,
+TGT_Designator_R        			/
+Scan_Zone_Up            			HOLD RSHF ;
+Scan_Zone_Down          			HOLD RSHF .
+Scan_Zone_Left          			HOLD RSHF ,
+Scan_Zone_Right         			HOLD RSHF /
+Radar_Scan_-/Gunpod_Step_-			HOLD RCTL -
+Radar_Scan_+/GunpodStep_+			HOLD RCTL =
+Tgt_Size_+/Gunpod_Elev_Inc			HOLD RALT =
+Tgt_Size/Gunpod_Elev_Dec			HOLD RALT -
+Radar_Range_Increase				-
+Radar_Range_Decrease				=
+Zoom_In                				=
+Zoom_Out               				-
+Launch_Perm_Override    			HOLD LALT w
+RWR/SPO_Mode_Select     			HOLD RSHF r
+RWR/SPO_Volume_Down     			HOLD RALT ,
+RWR/SPO_Volume_Up       			HOLD RALT .
+
+// Weapons
+Weapon_Fire            				SPC
+Weapon_Change          				d
+Cannon                				c
+Salvo_Mode             				HOLD LCTL v
+Cut_Off_Burst						HOLD LSHF c
+Weapon_Release         	 			HOLD RALT SPC
+Ripple_Quant/SPPU_Select 			HOLD LCTL SPC
+Ripple_Interval_Inc     			v
+Ripple_Interval_Dec     			HOLD LSHF v
+PRS/SGL_Rel_Mode_Cycle   			HOLD LSHF SPC
+
+// Countermeasures
+Continual_Dispense     				HOLD LSHF q
+CM_Release_Single             		q
+Flares                				KBDEL
+Chaff                 				KBINS
+ECM                   				e
+IR_Jamming							HOLD LSHF e
+
+// Radio Communications
+Flt_Comp_Mission_RTB     			HOLD LWIN e
+Flt_Comp_Mission_Rejoin  			HOLD LWIN r
+Toggle_Formation       				HOLD LWIN t
+Join_Formation         				HOLD LWIN y
+Attack_My_TGT           			HOLD LWIN q
+Cover_Me               				HOLD LWIN w
+AWACS_Home_AB           			HOLD LWIN u
+AWACS_Avail_Tanker      			HOLD LWIN i
+Flt_Attack_Gnd_TGT       			HOLD LWIN g
+Flt_Attack_Air_Defense   			HOLD LWIN d
+Comms_Menu             				\
+
+// Views
+Left_Slow        					KP4
+Right_Slow       					KP6
+Up_Slow          					KP8
+Down_Slow        					KP2
+Up_Right_Slow     					KP9
+Down_Right_Slow   					KP3
+Down_Left_Slow    					KP1
+Up_Left_Slow      					KP7
+Center          					KP5
+Zoom_In_Slow      					KP*
+Zoom_Out_Slow     					KP/
+Zoom_Normal      					KPENT
+Zoom_Ext_In       					HOLD RCTL KP*
+Zoom_Ext_Out      					HOLD RCTL KP/
+Zoom_Ext_Normal   					HOLD RCTL KPENT
+F11_Cam_Forward   					HOLD LALT KP*
+F11_Cam_Back      					HOLD LALT KP/
+Cockpit_View     					F1
+Head_Nat_View     					HOLD LCTL F1
+HUD_Only_View    					HOLD LALT F1
+A/C_View        					F2
+View_Own_A/C     					HOLD LCTL F2
+Toggle_Camera_Pos   				HOLD RALT F2
+Toggle_Local_Cam_Control   			HOLD LALT F2
+Fly_By_View       					F3
+Fly_By_Jump_View   					HOLD LCTL F3
+Look_Back_View    					F4
+Chase_View       					HOLD LCTL F4
+Near_A/C_View      					F5
+Grnd_Hostile_View 					HOLD LCTL F5
+Released_Weapon_View 				F6
+Weapon_TGT_View    					HOLD LCTL F6
+Ground_TGT_View   					F7
+Target_View      					F8
+Player/All_TGT_Filter 				HOLD RCTL F8
+Ship_View        					F9
+LSO_View   							HOLD LALT F9
+Theatre_Map      					F10
+Jump_To_Map_Pos   					HOLD LCTL F10
+Airfield_Camera   					F11
+Free_Cam   							HOLD LCTL F11
+Static_Obj_View   					F12
+Civ_Traffic_View      				HOLD LCTL F12
+Trains/Cars_Toggle  				HOLD LSHF F12
+Head_Movement_Toggle 				HOLD LWIN F1
+Keys_Rate_Fast     					HOLD LSHF ]
+Keys_Rate_Slow     					HOLD LCTL ]
+Keys_Rate_Normal   					HOLD LALT ]
+Mouse_Rate_Fast   					HOLD LSHF [
+Mouse_Rate_Slow   					HOLD LCTL [
+Mouse_Rate_Normal 					HOLD LALT [
+
+// View Cockpit
+Cockpit_Panel_View_In				KP0
+Cockpit_Panel_View_Tgl				HOLD RCTL KP0
+Save_Cockpit_Angles					HOLD RALT KP0
+View_Up								HOLD RSHF KP8
+View_Down							HOLD RSHF KP2
+View_Left							HOLD RSHF KP4
+View_Right							HOLD RSHF KP6
+View_Up_Right						HOLD RSHF KP9
+View_Down_Right						HOLD RSHF KP3
+View_Down_Left						HOLD RSHF KP1
+View_Up_Left						HOLD RSHF KP7
+Cockpit_Cam_Move_Up					HOLD RCTL RSHF KP8
+Cockpit_Cam_Move_Down				HOLD RCTL RSHF KP2
+Cockpit_Cam_Move_Left				HOLD RCTL RSHF KP4
+Cockpit_Cam_Move_Right				HOLD RCTL RSHF KP6
+Cockpit_Cam_Move_Fwd				HOLD RCTL RSHF KP*
+Cockpit_Cam_Move_Back				HOLD RCTL RSHF KP/
+Cockpit_Cam_Move_Center	 			HOLD RCTL RSHF KP5
+Glance_Up							HOLD RCTL KP8
+Glance_Down							HOLD RCTL KP2
+Glance_Left							HOLD RCTL KP4
+Glance_Right						HOLD RCTL KP6
+Glance_Up_Left						HOLD RCTL KP7
+Glance_Down_Left					HOLD RCTL KP1
+Glance_Up_Right						HOLD RCTL KP9
+Glance_Down_Right					HOLD RCTL KP3
+Camera_Pan_Mode_Toggle				HOLD LALT LSHF z
+Camera_Snap_View_Up					HOLD RALT KP8
+Camera_Snap_View_Down				HOLD RALT KP2
+Camera_Snap_View_Left				HOLD RALT KP4
+Camera_Snap_View_Right				HOLD RALT KP6
+Camera_Snap_View_Up_Left			HOLD RALT KP7
+Camera_Snap_View_Down_Left			HOLD RALT KP1
+Camera_Snap_View_Up_Right			HOLD RALT KP9
+Camera_Snap_View_Down_Right			HOLD RALT KP3
+Center_Camera_View					HOLD RSHF KP5					
+Return_Camera						HOLD RCTL KP5
+Return_Camera_Base					HOLD RALT KP5
+Custom_Snap_View_0					HOLD LWIN KP0
+Custom_Snap_View_1					HOLD LWIN KP1
+Custom_Snap_View_2					HOLD LWIN KP2
+Custom_Snap_View_3					HOLD LWIN KP3
+Custom_Snap_View_4					HOLD LWIN KP4
+Custom_Snap_View_5					HOLD LWIN KP5
+Custom_Snap_View_6					HOLD LWIN KP6
+Custom_Snap_View_7					HOLD LWIN KP7
+Custom_Snap_View_8					HOLD LWIN KP8
+Custom_Snap_View_9					HOLD LWIN KP9
+Mirror_Left_On						HOLD RALT n
+Mirror_Right_On						HOLD RALT m
+Zoom_In_Cockpit						HOLD RSHF KP*
+Zoom_Out_Cockpit					HOLD RSHF KP/
+
+// View Extended
+Camera_Jiggle						HOLD LSHF j
+Keep_Terrain_Cam_Alt				HOLD LALT k
+View_Friends_Mode					HOLD RCTL RSHF KBHOME
+View_Enemies_Mode					HOLD RCTL RSHF KBEND
+View_All_Mode						HOLD RCTL KBDEL
+Toggle_Tracking_Fire_Weapon			HOLD RCTL KP+
+Objects_Switch_Dir_Fwd				HOLD LCTL KBPGDN
+Objects_Switch_Dir_Rev				HOLD LCTL KBPGUP
+Object_sExclude						HOLD LALT KBDEL
+Include_Excluded_Obj				HOLD LALT KBINS
+
+// View Padlock
+Lock_View							KP.
+Unlock_View							NUMLOCK
+All_Missiles_Padlock				HOLD RSHF KP.
+Threat_Missiles_Padlock				HOLD RALT KP.
+Lock_Terrain_View					HOLD RCTL KP.
+
+// Labels
+All_Labels							HOLD LSHF F10
+A/C_Labels							HOLD LSHF F2
+Missile_Labels						HOLD LSHF F6
+Vehicle_&_Ship_Labels				HOLD LSHF F9
+
+// Simplifications
+Auto_Lock_Near_A/C					HOLD RALT F5
+Auto_Lock_Center_A/C				HOLD RALT F6
+Auto_Lock_Next_A/C					HOLD RALT F7
+Auto_Lock_Prev_A/C					HOLD RALT F8
+Auto_Lock_Near_Surface				HOLD RALT F9
+Auto_Lock_Center_Surface			HOLD RALT F10
+Auto_Lock_Next_Surface				HOLD RALT F11
+Auto_Lock_Prev_Surface				HOLD RALT F12

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# abs_path() {
+#   perl -MCwd -le '
+#     for (@ARGV) {
+#       if ($p = Cwd::abs_path $_) {
+#         print $p;
+#       } else {
+#         warn "abs_path: $_: $!\n";
+#         $ret = 1;
+#       }
+#     }
+#     exit $ret' "$@"
+# }
+
+# My settings
+
+# Grabbing this script's absolute location...
+# This may not work on other shells.
+SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+. "${SCRIPTPATH}/my_settings_bash"
+
+# For old stuffs
+if [[ $DISTRONAME == *"CentOS Linux"* || $DISTRONAME == *"Red Hat Enterprise Linux"* ]]; then
+  printf "${right_arrow} type LoadRHELSettings to use the 'install_stuff.sh'!!\n"
+  alias LoadRHELSettings='source "$SCRIPTPATH/RHEL_settings"'
+fi

@@ -1,0 +1,47 @@
+include "target.tmh"
+
+int main()
+{
+//	Configure(&HCougar, MODE_EXCLUDED);
+//	Configure(&Joystick, MODE_EXCLUDED);
+//	Configure(&Throttle, MODE_EXCLUDED);
+//	Configure(&LMFD, MODE_EXCLUDED);
+//	Configure(&RMFD, MODE_EXCLUDED);
+	if(Init(&EventHandle)) return 1;
+	SetKBRate(32, 50);
+	SetKBLayout(KB_ENG);
+	SetShiftButton(0, 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, TS1, PULSE+SPC, PULSE+SPC, PULSE+SPC, PULSE+SPC, PULSE+SPC, PULSE+SPC);
+	MapKeyIOUMD(&T16000, TS2, PULSE+BSP, PULSE+BSP, PULSE+BSP, PULSE+BSP, PULSE+BSP, PULSE+BSP);
+	MapKeyIOUMD(&T16000, TS3, PULSE+L_SHIFT+KP0, PULSE+L_SHIFT+KP0, PULSE+L_SHIFT+KP0, PULSE+L_SHIFT+KP0, PULSE+L_SHIFT+KP0, PULSE+L_SHIFT+KP0);
+	MapKeyIOUMD(&T16000, TS4, PULSE+KP0, PULSE+KP0, PULSE+KP0, PULSE+KP0, PULSE+KP0, PULSE+KP0);
+	MapKeyIOUMD(&T16000, B5, CHAIN( PULSE+'j', D(), PULSE+'i'), 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, B6, CHAIN( PULSE+'c', D(), PULSE+'f'), 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, B7, PULSE+L_CTL+'g', 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, B8, PULSE+L_CTL+BSP, 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, B9, PULSE+USB[87], 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, B10, PULSE+USB[86], 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, B11, PULSE+'v', 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, B12, PULSE+'y', 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, B13, PULSE+'r', 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, B14, PULSE+'n', 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, B15, PULSE+'m', 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, B16, PULSE+L_SHIFT+'h', 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, H1U, L_CTL+UARROW, 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, H1R, PULSE+F4, 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, H1D, L_CTL+DARROW, 0, 0, 0, 0, 0);
+	MapKeyIOUMD(&T16000, H1L, PULSE+F3, 0, 0, 0, 0, 0);
+	MapAxis(&T16000, JOYX, DX_X_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);
+	SetSCurve(&T16000, JOYX, 0, 0, 0, 0, 0);
+	MapAxis(&T16000, JOYY, DX_Y_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);
+	SetSCurve(&T16000, JOYY, 0, 0, 0, 0, 0);
+	MapAxis(&T16000, RUDDER, DX_ZROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);
+	SetSCurve(&T16000, RUDDER, 0, 0, 0, 0, 0);
+	MapAxis(&T16000, THR, DX_SLIDER_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);
+	SetSCurve(&T16000, THR, 0, 0, 0, 0, 0);
+
+}
+int EventHandle(int type, alias o, int x)
+{
+	DefaultMapping(&o, x);
+}
