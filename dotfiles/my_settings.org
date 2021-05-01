@@ -37,7 +37,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#quickly-exit-from-a-directory][Quickly exit from a directory]]
   - [[#system-utilities-shortcuts][System utilities shortcuts]]
   - [[#git-shortcuts][Git shortcuts]]
-  - [[#git-completions-for-zsh][Git Completions for Zsh]]
+  - [[#oh-my-zsh-for-zsh][Oh-my-zsh for Zsh]]
   - [[#termbin][Termbin]]
   - [[#switching-shells][Switching shells]]
   - [[#youtube-dl-shortcuts][youtube-dl shortcuts]]
@@ -895,25 +895,37 @@ function gitlog8h
 end
 #+end_src
 
-** Git Completions for Zsh
-Somehow, zsh in many distro packages does not come with git completions and makes it a bit clunky to use with git. So, let's install zsh git-completion from git's Github repo! Referenced [[https://oliverspryn.medium.com/adding-git-completion-to-zsh-60f3b0e7ffbc][Oliver Spryn's web site]].
-
-TODO We might deprecate this part? Oh-my-zsh does everything this part provides...
-
+** Oh-my-zsh for Zsh
+Ok, since we have already implemented installing those git-completion scripts in the oh-my-zsh installtion script, we will deprecate those scirpts.
 #+begin_src shell :tangle my_settings_zsh
-[ ! -d "$HOME/.zsh" ] && mkdir -p "$HOME/.zsh"
+# [ ! -d "$HOME/.zsh" ] && mkdir -p "$HOME/.zsh"
 
-[ ! -f "$HOME/.zsh/git-completion.bash" ] && curl -o "$HOME/.zsh/git-completion.bash" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
+# [ ! -f "$HOME/.zsh/git-completion.bash" ] && curl -o "$HOME/.zsh/git-completion.bash" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
 
-[ ! -f "$HOME/.zsh/_git" ] && curl -o "$HOME/.zsh/_git" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh
+# [ ! -f "$HOME/.zsh/_git" ] && curl -o "$HOME/.zsh/_git" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh
 
-zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
+# zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
 fpath=(~/.zsh $fpath)
 
-autoload -Uz compinit && compinit
+# autoload -Uz compinit && compinit
 #+end_src
 
-#+RESULTS:
+However, we need to impelement some features to manipulate oh-my-zsh stuffs such as themes. Some themes do not like light-themed consoles. So, let's at least write some alias to change theme.
+#+begin_src shell :tangle my_settings_zsh
+ztheme () {
+  if [ -z "$ZSH" ]; then
+    printf 'Errrr, no '\''$ZSH'\'' env? Forget it!\n'
+  fi
+  if [ -z "$1" ]; then
+    # No designated theme! Just select Random Theme!!
+    printf 'Selecting some random theme!\n'
+    export ZSH_THEME="random" && . "$ZSH/oh-my-zsh.sh"
+  else
+    printf 'Selecting %s as the new theme!\n' "$1"
+    export ZSH_THEME="$1" && . "$ZSH/oh-my-zsh.sh"
+  fi
+}
+#+end_src
 
 ** Termbin
 *** Bash

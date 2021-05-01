@@ -245,16 +245,30 @@ gitlog8h() {
     done | spark
 }
 
-[ ! -d "$HOME/.zsh" ] && mkdir -p "$HOME/.zsh"
+# [ ! -d "$HOME/.zsh" ] && mkdir -p "$HOME/.zsh"
 
-[ ! -f "$HOME/.zsh/git-completion.bash" ] && curl -o "$HOME/.zsh/git-completion.bash" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
+# [ ! -f "$HOME/.zsh/git-completion.bash" ] && curl -o "$HOME/.zsh/git-completion.bash" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
 
-[ ! -f "$HOME/.zsh/_git" ] && curl -o "$HOME/.zsh/_git" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh
+# [ ! -f "$HOME/.zsh/_git" ] && curl -o "$HOME/.zsh/_git" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh
 
-zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
+# zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
 fpath=(~/.zsh $fpath)
 
-autoload -Uz compinit && compinit
+# autoload -Uz compinit && compinit
+
+ztheme () {
+  if [ -z "$ZSH" ]; then
+    printf 'Errrr, no '\''$ZSH'\'' env? Forget it!\n'
+  fi
+  if [ -z "$1" ]; then
+    # No designated theme! Just select Random Theme!!
+    printf 'Selecting some random theme!\n'
+    export ZSH_THEME="random" && . "$ZSH/oh-my-zsh.sh"
+  else
+    printf 'Selecting %s as the new theme!\n' "$1"
+    export ZSH_THEME="$1" && . "$ZSH/oh-my-zsh.sh"
+  fi
+}
 
 alias tb='nc termbin.com 9999'
 
