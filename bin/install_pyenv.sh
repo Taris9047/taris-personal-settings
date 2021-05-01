@@ -1,5 +1,18 @@
 #!/bin/bash -e
 
+PY_VER='install-latest'
+if [ ! -z "$1" ]; then
+	printf 'Selecting python version as %s\n' "$1"
+	PY_VER="$1"
+else
+	printf 'Selecting latest CPython\n'
+fi
+
+die() {
+	printf '%s\n' "$1"
+	exit 1
+}
+
 PYTHON_PKGS=(
 	"pip"
 	"autopep8" "xlrd" "xlsxwriter" "sphinx"
@@ -33,15 +46,13 @@ COMP_OPTS_STR=$(
 #
 PYENV_DIR="$HOME/.pyenv"
 [ -d "$PYENV_DIR" ] && rm -rf "$PYENV_DIR"
-if [ ! -x "$(command -v git)" ]; then
-	printf 'git not found!!\n'
-	exit -1
-fi
+[ ! -x "$(command -v git)" ] && die 'git not found!! Exiting!!'
+[ ! -x "$(command -v curl)" ] && die 'curl not found!! Exiting!!'
 
 # Finally installing it!
 if [ ! -d "$PYENV_DIR" ]; then
 	printf 'Cloning pyenv into %s ...\n' "$PYENV_DIR"
-	git clone https://github.com/pyenv/pyenv.git "$PYENV_DIR"
+	git clone 'https://github.com/pyenv/pyenv.git' "$PYENV_DIR" || die "Failed to clone pyenv!! Exiting!!"
 fi
 
 # Grabbing Python build prereqs.
@@ -54,13 +65,25 @@ export PATH="$PYENV_DIR/bin:$PATH"
 eval "$(pyenv init -)"
 INSTALL_SUCCESS='true'
 if [ ! -f "$PYENV_ROOT/shims/python" ]; then
-	git clone https://github.com/momo-lab/pyenv-install-latest.git "$PYENV_ROOT/plugins/pyenv-install-latest"
-	env PYTHON_CONFIGURE_OPTS="$COMP_OPTS_STR" CFLAGS="$C_FLAGS" pyenv install-latest || INSTALL_SUCCESS='false'
-	[ "$INSTALL_SUCCESS" = 'true' ] && pyenv global "$(pyenv install-latest --print)"
+	git clone 'https://github.com/momo-lab/pyenv-install-latest.git' "$PYENV_ROOT/plugins/pyenv-install-latest" || die "pyenv-install-latest cloning failed!!"
+	if [ "$PY_VER" = 'install-latest' ]; then
+		env PYTHON_CONFIGURE_OPTS="$COMP_OPTS_STR" CFLAGS="$C_FLAGS" pyenv install-latest || INSTALL_SUCCESS='false'
+		[ "$INSTALL_SUCCESS" = 'true' ] && pyenv global "$(pyenv install-latest --print)"
+	else
+		env PYTHON_CONFIGURE_OPTS="$COMP_OPTS_STR" CFLAGS="$C_FLAGS" pyenv install "$PY_VER" || INSTALL_SUCCESS='false'
+		[ "$INSTALL_SUCCESS" = 'true' ] && pyenv global "$PY_VER"
+	fi
 fi
+PY_PYENV="$PYENV_DIR/shims/python"
 if [ "$INSTALL_SUCCESS" = 'true' ]; then
+	# Let's ensure pip installed!
+	curl -O 'https://bootstrap.pypa.io/get-pip.py' || die "Getting get-pip.py failed! Exiting!!"
+	"$PY_PYENV" ./get-pip.py || die "Failed to install pip with get-pip.py!! Oops!!"
+	PIP="$PYENV_DIR/shims/pip"
+	rm -rf ./get-pip.py
+
 	for pypi in "${PYTHON_PKGS[@]}"; do
-		"$PYENV_ROOT/shims/pip" install -U "$pypi" || true
+		"$PIP" install -U "$pypi" || true
 	done
 fi
 
