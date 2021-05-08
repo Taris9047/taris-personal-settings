@@ -42,6 +42,7 @@
   - [[#flycheck][Flycheck]]
   - [[#fish-shell][Fish Shell]]
   - [[#haskell][Haskell]]
+  - [[#json-and-hjson][JSON and HJSON]]
   - [[#python][Python]]
   - [[#ruby][Ruby]]
   - [[#javascript][Javascript]]
@@ -484,6 +485,21 @@ Beef up this part with my own set of language.
 ** Haskell
 #+begin_src emacs-lisp
 (use-package haskell-mode)
+#+end_src
+
+** JSON and HJSON
+I'm also adding up human readable json mode!
+#+begin_src emacs-lisp
+(use-package json-mode)
+#+end_src
+
+Some handy keybindings for JSON Mode.
+#+begin_src emacs-lisp
+(use-package json-reformat
+:config
+(setq indent-width 2))
+(nvmap :keymaps 'override :prefix "SPC"
+       "j r"   '(json-reformat-region :which-key "JSON Reformat region."))
 #+end_src
 
 ** Python
