@@ -99,8 +99,8 @@ VIM_SETTINGS_DIR="$SETTINGS_DIR/dotfiles/vim"
 mkdir -pv "$VIM_CONF_DIR"
 ln -sf "$VIM_SETTINGS_DIR/autoload" "$VIM_CONF_DIR/autoload"
 ln -sf "$VIM_SETTINGS_DIR/colors" "$VIM_CONF_DIR/colors"
-ln -sf "$VIM_SETTINGS_DIR/pack" "$VIM_CONF_DIR/pack"
-ln -sf "$VIM_SETTINGS_DIR/terminal_colors" "$VIM_CONF_DIR/terminal_colors"
+mkdir -p "$VIM_CONF_DIR/pack"
+mkdir -p "$VIM_CONF_DIR/terminal_colors"
 
 # NVIM
 printf 'Setting up NVIM config file\n'

@@ -208,3 +208,5 @@
 	helper = store
 [cola]
 	spellcheck = false
+[pull]
+	rebase = false
