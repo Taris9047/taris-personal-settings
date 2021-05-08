@@ -538,6 +538,7 @@ if [ -d "$PYENV_DIR" ]; then
     export PYENV_ROOT="$PYENV_DIR"
     export PATH="$PYENV_DIR/bin:$PATH"
     eval "$(pyenv init -)"
+    eval "$(pyenv init --path)"
 fi
 
 if [ -x "$(command -v $HOMEBREW/bin/pip3)" ] && [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then

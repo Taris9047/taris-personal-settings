@@ -1780,6 +1780,7 @@ if [ -d "$PYENV_DIR" ]; then
     export PYENV_ROOT="$PYENV_DIR"
     export PATH="$PYENV_DIR/bin:$PATH"
     eval "$(pyenv init -)"
+    eval "$(pyenv init --path)"
 fi
 #+end_src
 *** Zsh
@@ -1794,6 +1795,7 @@ if test -d "$PYENV_DIR"
   set PYENV_ROOT "$PYENV_DIR"
   set -Ua PATH "$PYENV_DIR/bin" $fish_user_paths
   pyenv init -
+  pyenv init --path
 end
 #+end_src
 

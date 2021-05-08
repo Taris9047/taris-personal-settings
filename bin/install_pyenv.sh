@@ -107,4 +107,5 @@ printf '\n\nMake sure those messages added into your shell init files.\n'
 printf 'PYENV_ROOT=%s\n' "$PYENV_DIR"
 printf 'PATH=%s/bin:$PATH\n' "$PYENV_DIR"
 printf 'eval $(pyenv init -) # if bash or zsh\n'
+printf 'eval $(pyenv init --path) # To add pyenv to path!\n'
 printf '\nThen you are good to go after next session!\n\n'

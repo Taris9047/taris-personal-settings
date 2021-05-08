@@ -502,6 +502,7 @@ if test -d "$PYENV_DIR"
   set PYENV_ROOT "$PYENV_DIR"
   set -Ua PATH "$PYENV_DIR/bin" $fish_user_paths
   pyenv init -
+  pyenv init --path
 end
 
 if type -q $HOMEBREW/bin/pip3
