@@ -68,7 +68,7 @@ array_element_decode() {
 
 # Config Files - This part needs to be POSIXified!
 # CONF_LIST=("vimrc" "gitignore" "gitconfig" "gdbinit" "Xresources" "tmux.conf")
-CONF_LIST=$(array 'vimrc' 'gitignore' 'gitconfig' 'gdbinit' 'Xresources' 'tmux.conf')
+CONF_LIST=$(array 'vimrc' 'gitignore' 'gitconfig' 'gdbinit' 'Xresources' 'tmux.conf' 'profile')
 
 # Linking dotfiles
 printf "\nLinking dotfiles from settings dir ...\n"
@@ -87,6 +87,7 @@ printf '%s\n' "$CONF_LIST" |
 	done
 # Lastly, prepare the gitconfig.local
 [ -L "$HOME/.gitconfig" ] && [ ! -f "$HOME/.gitconfig.local" ] && touch "$HOME/.gitconfig.local"
+
 
 # Still linking dotfiles... but to some odd locations.
 # i.e. .config or .local/config directories etc.

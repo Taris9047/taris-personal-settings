@@ -1,0 +1,10 @@
+#!/bin/bash
+
+SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+
+# Mounting cloud directories.
+# --> Need to install RClone and set them up. 
+. "$HOME/.settings/bin/mount_cloud_dirs.sh"
+
+# Finally, run the bashrc
+. "$HOME/.bashrc"
