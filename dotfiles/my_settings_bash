@@ -109,7 +109,11 @@ set_exa_as_ls() {
         alias lt='exa -aT --color=always --group-directories-first'
         alias l.='exa -a | egrep "^\."'
         echo 'exa' >"$LS_MODE_SAVE"
+    else
+        printf 'It seems exa has not yet installed!!\nUsing the good old ls\n'
+        set_ls_as_ls
     fi
+
 }
 
 set_lsd_as_ls() {
@@ -123,6 +127,9 @@ set_lsd_as_ls() {
         alias lt='lsd -a --tree --color=fancy --group-dirs=first'
         alias l.='lsd -a | egrep "^\."'
         echo 'lsd' >"$LS_MODE_SAVE"
+    else
+        printf 'It seems lsd has not yet installed!!\nUsing the good old ls\n'
+        set_ls_as_ls
     fi
 }
 
