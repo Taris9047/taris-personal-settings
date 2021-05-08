@@ -1594,7 +1594,7 @@ set JULIA_ROOT "$HOMEBREW/.opt/julia"
 set JULIA_BIN "$JULIA_ROOT/bin"
 if test -d "$JULIA_ROOT"
     and test -f "$JULIA_BIN/julia"
-    printf "%b Julia has been found at %s\n" "${check_symbol}" "${JULIA_ROOT}"
+    printf "%b Julia has been found at %s\n" "$check_symbol" "$JULIA_ROOT"
     addpath "$JULIA_BIN"
 end
 #+end_src

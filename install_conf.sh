@@ -88,7 +88,6 @@ printf '%s\n' "$CONF_LIST" |
 # Lastly, prepare the gitconfig.local
 [ -L "$HOME/.gitconfig" ] && [ ! -f "$HOME/.gitconfig.local" ] && touch "$HOME/.gitconfig.local"
 
-
 # Still linking dotfiles... but to some odd locations.
 # i.e. .config or .local/config directories etc.
 printf '\nWorking on other config files ...\n'
