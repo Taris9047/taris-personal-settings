@@ -193,6 +193,7 @@ if [ ! -x "$(command -v spark)" ]; then
 	printf "%b Installing spark!!\n" "$check_symbol"
 	[ ! -d "$HOMEBREW/bin" ] && mkdir -pv "$HOMEBREW/bin"
 	sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark" && "chmod +x $HOMEBREW/bin/spark" || true
+    chmod +x "$HOMEBREW/bin/spark" || true
 fi
 
 if [ ! -x "$(command -v rclone)" ]; then
