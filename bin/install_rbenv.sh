@@ -36,9 +36,9 @@ COMP_OPTS_STR=$(
   echo "${COMPILE_OPTS[*]}"
 )
 
-# Checking out their git repository to my own pyenv dir...
+# Checking out their git repository to my own rbenv dir...
 #
-# Their suggestion was ~/.pyenv
+# Their suggestion was ~/.rbenv
 #
 RBENV_DIR="$HOME/.rbenv"
 [ -d "$RBENV_DIR" ] && rm -rf "$RBENV_DIR"
@@ -58,10 +58,9 @@ eval "$(rbenv init -)"
 INSTALL_SUCCESS='true'
 if [ ! -f "$RBENV_ROOT/shims/ruby" ]; then
   git clone 'https://github.com/rbenv/ruby-build.git' "$RBENV_ROOT/plugins/ruby-build" || die "ruby-build cloning failed!!"
-    env RUBY_CONFIGURE_OPTS="$COMP_OPTS_STR" RUBY_CFLAGS="$C_FLAGS" rbenv install "$RB_VER" || INSTALL_SUCCESS='false'
-    # Select recently installed ruby as main.
-    [ "$INSTALL_SUCCESS" = 'true' ] && rbenv global "$RB_VER"
-  fi
+  env RUBY_CONFIGURE_OPTS="$COMP_OPTS_STR" RUBY_CFLAGS="$C_FLAGS" rbenv install "$RB_VER" || INSTALL_SUCCESS='false'
+  # Select recently installed ruby as main.
+  [ "$INSTALL_SUCCESS" = 'true' ] && rbenv global "$RB_VER"
 fi
 RB_RBENV="$RBENV_DIR/shims/ruby"
 GEM="$RBENV_DIR/shims/gem"
