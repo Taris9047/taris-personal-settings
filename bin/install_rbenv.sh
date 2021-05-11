@@ -14,15 +14,15 @@ die() {
 }
 
 GEMS=(
-  "rsense",
-  "rails",
-  "rake",
-  "bundler",
-  "open3",
-  "json",
-  "hjson",
-  "ruby-progressbar",
-  "tty-spinner",
+  "rsence"
+  "rails"
+  "rake"
+  "bundler"
+  "open3"
+  "json"
+  "hjson"
+  "ruby-progressbar"
+  "tty-spinner"
 )
 
 COMPILE_OPTS=(
