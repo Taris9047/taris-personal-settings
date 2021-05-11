@@ -64,6 +64,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#texlive][Texlive]]
   - [[#pypy---homebrewed-pypy3][PyPy - Homebrewed pypy3]]
   - [[#pyenv---manage-multiple-python-versions][Pyenv - Manage multiple python versions]]
+  - [[#rbenv---manages-ruby-interpreters][Rbenv - Manages ruby interpreters]]
   - [[#bpytop---top-htop-and-bashtop-replacement-by-python3][Bpytop - top, htop, and bashtop replacement by Python3]]
   - [[#n---homebrewed-nodejss-update-tool][n - Homebrewed Node.JS's update tool]]
   - [[#irfanview---what-yeah-wine][IrfanView - What? yeah, wine!]]
@@ -1807,6 +1808,41 @@ if test -d "$PYENV_DIR"
   set -Ua PATH "$PYENV_DIR/bin" $fish_user_paths
   pyenv init -
   pyenv init --path
+end
+#+end_src
+
+** Rbenv - Manages ruby interpreters
+*** Bash
+#+NAME: prog_rbenv
+#+begin_src shell :tangle my_settings_bash
+RBENV_DIR="$HOME/.rbenv"
+if [ -d "$RBENV_DIR" ]; then
+    printf '%b Rbenv found!! Extending environments\n' "${check_symbol}"
+    export RBENV_ROOT="$RBENV_DIR"
+    export PATH="$RBENV_DIR/bin:$PATH"
+    eval "$(rbenv init - bash)"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh
+RBENV_DIR="$HOME/.rbenv"
+if [ -d "$RBENV_DIR" ]; then
+    printf '%b Rbenv found!! Extending environments\n' "${check_symbol}"
+    export RBENV_ROOT="$RBENV_DIR"
+    export PATH="$RBENV_DIR/bin:$PATH"
+    eval "$(rbenv init - zsh)"
+fi
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set RBENV_DIR "$HOME/.rbenv"
+if test -d "$RBENV_DIR"
+  printf '%b Rbenv found!! Extending environments\n' "$check_symbol"
+  set RBENV_ROOT "$RBENV_DIR"
+  set -Ua PATH "$RBENV_DIR/bin" $fish_user_paths
+  rbenv init -
 end
 #+end_src
 

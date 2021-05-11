@@ -505,6 +505,14 @@ if test -d "$PYENV_DIR"
   pyenv init --path
 end
 
+set RBENV_DIR "$HOME/.rbenv"
+if test -d "$RBENV_DIR"
+  printf '%b Rbenv found!! Extending environments\n' "$check_symbol"
+  set RBENV_ROOT "$RBENV_DIR"
+  set -Ua PATH "$RBENV_DIR/bin" $fish_user_paths
+  rbenv init -
+end
+
 if type -q $HOMEBREW/bin/pip3
     and type -q $HOMEBREW/bin/bpytop
     printf "$check_symbol Locally installed bpytop found!\n"

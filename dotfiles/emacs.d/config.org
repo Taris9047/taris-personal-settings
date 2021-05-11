@@ -102,7 +102,7 @@ Doomemacs is heavy! So does Spacemacs and other spin-off emacs related projects.
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 (package-refresh-contents)
-(package-initialize)
+;; (package-initialize)
 #+end_src
 
 ** Installing use-package
