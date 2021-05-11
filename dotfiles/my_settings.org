@@ -700,7 +700,7 @@ end
 *** Bash
 #+NAME: inst_rclone
 #+begin_src shell :tangle my_settings_bash
-if [ ! -x "$(command -v rclone)" ]; then
+if [ ! -x "$(command -v rclone)" ] && [ -z "$SSH_CLIENT" ]; then
     printf "%b Installing RClone!!\n" "$check_symbol"
     echo; echo; curl 'https://rclone.org/install.sh' | sudo -H bash
 fi
@@ -713,7 +713,7 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-if not type -q rclone
+if not type -q rclone and test -z "$SSH_CLIENT"
     printf "$check_symbol Installing RClone!!\n"
     printf "  $right_arrow_symbol Type in your password if you feel it's halted!!\n"
     echo

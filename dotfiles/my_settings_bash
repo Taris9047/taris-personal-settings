@@ -196,7 +196,7 @@ if [ ! -x "$(command -v spark)" ]; then
     chmod +x "$HOMEBREW/bin/spark" || true
 fi
 
-if [ ! -x "$(command -v rclone)" ]; then
+if [ ! -x "$(command -v rclone)" ] && [ -z "$SSH_CLIENT" ]; then
     printf "%b Installing RClone!!\n" "$check_symbol"
     echo; echo; curl 'https://rclone.org/install.sh' | sudo -H bash
 fi

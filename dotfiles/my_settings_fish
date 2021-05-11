@@ -171,7 +171,7 @@ if not type -q spark
     or true
 end
 
-if not type -q rclone
+if not type -q rclone and test -z "$SSH_CLIENT"
     printf "$check_symbol Installing RClone!!\n"
     printf "  $right_arrow_symbol Type in your password if you feel it's halted!!\n"
     echo
