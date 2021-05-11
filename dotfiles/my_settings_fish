@@ -23,7 +23,7 @@ set line_delay 0.12
 
 alias tmuxkillall='tmux kill-server'
 if type -q tmux
-    if test "$TERM" != "*screen*" -a "$TERM" != "*tmux*" -a -z "$TMUX"
+    if test "$TERM" != "*screen*" -a "$TERM" != "*tmux*" -a -z "$TMUX" -a -n "$SSH_CLIENT"
         tmux new
     end
     builtin exit

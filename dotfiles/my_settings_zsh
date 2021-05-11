@@ -30,7 +30,7 @@ stringcontain() {
 	[ -z "$1" ] || { [ -z "${2##*$1*}" ] && [ -n "$2" ]; }
 }
 
-if [ -x "$(command -v tmux)" ] && ! stringcontain 'screen' "$TERM" && ! stringcontain 'tmux' "$TERM" && [ -z "$TMUX" ]; then
+if [ -x "$(command -v tmux)" ] && ! stringcontain 'screen' "$TERM" && ! stringcontain 'tmux' "$TERM" && [ -z "$TMUX" ] && [ -n "$SSH_CLIENT" ]; then
 	printf '%b tmux has found!! Running it!\n' "${check_symbol}"
 	tmux
 	builtin exit

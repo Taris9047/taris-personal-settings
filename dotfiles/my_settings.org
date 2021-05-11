@@ -186,6 +186,9 @@ set line_delay 0.12
 
 ** Prefer Tmux if available.
 Tmux is a great terminal interface for any situation, even your favorite Xorg terminal emulator can crash and screw up everything you were doing. Tmux saves it! This part also referenced some other people's contribution at [[https://unix.stackexchange.com/questions/43601/how-can-i-set-my-default-shell-to-start-up-tmux][Stack Exchange]].
+
+Actually, using TMUX on every single instance of my own local system seems a bit of chore. I would rather use TMUX when I'm on remote connection instead.
+
 *** Bash
 #+NAME: prefer_tmux_session
 #+begin_src shell :tangle my_settings_bash
@@ -193,7 +196,7 @@ stringcontain() {
 	[ -z "$1" ] || { [ -z "${2##*$1*}" ] && [ -n "$2" ]; }
 }
 
-if [ -x "$(command -v tmux)" ] && ! stringcontain 'screen' "$TERM" && ! stringcontain 'tmux' "$TERM" && [ -z "$TMUX" ]; then
+if [ -x "$(command -v tmux)" ] && ! stringcontain 'screen' "$TERM" && ! stringcontain 'tmux' "$TERM" && [ -z "$TMUX" ] && [ -n "$SSH_CLIENT" ]; then
 	printf '%b tmux has found!! Running it!\n' "${check_symbol}"
 	tmux
 	builtin exit
@@ -223,7 +226,7 @@ alias tmuxkillall='tmux kill-server'
 #+begin_src fish :tangle my_settings_fish
 alias tmuxkillall='tmux kill-server'
 if type -q tmux
-    if test "$TERM" != "*screen*" -a "$TERM" != "*tmux*" -a -z "$TMUX"
+    if test "$TERM" != "*screen*" -a "$TERM" != "*tmux*" -a -z "$TMUX" -a -n "$SSH_CLIENT"
         tmux new
     end
     builtin exit

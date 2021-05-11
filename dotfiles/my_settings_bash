@@ -26,6 +26,11 @@ stringcontain() {
 	[ -z "$1" ] || { [ -z "${2##*$1*}" ] && [ -n "$2" ]; }
 }
 
+if [ -x "$(command -v tmux)" ] && ! stringcontain 'screen' "$TERM" && ! stringcontain 'tmux' "$TERM" && [ -z "$TMUX" ] && [ -n "$SSH_CLIENT" ]; then
+	printf '%b tmux has found!! Running it!\n' "${check_symbol}"
+	tmux
+	builtin exit
+fi
 
 # if [ -x "$(command -v tmux)" ] && stringcontain 'xterm' "$TERM"; then
 #     builtin exit
@@ -193,7 +198,7 @@ fi
 
 if [ ! -x "$(command -v rclone)" ]; then
     printf "%b Installing RClone!!\n" "$check_symbol"
-#    echo; echo; curl 'https://rclone.org/install.sh' | sudo -H bash
+    echo; echo; curl 'https://rclone.org/install.sh' | sudo -H bash
 fi
 
 unalias rm mv cp grep egrep fgrep df rsync sudo free 2> /dev/null || true
