@@ -1440,7 +1440,7 @@ Emacs runs much faster with emacsclient which runs a daemon. Also, we are trying
 #+begin_src shell :tangle my_settings_bash
 # Emacs selection path: $HOMEBREW/bin/emacs > /snap/bin/emacs > system emacs such as ... /usr/bin/emacs
 emacs_candidates=( "$HOMEBREW/bin/emacs" "$SNAP_BIN/emacs" "/usr/local/bin/emacs" "/usr/bin/emacs" )
-for emacs_cand in "$emacs_candidates[@]"
+for emacs_cand in "${emacs_candidates[@]}"
 do
     if [ -x "$emacs_cand" ]; then
         emacs_cmd="$emacs_cand"
