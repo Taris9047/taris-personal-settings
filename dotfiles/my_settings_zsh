@@ -444,6 +444,7 @@ do
     if [ -x "$emacs_cand" ]; then
         emacs_cmd="$emacs_cand"
         emacsclient_cmd="$(dirname "$emacs_cand")"/emacsclient
+        break
     fi
 done
 
