@@ -50,6 +50,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#universal-open-function][Universal 'open' function]]
   - [[#check-uptime][Check uptime]]
 - [[#settings-for-custom-installed-programs][Settings for Custom installed programs!]]
+  - [[#snapd-stuff][Snapd stuff]]
   - [[#broot][Broot]]
   - [[#java-runtime-environment-or-java-development-kit][Java Runtime Environment (or Java Development Kit)]]
   - [[#emacs-aliases][EMACS Aliases]]
@@ -57,7 +58,6 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#homebrewed-gcc][Homebrewed GCC]]
   - [[#golang][Golang]]
   - [[#julia][Julia]]
-  - [[#snapd-stuff][Snapd stuff]]
   - [[#vnc-setup][VNC setup]]
   - [[#root][ROOT]]
   - [[#neovim][Neovim]]
@@ -1356,6 +1356,32 @@ end
 #+end_src
 
 * Settings for Custom installed programs!
+
+** Snapd stuff
+*** Bash
+#+NAME: prog_snapd
+#+begin_src shell :tangle my_settings_bash
+SNAP_BIN="/snap/bin"
+if [ -d "$SNAP_BIN" ]; then
+    printf "%b Snap executables have been found at %s\n" "${check_symbol}" "${SNAP_BIN}"
+    addpath "$SNAP_BIN"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_snapd>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set SNAP_BIN /snap/bin
+if test -d "$SNAP_BIN"
+    printf "$check_symbol Snap executables have been found at $SNAP_BIN\n"
+    addpath "$SNAP_BIN"
+end
+#+end_src
+
 ** Broot
 *** Bash
 #+NAME: prog_broot
@@ -1604,31 +1630,6 @@ if test -d "$JULIA_ROOT"
 end
 #+end_src
 
-** Snapd stuff
-*** Bash
-#+NAME: prog_snapd
-#+begin_src shell :tangle my_settings_bash
-SNAP_BIN="/snap/bin"
-if [ -d "$SNAP_BIN" ]; then
-    printf "%b Snap executables have been found at %s\n" "${check_symbol}" "${SNAP_BIN}"
-    addpath "$SNAP_BIN"
-fi
-#+end_src
-
-*** Zsh
-#+begin_src shell :tangle my_settings_zsh :noweb yes
-<<prog_snapd>>
-#+end_src
-
-*** Fish
-#+begin_src fish :tangle my_settings_fish
-set SNAP_BIN /snap/bin
-if test -d "$SNAP_BIN"
-    printf "$check_symbol Snap executables have been found at $SNAP_BIN\n"
-    addpath "$SNAP_BIN"
-end
-#+end_src
-
 ** VNC setup
 *** Bash
 #+NAME: prog_vnc
@@ -1657,7 +1658,6 @@ if type -q vncserver
     alias vnckill="vncserver -kill :1"
 end
 #+end_src
-
 
 ** ROOT
 *** Bash

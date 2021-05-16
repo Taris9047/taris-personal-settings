@@ -403,6 +403,12 @@ check_uptime() {
     echo "$(awk '{print $1}' /proc/uptime)"
 }
 
+SNAP_BIN="/snap/bin"
+if [ -d "$SNAP_BIN" ]; then
+    printf "%b Snap executables have been found at %s\n" "${check_symbol}" "${SNAP_BIN}"
+    addpath "$SNAP_BIN"
+fi
+
 if [ -x "$(command -v broot)" ]; then
     printf "%b Broot found!\n" "${check_symbol}"
     alias br='broot -dhp'
@@ -474,12 +480,6 @@ JULIA_BIN="$JULIA_ROOT/bin"
 if [ -d "$JULIA_ROOT" ] && [ -f "$JULIA_BIN/julia" ]; then
     printf "%b Julia has been found at %s\n" "${check_symbol}" "${JULIA_ROOT}"
     addpath "$JULIA_BIN"
-fi
-
-SNAP_BIN="/snap/bin"
-if [ -d "$SNAP_BIN" ]; then
-    printf "%b Snap executables have been found at %s\n" "${check_symbol}" "${SNAP_BIN}"
-    addpath "$SNAP_BIN"
 fi
 
 if [ -x "$(command -v vncserver)" ]; then
