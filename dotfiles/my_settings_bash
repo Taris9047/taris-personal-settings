@@ -436,10 +436,10 @@ done
 
 unalias em emacs emacsclient 2> /dev/null
 if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
-    alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a 'emacs' "
+    alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a '$emacs_cmd' "
     alias em="${emacs_cmd} -nw"
 else
-    alias emacs="${emacsclient_cmd} -c -a 'emacs' "
+    alias emacs="${emacsclient_cmd} -c -a '$emacs_cmd' "
     alias em="${emacs_cmd} -nw"
 fi
 
