@@ -1451,42 +1451,19 @@ done
 
 unalias em emacs emacsclient 2> /dev/null
 if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
-    alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a '$emacs_cmd' "
-    alias em="${emacs_cmd} -nw"
+    alias emc="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a '$emacs_cmd' "
+    alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacs_cmd}"
+    alias emt="${emacs_cmd} -nw"
 else
-    alias emacs="${emacsclient_cmd} -c -a '$emacs_cmd' "
-    alias em="${emacs_cmd} -nw"
+    alias emc="${emacsclient_cmd} -c -a '$emacs_cmd' "
+    alias emacs="${emacs_cmd}"
+    alias emt="${emacs_cmd} -nw"
 fi
-#+end_src
-
-#+begin_src shell :tangle my_settings_bash
-# Aaaaand some shortcut for emacs
-emc() {
-	if [ $# -eq 0 ]; then
-		emacsclient &
-		>/dev/null &
-	else
-		emacsclient "$1" &
-		>/dev/null &
-	fi
-}
 #+end_src
 
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh :noweb yes
 <<prog_emacs>>
-#+end_src
-
-#+begin_src shell :tangle my_settings_zsh
-emc() {
-	if [ $# -eq 0 ]; then
-		emacsclient &
-		disown
-	else
-		emacsclient "$1" &
-		disown
-	fi
-}
 #+end_src
 
 *** Fish
