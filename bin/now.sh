@@ -23,7 +23,7 @@ if [ -x "$(command -v jq)" ]; then
 fi
 
 # Replace Edmonton with your city name, GPS, etc. See: curl wttr.in/:help
-curl wttr.in/Halifax?0 --silent --max-time 3 > /tmp/now-weather
+curl wttr.in/$CITY?0 --silent --max-time 3 > /tmp/now-weather
 # Timeout #. Increase for slow connection---^
 
 readarray aWeather < /tmp/now-weather

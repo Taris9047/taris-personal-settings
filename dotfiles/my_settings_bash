@@ -434,7 +434,7 @@ do
     fi
 done
 
-unalias em emacs emacsclient 2> /dev/null
+unalias emc emt emacs emacsclient 2> /dev/null
 if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
     alias emc="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a '$emacs_cmd' "
     alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacs_cmd}"
