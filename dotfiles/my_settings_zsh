@@ -511,6 +511,13 @@ if [ -x "$(command -v $ROOT_DIR/bin/root)" ]; then
     alias thisroot="$ROOT_DIR/bin/thisroot.sh"
 fi
 
+if [ -x "$(command -v vim)" ]; then
+  printf "%b vim found! replacing stupid old vi!\n" "${check_symbol}"
+  sleep "${line_delay}"
+  unalias vi vim 2>/dev/null || true
+  alias vi='vim'
+fi
+
 if [ -x "$(command -v nvim)" ]; then
 	printf "%b Neovim found! replacing vim!\n" "${check_symbol}"
 	sleep "${line_delay}"

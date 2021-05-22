@@ -60,6 +60,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#julia][Julia]]
   - [[#vnc-setup][VNC setup]]
   - [[#root][ROOT]]
+  - [[#vim][Vim]]
   - [[#neovim][Neovim]]
   - [[#texlive][Texlive]]
   - [[#pypy---homebrewed-pypy3][PyPy - Homebrewed pypy3]]
@@ -1666,6 +1667,32 @@ set ROOT_DIR "$HOMEBREW/.opt/ROOT"
 if type -q "$ROOT_DIR/bin/root"
     printf "$check_symbol ROOT Found! Applying its shell env.\n"
     alias thisroot="$ROOT_DIR/bin/thisroot.fish"
+end
+#+end_src
+
+** Vim
+*** Bash
+#+NAME: prog_vim
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v vim)" ]; then
+  printf "%b vim found! replacing stupid old vi!\n" "${check_symbol}"
+  sleep "${line_delay}"
+  unalias vi vim 2>/dev/null || true
+  alias vi='vim'
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_vim>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q vim
+    printf "$check_symbol Vim found! Replacing old vi!\n"
+    sleep $line_delay
+    alias vi='vim'
 end
 #+end_src
 

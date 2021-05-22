@@ -467,6 +467,12 @@ if type -q "$ROOT_DIR/bin/root"
     alias thisroot="$ROOT_DIR/bin/thisroot.fish"
 end
 
+if type -q vim
+    printf "$check_symbol Vim found! Replacing old vi!\n"
+    sleep $line_delay
+    alias vi='vim'
+end
+
 if type -q nvim
     printf "$check_symbol Neovim found! replacing vim!\n"
     sleep $line_delay
