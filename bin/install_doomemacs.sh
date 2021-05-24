@@ -15,22 +15,22 @@ install_git() {
 
 	[ ! -x "$(command -v gcc)" ] && die "ouch! no gcc?"
 
-	echo "Trying to delete old git from package..."
-	sudo -H apt -y remove git && sudo -H apt autoremove || true
+	# echo "Trying to delete old git from package..."
+	# sudo -H apt -y remove git && sudo -H apt autoremove || true
 
 	echo "Ok, let's install real git!!"
 
 	CWD=$(pwd -P)
 
-	local bld_dir = "${SCRIPTPATH}/.build"
+	local bld_dir="${SCRIPTPATH}/.build"
 
 	mkdir -pfv "$bld_dir" &&
 		cd "$bld_dir" &&
 		wget 'https://www.kernel.org/pub/software/scm/git/git-2.31.1.tar.xz' -O "${bld_dir}/git-2.31.1.tar.xz" &&
 		tar xpvf "${bld_dir}/git-2.31.1.tar.xz" &&
 		cd "${bld_dir}/git-2.31.1/" &&
-		./configure --prefix=/usr/local &&
-		make -j2 && sudo -H make install &&
+		./configure --prefix=$HOME/.local &&
+		make -j2 && make install &&
 		cd "$CWD" &&
 		rm -rf "$bld_dir"
 	echo "Ok, Installed new git on /usr/local !!"
@@ -45,7 +45,7 @@ else
 	git_ver_stdout=$(echo $(git --version))
 	gvs_arr=($git_ver_stdout)
 	git_ver_str="${gvs_arr[2]}"
-	version_greater_equal "${git_ver_str}" "2.23.0" || install_git
+	version_greater_equal "${git_ver_str}" "2.28.1" || install_git
 fi
 
 echo "Checking Emacs... obviously."
@@ -99,7 +99,7 @@ fi
 
 echo "Let's install Doomemacs!!"
 git clone --depth 1 https://github.com/hlissner/doom-emacs "$HOME/.emacs.d"
-"$HOME/.emacs.d/bin/doom" -y install
+"$HOME/.emacs.d/bin/doom" install
 
 echo "Ok, updating the doom.d setting files!!"
 rm -rvf ${HOME}/.doom.d/*
