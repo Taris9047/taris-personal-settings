@@ -28,6 +28,9 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#texlive-home-directory-set][Texlive home directory set]]
   - [[#default-cligui-editor-set][Default CLI/GUI editor set]]
   - [[#change-terminal-titles][Change terminal titles]]
+  - [[#make-xterm-pretty-again][Make Xterm pretty again]]
+  - [[#zsh][Zsh]]
+  - [[#fish][Fish]]
 - [[#hot-spot-installation][Hot Spot Installation]]
   - [[#spark][Spark]]
   - [[#rclone][RClone]]
@@ -42,6 +45,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#switching-shells][Switching shells]]
   - [[#youtube-dl-shortcuts][youtube-dl shortcuts]]
   - [[#clear-screen][Clear screen]]
+  - [[#use-urxvt-instead-of-xterm][Use URxvt instead of Xterm]]
 - [[#basic-functions-for-everyday-use][Basic Functions for everyday use]]
   - [[#prepending-system-path-variable][Prepending system PATH variable.]]
   - [[#extract-archive][Extract archive]]
@@ -91,7 +95,6 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
 
 * Exports
 Fundamental variables to start with.
-
 ** She-bang preambles
 For Bash and Zsh.. we are considering to change them to POSIX compliant ones rather than those heavy shells themselves.
 
@@ -267,7 +270,6 @@ export HISTCONTROL="ignoredups:erasedups"
 #+begin_src fish :tangle my_settings_fish
 set TERM "xterm-256color"
 #+end_src
-
 
 ** Autocompletion color - Fish only
 *** Fish
@@ -666,6 +668,26 @@ function fish_title
 end
 #+end_src
 
+** Make Xterm pretty again
+*** Bash
+#+NAME: XtermSettings
+#+begin_src shell :tangle my_settings_bash
+if [ -f "$HOME/.Xresources" ] && [ -x "$(command -v xrdb)" ]; then
+    printf '%b Reading in Xterm configurations!!\n' "${check_symbol}"
+    xrdb -merge "$HOME/.Xresources"
+fi
+#+end_src
+** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<XtermSettings>>
+#+end_src
+** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -f "$HOME/.Xresources" and test -x "$(command -v xrdb)"
+    printf '%b Reading in Xterm configuraitons!!\n' "$check_symbol"
+    xrdb -merge "$HOME/.Xresources"
+end
+#+end_src
 * Hot Spot Installation
 ** Spark
 *** Bash
@@ -1048,6 +1070,22 @@ else if type -q spark
 end
 #+end_src
 
+** Use URxvt instead of Xterm
+*** Bash
+#+NAME: URxvtInsteadXterm
+#+begin_src shell :tangle my_settings_bash
+[ -x "$(command -v urxvt)" ] && alias xterm='urxvt'
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<URxvtInsteadXterm>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -f "(command -v urxvt)"
+    alias xterm='urxvt'
+end
+#+end_src
 * Basic Functions for everyday use
 ** Prepending system PATH variable.
 Apparently, there are much better ways to handle this kind of job and many newer shell versions will provide some kind of macro or internal functions to do this. But I would rather stay safe.
@@ -2158,7 +2196,7 @@ end
 #+begin_src shell :tangle my_settings_bash
 trash_location="$HOME/.local/share/Trash/files/"
 if [ -x "$(command -v rip)" ]; then
-    printf "%b rip, rm-improved found!\n  ${right_arrow_symbol} Setting up graveyard at $trash_location\n" "${check_symbol}"
+    printf '%b rip, rm-improved found!\n  %b Setting up graveyard at %s\n' "${check_symbol}" "${right_arrow_symbol}" "${trash_location}"
     sleep "${line_delay}"
     alias rip="rip --graveyard $trash_location"
 fi

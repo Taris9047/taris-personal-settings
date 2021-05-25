@@ -178,6 +178,11 @@ case ${TERM} in
     ;;
 esac
 
+if [ -f "$HOME/.Xresources" ] && [ -x "$(command -v xrdb)" ]; then
+    printf '%b Reading in Xterm configurations!!\n' "${check_symbol}"
+    xrdb -merge "$HOME/.Xresources"
+fi
+
 if [ ! -x "$(command -v spark)" ]; then
 	printf "%b Installing spark!!\n" "$check_symbol"
 	[ ! -d "$HOMEBREW/bin" ] && mkdir -pv "$HOMEBREW/bin"
@@ -303,6 +308,8 @@ if [ -x "$(command -v spark)" ] && [ -x "$(command -v lolcat)" ]; then
 elif [ -x "$(command -v spark)" ] && [ ! -x "$(command -v lolcat)" ]; then
     alias clear='clear; echo; seq 1 $(tput cols) | sort -R | spark; echo'
 fi
+
+[ -x "$(command -v urxvt)" ] && alias xterm='urxvt'
 
 addpath() {
     case ":$PATH:" in
@@ -654,7 +661,7 @@ bat_theme_dark() {
 
 trash_location="$HOME/.local/share/Trash/files/"
 if [ -x "$(command -v rip)" ]; then
-    printf "%b rip, rm-improved found!\n  ${right_arrow_symbol} Setting up graveyard at $trash_location\n" "${check_symbol}"
+    printf '%b rip, rm-improved found!\n  %b Setting up graveyard at %s\n' "${check_symbol}" "${right_arrow_symbol}" "${trash_location}"
     sleep "${line_delay}"
     alias rip="rip --graveyard $trash_location"
 fi
