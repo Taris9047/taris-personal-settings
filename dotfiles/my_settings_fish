@@ -280,7 +280,7 @@ else if type -q spark
 end
 
 if test -f "(command -v urxvt)"
-    alias xterm='urxvt'
+    alias uxterm='urxvt'
 end
 
 function addpath

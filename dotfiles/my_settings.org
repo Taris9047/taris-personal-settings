@@ -1074,7 +1074,7 @@ end
 *** Bash
 #+NAME: URxvtInsteadXterm
 #+begin_src shell :tangle my_settings_bash
-[ -x "$(command -v urxvt)" ] && alias xterm='urxvt'
+[ -x "$(command -v urxvt)" ] && alias uxterm='urxvt'
 #+end_src
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh :noweb yes
@@ -1083,7 +1083,7 @@ end
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 if test -f "(command -v urxvt)"
-    alias xterm='urxvt'
+    alias uxterm='urxvt'
 end
 #+end_src
 * Basic Functions for everyday use
