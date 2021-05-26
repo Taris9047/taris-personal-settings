@@ -14,7 +14,8 @@ Xft.lcdfilter: lcdfilter
 XTerm*renderFont: true
 XTerm*faceName: xft:mononoki Nerd Font, \n\
                 xft:JoyPixels:size=12, \n\
-                xft:Monospace:style=Medium:size=12
+                xft:Monospace:style=Medium:size=12 \n\
+                xft:Noto Color Emoji
 XTerm*faceSize: 12
 XTerm*utf8: 2
 XTerm*locale: true
@@ -62,7 +63,8 @@ URxvt.intensityStyles: false
 URxvt.font: xft:mononoki Nerd Font:size=12, \n\
             xft:JoyPixels:size=12, \n\
             xft:Monospace:style=Medium:size=12  \n\
-            xft:Symbola:size=12
+            xft:Symbola:size=12 \n\
+            xft:Noto Color Emoji
 URxvt.saveLines: 2000
 URxvt.scrollBar: false
 URxvt.cursorColor: white
