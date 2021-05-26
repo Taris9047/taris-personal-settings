@@ -20,6 +20,17 @@ XTerm*faceSize: 12
 XTerm*utf8: 2
 XTerm*locale: true
 
+! Repeating the same settings for Unicode version.
+UXTerm*renderFont: true
+UXTerm*faceName: xft:mononoki Nerd Font, \n\
+                xft:JoyPixels:size=12, \n\
+                xft:Monospace:style=Medium:size=12 \n\
+                xft:Noto Color Emoji
+UXTerm*faceSize: 12
+UXTerm*utf8: 2
+UXTerm*locale: true
+
+
 ! Font size manipulation (Ctrl+0 to return to normal size)
 XTerm.vt100.translations: #override \
   Ctrl <Key> minus: smaller-vt-font() \n\
@@ -30,32 +41,53 @@ XTerm.vt100.translations: #override \
   Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
   Ctrl <Btn1Up>: exec-formatted("xdg-open '%t'", PRIMARY)
 
+UXTerm.vt100.translations: #override \
+  Ctrl <Key> minus: smaller-vt-font() \n\
+  Ctrl <Key> plus: larger-vt-font() \n\
+  Ctrl <Key> 0: set-vt-font(d) \n\
+  Shift <KeyPress> Insert: insert-selection(CLIPBOARD) \n\
+  Ctrl Shift <Key>V: insert-selection(CLIPBOARD) \n\
+  Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
+  Ctrl <Btn1Up>: exec-formatted("xdg-open '%t'", PRIMARY)
+
+
 ! Selecting text
 XTerm.highlightSelection: true
 XTerm.trimSelection: true
+UXTerm.highlightSelection: true
+UXTerm.trimSelection: true
+
 
 ! Every shell is a login shell by default (for inclusion of all necessary environment variables)
 XTerm*loginshell: true
+UXTerm*loginshell: true
 
 ! I like a LOT of scrollback...
 XTerm*savelines: 16384
 XTerm*scrollBar: true
 XTerm*rightScrollBar: true
+UXTerm*savelines: 16384
+UXTerm*scrollBar: true
+UXTerm*rightScrollBar: true
 
 ! Do not Auto scroll when tail -f something
 XTerm*scrollTtyOutput: false
+UXTerm*scrollTtyOutput: false
 
 ! double-click to select whole URLs :D
 XTerm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
+UXTerm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
+
 
 ! UTF8 title - To prevent broken Korean letters on the window title
 XTerm*utf8Title: true
+UXTerm*utf8Title: true
 
 ! Working with modern Linux keybindings...
 XTerm*eightBitInput: false
+UXTerm*eightBitInput: false
 
-
-
+! URxvt Settings
 URxvt*imLocale: en_US.UTF-8
 URxvt*termName: rxvt-unicode-256color
 URxvt*buffered: false
@@ -207,8 +239,7 @@ URxvt*depth: 32
 *.color7:       #202328
 *.color15:      #dfdfdf
 
-! Emacs Hangul Problem
+! Emacs Hangul Problem - Let us not use X based input method in Emacs. Emacs has its own.
+! Referenced: https://m.blog.naver.com/PostView.naver?blogId=jodi999&logNo=221256569685&proxyReferer=https:%2F%2Fwww.google.com%2F
 Emacs*useXIM: false
-
-! Korean stuff
 
