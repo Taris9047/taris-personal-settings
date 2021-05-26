@@ -45,7 +45,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#switching-shells][Switching shells]]
   - [[#youtube-dl-shortcuts][youtube-dl shortcuts]]
   - [[#clear-screen][Clear screen]]
-  - [[#use-urxvt-instead-of-xterm][Use URxvt instead of Xterm]]
+  - [[#use-uxterm-instead-of-xterm][Use UXterm instead of Xterm]]
 - [[#basic-functions-for-everyday-use][Basic Functions for everyday use]]
   - [[#prepending-system-path-variable][Prepending system PATH variable.]]
   - [[#extract-archive][Extract archive]]
@@ -1070,11 +1070,12 @@ else if type -q spark
 end
 #+end_src
 
-** Use URxvt instead of Xterm
+** Use UXterm instead of Xterm
 *** Bash
 #+NAME: URxvtInsteadXterm
 #+begin_src shell :tangle my_settings_bash
-[ -x "$(command -v urxvt)" ] && alias uxterm='urxvt'
+[ -x "$(command -v uxterm)" ] && alias xterm='uxterm'
+[ -x "$(command -v urxvt)" ] && alias rxvt='urxvt'
 #+end_src
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh :noweb yes
@@ -1082,8 +1083,10 @@ end
 #+end_src
 *** Fish
 #+begin_src fish :tangle my_settings_fish
+if test -f "(command -v uxterm)"
+    alias xterm='uxterm'
 if test -f "(command -v urxvt)"
-    alias uxterm='urxvt'
+    alias rxvt='urxvt'
 end
 #+end_src
 * Basic Functions for everyday use

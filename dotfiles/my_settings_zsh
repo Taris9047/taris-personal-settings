@@ -309,7 +309,8 @@ elif [ -x "$(command -v spark)" ] && [ ! -x "$(command -v lolcat)" ]; then
     alias clear='clear; echo; seq 1 $(tput cols) | sort -R | spark; echo'
 fi
 
-[ -x "$(command -v urxvt)" ] && alias uxterm='urxvt'
+[ -x "$(command -v uxterm)" ] && alias xterm='uxterm'
+[ -x "$(command -v urxvt)" ] && alias rxvt='urxvt'
 
 addpath() {
     case ":$PATH:" in
