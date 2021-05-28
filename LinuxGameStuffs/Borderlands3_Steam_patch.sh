@@ -4,8 +4,12 @@
 WORK_DIR="$HOME/.bd3_patch"
 ORIG_DIR="$CWD"
 
-GAME_REF_NUM='397540'
-PROTON_DIR="/home/$USER/.steam/debian-installation/steamapps/common/Proton - Experimental/"
+GAME_REF_NUM='397540' # Reference number for Borderlands 3 as suggested by Hovercraft
+
+# Mine is Pop! OS, which bases on Ubuntu. It can be different on other machines. Adjust this directory for your own situation
+PROTON_DIR="/home/$USER/.steam/debian-installation/steamapps/common/Proton - Experimental/" 
+
+# As I said, I usually gather all the Steam games together in ~/GameAndMedia directory. It will be different in your case. Change it!
 WINE_PREFIX_FOR_INSTALL="/home/$USER/GameAndMedia/SteamLibrary/steamapps/compatdata/$GAME_REF_NUM/pfx"
 
 # Good old die function
@@ -15,9 +19,12 @@ die () {
 }
 
 # Installing mf-install
+# You need some external tools. 
+# if you are on Ubuntu based distro., type
+# apt install -y git cabextract 
+# if the script complains missing tools.
 [ ! -x "$(command -v git)" ] && die "We need git! ponk!"
 [ ! -x "$(command -v cabextract)" ] && "We need cabextract!"
-
 
 # Dealing with work directory
 [ -d "$WORK_DIR" ] && rm -rf "$WORK_DIR"
@@ -27,7 +34,7 @@ mkdir -p "$WORK_DIR"
 if [ -d "$WORK_DIR" ]; then
   cd "$WORK_DIR" && \
   git clone https://github.com/z0z0z/mf-install && \
-  cd "$WORK_DIR/mf-install" &&
+  cd "$WORK_DIR/mf-install" && \
   PROTON="$PROTON_DIR" WINEPREFIX="$WINE_PREFIX_FOR_INSTALL" ./mf-install.sh -proton
 
   cd "$WORK_DIR" && \
