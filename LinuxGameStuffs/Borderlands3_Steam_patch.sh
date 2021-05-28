@@ -12,6 +12,9 @@ PROTON_DIR="/home/$USER/.steam/debian-installation/steamapps/common/Proton - Exp
 # As I said, I usually gather all the Steam games together in ~/GameAndMedia directory. It will be different in your case. Change it!
 WINE_PREFIX_FOR_INSTALL="/home/$USER/GameAndMedia/SteamLibrary/steamapps/compatdata/$GAME_REF_NUM/pfx"
 
+# Game Data directory!
+GAME_BIN_DIR="/home/$USER/GameAndMedia/SteamLibrary/steamapps/common/Borderlands 3/OakGame/Binaries/Win64/"
+
 # Good old die function
 die () {
   printf 'ERROR! %s\n' "$1"
@@ -41,6 +44,11 @@ if [ -d "$WORK_DIR" ]; then
   git clone https://github.com/z0z0z/mf-installcab && \
   cd "$WORK_DIR/mf-installcab" && \
   PROTON="$PROTON_DIR" WINEPREFIX="$WINE_PREFIX_FOR_INSTALL" ./install-mf-64.sh
+
+  printf '\nmfplat.dll? will do!'
+
+  cp -rfv "$WORK_DIR/mf-installcab/mfplat.dll" "$GAME_BIN_DIR/"
+
 fi
 
 # Cleaning up!
