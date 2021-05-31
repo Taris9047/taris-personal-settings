@@ -2,6 +2,9 @@
 
 SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
+# Minimum allowed git version
+git_minimal='2.28.1'
+
 version_greater_equal() {
 	printf '%s\n%s\n' "$2" "$1" | sort -V -C
 }
@@ -9,6 +12,12 @@ version_greater_equal() {
 die() {
 	printf 'ERROR: %s\n' "$1"
 	exit -1
+}
+
+install_git_ubuntu() {
+	printf 'Installing newest git from PPA!!\n'
+	sudo apt-get-repository ppa:git-core/ppa
+	sudo apt-get update && sudo apt-get -y upgrade
 }
 
 install_git() {
@@ -45,7 +54,13 @@ else
 	git_ver_stdout=$(echo $(git --version))
 	gvs_arr=($git_ver_stdout)
 	git_ver_str="${gvs_arr[2]}"
-	version_greater_equal "${git_ver_str}" "2.28.1" || install_git
+	
+	# Ubuntu can use PPA fresh git. So, let's use it.
+	if [ ! -z "$(grep -i 'ubuntu' /etc/os-release)" ]; then
+		version_greater_equal "${git_ver_str}" "${git_minimal}" || install_git_ubuntu
+	else
+		version_greater_equal "${git_ver_str}" "${git_minimal}" || install_git
+	fi
 fi
 
 echo "Checking Emacs... obviously."
