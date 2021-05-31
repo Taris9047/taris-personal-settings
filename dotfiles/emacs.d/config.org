@@ -348,10 +348,11 @@ This line causes error. Not sure why. We are supposed to find *dashboard* buffer
 
 * Unicode Fonts
 #+begin_src emacs-lisp
-(use-package unicode-fonts
-   :ensure t
-   :config
-    (unicode-fonts-setup))
+;; Disabling it due to some practical reason...
+;; (use-package unicode-fonts
+;;    :ensure t
+;;    :config
+;;     (unicode-fonts-setup))
 #+end_src
 
 * General Keybindings!!
