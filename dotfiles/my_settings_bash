@@ -603,6 +603,11 @@ fi
 if [ -f "$HOME/.emacs.d/bin/doom" ]; then
     printf "%b Doomemacs found! Adding to path!\n" "${check_symbol}"
     addpath "$HOME/.emacs.d/bin"
+    # Also, setting up some aliases
+    alias doomsync='~/.emacs.d/bin/doom sync'
+    alias doomdoctor='~/.emacs.d/bin/doom doctor'
+    alias doomupgrade='~/.emacs.d/bin/doom upgrade'
+    alias doompurge='~/.emacs.d/bin/doom purge'
 fi
 
 if [ -d "/usr/local/cuda-6.5" ]; then
