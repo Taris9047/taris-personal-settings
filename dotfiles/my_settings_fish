@@ -578,6 +578,18 @@ if test -f "$HOME/.emacs.d/bin/doom"
     alias doompurge='~/.emacs.d/bin/doom purge'
 end
 
+if test -x "/usr/lib/cuda/bin/nvcc"
+    printf '%b Package manager CUDA found! Doing some env stuff for it!\n' "${check_symbol}"
+    set -Ua LD_LIBRARY_PATH "/usr/lib/cuda/lib64"
+    set -Up fish_user_paths "/usr/lib/cuda/bin"
+end
+
+if test -d "/usr/local/cuda-6.5"
+    printf "$check_symbol CUDA 6.5 found! Doing some env stuff for it.\n"
+    set -Ua LD_LIBRARY_PATH "/usr/local/cuda-6.5/lib64"
+    set -Up fish_user_paths "/usr/local/cuda-6.5/bin"
+end
+
 if type -q jq
     printf "$check_symbol jq found, we can use geolocation alias as: geoloc\n"
     alias geoloc="curl -s https://ipvigilante.com/(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"

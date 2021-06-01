@@ -75,7 +75,8 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#irfanview---what-yeah-wine][IrfanView - What? yeah, wine!]]
   - [[#ltspice---yet-another-wine-program][LTSpice - Yet another wine program]]
   - [[#doomemacs-doom-and-evil][Doomemacs! DOOM! and EVIL!]]
-  - [[#cuda-for-nvidia-96009400m][Cuda for NVIDIA 9600/9400m]]
+  - [[#cuda-settings][CUDA Settings]]
+  - [[#cuda-for-nvidia-96009400m][CUDA for NVIDIA 9600/9400m]]
   - [[#geolocation][Geolocation]]
 - [[#rust-replacements][Rust replacements]]
   - [[#du-dust---du-replacement][Du-dust - du replacement]]
@@ -2065,13 +2066,38 @@ if test -f "$HOME/.emacs.d/bin/doom"
 end
 #+end_src
 
-** Cuda for NVIDIA 9600/9400m
+** CUDA Settings
+*** Bash
+#+NAME: prog_cuda
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v /usr/lib/cuda/bin/nvcc)" ]; then
+    printf '%b Package manager CUDA found! Doing some env stuff for it!\n' "${check_symbol}"
+    export LD_LIBRARY_PATH="/usr/lib/cuda/lib64:${LD_LIBRARY_PATH}"
+    export PATH="$PATH:/usr/lib/cuda/bin"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh
+<<prog_cuda>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -x "/usr/lib/cuda/bin/nvcc"
+    printf '%b Package manager CUDA found! Doing some env stuff for it!\n' "${check_symbol}"
+    set -Ua LD_LIBRARY_PATH "/usr/lib/cuda/lib64"
+    set -Up fish_user_paths "/usr/lib/cuda/bin"
+end
+#+end_src
+
+** CUDA for NVIDIA 9600/9400m
 *** Bash
 #+NAME: prog_cuda_old
 #+begin_src shell :tangle my_settings_bash
 if [ -d "/usr/local/cuda-6.5" ]; then
     printf "%b CUDA 6.5 found! Doing some env stuff for it.\n" "${check_symbol}"
-    export LD_LIBRARY_PATH="/usr/local/cuda-6.5/lib64":$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH="/usr/local/cuda-6.5/lib64:${LD_LIBRARY_PATH}"
     export PATH=$PATH:"/usr/local/cuda-6.5/bin"
 fi
 #+end_src
@@ -2082,7 +2108,7 @@ fi
 #+end_src
 
 *** Fish
-#+begin_src fish :my_settings_fish
+#+begin_src fish :tangle my_settings_fish
 if test -d "/usr/local/cuda-6.5"
     printf "$check_symbol CUDA 6.5 found! Doing some env stuff for it.\n"
     set -Ua LD_LIBRARY_PATH "/usr/local/cuda-6.5/lib64"
