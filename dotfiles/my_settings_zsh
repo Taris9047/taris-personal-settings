@@ -623,7 +623,11 @@ if [ -f "$HOME/.emacs.d/bin/doom" ]; then
     alias doompurge='~/.emacs.d/bin/doom purge'
 fi
 
-<<prog_cuda>>
+if [ -x "$(command -v /usr/lib/cuda/bin/nvcc)" ]; then
+    printf '%b Package manager CUDA found! Doing some env stuff for it!\n' "${check_symbol}"
+    export LD_LIBRARY_PATH="/usr/lib/cuda/lib64:${LD_LIBRARY_PATH}"
+    export PATH="$PATH:/usr/lib/cuda/bin"
+fi
 
 if [ -d "/usr/local/cuda-6.5" ]; then
     printf "%b CUDA 6.5 found! Doing some env stuff for it.\n" "${check_symbol}"

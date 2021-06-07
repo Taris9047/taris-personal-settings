@@ -2078,7 +2078,7 @@ fi
 #+end_src
 
 *** Zsh
-#+begin_src shell :tangle my_settings_zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
 <<prog_cuda>>
 #+end_src
 
