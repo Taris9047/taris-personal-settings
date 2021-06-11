@@ -560,7 +560,7 @@ if [ -d "$RBENV_DIR" ]; then
 fi
 
 if [ -x "$(command -v $HOMEBREW/bin/pip3)" ] && [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
-    printf "%b Locally installed bpytop found!\n" "${check_symbol}"
+    printf '%b Locally installed bpytop found!\n' "${check_symbol}"
     sleep ${line_delay}
     alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
     alias htop="$HOMEBREW/bin/bpytop"
@@ -568,7 +568,7 @@ if [ -x "$(command -v $HOMEBREW/bin/pip3)" ] && [ -x "$(command -v $HOMEBREW/bin
 fi
 
 if [ -x "$(command -v n)" ]; then
-    printf "%b n found!, Setting up N_PREFIX environment variable.\n" "${check_symbol}"
+    printf '%b n found!, Setting up N_PREFIX environment variable.\n' "${check_symbol}"
     sleep "${line_delay}"
     export N_PREFIX="$(command -v n | sed -E 's/\/bin\/n//')"
 fi
@@ -579,8 +579,8 @@ run_iview() {
 }
 if [ -x "$(command -v wine)" ]; then
 	if [ -f "$iview64_path" ]; then
-		printf "%b Irfanview found!!\n" "${check_symbol}"
-		printf "  %b Usage: iview <files>\n" "${right_arrow_symbol}"
+		printf '%b Irfanview found!!\n' "${check_symbol}"
+		printf '  %b Usage: iview <files>\n' "${right_arrow_symbol}"
 		alias iview=run_iview
 		sleep ${line_delay}
 	fi
@@ -593,15 +593,15 @@ run_ltspice ()
 }
 if [ -x "$(command -v wine)" ]; then
     if [ -f "$ltspice_path" ]; then
-        printf "%b LTSpice found!!\n" "${check_symbol}"
-        printf "  %b Usage: ltspice \n" "${right_arrow_symbol}"
+        printf '%b LTSpice found!!\n' "${check_symbol}"
+        printf '  %b Usage: ltspice \n' "${right_arrow_symbol}"
         alias ltspice=run_ltspice
         sleep ${line_delay}
     fi
 fi
 
 if [ -f "$HOME/.emacs.d/bin/doom" ]; then
-    printf "%b Doomemacs found! Adding to path!\n" "${check_symbol}"
+    printf '%b Doomemacs found! Adding to path!\n' "${check_symbol}"
     addpath "$HOME/.emacs.d/bin"
     # Also, setting up some aliases
     alias doomsync='~/.emacs.d/bin/doom sync'
@@ -617,25 +617,25 @@ if [ -x "$(command -v /usr/lib/cuda/bin/nvcc)" ]; then
 fi
 
 if [ -d "/usr/local/cuda-6.5" ]; then
-    printf "%b CUDA 6.5 found! Doing some env stuff for it.\n" "${check_symbol}"
+    printf '%b CUDA 6.5 found! Doing some env stuff for it.\n' "${check_symbol}"
     export LD_LIBRARY_PATH="/usr/local/cuda-6.5/lib64:${LD_LIBRARY_PATH}"
     export PATH=$PATH:"/usr/local/cuda-6.5/bin"
 fi
 
 if [ -x "$(command -v jq)" ]; then
-    printf "%b jq found, we can use geolocation alias as: geoloc\n" "${check_symbol}"
+    printf '%b jq found, we can use geolocation alias as: geoloc\n' "${check_symbol}"
     alias geoloc="curl -s http://ip-api.com/json/$(curl -s https://ipinfo.io/ip) | jq '.lat, .lon, .city, .country'"
 fi
 
 if [ -x "$(command -v dust)" ]; then
-    printf "%b dust found! Using it instead of du!\n" "${check_symbol}"
+    printf '%b dust found! Using it instead of du!\n' "${check_symbol}"
     alias du='dust -r'
 else
     alias du='du -skh | sort -r'
 fi
 
 if [ -x "$(command -v bat)" ]; then
-    printf "%b bat found! using it instead of cat\n" "${check_symbol}"
+    printf '%b bat found! using it instead of cat\n' "${check_symbol}"
     sleep "${line_delay}"
     bat_theme="$(cat $BATTHEMESAVE)"
     alias cat='bat --theme="$bat_theme"'
@@ -666,7 +666,7 @@ if [ -x "$(command -v rip)" ]; then
 fi
 
 if [ -x "$(command -v zoxide)" ]; then
-    printf "%b zoxide found! activating it!\n" "${check_symbol}"
+    printf '%b zoxide found! activating it!\n' "${check_symbol}"
     sleep "${line_delay}"
     case "$(echo $MYSHELL)" in
         *"bash") eval "$(zoxide init bash)"; alias cd='z' ;;
@@ -678,15 +678,15 @@ fi
 if [ -x "$(command -v rclone)" ]; then
 
 	if [ ! -d "$GOOGLE_DRIVE" ]; then
-		printf "%b Google drive mount point not found! making one..\n" "${check_symbol}"
+		printf '%b Google drive mount point not found! making one..\n' "${check_symbol}"
 		mkdir -pv "$GOOGLE_DRIVE"
 	fi
 
 	if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'; then
-		printf "%b Google Drive already mounted at $GOOGLE_DRIVE\n" "${check_symbol}"
+		printf '%b Google Drive already mounted at $GOOGLE_DRIVE\n' "${check_symbol}"
 		sleep "${line_delay}"
 	elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-		printf "%b RClone was for Google drive not set up yet!\n" "${check_symbol}"
+		printf '%b RClone was for Google drive not set up yet!\n' "${check_symbol}"
 	else
 		if [ ! -z "$(grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
 			printf '%b Mounting Google Drive to %s\n' "${check_symbol}" "${GOOGLE_DRIVE}"
@@ -698,13 +698,13 @@ fi
 
 if [ -x "$(command -v rclone)" ]; then
     if grep -qs "$ONE_DRIVE" '/proc/mounts'; then
-        printf "%b MS One Drive already mounted at $ONE_DRIVE\n" "${check_symbol}"
+        printf '%b MS One Drive already mounted at $ONE_DRIVE\n' "${check_symbol}"
         sleep "${line_delay}"
     elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-        printf "%b RClone for Onedrive was not set up yet!\n" "${check_symbol}"
+        printf '%b RClone for Onedrive was not set up yet!\n' "${check_symbol}"
     else
         if [ ! -z "$(grep -i "\[onedrive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
-            printf "%b Mounting MS One Drive to %s\n" "${check_symbol}" "${ONE_DRIVE}"
+            printf '%b Mounting MS One Drive to %s\n' "${check_symbol}" "${ONE_DRIVE}"
             rclone mount --vfs-cache-mode writes onedrive: "$ONE_DRIVE" &
             sleep 2
         fi
@@ -712,16 +712,16 @@ if [ -x "$(command -v rclone)" ]; then
 fi
 
 if [ -x "$(command -v starship)" ]; then
-    printf "%b Starship shell extension found! Let's start it!\n" "${check_symbol}"
+    printf '%b Starship shell extension found! Let''''s start it!\n' "${check_symbol}"
     sleep "${line_delay}"
 
     case "$(echo $MYSHELL)" in
         *"bash")
-            printf "  %b Running it as bash" "${right_arrow_symbol}"
+            printf '  %b Running it as bash\n' "${right_arrow_symbol}"
             eval "$(starship init bash)"
             ;;
         *"zsh")
-            printf "  %b Running it as zsh" "${right_arrow_symbol}"
+            printf '  %b Running it as zsh\n' "${right_arrow_symbol}"
             eval "$(starship init zsh)"
             ;;
         *) ;;

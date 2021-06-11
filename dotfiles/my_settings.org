@@ -1907,7 +1907,7 @@ We can install bpytop through the pyenv's python. But these kind of tools are be
 #+NAME: prog_bashtop
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v $HOMEBREW/bin/pip3)" ] && [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
-    printf "%b Locally installed bpytop found!\n" "${check_symbol}"
+    printf '%b Locally installed bpytop found!\n' "${check_symbol}"
     sleep ${line_delay}
     alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
     alias htop="$HOMEBREW/bin/bpytop"
@@ -1924,7 +1924,7 @@ fi
 #+begin_src fish :tangle my_settings_fish
 if type -q $HOMEBREW/bin/pip3
     and type -q $HOMEBREW/bin/bpytop
-    printf "$check_symbol Locally installed bpytop found!\n"
+    printf '$check_symbol Locally installed bpytop found!\n'
     sleep $line_delay
     alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop; $HOMEBREW/bin/bpytop"
     alias htop="$HOMEBREW/bin/bpytop"
@@ -1937,7 +1937,7 @@ end
 #+NAME: prog_n
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v n)" ]; then
-    printf "%b n found!, Setting up N_PREFIX environment variable.\n" "${check_symbol}"
+    printf '%b n found!, Setting up N_PREFIX environment variable.\n' "${check_symbol}"
     sleep "${line_delay}"
     export N_PREFIX="$(command -v n | sed -E 's/\/bin\/n//')"
 fi
@@ -1951,7 +1951,7 @@ fi
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 if type -q n
-    printf "$check_symbol n found!, Setting up N_PREFIX for it!\n"
+    printf '$check_symbol n found!, Setting up N_PREFIX for it!\n'
     sleep "$line_delay"
     set -U N_PREFIX "(type -p n | sed -E 's/\/bin\/n//g')"
 end
@@ -1967,8 +1967,8 @@ run_iview() {
 }
 if [ -x "$(command -v wine)" ]; then
 	if [ -f "$iview64_path" ]; then
-		printf "%b Irfanview found!!\n" "${check_symbol}"
-		printf "  %b Usage: iview <files>\n" "${right_arrow_symbol}"
+		printf '%b Irfanview found!!\n' "${check_symbol}"
+		printf '  %b Usage: iview <files>\n' "${right_arrow_symbol}"
 		alias iview=run_iview
 		sleep ${line_delay}
 	fi
@@ -1988,8 +1988,8 @@ function run_iview
 end
 if type -q wine
     and test -f "$iview64_path"
-    printf "$check_symbol Irfanveiw found!\n"
-    printf "  $right_arrow_symbol Usage: iview <files>\n"
+    printf '%b Irfanveiw found!\n' "$check_symbol"
+    printf '  %b Usage: iview <files>\n' "$right_arrow_symbol"
     alias iview='run_iview'
     sleep $line_dealy
 end
@@ -2006,8 +2006,8 @@ run_ltspice ()
 }
 if [ -x "$(command -v wine)" ]; then
     if [ -f "$ltspice_path" ]; then
-        printf "%b LTSpice found!!\n" "${check_symbol}"
-        printf "  %b Usage: ltspice \n" "${right_arrow_symbol}"
+        printf '%b LTSpice found!!\n' "${check_symbol}"
+        printf '  %b Usage: ltspice \n' "${right_arrow_symbol}"
         alias ltspice=run_ltspice
         sleep ${line_delay}
     fi
@@ -2039,7 +2039,7 @@ end
 #+NAME: prog_doomemacs
 #+begin_src shell :tangle my_settings_bash
 if [ -f "$HOME/.emacs.d/bin/doom" ]; then
-    printf "%b Doomemacs found! Adding to path!\n" "${check_symbol}"
+    printf '%b Doomemacs found! Adding to path!\n' "${check_symbol}"
     addpath "$HOME/.emacs.d/bin"
     # Also, setting up some aliases
     alias doomsync='~/.emacs.d/bin/doom sync'
@@ -2096,7 +2096,7 @@ end
 #+NAME: prog_cuda_old
 #+begin_src shell :tangle my_settings_bash
 if [ -d "/usr/local/cuda-6.5" ]; then
-    printf "%b CUDA 6.5 found! Doing some env stuff for it.\n" "${check_symbol}"
+    printf '%b CUDA 6.5 found! Doing some env stuff for it.\n' "${check_symbol}"
     export LD_LIBRARY_PATH="/usr/local/cuda-6.5/lib64:${LD_LIBRARY_PATH}"
     export PATH=$PATH:"/usr/local/cuda-6.5/bin"
 fi
@@ -2121,7 +2121,7 @@ end
 #+NAME: prog_jq
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v jq)" ]; then
-    printf "%b jq found, we can use geolocation alias as: geoloc\n" "${check_symbol}"
+    printf '%b jq found, we can use geolocation alias as: geoloc\n' "${check_symbol}"
     alias geoloc="curl -s http://ip-api.com/json/$(curl -s https://ipinfo.io/ip) | jq '.lat, .lon, .city, .country'"
 fi
 #+end_src
@@ -2145,7 +2145,7 @@ end
 #+NAME: prog_dust
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v dust)" ]; then
-    printf "%b dust found! Using it instead of du!\n" "${check_symbol}"
+    printf '%b dust found! Using it instead of du!\n' "${check_symbol}"
     alias du='dust -r'
 else
     alias du='du -skh | sort -r'
@@ -2172,7 +2172,7 @@ end
 #+NAME: prog_bat
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v bat)" ]; then
-    printf "%b bat found! using it instead of cat\n" "${check_symbol}"
+    printf '%b bat found! using it instead of cat\n' "${check_symbol}"
     sleep "${line_delay}"
     bat_theme="$(cat $BATTHEMESAVE)"
     alias cat='bat --theme="$bat_theme"'
@@ -2260,7 +2260,7 @@ end
 #+NAME: prog_zoxide
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v zoxide)" ]; then
-    printf "%b zoxide found! activating it!\n" "${check_symbol}"
+    printf '%b zoxide found! activating it!\n' "${check_symbol}"
     sleep "${line_delay}"
     case "$(echo $MYSHELL)" in
         ,*"bash") eval "$(zoxide init bash)"; alias cd='z' ;;
@@ -2292,15 +2292,15 @@ end
 if [ -x "$(command -v rclone)" ]; then
 
 	if [ ! -d "$GOOGLE_DRIVE" ]; then
-		printf "%b Google drive mount point not found! making one..\n" "${check_symbol}"
+		printf '%b Google drive mount point not found! making one..\n' "${check_symbol}"
 		mkdir -pv "$GOOGLE_DRIVE"
 	fi
 
 	if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'; then
-		printf "%b Google Drive already mounted at $GOOGLE_DRIVE\n" "${check_symbol}"
+		printf '%b Google Drive already mounted at $GOOGLE_DRIVE\n' "${check_symbol}"
 		sleep "${line_delay}"
 	elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-		printf "%b RClone was for Google drive not set up yet!\n" "${check_symbol}"
+		printf '%b RClone was for Google drive not set up yet!\n' "${check_symbol}"
 	else
 		if [ ! -z "$(grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
 			printf '%b Mounting Google Drive to %s\n' "${check_symbol}" "${GOOGLE_DRIVE}"
@@ -2345,13 +2345,13 @@ end
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v rclone)" ]; then
     if grep -qs "$ONE_DRIVE" '/proc/mounts'; then
-        printf "%b MS One Drive already mounted at $ONE_DRIVE\n" "${check_symbol}"
+        printf '%b MS One Drive already mounted at $ONE_DRIVE\n' "${check_symbol}"
         sleep "${line_delay}"
     elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-        printf "%b RClone for Onedrive was not set up yet!\n" "${check_symbol}"
+        printf '%b RClone for Onedrive was not set up yet!\n' "${check_symbol}"
     else
         if [ ! -z "$(grep -i "\[onedrive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
-            printf "%b Mounting MS One Drive to %s\n" "${check_symbol}" "${ONE_DRIVE}"
+            printf '%b Mounting MS One Drive to %s\n' "${check_symbol}" "${ONE_DRIVE}"
             rclone mount --vfs-cache-mode writes onedrive: "$ONE_DRIVE" &
             sleep 2
         fi
@@ -2395,16 +2395,16 @@ This part is also super duper dependent on shell type. Gotta isolate it when we 
 #+NAME: shellext_starship
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v starship)" ]; then
-    printf "%b Starship shell extension found! Let's start it!\n" "${check_symbol}"
+    printf '%b Starship shell extension found! Let''''s start it!\n' "${check_symbol}"
     sleep "${line_delay}"
 
     case "$(echo $MYSHELL)" in
         ,*"bash")
-            printf "  %b Running it as bash" "${right_arrow_symbol}"
+            printf '  %b Running it as bash\n' "${right_arrow_symbol}"
             eval "$(starship init bash)"
             ;;
         ,*"zsh")
-            printf "  %b Running it as zsh" "${right_arrow_symbol}"
+            printf '  %b Running it as zsh\n' "${right_arrow_symbol}"
             eval "$(starship init zsh)"
             ;;
         ,*) ;;

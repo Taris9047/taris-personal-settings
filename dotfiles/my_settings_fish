@@ -532,7 +532,7 @@ end
 
 if type -q $HOMEBREW/bin/pip3
     and type -q $HOMEBREW/bin/bpytop
-    printf "$check_symbol Locally installed bpytop found!\n"
+    printf '$check_symbol Locally installed bpytop found!\n'
     sleep $line_delay
     alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop; $HOMEBREW/bin/bpytop"
     alias htop="$HOMEBREW/bin/bpytop"
@@ -540,7 +540,7 @@ if type -q $HOMEBREW/bin/pip3
 end
 
 if type -q n
-    printf "$check_symbol n found!, Setting up N_PREFIX for it!\n"
+    printf '$check_symbol n found!, Setting up N_PREFIX for it!\n'
     sleep "$line_delay"
     set -U N_PREFIX "(type -p n | sed -E 's/\/bin\/n//g')"
 end
@@ -551,8 +551,8 @@ function run_iview
 end
 if type -q wine
     and test -f "$iview64_path"
-    printf "$check_symbol Irfanveiw found!\n"
-    printf "  $right_arrow_symbol Usage: iview <files>\n"
+    printf '%b Irfanveiw found!\n' "$check_symbol"
+    printf '  %b Usage: iview <files>\n' "$right_arrow_symbol"
     alias iview='run_iview'
     sleep $line_dealy
 end
