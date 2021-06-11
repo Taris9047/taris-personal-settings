@@ -2418,7 +2418,6 @@ Come to think of Starship... We may not need it on Zsh if we have oh-my-zsh alre
 [ -x "$(command -v starship)" ] && [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ] && eval "$(starship init zsh)"
 #+end_src
 
-
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 if type -q starship
@@ -2436,9 +2435,9 @@ end
 clear
 if [ -x "$(command -v figlet)" ]; then
     if [ -x $(command -v lolcat) ]; then
-        figlet -w "$(tput cols)" "$HOST" | lolcat
+        figlet -w "$(tput cols)" "$(uname -n)" | lolcat
     else
-        figlet -w "$(tput cols)" "$HOST"
+        figlet -w "$(tput cols)" "$(uname -n)"
     fi
 fi
 #+end_src
