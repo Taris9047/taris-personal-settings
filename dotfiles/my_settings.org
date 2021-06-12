@@ -1961,7 +1961,7 @@ end
 *** Bash
 #+NAME: prog_irfanview
 #+begin_src shell :tangle my_settings_bash
-iview64_path="$HOME/.wine/drive_c/Program\\ Files/IrfanView/i_view64.exe"
+iview64_path="$HOME/.wine/drive_c/Program Files/IrfanView/i_view64.exe"
 run_iview() {
 	wine "$iview64_path" "$(winepath --windows "$@")"
 }
@@ -1999,7 +1999,7 @@ end
 *** Bash
 #+NAME: prog_irfanview
 #+begin_src shell :tangle my_settings_bash
-ltspice_path="$HOME/.wine/drive_c/Program\\ Files/LTC/LTspiceXVII/XVIIx64.exe"
+ltspice_path="$HOME/.wine/drive_c/Program Files/LTC/LTspiceXVII/XVIIx64.exe"
 run_ltspice ()
 {
     wine "$ltspice_path" "$(winepath --windows "$@")"
