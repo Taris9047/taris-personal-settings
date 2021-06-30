@@ -7,6 +7,12 @@
 # --> Need to install RClone and set them up. 
 # . "$HOME/.settings/bin/mount_cloud_dirs.sh"
 
+# hangul stuffs
+#export INPUT_METHOD="fcitx"
+#export XMODIFIERS=@im=fcitx
+#export QT_IM_MODULE=fcitx
+#export GTK_IM_MODULE=fcitx
+
 # Finally, run corresponding shell initialization scripts!!
 [ -n "$BASH_VERSION" ] && . "$HOME/.bashrc"
 [ -n "$ZSH_VERSION" ] && . "$HOME/.zshrc"

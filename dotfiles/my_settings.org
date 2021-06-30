@@ -789,9 +789,9 @@ function aptup () {
         sudo apt -y update && sudo apt -y upgrade
     else
         printf 'ERROR: Cannot find apt or apt-get in the system.\n'
-        exit 1
+        return 1
     fi
-    exit 0
+    return 0
 }
 
 function aptin () {
@@ -803,9 +803,9 @@ function dnfup () {
         sudo dnf -y update
     else
         printf 'ERROR: Cannot find dnf in the system!! Maybe try with Yum?\n'
-        exit 1
+        return 1
     fi
-    exit 0
+    return 0
 }
 
 function dnfin () {
@@ -817,9 +817,9 @@ function yumup () {
         sudo yum -y update
     else
         printf 'ERROR: Cannot find yum!\n'
-        exit 1
+        return 1
     fi
-    exit 0
+    return 0
 }
 
 function yumin () {
@@ -835,7 +835,7 @@ function pacmansync () {
         printf 'pacman system seems to be incomplete!\n'
         return 1
     fi
-    exit 0
+    return 0
 }
 
 function pacmanin () {
@@ -848,6 +848,13 @@ function pkgup () {
     dnfup 2>&1 && return 0
     yumup 2>&1 && return 0
     pacmansync 2>&1 && return 0
+}
+
+function pkgin () {
+    aptin "$@" 2>&1 && return 0
+    dnfin "$@" 2>&1 && return 0
+    yumin "$@" 2>&1 && return 0
+    pacmanin "$@" 2>&1 && return 0
 }
 
 # if [ -x "$(command -v apt)" ] && [ -x "$(command -v apt-get)" ]; then
