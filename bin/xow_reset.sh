@@ -5,7 +5,7 @@ die () {
   exit 1
 }
 
-[ ! -x "$(command -x xow)" ] && die 'xow does not exist on this system!'
+[ ! -x "$(command -v xow)" ] && die 'xow does not exist on this system!'
 
 printf 'Resetting the XBOX ONE wireless dongle...\n'
 
