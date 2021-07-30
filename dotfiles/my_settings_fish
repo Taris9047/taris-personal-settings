@@ -160,7 +160,7 @@ function fish_title
     hostname
 end
 
-if test -f "$HOME/.Xresources" and test -x "$(command -v xrdb)"
+if test -f "$HOME/.Xresources" and test -x "(command -v xrdb)"
     printf '%b Reading in Xterm configuraitons!!\n' "$check_symbol"
     xrdb -merge "$HOME/.Xresources"
 end
@@ -281,6 +281,7 @@ end
 
 if test -f "(command -v uxterm)"
     alias xterm='uxterm'
+end
 if test -f "(command -v urxvt)"
     alias rxvt='urxvt'
 end
@@ -579,7 +580,7 @@ if test -f "$HOME/.emacs.d/bin/doom"
 end
 
 if test -x "/usr/lib/cuda/bin/nvcc"
-    printf '%b Package manager CUDA found! Doing some env stuff for it!\n' "${check_symbol}"
+    printf '%b Package manager CUDA found! Doing some env stuff for it!\n' "$check_symbol"
     set -Ua LD_LIBRARY_PATH "/usr/lib/cuda/lib64"
     set -Up fish_user_paths "/usr/lib/cuda/bin"
 end
