@@ -616,11 +616,7 @@ else
     export EDITOR="vi"
 fi
 
-if [ -x "$(command -v subl)" ]; then
-    export VISUAL="subl"
-else
-    export VISUAL="xdg-open"
-fi
+export VISUAL="xdg-open"
 #+end_src
 
 *** Zsh
