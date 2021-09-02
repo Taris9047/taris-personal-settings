@@ -630,12 +630,20 @@ if [ -d "$RBENV_DIR" ]; then
     eval "$(rbenv init - bash)"
 fi
 
-if [ -x "$(command -v $HOMEBREW/bin/pip3)" ] && [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
+BPYTOP_PATH="$HOMEBREW/bin/bpytop"
+PIP3_PATH="$HOMEBREW/bin/pip3"
+
+if [ -x "$(command -v $HOME/.pyenv/shims/pip)" ]; then
+    BPYTOP_PATH="$HOME/.pyenv/shims/bpytop"
+    PIP3_PATH="$HOME/.pyenv/shims/pip"
+fi
+
+if [ -x "$(command -v $PIP3_PATH)" ] && [ -x "$(command -v $BPYTOP_PATH)" ]; then
     printf '%b Locally installed bpytop found!\n' "${check_symbol}"
     sleep ${line_delay}
-    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
-    alias htop="$HOMEBREW/bin/bpytop"
-    alias top="$HOMEBREW/bin/bpytop"
+    alias bpytop="$PIP3_PATH install -U bpytop && $BPYTOP_PATH"
+    alias htop="$BPYTOP_PATH"
+    alias top="$BPYTOP_PATH"
 fi
 
 if [ -x "$(command -v n)" ]; then

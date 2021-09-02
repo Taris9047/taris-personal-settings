@@ -151,7 +151,7 @@ else
 end
 
 if type -q subl
-    set VISUAL "subl"
+    set VISUAL "vim"
 else
     set VISUAL "xdg-open"
 end
