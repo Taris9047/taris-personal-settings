@@ -622,6 +622,8 @@ if [ -d "$PYENV_DIR" ]; then
     eval "$(pyenv init --path)"
 fi
 
+alias pyenvup="cd $PYENV_DIR && git pull && cd -"
+
 RBENV_DIR="$HOME/.rbenv"
 if [ -d "$RBENV_DIR" ]; then
     printf '%b Rbenv found!! Extending environments\n' "${check_symbol}"
