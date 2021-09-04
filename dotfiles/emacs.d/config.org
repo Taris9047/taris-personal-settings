@@ -775,17 +775,6 @@ Well, let's use it!!
       '(("n" . "NAME")
         ("cap" . "CAPTION")))
 
-(when (version< (org-version) "9.2")
-  (add-to-list 'org-modules 'org-tempo))
-(require 'org-tempo)
-(if (version<  (org-version) "9.2")
-    (dolist (ele old-structure-template-alist)
-      (add-to-list 'org-structure-template-alist ele))
-  (dolist (ele new-structure-template-alist)
-    (add-to-list 'org-structure-template-alist ele))
-  (dolist (ele my-tempo-keywords-alist)
-    (add-to-list 'org-tempo-keywords-alist ele))
-  )
 #+end_src
 
 ** Source Code Block Syntax highlighting
