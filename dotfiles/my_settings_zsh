@@ -163,7 +163,22 @@ else
     export EDITOR="vi"
 fi
 
-export VISUAL="xdg-open"
+
+
+if [ -x "$(command -v gedit)" ]; then
+    export EDITOR="gedit"
+    export VISUAL="gedit"
+fi
+
+if [ -x "$(command -v xed)" ]; then
+    export EDITOR="xed"
+    export VISUAL="xed"
+fi
+
+if [ -x "$(command -v emacs)" ]; then
+    export EDITOR="emacs"
+    export VISUAL="emacs"
+fi
 
 case ${TERM} in
   xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)

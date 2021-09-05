@@ -603,7 +603,7 @@ set texlive_base_path "$HOME/.texlive"
 ** Default CLI/GUI editor set
 Prioritizes Neovim first. But use VIM. VI is the last resort. I doubt any sane distribution manager would drop VI from default installation.
 
-For a GUI editor, the situation differs. We can rely on 'xdg-open' in most cases for known mimetypes. But some flies, such as files withtout known extension, are not supported. So, we might need to find some 'fallback' editor.. such as Emacs? The default is [[https://www.sublimetext.com/][Sublime Text]], of course!
+For a GUI editor, the situation differs. We can rely on 'xdg-open' in most cases for known mimetypes. But some flies, such as files withtout known extension, are not supported. So, we might need to find some 'fallback' editor.. such as Emacs?
 
 *** Bash
 #+NAME: cli_gui_edit_set
@@ -616,7 +616,23 @@ else
     export EDITOR="vi"
 fi
 
-export VISUAL="xdg-open"
+
+
+if [ -x "$(command -v gedit)" ]; then
+    export EDITOR="gedit"
+    export VISUAL="gedit"
+fi
+
+if [ -x "$(command -v xed)" ]; then
+    export EDITOR="xed"
+    export VISUAL="xed"
+fi
+
+if [ -x "$(command -v emacs)" ]; then
+    export EDITOR="emacs"
+    export VISUAL="emacs"
+fi
+
 #+end_src
 
 *** Zsh
