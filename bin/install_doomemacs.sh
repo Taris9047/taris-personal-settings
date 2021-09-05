@@ -16,7 +16,7 @@ die() {
 
 install_git_ubuntu() {
 	printf 'Installing newest git from PPA!!\n'
-	sudo apt-get-repository ppa:git-core/ppa
+	sudo add-apt-repository ppa:git-core/ppa
 	sudo apt-get update && sudo apt-get -y upgrade
 }
 

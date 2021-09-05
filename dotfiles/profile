@@ -17,3 +17,4 @@
 [ -n "$BASH_VERSION" ] && . "$HOME/.bashrc"
 [ -n "$ZSH_VERSION" ] && . "$HOME/.zshrc"
 [ -n "$FISH_VERSION" ] && . "$HOME/.config/fish/config.fish"
+. "$HOME/.cargo/env"
