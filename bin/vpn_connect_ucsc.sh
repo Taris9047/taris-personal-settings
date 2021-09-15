@@ -3,7 +3,7 @@
 VPN_SERVER="vpn.ucsc.edu"
 
 if [ ! -f "$HOME/.vpn_creds" ]; then
-  printf 'We are lacking .vpn_creds in the user's home dir.\n'
+  printf 'We are lacking .vpn_creds in the users home dir.\n'
   exit 1
 fi
 
