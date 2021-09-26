@@ -18,9 +18,11 @@ def_transition = 5
 
 def display_help():
     ver_string = "{:d}.{:d}.{:d}".format(Version[0], Version[1], Version[2])
+    print()
     print("Dynamic Wallpaper Creator! Version {}".format(ver_string))
     print("Usage: make_xml_bkg.py <image_folder>")
     print("provide -h or --help option to show this message.")
+    print()
 
 
 #
@@ -301,6 +303,9 @@ if __name__ == "__main__":
         if not os.path.exists(image_dir):
             print("It looks like the given directory for images does not exist!!")
             sys.exit(-1)
+    else:
+        display_help()
+        sys.exit(0)
 
     print("Image directory has been set:")
     print(image_dir)
