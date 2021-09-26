@@ -18,6 +18,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#shell-options][Shell options]]
   - [[#terminal-type-and-history-control][Terminal type and history control]]
   - [[#autocompletion-color---fish-only][Autocompletion color - Fish only]]
+  - [[#update-settings-directory-at-each-login][Update ~/Settings directory at each login]]
   - [[#manpage-reader][Manpage reader]]
   - [[#default-setting-directory][Default Setting directory]]
   - [[#ls-mode-initial-set-up][ls mode initial set up]]
@@ -280,6 +281,27 @@ set fish_color_autosuggestion '#7d7d7d'
 set fish_color_command brcyan
 set fish_color_error '#ff6c6b'
 set fish_color_param brcyan
+#+end_src
+
+** Update ~/Settings directory at each login
+
+Running 'git pull' each time is kind of a chore. Let us run it everytime we log in.
+
+*** Bash
+#+begin_src shell :tangle my_settings_bash
+[ -d "$HOME/.settings" ] && /bin/bash -c 'cd "$HOME/.settings" && git pull'
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh
+[ -d "$HOME/.settings" ] && /bin/zsh -c 'cd "$HOME/.settings" && git pull'
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -d "$HOME/.settings"
+    /bin/fish -c 'cd "$HOME/.settings" && git pull'
+end
 #+end_src
 
 ** Manpage reader

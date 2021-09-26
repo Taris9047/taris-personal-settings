@@ -54,6 +54,8 @@ esac
 export TERM="xterm-256color"
 export HISTCONTROL="ignoredups:erasedups"
 
+[ -d "$HOME/.settings" ] && /bin/bash -c 'cd "$HOME/.settings" && git pull'
+
 export MYSETTINGSDIR="$HOME/.config/my_settings"
 [ ! -d "$MYSETTINGSDIR" ] && mkdir -p "$MYSETTINGSDIR"
 

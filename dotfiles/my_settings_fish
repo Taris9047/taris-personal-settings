@@ -37,6 +37,10 @@ set fish_color_command brcyan
 set fish_color_error '#ff6c6b'
 set fish_color_param brcyan
 
+if test -d "$HOME/.settings"
+    /bin/fish -c 'cd "$HOME/.settings" && git pull'
+end
+
 if type -q bat
     set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
 else if type -q vim and not type -q nvim
