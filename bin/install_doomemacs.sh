@@ -34,7 +34,7 @@ install_git() {
 
 	local bld_dir="${SCRIPTPATH}/.build"
 
-	mkdir -pfv "$bld_dir" &&
+	mkdir -pv "$bld_dir" &&
 		cd "$bld_dir" &&
 		wget "https://www.kernel.org/pub/software/scm/git/git-${new_git_ver}.tar.xz" -O "${bld_dir}/git-${new_git_ver}.tar.xz" &&
 		tar xpvf "${bld_dir}/git-${new_git_ver}.tar.xz" &&
