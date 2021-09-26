@@ -4,6 +4,7 @@ SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 # Minimum allowed git version
 git_minimal='2.28.1'
+new_git_ver='2.33.0'
 
 version_greater_equal() {
 	printf '%s\n%s\n' "$2" "$1" | sort -V -C
@@ -35,9 +36,9 @@ install_git() {
 
 	mkdir -pfv "$bld_dir" &&
 		cd "$bld_dir" &&
-		wget 'https://www.kernel.org/pub/software/scm/git/git-2.31.1.tar.xz' -O "${bld_dir}/git-2.31.1.tar.xz" &&
-		tar xpvf "${bld_dir}/git-2.31.1.tar.xz" &&
-		cd "${bld_dir}/git-2.31.1/" &&
+		wget "https://www.kernel.org/pub/software/scm/git/git-${new_git_ver}.tar.xz" -O "${bld_dir}/git-${new_git_ver}.tar.xz" &&
+		tar xpvf "${bld_dir}/git-${new_git_ver}.tar.xz" &&
+		cd "${bld_dir}/git-${new_git_ver}/" &&
 		./configure --prefix=$HOME/.local &&
 		make -j2 && make install &&
 		cd "$CWD" &&
