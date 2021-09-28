@@ -16,3 +16,8 @@ VPN="/opt/cisco/anyconnect/bin/vpn"
 sleep 1
 "$VPN" -s < "$HOME/.vpn_creds" connect "${VPN_SERVER}"
 
+# Restart the server...
+#printf 'Restarting RealVNC Server\n'
+#$HOME/.settings/bin/vncserver_restart.sh
+
+
