@@ -7,8 +7,8 @@ VERSION=1.23
 CWD=$(pwd -P)
 PACKAGES=$CWD/packages
 WORKSPACE=$CWD/workspace
-CC=clang
-CXX=clang++
+CC="$(command -v clang)"
+CXX="$(command -v clang++)"
 
 # Fallback compilers
 if [ ! -x "$(command -v clang)" ]; then
@@ -21,7 +21,8 @@ fi
 LDFLAGS="-L${WORKSPACE}/lib -ldl -lm -lpthread -lz"
 LDFLAGS_Z="-L${WORKSPACE}/lib -ldl -lm -lpthread"
 LDEXEFLAGS="-static"
-EXTRALIBS="-ldl -lpthread -lm -lz"
+# EXTRALIBS="-ldl -lpthread -lm -lz"
+EXTRALIBS=""
 case "$CC" in
 *"clang")
 	CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIC -fPIE"
@@ -741,51 +742,6 @@ if build "ffmpeg"; then
 	#cd "$PACKAGES"/ffmpeg/ || exit
 	[ ! -d "$PACKAGES/FFMpeg" ] && git clone https://github.com/FFmpeg/FFmpeg.git "$PACKAGES"/FFMpeg
 	cd "$PACKAGES/FFMpeg" || exit
-	# shellcheck disable=SC2086
-
-	# if command_exists "nvcc"; then
-	# 	NVCC_ORIG_TXT="$(
-	# 		cat <<-EOF
-	# 			if enabled cuda_nvcc; then
-	# 			    nvcc_default="nvcc"
-	# 			    nvccflags_default="-gencode arch=compute_30,code=sm_30 -O2"
-	# 			else
-	# 			    nvcc_default="clang"
-	# 			    nvccflags_default="--cuda-gpu-arch=sm_30 -O2"
-	# 			    NVCC_C=""
-	# 			fi
-	# 		EOF
-	# 	)"
-	# 	NVCC_ORIG_TXT=${NVCC_ORIG_TXT//$'\n'/\\n}
-
-	# 	NVCC_FIXED_TXT="$(
-	# 		cat <<-EOF
-	# 			if enabled cuda_nvcc; then
-	# 			    nvcc_default="nvcc"
-	# 			    nvccflags_default="-gencode arch=compute_52,code=sm_52 -O2"
-	# 			else
-	# 			    nvcc_default="clang"
-	# 			    nvccflags_default="--cuda-gpu-arch=sm_52 -O2"
-	# 			    NVCC_C=""
-	# 			fi
-	# 		EOF
-	# 	)"
-	# 	NVCC_FIXED_TXT=${NVCC_FIXED_TXT//$'\n'/\\n}
-
-	# 	nvcc_version=$(get_nvcc_ver)
-	# 	vercomp "10.0" $nvcc_version
-	# 	case $? in
-	# 	0)
-	# 		sed -z "s/${NVCC_ORIG_TXT}/${NVCC_FIXED_TXT}/g" -i ./configure
-	# 		;;
-	# 	1) ;;
-
-	# 	2)
-	# 		sed -z "s/${NVCC_ORIG_TXT}/${NVCC_FIXED_TXT}/g" -i ./configure
-	# 		;;
-	# 	*) ;;
-	# 	esac
-	# fi
 
 	env "$COMPILER_SET" ./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
@@ -800,8 +756,6 @@ if build "ffmpeg"; then
 		--enable-version3 \
 		--extra-cflags="${CFLAGS}" \
 		--extra-ldflags="${LDFLAGS}" \
-		--extra-ldexeflags="${LDEXEFLAGS}" \
-		--extra-libs="${EXTRALIBS}" \
 		--pkgconfigdir="$WORKSPACE/lib/pkgconfig" \
 		--pkg-config-flags="--static" || exit 1
 	execute make -j $MJOBS || exit 1
