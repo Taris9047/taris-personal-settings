@@ -18,10 +18,9 @@ if [ ! -x "$(command -v clang)" ]; then
 fi
 
 # Setting up build environments
-LDFLAGS="-L${WORKSPACE}/lib -ldl -lm -lpthread -lz"
-LDFLAGS_Z="-L${WORKSPACE}/lib -ldl -lm -lpthread"
+LDFLAGS_Z="-L${WORKSPACE}/lib"
+LDFLAGS="${LDFLAGS_Z} -lz"
 LDEXEFLAGS=""
-# EXTRALIBS="-ldl -lpthread -lm -lz"
 EXTRALIBS=""
 case "$CC" in
 *"clang")
@@ -53,6 +52,9 @@ PKG_CONFIG_PATH="${WORKSPACE}/lib/pkgconfig"
 PKG_CONFIG_PATH+="/usr/local/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig"
 PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig"
 export PKG_CONFIG_PATH
+
+COMPILER_SET+=" PKG_CONFIG_PATH=\"$PKG_CONFIG_PATH\""
+
 
 PYTHON=''
 if [ -x "$(command -v python3)" ]; then
@@ -105,12 +107,13 @@ m4_ver="1.4.19"
 autoconf_ver="2.71"
 automake_ver="1.16.4"
 libtool_ver="2.4.6"
-openssl_ver="1.1.11l"
+openssl_ver="1_1_1l"
 cmake_ver="3.21.2"
 dav1d_ver="0.9.2"
+x264_ver="5db6aa6cab1b146e07b60cc1736a01f21da01154"
 x265_ver="3.5"
 libvpx_ver="1.10.0"
-xvidcore_ver="1.10.0"
+xvidcore_ver="1.3.7"
 vid_stab_ver="1.1.0"
 zimg_ver="3.0.3"
 lv2_ver="1.18.2"
@@ -521,7 +524,7 @@ fi
 if build "cmake"; then
   download "https://cmake.org/files/LatestRelease/cmake-${cmake_ver}.tar.gz" "cmake-${cmake_ver}.tar.gz"
   cd "$PACKAGES"/cmake-${cmake_ver} || exit
-  execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --parallel="${MJOBS}" -- -DCMAKE_USE_OPENSSL=OFF
+  execute env "CC=$(command -v gcc) CXX=$(command -v g++)" ./configure --prefix="${WORKSPACE}" --parallel="${MJOBS}" -- -DCMAKE_USE_OPENSSL=OFF
   execute make -j $MJOBS
   execute make install
   build_done "cmake"
@@ -529,8 +532,8 @@ fi
 
 
 if build "openssl"; then
-	download "https://www.openssl.org/source/openssl-$openssl_ver.tar.gz" "openssl-$openssl_ver.tar.gz"
-	cd "$PACKAGES"/openssl-$openssl_ver || exit
+	download "https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_${openssl_ver}.tar.gz" "openssl-${openssl_ver}.tar.gz"
+	cd "$PACKAGES"/openssl-${openssl_ver} || exit
 	execute env "$COMPILER_SET" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
 	execute make -j $MJOBS
 	execute make install_sw
@@ -692,8 +695,8 @@ CONFIGURE_OPTIONS+=("--enable-libfdk-aac")
 if build "libwebp"; then
 	download "https://github.com/webmproject/libwebp/archive/v${libwebp_ver}.tar.gz" "libwebp-${libwebp_ver}.tar.gz"
 	make_dir "$PACKAGES"/libwebp-${libwebp_ver}/build
-	cd "$PACKAGES"/libwebp-1.1.0/build || exit
-	execute cmake -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_INSTALL_INCLUDEDIR=include -DENABLE_SHARED=OFF -DENABLE_STATIC=ON ../
+	cd "$PACKAGES"/libwebp-${libwebp_ver}/build || exit
+	execute env "$COMPILER_SET" cmake -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_INSTALL_INCLUDEDIR=include -DENABLE_SHARED=OFF -DENABLE_STATIC=ON ../
 	execute make -j $MJOBS
 	execute make install
 
@@ -741,8 +744,8 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libxvid")
 
 if build "x264"; then
-	download "https://code.videolan.org/videolan/x264/-/archive/stable/x264-stable.tar.bz2" "x264-stable.tar.bz2"
-	cd "$PACKAGES"/x264-stable || exit
+	download "https://code.videolan.org/videolan/x264/-/archive/${x264_ver}/x264-${x264_ver}.tar.gz" "x264-${x264_ver}.tar.gz"
+	cd "$PACKAGES"/x264-${x264_ver} || exit
 
 	if [[ "$OSTYPE" == "linux-gnu" ]]; then
 		execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS="-fPIC"
@@ -816,7 +819,7 @@ if build "srt"; then
 	export OPENSSL_LIB_DIR="${WORKSPACE}"/lib
 	export OPENSSL_INCLUDE_DIR="${WORKSPACE}"/include/
 	execute cmake . -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_INSTALL_INCLUDEDIR=include -DENABLE_SHARED=OFF -DENABLE_STATIC=ON -DENABLE_APPS=OFF -DUSE_STATIC_LIBSTDCXX=ON
-	execute make install
+	execute make -j $MJOBS install
 
 	if [ -n "$LDEXEFLAGS" ]; then
 		sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}"/lib/pkgconfig/srt.pc # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
@@ -865,7 +868,7 @@ if build "ffmpeg"; then
 	[ ! -d "$PACKAGES/FFMpeg" ] && git clone https://github.com/FFmpeg/FFmpeg.git "$PACKAGES"/FFMpeg
 	cd "$PACKAGES/FFMpeg" || exit
 
-	env "$COMPILER_SET PATH=${WORKSPACE}/bin:$PATH" ./configure "${CONFIGURE_OPTIONS[@]}" \
+	env "$COMPILER_SET" ./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
 		--disable-debug \
 		--disable-doc \
@@ -876,8 +879,6 @@ if build "ffmpeg"; then
 		--enable-static \
 		--enable-small \
 		--enable-version3 \
-		--extra-cflags="${CFLAGS}" \
-		--extra-ldflags="${LDFLAGS}" \
 		--pkgconfigdir="$WORKSPACE/lib/pkgconfig" \
 		--pkg-config-flags="--static" || exit 1
 	execute make -j $MJOBS || exit 1
