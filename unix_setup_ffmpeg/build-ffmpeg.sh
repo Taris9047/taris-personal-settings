@@ -3,7 +3,7 @@
 # Referenced:
 # https://github.com/markus-perl/ffmpeg-build-script
 
-VERSION=1.23
+VERSION=1.25
 CWD=$(pwd -P)
 PACKAGES=$CWD/packages
 WORKSPACE=$CWD/workspace
@@ -20,7 +20,7 @@ fi
 # Setting up build environments
 LDFLAGS="-L${WORKSPACE}/lib -ldl -lm -lpthread -lz"
 LDFLAGS_Z="-L${WORKSPACE}/lib -ldl -lm -lpthread"
-LDEXEFLAGS="-static"
+LDEXEFLAGS=""
 # EXTRALIBS="-ldl -lpthread -lm -lz"
 EXTRALIBS=""
 case "$CC" in
@@ -49,15 +49,10 @@ fi
 
 # Setting up pkgconfig stuffs
 export PATH="${WORKSPACE}/bin:$PATH"
-PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig"
+PKG_CONFIG_PATH="${WORKSPACE}/lib/pkgconfig"
+PKG_CONFIG_PATH+="/usr/local/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig"
 PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig"
 export PKG_CONFIG_PATH
-
-echo ""
-echo "Compilers are..."
-echo "C Compiler=${CC}"
-echo "C++ Compiler=${CXX}"
-echo ""
 
 PYTHON=''
 if [ -x "$(command -v python3)" ]; then
@@ -101,6 +96,46 @@ else
 	MJOBS=4
 fi
 
+# Versions
+pkgconfig_ver="0.29.2"
+yasm_ver="1.3.0"
+nasm_ver="2.15.05"
+zlib_ver="1.2.11"
+m4_ver="1.4.19"
+autoconf_ver="2.71"
+automake_ver="1.16.4"
+libtool_ver="2.4.6"
+openssl_ver="1.1.11l"
+cmake_ver="3.21.2"
+dav1d_ver="0.9.2"
+x265_ver="3.5"
+libvpx_ver="1.10.0"
+xvidcore_ver="1.10.0"
+vid_stab_ver="1.1.0"
+zimg_ver="3.0.3"
+lv2_ver="1.18.2"
+waflib_ver="b600c928b221a001faeab7bd92786d0b25714bc8"
+serd_ver="0.30.10"
+pcre_ver="8.44"
+sord_ver="0.16.8"
+sratom_ver="0.6.8"
+lilv_ver="0.24.12"
+opencore_ver="0.1.5"
+lame_ver="3.100"
+opus_ver="1.3.1"
+libogg_ver="1.3.3"
+libvorbis_ver="1.3.6"
+libtheora_ver="1.1.1"
+fdk_aac_ver="2.0.2"
+libtiff_ver="4.3.0"
+libpng_ver="1.6.37"
+libwebp_ver="1.2.0"
+libsdl_ver="2.0.14"
+srt_ver="1.4.3"
+nvcodec_ver="11.1.5.0"
+amf_ver="1.4.21.0"
+
+# Functions...
 make_dir() {
 	if [ ! -d "$1" ]; then
 		if ! mkdir "$1"; then
@@ -112,7 +147,9 @@ make_dir() {
 
 remove_dir() {
 	if [ -d "$1" ]; then
-		rm -rfv "$1"
+		rm -rf "$1"
+	else
+	    echo "$1 does not exist! Passing!"
 	fi
 }
 
@@ -231,6 +268,10 @@ cleanup() {
 	echo ""
 }
 
+version() {
+    echo "$0 $VERSION"
+}
+
 # Adopted from
 #
 # https://stackoverflow.com/a/4025065
@@ -301,39 +342,78 @@ verify_binary_type() {
 	esac
 }
 
+usage() {
+    echo "Usage: $0"
+    echo "   --build: start building process"
+    echo "   --cleanup: remove all working dirs"
+    echo "   --version: shows version info."
+    echo "   --help: show this help"
+    echo ""
+}
+
+bflag=''
+cflag=''
+
+while (($# > 0)); do
+    case "$1" in
+    -h | --help)
+        usage
+	    exit 0
+	    ;;
+
+	--version)
+	    version
+	    exit 0
+	    ;;
+	
+    -*)
+        if [[ "$1" == "--build" ]]; then
+            bflag='-b'
+        fi
+
+        if [[ "$1" == "--full-static" ]]; then
+        	if [[ "$OSTYPE" == "darwin"* ]]; then
+        		echo "Error: A full static binary can only be build on Linux."
+        		exit 1
+        	fi
+        	LDEXEFLAGS="-static"
+	    fi
+	    
+	    if [[ "$1" == "--cleanup" ]]; then
+	        cflag='-c'
+	        cleanup
+	    fi
+	    
+	    shift
+	    ;;
+	*)
+	    usage
+	    exit 1
+	    ;;
+    esac
+done
+
+if [ -z "$bflag" ]; then
+    if [ -z "$cflag" ]; then
+        usage
+	    exit 1
+	fi
+	exit 0
+fi
+
 echo "ffmpeg-build-script v$VERSION"
 echo "========================="
 echo ""
-
-case "$1" in
-"--cleanup")
-	remove_dir "$PACKAGES"
-	remove_dir "$WORKSPACE"
-	echo "Cleanup done."
-	echo ""
-	exit 0
-	;;
-"--build") ;;
-
-\
-	"--full-static")
-	if [[ "$OSTYPE" == "darwin"* ]]; then
-		echo "Error: A full static binary can only be build on Linux."
-		exit 1
-	fi
-	LDEXEFLAGS="-static"
-	;;
-*)
-	echo "Usage: $0"
-	echo "   --build: start building process"
-	echo "   --cleanup: remove all working dirs"
-	echo "   --help: show this help"
-	echo ""
-	exit 0
-	;;
-esac
+echo "Compilers are..."
+echo "C Compiler=${CC}"
+echo "C++ Compiler=${CXX}"
+echo ""
 
 echo "Using $MJOBS make jobs simultaneously."
+
+if [ -n "$LDEXEFLAGS" ]; then
+  echo "Start the build in full static mode."
+fi
 
 make_dir "$PACKAGES"
 make_dir "$WORKSPACE"
@@ -364,24 +444,20 @@ if [ -n "$LDEXEFLAGS" ]; then
 	echo "Start the build in full static mode."
 fi
 
-export PATH="${WORKSPACE}/bin:$PATH"
-PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig"
-PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig"
-export PKG_CONFIG_PATH
-
 ## Base Libraries to build stuffs
 if build "zlib"; then
-	download "https://www.zlib.net/zlib-1.2.11.tar.gz" "zlib-1.2.11.tar.gz"
-	cd "$PACKAGES"/zlib-1.2.11 || exit
+	download "https://www.zlib.net/zlib-$zlib_ver.tar.gz" "zlib-$zlib_ver.tar.gz"
+	cd "$PACKAGES"/zlib-$zlib_ver || exit
 	execute env "$COMPILER_SET_Z" ./configure --static --prefix="${WORKSPACE}"
 	execute make -j $MJOBS
 	execute make install
 	build_done "zlib"
 fi
+LDFLAGS+=" -L/zlib/lib"
 
 if build "pkg-config"; then
-	download "https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz" "pkg-config-0.29.2.tar.gz"
-	cd "$PACKAGES"/pkg-config-0.29.2 || exit
+	download "https://pkgconfig.freedesktop.org/releases/pkg-config-$pkgconfig_ver.tar.gz" "pkg-config-$pkgconfig_ver.tar.gz"
+	cd "$PACKAGES"/pkg-config-$pkgconfig_ver || exit
 	execute env "$COMPILER_SET" ./configure --silent --prefix="${WORKSPACE}" --with-pc-path="${WORKSPACE}"/lib/pkgconfig --with-internal-glib --disable-host-tool
 	execute make -j $MJOBS
 	execute make install
@@ -389,8 +465,8 @@ if build "pkg-config"; then
 fi
 
 if build "yasm"; then
-	download "https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz" "yasm-1.3.0.tar.gz"
-	cd "$PACKAGES"/yasm-1.3.0 || exit
+	download "https://www.tortall.net/projects/yasm/releases/yasm-$yasm_ver.tar.gz" "yasm-$yasm_ver.tar.gz"
+	cd "$PACKAGES"/yasm-$yasm_ver || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
 	execute make -j $MJOBS
 	execute make install
@@ -398,17 +474,63 @@ if build "yasm"; then
 fi
 
 if build "nasm"; then
-	download "https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.xz" "nasm-2.15.05.tar.xz"
-	cd "$PACKAGES"/nasm-2.15.05 || exit
+	download "https://www.nasm.us/pub/nasm/releasebuilds/$nasm_ver/nasm-$nasm_ver.tar.xz" "nasm-$nasm_ver.tar.xz"
+	cd "$PACKAGES"/nasm-$nasm_ver || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
 	build_done "nasm"
 fi
 
+if build "m4"; then
+  download "https://ftp.gnu.org/gnu/m4/m4-${m4_ver}.tar.gz" "m4-${m4_ver}.tar.gz"
+  cd "$PACKAGES"/m4-${m4_ver} || exit
+  execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
+  execute make -j $MJOBS
+  execute make install
+  build_done "m4"
+fi
+
+if build "autoconf"; then
+  download "https://ftp.gnu.org/gnu/autoconf/autoconf-${autoconf_ver}.tar.gz" "autoconf-${autoconf_ver}.tar.gz"
+  cd "$PACKAGES"/autoconf-${autoconf_ver} || exit
+  execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
+  execute make -j $MJOBS
+  execute make install
+  build_done "autoconf"
+fi
+
+if build "automake"; then
+  download "https://ftp.gnu.org/gnu/automake/automake-${automake_ver}.tar.gz" "automake-${automake_ver}.tar.gz"
+  cd "$PACKAGES"/automake-${automake_ver} || exit
+  execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
+  execute make -j $MJOBS
+  execute make install
+  build_done "automake"
+fi
+
+if build "libtool"; then
+  download "https://ftpmirror.gnu.org/libtool/libtool-${libtool_ver}.tar.gz" "libtool-${libtool_ver}.tar.gz"
+  cd "$PACKAGES"/libtool-${libtool_ver} || exit
+  execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --enable-static --disable-shared
+  execute make -j $MJOBS
+  execute make install
+  build_done "libtool"
+fi
+
+if build "cmake"; then
+  download "https://cmake.org/files/LatestRelease/cmake-${cmake_ver}.tar.gz" "cmake-${cmake_ver}.tar.gz"
+  cd "$PACKAGES"/cmake-${cmake_ver} || exit
+  execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --parallel="${MJOBS}" -- -DCMAKE_USE_OPENSSL=OFF
+  execute make -j $MJOBS
+  execute make install
+  build_done "cmake"
+fi
+
+
 if build "openssl"; then
-	download "https://www.openssl.org/source/openssl-1.1.1k.tar.gz" "openssl-1.1.1k.tar.gz"
-	cd "$PACKAGES"/openssl-1.1.1k || exit
+	download "https://www.openssl.org/source/openssl-$openssl_ver.tar.gz" "openssl-$openssl_ver.tar.gz"
+	cd "$PACKAGES"/openssl-$openssl_ver || exit
 	execute env "$COMPILER_SET" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
 	execute make -j $MJOBS
 	execute make install_sw
@@ -423,7 +545,7 @@ CONFIGURE_OPTIONS+=("--enable-openssl")
 if command_exists $PYTHON; then
 
 	if build "lv2"; then
-		download "https://lv2plug.in/spec/lv2-1.18.0.tar.bz2" "lv2-1.18.0.tar.bz2"
+		download "https://lv2plug.in/spec/lv2-${lv2_ver}.tar.bz2" "lv2-${lv2_ver}.tar.bz2"
 		execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --lv2-user
 		execute $PYTHON ./waf
 		execute $PYTHON ./waf install
@@ -432,13 +554,13 @@ if command_exists $PYTHON; then
 	fi
 
 	if build "waflib"; then
-		download "https://gitlab.com/drobilla/autowaf/-/archive/cc37724b9bfa889baebd8cb10f38b8c7cab83e37/autowaf-cc37724b9bfa889baebd8cb10f38b8c7cab83e37.tar.gz" "autowaf.tar.gz"
+		download "https://gitlab.com/drobilla/autowaf/-/archive/${waflib_ver}/autowaf-${waflib_ver}.tar.gz" "autowaf.tar.gz"
 		build_done "waflib"
 	fi
 
 	if build "serd"; then
-		download "https://gitlab.com/drobilla/serd/-/archive/v0.30.6/serd-v0.30.6.tar.gz" "serd-v0.30.6.tar.gz"
-		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/serd-v0.30.6/waflib/"
+		download "https://gitlab.com/drobilla/serd/-/archive/v${serd_ver}/serd-v${serd_ver}.tar.gz" "serd-v${serd_ver}.tar.gz"
+		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/serd-v${serd_ver}/waflib/"
 		execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared --no-posix
 		execute $PYTHON ./waf
 		execute $PYTHON ./waf install
@@ -446,7 +568,7 @@ if command_exists $PYTHON; then
 	fi
 
 	if build "pcre"; then
-		download "https://ftp.pcre.org/pub/pcre/pcre-8.44.tar.gz" "pcre-8.44.tar.gz"
+		download "https://ftp.pcre.org/pub/pcre/pcre-${pcre_ver}.tar.gz" "pcre-${pcre_ver}.tar.gz"
 		execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 		execute make -j $MJOBS
 		execute make install
@@ -455,8 +577,8 @@ if command_exists $PYTHON; then
 	fi
 
 	if build "sord"; then
-		download "https://gitlab.com/drobilla/sord/-/archive/v0.16.6/sord-v0.16.6.tar.gz" "sord-v0.16.6.tar.gz"
-		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sord-v0.16.6/waflib/"
+		download "https://gitlab.com/drobilla/sord/-/archive/v${sord_ver}/sord-v${sord_ver}.tar.gz" "sord-v${sord_ver}.tar.gz"
+		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sord-v${sord_ver}/waflib/"
 		execute $PYTHON ./waf configure --prefix="${WORKSPACE}" CFLAGS="\"${CFLAGS}\"" --static --no-shared --no-utils
 		execute $PYTHON ./waf CFLAGS="\"${CFLAGS}\""
 		execute $PYTHON ./waf install
@@ -465,8 +587,8 @@ if command_exists $PYTHON; then
 	fi
 
 	if build "sratom"; then
-		download "https://gitlab.com/lv2/sratom/-/archive/v0.6.6/sratom-v0.6.6.tar.gz" "sratom-v0.6.6.tar.gz"
-		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sratom-v0.6.6/waflib/"
+		download "https://gitlab.com/lv2/sratom/-/archive/v${sratom_ver}/sratom-v${sratom_ver}.tar.gz" "sratom-v${sratom_ver}.tar.gz"
+		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sratom-v${sratom_ver}/waflib/"
 		execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared
 		execute $PYTHON ./waf
 		execute $PYTHON ./waf install
@@ -475,8 +597,8 @@ if command_exists $PYTHON; then
 	fi
 
 	if build "lilv"; then
-		download "https://gitlab.com/lv2/lilv/-/archive/v0.24.10/lilv-v0.24.10.tar.gz" "lilv-v0.24.10.tar.gz"
-		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/lilv-v0.24.10/waflib/"
+		download "https://gitlab.com/lv2/lilv/-/archive/v${lilv_ver}/lilv-v${lilv_ver}.tar.gz" "lilv-v${lilv_ver}.tar.gz"
+		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/lilv-v${lilv_ver}/waflib/"
 		execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared --no-utils
 		execute $PYTHON ./waf
 		execute $PYTHON ./waf install
@@ -489,8 +611,8 @@ fi
 
 ## Audio Library
 if build "lame"; then
-	download "https://netcologne.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz" "lame-3.100.tar.gz"
-	cd "$PACKAGES"/lame-3.100 || exit
+	download "https://netcologne.dl.sourceforge.net/project/lame/lame/${lame_ver}/lame-${lame_ver}.tar.gz" "lame-${lame_ver}.tar.gz"
+	cd "$PACKAGES"/lame-${lame_ver} || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
@@ -500,8 +622,8 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libmp3lame")
 
 if build "opencore"; then
-	download "https://deac-riga.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-0.1.5.tar.gz" "opencore-amr-0.1.5.tar.gz"
-	cd "$PACKAGES"/opencore-amr-0.1.5 || exit
+	download "https://deac-riga.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-${opencore_ver}.tar.gz" "opencore-amr-${opencore_ver}.tar.gz"
+	cd "$PACKAGES"/opencore-amr-${opencore_ver} || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
@@ -511,8 +633,8 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libopencore_amrnb" "--enable-libopencore_amrwb")
 
 if build "opus"; then
-	download "https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz" "opus-1.3.1.tar.gz"
-	cd "$PACKAGES"/opus-1.3.1 || exit
+	download "https://archive.mozilla.org/pub/opus/opus-${opus_ver}.tar.gz" "opus-${opus_ver}.tar.gz"
+	cd "$PACKAGES"/opus-${opus_ver} || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
@@ -522,8 +644,8 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libopus")
 
 if build "libogg"; then
-	download "https://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-1.3.3.tar.gz" "libogg-1.3.3.tar.gz"
-	cd "$PACKAGES"/libogg-1.3.3 || exit
+	download "https://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-${libogg_ver}.tar.gz" "libogg-${libogg_ver}.tar.gz"
+	cd "$PACKAGES"/libogg-${libogg_ver} || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
@@ -531,8 +653,8 @@ if build "libogg"; then
 fi
 
 if build "libvorbis"; then
-	download "https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-1.3.6.tar.gz" "libvorbis-1.3.6.tar.gz"
-	cd "$PACKAGES"/libvorbis-1.3.6 || exit
+	download "https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-${libvorbis_ver}.tar.gz" "libvorbis-${libvorbis_ver}.tar.gz"
+	cd "$PACKAGES"/libvorbis-${libvorbis_ver} || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest
 	execute make -j $MJOBS
 	execute make install
@@ -542,8 +664,8 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libvorbis")
 
 if build "libtheora"; then
-	download "https://ftp.osuosl.org/pub/xiph/releases/theora/libtheora-1.1.1.tar.gz" "libtheora-1.1.1.tar.bz"
-	cd "$PACKAGES"/libtheora-1.1.1 || exit
+	download "https://ftp.osuosl.org/pub/xiph/releases/theora/libtheora-${libtheora_ver}.tar.gz" "libtheora-${libtheora_ver}.tar.bz"
+	cd "$PACKAGES"/libtheora-${libtheora_ver} || exit
 	sed "s/-fforce-addr//g" configure >configure.patched
 	chmod +x configure.patched
 	mv configure.patched configure
@@ -556,8 +678,8 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libtheora")
 
 if build "fdk_aac"; then
-	download "https://sourceforge.net/projects/opencore-amr/files/fdk-aac/fdk-aac-2.0.1.tar.gz/download?use_mirror=gigenet" "fdk-aac-2.0.1.tar.gz"
-	cd "$PACKAGES"/fdk-aac-2.0.1 || exit
+	download "https://sourceforge.net/projects/opencore-amr/files/fdk-aac/fdk-aac-${fdk_aac_ver}.tar.gz/download?use_mirror=gigenet" "fdk-aac-${fdk_aac_ver}.tar.gz"
+	cd "$PACKAGES"/fdk-aac-${fdk_aac_ver} || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
@@ -568,8 +690,8 @@ CONFIGURE_OPTIONS+=("--enable-libfdk-aac")
 
 ## Image Library
 if build "libwebp"; then
-	download "https://github.com/webmproject/libwebp/archive/v1.1.0.tar.gz" "libwebp-1.1.0.tar.gz"
-	make_dir "$PACKAGES"/libwebp-1.1.0/build
+	download "https://github.com/webmproject/libwebp/archive/v${libwebp_ver}.tar.gz" "libwebp-${libwebp_ver}.tar.gz"
+	make_dir "$PACKAGES"/libwebp-${libwebp_ver}/build
 	cd "$PACKAGES"/libwebp-1.1.0/build || exit
 	execute cmake -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_INSTALL_INCLUDEDIR=include -DENABLE_SHARED=OFF -DENABLE_STATIC=ON ../
 	execute make -j $MJOBS
@@ -580,8 +702,8 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libwebp")
 
 if build "libvpx"; then
-	download "https://github.com/webmproject/libvpx/archive/v1.9.0.tar.gz" "libvpx-1.9.0.tar.gz"
-	cd "$PACKAGES"/libvpx-1.9.0 || exit
+	download "https://github.com/webmproject/libvpx/archive/v${libvpx_ver}.tar.gz" "libvpx-${libvpx_ver}.tar.gz"
+	cd "$PACKAGES"/libvpx-${libvpx_ver} || exit
 
 	if [[ "$OSTYPE" == "darwin"* ]]; then
 		echo "Applying Darwin patch"
@@ -599,8 +721,8 @@ CONFIGURE_OPTIONS+=("--enable-libvpx")
 
 ## Video Library
 if build "xvidcore"; then
-	download "https://downloads.xvid.com/downloads/xvidcore-1.3.7.tar.gz" "xvidcore-1.3.7.tar.gz"
-	cd "$PACKAGES"/xvidcore-1.3.7 || exit
+	download "https://downloads.xvid.com/downloads/xvidcore-${xvidcore_ver}.tar.gz" "xvidcore-${xvidcore_ver}.tar.gz"
+	cd "$PACKAGES"/xvidcore-${xvidcore_ver} || exit
 	cd build/generic || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
@@ -637,7 +759,7 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
 
 if build "x265"; then
-	download "https://github.com/videolan/x265/archive/Release_3.5.tar.gz" "x265-3.5.tar.gz"
+	download "https://github.com/videolan/x265/archive/Release_${x265_ver}.tar.gz" "x265-${x265_ver}.tar.gz"
 	cd "$PACKAGES"/x265-*/ || exit
 	cd source || exit
 	execute env "$COMPILER_SET" cmake . -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DENABLE_SHARED=off -DBUILD_SHARED_LIBS=OFF
@@ -653,8 +775,8 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libx265")
 
 if build "vid_stab"; then
-	download "https://github.com/georgmartius/vid.stab/archive/v1.1.0.tar.gz" "vid.stab-1.1.0.tar.gz"
-	cd "$PACKAGES"/vid.stab-1.1.0 || exit
+	download "https://github.com/georgmartius/vid.stab/archive/v${vid_stab_ver}.tar.gz" "vid.stab-${vid_stab_ver}.tar.gz"
+	cd "$PACKAGES"/vid.stab-${vid_stab_ver} || exit
 	execute env "$COMPILER_SET" cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DUSE_OMP=OFF -DENABLE_SHARED:bool=off .
 	execute make
 	execute make install
@@ -679,7 +801,7 @@ CONFIGURE_OPTIONS+=("--enable-libaom")
 
 ## Other Library
 if build "libsdl"; then
-	download "https://www.libsdl.org/release/SDL2-2.0.14.tar.gz"
+	download "https://www.libsdl.org/release/SDL2-${libsdl_ver}.tar.gz"
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
@@ -688,8 +810,8 @@ if build "libsdl"; then
 fi
 
 if build "srt"; then
-	download "https://github.com/Haivision/srt/archive/v1.4.3.tar.gz" "srt-1.4.3.tar.gz"
-	cd "$PACKAGES"/srt-1.4.3 || exit
+	download "https://github.com/Haivision/srt/archive/v${srt_ver}.tar.gz" "srt-${srt_ver}.tar.gz"
+	cd "$PACKAGES"/srt-${srt_ver} || exit
 	export OPENSSL_ROOT_DIR="${WORKSPACE}"
 	export OPENSSL_LIB_DIR="${WORKSPACE}"/lib
 	export OPENSSL_INCLUDE_DIR="${WORKSPACE}"/include/
@@ -710,9 +832,9 @@ CONFIGURE_OPTIONS+=("--enable-libsrt")
 if command_exists "nvcc"; then
 
 	if build "nv-codec"; then
-		download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n11.0.10.0/nv-codec-headers-11.0.10.0.tar.gz" "nv-codec-headers-11.0.10.0.tar.gz"
-		cd "$PACKAGES"/nv-codec-headers-11.0.10.0 || exit
-		sed -i "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-11.0.10.0/Makefile && execute make install
+		download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n${nvcodec_ver}/nv-codec-headers-${nvcodec_ver}.tar.gz" "nv-codec-headers-${nvcodec_ver}.tar.gz"
+		cd "$PACKAGES"/nv-codec-headers-${nvcodec_ver} || exit
+		sed -i "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-${nvcodec_ver}/Makefile && execute make install
 		build_done "nv-codec"
 	fi
 	CFLAGS="$CFLAGS -I/usr/lib/cuda/include"
@@ -743,7 +865,7 @@ if build "ffmpeg"; then
 	[ ! -d "$PACKAGES/FFMpeg" ] && git clone https://github.com/FFmpeg/FFmpeg.git "$PACKAGES"/FFMpeg
 	cd "$PACKAGES/FFMpeg" || exit
 
-	env "$COMPILER_SET" ./configure "${CONFIGURE_OPTIONS[@]}" \
+	env "$COMPILER_SET PATH=${WORKSPACE}/bin:$PATH" ./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
 		--disable-debug \
 		--disable-doc \
