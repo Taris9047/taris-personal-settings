@@ -18,10 +18,10 @@ if [ ! -x "$(command -v clang)" ]; then
 fi
 
 # Setting up build environments
-LDFLAGS_Z="-L${WORKSPACE}/lib"
-LDFLAGS="${LDFLAGS_Z} -lz"
+LDFLAGS_Z="-L${WORKSPACE}/lib -L/usr/lib -L/usr/lib64"
+LDFLAGS="${LDFLAGS_Z}"
 LDEXEFLAGS=""
-EXTRALIBS=""
+EXTRALIBS="-ldl -lpthread -lm -lz"
 case "$CC" in
 *"clang")
 	CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIC -fPIE"
@@ -109,6 +109,7 @@ automake_ver="1.16.4"
 libtool_ver="2.4.6"
 openssl_ver="1_1_1l"
 cmake_ver="3.21.2"
+git_ver="2.33.0"
 dav1d_ver="0.9.2"
 x264_ver="5db6aa6cab1b146e07b60cc1736a01f21da01154"
 x265_ver="3.5"
@@ -542,6 +543,16 @@ if build "openssl"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-openssl")
 
+if build "git"; then
+  download "https://www.kernel.org/pub/software/scm/git/git-${git_ver}.tar.xz" "git-${git_ver}.tar.gz"
+  cd "$PACKAGES"/git-${git_ver} || exit
+  execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-openssl --with-zlib="${WORKSPACE}/lib" --with-lib="${WORKSPACE}/lib"
+  execute make -j $MJOBS
+  execute make install
+  build_done "git"
+fi
+
+
 ## Media Libraries
 
 # Lv2 crap
@@ -868,7 +879,7 @@ if build "ffmpeg"; then
 	[ ! -d "$PACKAGES/FFMpeg" ] && git clone https://github.com/FFmpeg/FFmpeg.git "$PACKAGES"/FFMpeg
 	cd "$PACKAGES/FFMpeg" || exit
 
-	env "$COMPILER_SET" ./configure "${CONFIGURE_OPTIONS[@]}" \
+	env "CC=gcc CXX=g++" ./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
 		--disable-debug \
 		--disable-doc \
@@ -879,6 +890,7 @@ if build "ffmpeg"; then
 		--enable-static \
 		--enable-small \
 		--enable-version3 \
+        --extra-libs="${EXTRALIBS}" \
 		--pkgconfigdir="$WORKSPACE/lib/pkgconfig" \
 		--pkg-config-flags="--static" || exit 1
 	execute make -j $MJOBS || exit 1
