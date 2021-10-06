@@ -881,6 +881,8 @@ if build "ffmpeg"; then
 
 	./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
+		--cc="$CC" \
+		--cxx="$CXX" \
 		--disable-debug \
 		--disable-doc \
 		--disable-shared \
