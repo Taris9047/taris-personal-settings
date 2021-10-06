@@ -18,7 +18,7 @@ if [ ! -x "$(command -v clang)" ]; then
 fi
 
 # Setting up build environments
-LDFLAGS_Z="-Wl,-rpath=${WORKSPACE}/lib"
+LDFLAGS_Z="-Wl,-rpath=${WORKSPACE}/lib -L${WORKSPACE}/lib"
 LDFLAGS="${LDFLAGS_Z}"
 LDEXEFLAGS=""
 EXTRALIBS="-ldl -lpthread -lm -lz"
@@ -874,12 +874,12 @@ if command_exists "nvcc"; then
 fi
 
 if build "ffmpeg"; then
-	#download "https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2" "ffmpeg-snapshot.tar.bz2"
-	#cd "$PACKAGES"/ffmpeg/ || exit
-	[ ! -d "$PACKAGES/FFMpeg" ] && git clone https://github.com/FFmpeg/FFmpeg.git "$PACKAGES"/FFMpeg
-	cd "$PACKAGES/FFMpeg" || exit
+	download "https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2" "ffmpeg-snapshot.tar.bz2"
+	cd "$PACKAGES"/ffmpeg-snapshot/ || exit
+	# [ ! -d "$PACKAGES/FFMpeg" ] && git clone https://github.com/FFmpeg/FFmpeg.git "$PACKAGES"/FFMpeg
+	# cd "$PACKAGES/FFMpeg" || exit
 
-	env "CC=gcc CXX=g++" ./configure "${CONFIGURE_OPTIONS[@]}" \
+	./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
 		--disable-debug \
 		--disable-doc \
@@ -890,6 +890,9 @@ if build "ffmpeg"; then
 		--enable-static \
 		--enable-small \
 		--enable-version3 \
+		--extra-cflags="${CFLAGS}" \
+		--extra-ldexeflags="${LDEXEFLAGS}" \
+		--extra-ldflags="${LDFLAGS}" \
         --extra-libs="${EXTRALIBS}" \
 		--pkgconfigdir="$WORKSPACE/lib/pkgconfig" \
 		--pkg-config-flags="--static" || exit 1
