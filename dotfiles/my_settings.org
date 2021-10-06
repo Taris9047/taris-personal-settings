@@ -1779,7 +1779,7 @@ if [ -x "$(command -v vncserver)" ]; then
     echo " To start: vncstart"
     echo " To end: vnckill"
     echo ""
-    alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+    alias vncstart="vncserver -localhost no -useold -geometry 1600x900 -depth 32"
     alias vnckill="vncserver -kill :1"
 fi
 #+end_src
@@ -1794,7 +1794,7 @@ if type -q vncserver
     echo "$check_symbol VNC server found!"
     echo "  To start: vncstart"
     echo "  To end: vnckill"
-    alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+    alias vncstart="vncserver -localhost no -useold -geometry 1600x900 -depth 32"
     alias vnckill="vncserver -kill :1"
 end
 #+end_src

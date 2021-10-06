@@ -18,7 +18,7 @@ if [ ! -x "$(command -v clang)" ]; then
 fi
 
 # Setting up build environments
-LDFLAGS_Z="-L${WORKSPACE}/lib -L/usr/lib -L/usr/lib64"
+LDFLAGS_Z="-Wl,-rpath=${WORKSPACE}/lib"
 LDFLAGS="${LDFLAGS_Z}"
 LDEXEFLAGS=""
 EXTRALIBS="-ldl -lpthread -lm -lz"
@@ -543,14 +543,14 @@ if build "openssl"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-openssl")
 
-if build "git"; then
-  download "https://www.kernel.org/pub/software/scm/git/git-${git_ver}.tar.xz" "git-${git_ver}.tar.gz"
-  cd "$PACKAGES"/git-${git_ver} || exit
-  execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-openssl --with-zlib="${WORKSPACE}/lib" --with-lib="${WORKSPACE}/lib"
-  execute make -j $MJOBS
-  execute make install
-  build_done "git"
-fi
+# if build "git"; then
+#   download "https://www.kernel.org/pub/software/scm/git/git-${git_ver}.tar.xz" "git-${git_ver}.tar.gz"
+#   cd "$PACKAGES"/git-${git_ver} || exit
+#   execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-openssl --with-zlib="${WORKSPACE}/lib" --with-lib="${WORKSPACE}/lib"
+#   execute make -j $MJOBS
+#   execute make install
+#   build_done "git"
+# fi
 
 
 ## Media Libraries
