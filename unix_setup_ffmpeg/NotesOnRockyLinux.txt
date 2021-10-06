@@ -1,0 +1,2 @@
+It seems a bit werid.. but srt does not work on Rocky Linux. This caused me to implement '--nosrt' flag.
+

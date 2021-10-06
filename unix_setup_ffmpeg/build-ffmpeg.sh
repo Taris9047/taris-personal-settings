@@ -7,19 +7,19 @@ VERSION=1.25
 CWD=$(pwd -P)
 PACKAGES=$CWD/packages
 WORKSPACE=$CWD/workspace
-CC="$(command -v clang)"
-CXX="$(command -v clang++)"
+CC="$(command -v /usr/bin/clang)"
+CXX="$(command -v /usr/bin/clang++)"
 
 # Fallback compilers
 if [ ! -x "$(command -v clang)" ]; then
 	echo "Oops, clang can't be found!! Falling back to system GCC."
-	CC="$(command -v gcc)"
-	CXX="$(command -v g++)"
+	CC="$(command -v /usr/bin/gcc)"
+	CXX="$(command -v /usr/bin/g++)"
 fi
 
 # Setting up build environments
 LDFLAGS_Z="-Wl,-rpath=${WORKSPACE}/lib -L${WORKSPACE}/lib"
-LDFLAGS="${LDFLAGS_Z}"
+LDFLAGS="${LDFLAGS_Z} -lz -Wl,-rpath=/usr/lib -Wl,-rpath=/usr/lib64"
 LDEXEFLAGS=""
 EXTRALIBS="-ldl -lpthread -lm -lz"
 case "$CC" in
@@ -357,6 +357,7 @@ usage() {
 
 bflag=''
 cflag=''
+nosrt=''
 
 while (($# > 0)); do
     case "$1" in
@@ -386,6 +387,10 @@ while (($# > 0)); do
 	    if [[ "$1" == "--cleanup" ]]; then
 	        cflag='-c'
 	        cleanup
+	    fi
+	    
+	    if [[ "$1" == "--nosrt" ]]; then
+	        nosrt='yes'
 	    fi
 	    
 	    shift
@@ -439,10 +444,10 @@ if ! command_exists "curl"; then
 	exit 1
 fi
 
-if ! command_exists "cmake"; then
-	echo "cmake not installed."
-	exit 1
-fi
+# if ! command_exists "cmake"; then
+# 	echo "cmake not installed."
+# 	exit 1
+# fi
 
 if [ -n "$LDEXEFLAGS" ]; then
 	echo "Start the build in full static mode."
@@ -522,13 +527,15 @@ if build "libtool"; then
   build_done "libtool"
 fi
 
-if build "cmake"; then
-  download "https://cmake.org/files/LatestRelease/cmake-${cmake_ver}.tar.gz" "cmake-${cmake_ver}.tar.gz"
-  cd "$PACKAGES"/cmake-${cmake_ver} || exit
-  execute env "CC=$(command -v gcc) CXX=$(command -v g++)" ./configure --prefix="${WORKSPACE}" --parallel="${MJOBS}" -- -DCMAKE_USE_OPENSSL=OFF
-  execute make -j $MJOBS
-  execute make install
-  build_done "cmake"
+if [ ! -x "$(command -v cmake)" ]; then
+	if build "cmake"; then
+	  download "https://cmake.org/files/LatestRelease/cmake-${cmake_ver}.tar.gz" "cmake-${cmake_ver}.tar.gz"
+	  cd "$PACKAGES"/cmake-${cmake_ver} || exit
+	  execute ./configure --prefix="${WORKSPACE}" --parallel="${MJOBS}" -- -DCMAKE_USE_OPENSSL=OFF
+	  execute make -j $MJOBS
+	  execute make install
+	  build_done "cmake"
+	fi
 fi
 
 
@@ -823,22 +830,32 @@ if build "libsdl"; then
 	build_done "libsdl"
 fi
 
-if build "srt"; then
-	download "https://github.com/Haivision/srt/archive/v${srt_ver}.tar.gz" "srt-${srt_ver}.tar.gz"
-	cd "$PACKAGES"/srt-${srt_ver} || exit
-	export OPENSSL_ROOT_DIR="${WORKSPACE}"
-	export OPENSSL_LIB_DIR="${WORKSPACE}"/lib
-	export OPENSSL_INCLUDE_DIR="${WORKSPACE}"/include/
-	execute cmake . -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_INSTALL_INCLUDEDIR=include -DENABLE_SHARED=OFF -DENABLE_STATIC=ON -DENABLE_APPS=OFF -DUSE_STATIC_LIBSTDCXX=ON
-	execute make -j $MJOBS install
+if [ ! -n "$nosrt" ]; then
+    if build "srt"; then
+	    download "https://github.com/Haivision/srt/archive/v${srt_ver}.tar.gz" "srt-${srt_ver}.tar.gz"
+	    cd "$PACKAGES"/srt-${srt_ver} || exit
+	    export OPENSSL_ROOT_DIR="${WORKSPACE}"
+	    export OPENSSL_LIB_DIR="${WORKSPACE}"/lib
+	    export OPENSSL_INCLUDE_DIR="${WORKSPACE}"/include/
+	    execute cmake . \
+	        -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
+	        -DCMAKE_INSTALL_LIBDIR=lib \
+	        -DCMAKE_INSTALL_BINDIR=bin \
+	        -DCMAKE_INSTALL_INCLUDEDIR=include \
+	        -DENABLE_SHARED=OFF \
+	        -DENABLE_STATIC=ON \
+	        -DENABLE_APPS=OFF \
+	        -DUSE_STATIC_LIBSTDCXX=ON
+	    execute make -j $MJOBS install
 
-	if [ -n "$LDEXEFLAGS" ]; then
-		sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}"/lib/pkgconfig/srt.pc # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
-	fi
+	    if [ -n "$LDEXEFLAGS" ]; then
+		    sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}"/lib/pkgconfig/srt.pc # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
+	    fi
 
-	build_done "srt"
+	    build_done "srt"
+    fi
+    CONFIGURE_OPTIONS+=("--enable-libsrt")
 fi
-CONFIGURE_OPTIONS+=("--enable-libsrt")
 
 ##
 ## NVCC Stuffs
@@ -938,7 +955,6 @@ if build "ffmpeg"; then
 			;;
 		esac
 	fi
-
 fi
 
 exit 0
