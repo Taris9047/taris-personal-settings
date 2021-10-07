@@ -18,7 +18,8 @@ PYTHON_PKGS=(
 	"autopep8" "xlrd" "xlsxwriter" "sphinx"
 	"pylint" "pyparsing" "pyopengl"
 	"numpy" "scipy" "matplotlib" "pandas" "nose"
-	"sympy" "pyinstaller" "jupyter" "nose" "virtualenv"
+	"sympy" "pyinstaller" "jupyter" "nose" "virtualenv",
+	"pyexcel", "pyexcel_ods"
 )
 
 COMPILE_OPTS=(
