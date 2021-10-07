@@ -2,6 +2,10 @@
 
 SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
+# Minimum allowed git version
+git_minimal='2.28.1'
+new_git_ver='2.33.0'
+
 version_greater_equal() {
 	printf '%s\n%s\n' "$2" "$1" | sort -V -C
 }
@@ -11,26 +15,32 @@ die() {
 	exit -1
 }
 
+install_git_ubuntu() {
+	printf 'Installing newest git from PPA!!\n'
+	sudo add-apt-repository ppa:git-core/ppa
+	sudo apt-get update && sudo apt-get -y upgrade
+}
+
 install_git() {
 
 	[ ! -x "$(command -v gcc)" ] && die "ouch! no gcc?"
 
-	echo "Trying to delete old git from package..."
-	sudo -H apt -y remove git && sudo -H apt autoremove || true
+	# echo "Trying to delete old git from package..."
+	# sudo -H apt -y remove git && sudo -H apt autoremove || true
 
 	echo "Ok, let's install real git!!"
 
 	CWD=$(pwd -P)
 
-	local bld_dir = "${SCRIPTPATH}/.build"
+	local bld_dir="${SCRIPTPATH}/.build"
 
-	mkdir -pfv "$bld_dir" &&
+	mkdir -pv "$bld_dir" &&
 		cd "$bld_dir" &&
-		wget 'https://www.kernel.org/pub/software/scm/git/git-2.31.1.tar.xz' -O "${bld_dir}/git-2.31.1.tar.xz" &&
-		tar xpvf "${bld_dir}/git-2.31.1.tar.xz" &&
-		cd "${bld_dir}/git-2.31.1/" &&
-		./configure --prefix=/usr/local &&
-		make -j2 && sudo -H make install &&
+		wget "https://www.kernel.org/pub/software/scm/git/git-${new_git_ver}.tar.xz" -O "${bld_dir}/git-${new_git_ver}.tar.xz" &&
+		tar xpvf "${bld_dir}/git-${new_git_ver}.tar.xz" &&
+		cd "${bld_dir}/git-${new_git_ver}/" &&
+		./configure --prefix=$HOME/.local &&
+		make -j2 && make install &&
 		cd "$CWD" &&
 		rm -rf "$bld_dir"
 	echo "Ok, Installed new git on /usr/local !!"
@@ -45,7 +55,13 @@ else
 	git_ver_stdout=$(echo $(git --version))
 	gvs_arr=($git_ver_stdout)
 	git_ver_str="${gvs_arr[2]}"
-	version_greater_equal "${git_ver_str}" "2.23.0" || install_git
+	
+	# Ubuntu can use PPA fresh git. So, let's use it.
+	if [ ! -z "$(grep -i 'ubuntu' /etc/os-release)" ]; then
+		version_greater_equal "${git_ver_str}" "${git_minimal}" || install_git_ubuntu
+	else
+		version_greater_equal "${git_ver_str}" "${git_minimal}" || install_git
+	fi
 fi
 
 echo "Checking Emacs... obviously."
@@ -99,7 +115,7 @@ fi
 
 echo "Let's install Doomemacs!!"
 git clone --depth 1 https://github.com/hlissner/doom-emacs "$HOME/.emacs.d"
-"$HOME/.emacs.d/bin/doom" -y install
+"$HOME/.emacs.d/bin/doom" install
 
 echo "Ok, updating the doom.d setting files!!"
 rm -rvf ${HOME}/.doom.d/*

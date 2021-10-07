@@ -43,6 +43,8 @@ alias tmuxkillall='tmux kill-server'
 export TERM="xterm-256color"
 export HISTCONTROL="ignoredups:erasedups"
 
+[ -d "$HOME/.settings" ] && cd "$HOME/.settings" && git pull && cd -
+
 export MYSETTINGSDIR="$HOME/.config/my_settings"
 [ ! -d "$MYSETTINGSDIR" ] && mkdir -p "$MYSETTINGSDIR"
 
@@ -163,10 +165,21 @@ else
     export EDITOR="vi"
 fi
 
-if [ -x "$(command -v subl)" ]; then
-    export VISUAL="subl"
-else
-    export VISUAL="xdg-open"
+
+
+if [ -x "$(command -v gedit)" ]; then
+    export EDITOR="gedit"
+    export VISUAL="gedit"
+fi
+
+if [ -x "$(command -v xed)" ]; then
+    export EDITOR="xed"
+    export VISUAL="xed"
+fi
+
+if [ -x "$(command -v emacs)" ]; then
+    export EDITOR="emacs"
+    export VISUAL="emacs"
 fi
 
 case ${TERM} in
@@ -177,6 +190,11 @@ case ${TERM} in
     PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
     ;;
 esac
+
+if [ -f "$HOME/.Xresources" ] && [ -x "$(command -v xrdb)" ]; then
+    printf '%b Reading in Xterm configurations!!\n' "${check_symbol}"
+    xrdb -merge "$HOME/.Xresources"
+fi
 
 if [ ! -x "$(command -v spark)" ]; then
 	printf "%b Installing spark!!\n" "$check_symbol"
@@ -202,18 +220,93 @@ alias rsync='rsync -azvh --info=progress2'
 alias sudo='sudo -H'
 alias free='free -m'
 
-if [ -x "$(command -v apt)" ] && [ -x "$(command -v apt-get)" ]; then
-	alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
-	alias aptin='sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install'
-fi
-if [ -x "$(command -v dnf)" ]; then
-	alias dnfup='sudo dnf -y update'
-	alias dnfin='sudo dnf -y install'
-fi
-if [ -x "$(command -v pacman)" ] && [ -x "$(command -v pamac)" ] && [ -x "$(command -v pacman-mirrors)" ]; then
-	alias pmyy='sudo pacman-mirrors --continent && sudo pacman -Syyu && sudo pamac upgrade -a'
-	alias pmin='sudo pacman -Syyu'
-fi
+function aptup () {
+    if [ -x "$(command -v apt-get)" ]; then
+        sudo apt-get -y update && sudo apt-get -y upgrade
+    elif [ -x "$(command -v apt)" ]; then
+        sudo apt -y update && sudo apt -y upgrade
+    else
+        printf 'ERROR: Cannot find apt or apt-get in the system.\n'
+        return 1
+    fi
+    return 0
+}
+
+function aptin () {
+    aptup && sudo apt-get -y install "$@"
+}
+
+function dnfup () {
+    if [ -x "$(command -v dnf)" ]; then
+        sudo dnf -y update
+    else
+        printf 'ERROR: Cannot find dnf in the system!! Maybe try with Yum?\n'
+        return 1
+    fi
+    return 0
+}
+
+function dnfin () {
+    dnfup && sudo dnf -y install "$@"
+}
+
+function yumup () {
+    if [ -x "$(command -v yum)" ]; then
+        sudo yum -y update
+    else
+        printf 'ERROR: Cannot find yum!\n'
+        return 1
+    fi
+    return 0
+}
+
+function yumin () {
+    yumup && yum -y install "$@"
+}
+
+function pacmansync () {
+    if [ -x "$(command -v pacman)" ] && [ -x "$(command -v pamac)" ] && [ -x "$(pacman-mirrors)" ]; then
+        sudo pacman-mirrors --continent
+        sudo pacman -Syuu
+        sudo pamac upgrade -a
+    else
+        printf 'pacman system seems to be incomplete!\n'
+        return 1
+    fi
+    return 0
+}
+
+function pacmanin () {
+    pacmansync && sudo pacman -Syuu "$@"
+}
+
+function pkgup () {
+    printf 'Updating the system with package manager!\n'
+    aptup 2>&1 && return 0
+    dnfup 2>&1 && return 0
+    yumup 2>&1 && return 0
+    pacmansync 2>&1 && return 0
+}
+
+function pkgin () {
+    aptin "$@" 2>&1 && return 0
+    dnfin "$@" 2>&1 && return 0
+    yumin "$@" 2>&1 && return 0
+    pacmanin "$@" 2>&1 && return 0
+}
+
+# if [ -x "$(command -v apt)" ] && [ -x "$(command -v apt-get)" ]; then
+# 	alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
+# 	alias aptin='sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install'
+# fi
+# if [ -x "$(command -v dnf)" ]; then
+# 	alias dnfup='sudo dnf -y update'
+# 	alias dnfin='sudo dnf -y install'
+# fi
+# if [ -x "$(command -v pacman)" ] && [ -x "$(command -v pamac)" ] && [ -x "$(command -v pacman-mirrors)" ]; then
+# 	alias pmyy='sudo pacman-mirrors --continent && sudo pacman -Syyu && sudo pamac upgrade -a'
+# 	alias pmin='sudo pacman -Syyu'
+# fi
 
 alias cd..='cd ..' # Just like MS-DOS
 alias ...='cd ../..'
@@ -303,6 +396,9 @@ if [ -x "$(command -v spark)" ] && [ -x "$(command -v lolcat)" ]; then
 elif [ -x "$(command -v spark)" ] && [ ! -x "$(command -v lolcat)" ]; then
     alias clear='clear; echo; seq 1 $(tput cols) | sort -R | spark; echo'
 fi
+
+[ -x "$(command -v uxterm)" ] && alias xterm='uxterm'
+[ -x "$(command -v urxvt)" ] && alias rxvt='urxvt'
 
 addpath() {
     case ":$PATH:" in
@@ -417,6 +513,12 @@ check_uptime() {
     echo "$(awk '{print $1}' /proc/uptime)"
 }
 
+SNAP_BIN="/snap/bin"
+if [ -d "$SNAP_BIN" ]; then
+    printf "%b Snap executables have been found at %s\n" "${check_symbol}" "${SNAP_BIN}"
+    addpath "$SNAP_BIN"
+fi
+
 if [ -x "$(command -v broot)" ]; then
     printf "%b Broot found!\n" "${check_symbol}"
     alias br='broot -dhp'
@@ -431,26 +533,27 @@ if [ -d "$JAVA_HOME" ]; then
     export CLASSPATH="${JAVA_HOME}/lib"
 fi
 
-emacs_cmd="$(command -v emacs)"
-emacsclient_cmd="$(command -v emacsclient)"
-unalias em emacs emacsclient 2> /dev/null
-if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
-    alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a 'emacs' "
-    alias em="${emacs_cmd} -nw"
-else
-    alias emacs="${emacsclient_cmd} -c -a 'emacs' "
-    alias em="${emacs_cmd} -nw"
-fi
+# Emacs selection path: $HOMEBREW/bin/emacs > /snap/bin/emacs > system emacs such as ... /usr/bin/emacs
+emacs_candidates=( "$HOMEBREW/bin/emacs" "$SNAP_BIN/emacs" "/usr/local/bin/emacs" "/usr/bin/emacs" )
+for emacs_cand in "${emacs_candidates[@]}"
+do
+    if [ -x "$emacs_cand" ]; then
+        emacs_cmd="$emacs_cand"
+        emacsclient_cmd="$(dirname "$emacs_cand")"/emacsclient
+        break
+    fi
+done
 
-emc() {
-	if [ $# -eq 0 ]; then
-		emacsclient &
-		disown
-	else
-		emacsclient "$1" &
-		disown
-	fi
-}
+unalias emc emt emacs emacsclient 2> /dev/null
+if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
+    alias emc="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a '$emacs_cmd' "
+    alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacs_cmd}"
+    alias emt="${emacs_cmd} -nw"
+else
+    alias emc="${emacsclient_cmd} -c -a '$emacs_cmd' "
+    alias emacs="${emacs_cmd}"
+    alias emt="${emacs_cmd} -nw"
+fi
 
 if [ -d "$HOME/.cargo" ]; then
     printf "%b Cargo directory detected at %s\n" "${check_symbol}" "${HOME}/.cargo"
@@ -489,18 +592,12 @@ if [ -d "$JULIA_ROOT" ] && [ -f "$JULIA_BIN/julia" ]; then
     addpath "$JULIA_BIN"
 fi
 
-SNAP_BIN="/snap/bin"
-if [ -d "$SNAP_BIN" ]; then
-    printf "%b Snap executables have been found at %s\n" "${check_symbol}" "${SNAP_BIN}"
-    addpath "$SNAP_BIN"
-fi
-
 if [ -x "$(command -v vncserver)" ]; then
     echo "*** VNC server found! ***"
     echo " To start: vncstart"
     echo " To end: vnckill"
     echo ""
-    alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+    alias vncstart="vncserver -localhost no -useold -geometry 1600x900 -depth 32"
     alias vnckill="vncserver -kill :1"
 fi
 
@@ -508,6 +605,13 @@ ROOT_DIR=$HOMEBREW/.opt/ROOT
 if [ -x "$(command -v $ROOT_DIR/bin/root)" ]; then
     printf "%b ROOT Found! Applying its shell env.\n" "${check_symbol}"
     alias thisroot="$ROOT_DIR/bin/thisroot.sh"
+fi
+
+if [ -x "$(command -v vim)" ]; then
+  printf "%b vim found! replacing stupid old vi!\n" "${check_symbol}"
+  sleep "${line_delay}"
+  unalias vi vim 2>/dev/null || true
+  alias vi='vim'
 fi
 
 if [ -x "$(command -v nvim)" ]; then
@@ -549,6 +653,8 @@ if [ -d "$PYENV_DIR" ]; then
     eval "$(pyenv init --path)"
 fi
 
+alias pyenvup="cd $PYENV_DIR && git pull && cd -"
+
 RBENV_DIR="$HOME/.rbenv"
 if [ -d "$RBENV_DIR" ]; then
     printf '%b Rbenv found!! Extending environments\n' "${check_symbol}"
@@ -557,71 +663,90 @@ if [ -d "$RBENV_DIR" ]; then
     eval "$(rbenv init - zsh)"
 fi
 
-if [ -x "$(command -v $HOMEBREW/bin/pip3)" ] && [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
-    printf "%b Locally installed bpytop found!\n" "${check_symbol}"
+BPYTOP_PATH="$HOMEBREW/bin/bpytop"
+PIP3_PATH="$HOMEBREW/bin/pip3"
+
+if [ -x "$(command -v $HOME/.pyenv/shims/pip)" ]; then
+    BPYTOP_PATH="$HOME/.pyenv/shims/bpytop"
+    PIP3_PATH="$HOME/.pyenv/shims/pip"
+fi
+
+if [ -x "$(command -v $PIP3_PATH)" ] && [ -x "$(command -v $BPYTOP_PATH)" ]; then
+    printf '%b Locally installed bpytop found!\n' "${check_symbol}"
     sleep ${line_delay}
-    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
-    alias htop="$HOMEBREW/bin/bpytop"
-    alias top="$HOMEBREW/bin/bpytop"
+    alias bpytop="$PIP3_PATH install -U bpytop && $BPYTOP_PATH"
+    alias htop="$BPYTOP_PATH"
+    alias top="$BPYTOP_PATH"
 fi
 
 if [ -x "$(command -v n)" ]; then
-    printf "%b n found!, Setting up N_PREFIX environment variable.\n" "${check_symbol}"
+    printf '%b n found!, Setting up N_PREFIX environment variable.\n' "${check_symbol}"
     sleep "${line_delay}"
     export N_PREFIX="$(command -v n | sed -E 's/\/bin\/n//')"
 fi
 
-iview64_path="$HOME/.wine/drive_c/Program\\ Files/IrfanView/i_view64.exe"
+iview64_path="$HOME/.wine/drive_c/Program Files/IrfanView/i_view64.exe"
 run_iview() {
 	wine "$iview64_path" "$(winepath --windows "$@")"
 }
 if [ -x "$(command -v wine)" ]; then
 	if [ -f "$iview64_path" ]; then
-		printf "%b Irfanview found!!\n" "${check_symbol}"
-		printf "  %b Usage: iview <files>\n" "${right_arrow_symbol}"
+		printf '%b Irfanview found!!\n' "${check_symbol}"
+		printf '  %b Usage: iview <files>\n' "${right_arrow_symbol}"
 		alias iview=run_iview
 		sleep ${line_delay}
 	fi
 fi
 
-iview64_path="$HOME/.wine/drive_c/Program\\ Files/IrfanView/i_view64.exe"
+iview64_path="$HOME/.wine/drive_c/Program Files/IrfanView/i_view64.exe"
 run_iview() {
 	wine "$iview64_path" "$(winepath --windows "$@")"
 }
 if [ -x "$(command -v wine)" ]; then
 	if [ -f "$iview64_path" ]; then
-		printf "%b Irfanview found!!\n" "${check_symbol}"
-		printf "  %b Usage: iview <files>\n" "${right_arrow_symbol}"
+		printf '%b Irfanview found!!\n' "${check_symbol}"
+		printf '  %b Usage: iview <files>\n' "${right_arrow_symbol}"
 		alias iview=run_iview
 		sleep ${line_delay}
 	fi
 fi
 
 if [ -f "$HOME/.emacs.d/bin/doom" ]; then
-    printf "%b Doomemacs found! Adding to path!\n" "${check_symbol}"
+    printf '%b Doomemacs found! Adding to path!\n' "${check_symbol}"
     addpath "$HOME/.emacs.d/bin"
+    # Also, setting up some aliases
+    alias doomsync='~/.emacs.d/bin/doom sync'
+    alias doomdoctor='~/.emacs.d/bin/doom doctor'
+    alias doomupgrade='~/.emacs.d/bin/doom upgrade'
+    alias doompurge='~/.emacs.d/bin/doom purge'
+fi
+
+if [ -x "$(command -v /usr/lib/cuda/bin/nvcc)" ]; then
+    printf '%b Package manager CUDA found! Doing some env stuff for it!\n' "${check_symbol}"
+    export LD_LIBRARY_PATH="/usr/lib/cuda/lib64:${LD_LIBRARY_PATH}"
+    export PATH="$PATH:/usr/lib/cuda/bin"
 fi
 
 if [ -d "/usr/local/cuda-6.5" ]; then
-    printf "%b CUDA 6.5 found! Doing some env stuff for it.\n" "${check_symbol}"
-    export LD_LIBRARY_PATH="/usr/local/cuda-6.5/lib64":$LD_LIBRARY_PATH
+    printf '%b CUDA 6.5 found! Doing some env stuff for it.\n' "${check_symbol}"
+    export LD_LIBRARY_PATH="/usr/local/cuda-6.5/lib64:${LD_LIBRARY_PATH}"
     export PATH=$PATH:"/usr/local/cuda-6.5/bin"
 fi
 
 if [ -x "$(command -v jq)" ]; then
-    printf "%b jq found, we can use geolocation alias as: geoloc\n" "${check_symbol}"
+    printf '%b jq found, we can use geolocation alias as: geoloc\n' "${check_symbol}"
     alias geoloc="curl -s http://ip-api.com/json/$(curl -s https://ipinfo.io/ip) | jq '.lat, .lon, .city, .country'"
 fi
 
 if [ -x "$(command -v dust)" ]; then
-    printf "%b dust found! Using it instead of du!\n" "${check_symbol}"
+    printf '%b dust found! Using it instead of du!\n' "${check_symbol}"
     alias du='dust -r'
 else
     alias du='du -skh | sort -r'
 fi
 
 if [ -x "$(command -v bat)" ]; then
-    printf "%b bat found! using it instead of cat\n" "${check_symbol}"
+    printf '%b bat found! using it instead of cat\n' "${check_symbol}"
     sleep "${line_delay}"
     bat_theme="$(cat $BATTHEMESAVE)"
     alias cat='bat --theme="$bat_theme"'
@@ -646,13 +771,13 @@ bat_theme_dark() {
 
 trash_location="$HOME/.local/share/Trash/files/"
 if [ -x "$(command -v rip)" ]; then
-    printf "%b rip, rm-improved found!\n  ${right_arrow_symbol} Setting up graveyard at $trash_location\n" "${check_symbol}"
+    printf '%b rip, rm-improved found!\n  %b Setting up graveyard at %s\n' "${check_symbol}" "${right_arrow_symbol}" "${trash_location}"
     sleep "${line_delay}"
     alias rip="rip --graveyard $trash_location"
 fi
 
 if [ -x "$(command -v zoxide)" ]; then
-    printf "%b zoxide found! activating it!\n" "${check_symbol}"
+    printf '%b zoxide found! activating it!\n' "${check_symbol}"
     sleep "${line_delay}"
     case "$(echo $MYSHELL)" in
         *"bash") eval "$(zoxide init bash)"; alias cd='z' ;;
@@ -664,15 +789,15 @@ fi
 if [ -x "$(command -v rclone)" ]; then
 
 	if [ ! -d "$GOOGLE_DRIVE" ]; then
-		printf "%b Google drive mount point not found! making one..\n" "${check_symbol}"
+		printf '%b Google drive mount point not found! making one..\n' "${check_symbol}"
 		mkdir -pv "$GOOGLE_DRIVE"
 	fi
 
 	if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'; then
-		printf "%b Google Drive already mounted at $GOOGLE_DRIVE\n" "${check_symbol}"
+		printf '%b Google Drive already mounted at $GOOGLE_DRIVE\n' "${check_symbol}"
 		sleep "${line_delay}"
 	elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-		printf "%b RClone was for Google drive not set up yet!\n" "${check_symbol}"
+		printf '%b RClone was for Google drive not set up yet!\n' "${check_symbol}"
 	else
 		if [ ! -z "$(grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
 			printf '%b Mounting Google Drive to %s\n' "${check_symbol}" "${GOOGLE_DRIVE}"
@@ -684,13 +809,13 @@ fi
 
 if [ -x "$(command -v rclone)" ]; then
     if grep -qs "$ONE_DRIVE" '/proc/mounts'; then
-        printf "%b MS One Drive already mounted at $ONE_DRIVE\n" "${check_symbol}"
+        printf '%b MS One Drive already mounted at $ONE_DRIVE\n' "${check_symbol}"
         sleep "${line_delay}"
     elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-        printf "%b RClone for Onedrive was not set up yet!\n" "${check_symbol}"
+        printf '%b RClone for Onedrive was not set up yet!\n' "${check_symbol}"
     else
         if [ ! -z "$(grep -i "\[onedrive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
-            printf "%b Mounting MS One Drive to %s\n" "${check_symbol}" "${ONE_DRIVE}"
+            printf '%b Mounting MS One Drive to %s\n' "${check_symbol}" "${ONE_DRIVE}"
             rclone mount --vfs-cache-mode writes onedrive: "$ONE_DRIVE" &
             sleep 2
         fi
@@ -702,9 +827,9 @@ fi
 clear
 if [ -x "$(command -v figlet)" ]; then
     if [ -x $(command -v lolcat) ]; then
-        figlet -w "$(tput cols)" "$HOST" | lolcat
+        figlet -w "$(tput cols)" "$(uname -n)" | lolcat
     else
-        figlet -w "$(tput cols)" "$HOST"
+        figlet -w "$(tput cols)" "$(uname -n)"
     fi
 fi
 

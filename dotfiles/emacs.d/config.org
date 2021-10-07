@@ -348,10 +348,11 @@ This line causes error. Not sure why. We are supposed to find *dashboard* buffer
 
 * Unicode Fonts
 #+begin_src emacs-lisp
-(use-package unicode-fonts
-   :ensure t
-   :config
-    (unicode-fonts-setup))
+;; Disabling it due to some practical reason...
+;; (use-package unicode-fonts
+;;    :ensure t
+;;    :config
+;;     (unicode-fonts-setup))
 #+end_src
 
 * General Keybindings!!
@@ -774,17 +775,6 @@ Well, let's use it!!
       '(("n" . "NAME")
         ("cap" . "CAPTION")))
 
-(when (version< (org-version) "9.2")
-  (add-to-list 'org-modules 'org-tempo))
-(require 'org-tempo)
-(if (version<  (org-version) "9.2")
-    (dolist (ele old-structure-template-alist)
-      (add-to-list 'org-structure-template-alist ele))
-  (dolist (ele new-structure-template-alist)
-    (add-to-list 'org-structure-template-alist ele))
-  (dolist (ele my-tempo-keywords-alist)
-    (add-to-list 'org-tempo-keywords-alist ele))
-  )
 #+end_src
 
 ** Source Code Block Syntax highlighting

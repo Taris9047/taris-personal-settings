@@ -272,6 +272,13 @@ if [ ! -d "$UDS_DIR" ]; then
 	ln -sf "$UDS_DIR" "$UDS_LNK"
 fi
 
+# Installing Rust stuffs
+printf 'Setting up Rust utilities.\n'
+if [ ! -d "$USR_DIR/.cargo" ]; then
+    /bin/bash -c "$SETTINGS_DIR/bin/setup_rust.sh"
+fi
+
+printf '\n'
 printf '\n**** Closing Comments ****\n'
 printf 'Run %s dir to set up Doomemacs stuffs.\n\n' "$SETTINGS_DIR/bin/install_doomemacs.sh"
 printf 'TODO: Also, don''t forget to populate %s\n\n' "$HOME/.gitconfig.local"

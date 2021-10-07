@@ -37,6 +37,10 @@ set fish_color_command brcyan
 set fish_color_error '#ff6c6b'
 set fish_color_param brcyan
 
+if test -d "$HOME/.settings"
+    /bin/fish -c 'cd "$HOME/.settings" && git pull'
+end
+
 if type -q bat
     set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
 else if type -q vim and not type -q nvim
@@ -151,13 +155,18 @@ else
 end
 
 if type -q subl
-    set VISUAL "subl"
+    set VISUAL "vim"
 else
     set VISUAL "xdg-open"
 end
 
 function fish_title
     hostname
+end
+
+if test -f "$HOME/.Xresources" and test -x "(command -v xrdb)"
+    printf '%b Reading in Xterm configuraitons!!\n' "$check_symbol"
+    xrdb -merge "$HOME/.Xresources"
 end
 
 if not type -q spark
@@ -274,6 +283,13 @@ else if type -q spark
     alias clear='command clear; echo; echo; seq 1 (tput cols) | sort -R | spark | echo; echo' # Non-Coloured end clear
 end
 
+if test -f "(command -v uxterm)"
+    alias xterm='uxterm'
+end
+if test -f "(command -v urxvt)"
+    alias rxvt='urxvt'
+end
+
 function addpath
     switch "$PATH"
         case "*:$1:*"
@@ -384,6 +400,12 @@ function check_uptime
     echo (awk '{print $1}' /proc/uptime)
 end
 
+set SNAP_BIN /snap/bin
+if test -d "$SNAP_BIN"
+    printf "$check_symbol Snap executables have been found at $SNAP_BIN\n"
+    addpath "$SNAP_BIN"
+end
+
 if type -q broot
     alias br='broot -dhp'
     alias bs='broot --sizes'
@@ -447,17 +469,11 @@ if test -d "$JULIA_ROOT"
     addpath "$JULIA_BIN"
 end
 
-set SNAP_BIN /snap/bin
-if test -d "$SNAP_BIN"
-    printf "$check_symbol Snap executables have been found at $SNAP_BIN\n"
-    addpath "$SNAP_BIN"
-end
-
 if type -q vncserver
     echo "$check_symbol VNC server found!"
     echo "  To start: vncstart"
     echo "  To end: vnckill"
-    alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+    alias vncstart="vncserver -localhost no -useold -geometry 1600x900 -depth 32"
     alias vnckill="vncserver -kill :1"
 end
 
@@ -465,6 +481,12 @@ set ROOT_DIR "$HOMEBREW/.opt/ROOT"
 if type -q "$ROOT_DIR/bin/root"
     printf "$check_symbol ROOT Found! Applying its shell env.\n"
     alias thisroot="$ROOT_DIR/bin/thisroot.fish"
+end
+
+if type -q vim
+    printf "$check_symbol Vim found! Replacing old vi!\n"
+    sleep $line_delay
+    alias vi='vim'
 end
 
 if type -q nvim
@@ -515,7 +537,7 @@ end
 
 if type -q $HOMEBREW/bin/pip3
     and type -q $HOMEBREW/bin/bpytop
-    printf "$check_symbol Locally installed bpytop found!\n"
+    printf '$check_symbol Locally installed bpytop found!\n'
     sleep $line_delay
     alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop; $HOMEBREW/bin/bpytop"
     alias htop="$HOMEBREW/bin/bpytop"
@@ -523,7 +545,7 @@ if type -q $HOMEBREW/bin/pip3
 end
 
 if type -q n
-    printf "$check_symbol n found!, Setting up N_PREFIX for it!\n"
+    printf '$check_symbol n found!, Setting up N_PREFIX for it!\n'
     sleep "$line_delay"
     set -U N_PREFIX "(type -p n | sed -E 's/\/bin\/n//g')"
 end
@@ -534,8 +556,8 @@ function run_iview
 end
 if type -q wine
     and test -f "$iview64_path"
-    printf "$check_symbol Irfanveiw found!\n"
-    printf "  $right_arrow_symbol Usage: iview <files>\n"
+    printf '%b Irfanveiw found!\n' "$check_symbol"
+    printf '  %b Usage: iview <files>\n' "$right_arrow_symbol"
     alias iview='run_iview'
     sleep $line_dealy
 end
@@ -555,6 +577,22 @@ end
 if test -f "$HOME/.emacs.d/bin/doom"
     printf "$check_symbol Doomemacs found! Adding to path!\n"
     addpath "$HOME/.emacs.d/bin"
+    alias doomsync='~/.emacs.d/bin/doom sync'
+    alias doomdoctor='~/.emacs.d/bin/doom doctor'
+    alias doomupgrade='~/.emacs.d/bin/doom upgrade'
+    alias doompurge='~/.emacs.d/bin/doom purge'
+end
+
+if test -x "/usr/lib/cuda/bin/nvcc"
+    printf '%b Package manager CUDA found! Doing some env stuff for it!\n' "$check_symbol"
+    set -Ua LD_LIBRARY_PATH "/usr/lib/cuda/lib64"
+    set -Up fish_user_paths "/usr/lib/cuda/bin"
+end
+
+if test -d "/usr/local/cuda-6.5"
+    printf "$check_symbol CUDA 6.5 found! Doing some env stuff for it.\n"
+    set -Ua LD_LIBRARY_PATH "/usr/local/cuda-6.5/lib64"
+    set -Up fish_user_paths "/usr/local/cuda-6.5/bin"
 end
 
 if type -q jq

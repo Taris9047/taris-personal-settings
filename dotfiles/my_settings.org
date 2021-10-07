@@ -18,6 +18,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#shell-options][Shell options]]
   - [[#terminal-type-and-history-control][Terminal type and history control]]
   - [[#autocompletion-color---fish-only][Autocompletion color - Fish only]]
+  - [[#update-settings-directory-at-each-login][Update ~/Settings directory at each login]]
   - [[#manpage-reader][Manpage reader]]
   - [[#default-setting-directory][Default Setting directory]]
   - [[#ls-mode-initial-set-up][ls mode initial set up]]
@@ -28,6 +29,9 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#texlive-home-directory-set][Texlive home directory set]]
   - [[#default-cligui-editor-set][Default CLI/GUI editor set]]
   - [[#change-terminal-titles][Change terminal titles]]
+  - [[#make-xterm-pretty-again][Make Xterm pretty again]]
+  - [[#zsh][Zsh]]
+  - [[#fish][Fish]]
 - [[#hot-spot-installation][Hot Spot Installation]]
   - [[#spark][Spark]]
   - [[#rclone][RClone]]
@@ -42,6 +46,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#switching-shells][Switching shells]]
   - [[#youtube-dl-shortcuts][youtube-dl shortcuts]]
   - [[#clear-screen][Clear screen]]
+  - [[#use-uxterm-instead-of-xterm][Use UXterm instead of Xterm]]
 - [[#basic-functions-for-everyday-use][Basic Functions for everyday use]]
   - [[#prepending-system-path-variable][Prepending system PATH variable.]]
   - [[#extract-archive][Extract archive]]
@@ -50,6 +55,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#universal-open-function][Universal 'open' function]]
   - [[#check-uptime][Check uptime]]
 - [[#settings-for-custom-installed-programs][Settings for Custom installed programs!]]
+  - [[#snapd-stuff][Snapd stuff]]
   - [[#broot][Broot]]
   - [[#java-runtime-environment-or-java-development-kit][Java Runtime Environment (or Java Development Kit)]]
   - [[#emacs-aliases][EMACS Aliases]]
@@ -57,9 +63,9 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#homebrewed-gcc][Homebrewed GCC]]
   - [[#golang][Golang]]
   - [[#julia][Julia]]
-  - [[#snapd-stuff][Snapd stuff]]
   - [[#vnc-setup][VNC setup]]
   - [[#root][ROOT]]
+  - [[#vim][Vim]]
   - [[#neovim][Neovim]]
   - [[#texlive][Texlive]]
   - [[#pypy---homebrewed-pypy3][PyPy - Homebrewed pypy3]]
@@ -70,7 +76,8 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#irfanview---what-yeah-wine][IrfanView - What? yeah, wine!]]
   - [[#ltspice---yet-another-wine-program][LTSpice - Yet another wine program]]
   - [[#doomemacs-doom-and-evil][Doomemacs! DOOM! and EVIL!]]
-  - [[#cuda-for-nvidia-96009400m][Cuda for NVIDIA 9600/9400m]]
+  - [[#cuda-settings][CUDA Settings]]
+  - [[#cuda-for-nvidia-96009400m][CUDA for NVIDIA 9600/9400m]]
   - [[#geolocation][Geolocation]]
 - [[#rust-replacements][Rust replacements]]
   - [[#du-dust---du-replacement][Du-dust - du replacement]]
@@ -90,7 +97,6 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
 
 * Exports
 Fundamental variables to start with.
-
 ** She-bang preambles
 For Bash and Zsh.. we are considering to change them to POSIX compliant ones rather than those heavy shells themselves.
 
@@ -267,7 +273,6 @@ export HISTCONTROL="ignoredups:erasedups"
 set TERM "xterm-256color"
 #+end_src
 
-
 ** Autocompletion color - Fish only
 *** Fish
 #+begin_src fish :tangle my_settings_fish
@@ -276,6 +281,27 @@ set fish_color_autosuggestion '#7d7d7d'
 set fish_color_command brcyan
 set fish_color_error '#ff6c6b'
 set fish_color_param brcyan
+#+end_src
+
+** Update ~/Settings directory at each login
+
+Running 'git pull' each time is kind of a chore. Let us run it everytime we log in.
+
+*** Bash
+#+begin_src shell :tangle my_settings_bash
+[ -d "$HOME/.settings" ] && cd "$HOME/.settings" && git pull && cd -
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh
+[ -d "$HOME/.settings" ] && cd "$HOME/.settings" && git pull && cd -
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -d "$HOME/.settings"
+    /bin/fish -c 'cd "$HOME/.settings" && git pull'
+end
 #+end_src
 
 ** Manpage reader
@@ -599,7 +625,7 @@ set texlive_base_path "$HOME/.texlive"
 ** Default CLI/GUI editor set
 Prioritizes Neovim first. But use VIM. VI is the last resort. I doubt any sane distribution manager would drop VI from default installation.
 
-For a GUI editor, the situation differs. We can rely on 'xdg-open' in most cases for known mimetypes. But some flies, such as files withtout known extension, are not supported. So, we might need to find some 'fallback' editor.. such as Emacs? The default is [[https://www.sublimetext.com/][Sublime Text]], of course!
+For a GUI editor, the situation differs. We can rely on 'xdg-open' in most cases for known mimetypes. But some flies, such as files withtout known extension, are not supported. So, we might need to find some 'fallback' editor.. such as Emacs?
 
 *** Bash
 #+NAME: cli_gui_edit_set
@@ -612,11 +638,23 @@ else
     export EDITOR="vi"
 fi
 
-if [ -x "$(command -v subl)" ]; then
-    export VISUAL="subl"
-else
-    export VISUAL="xdg-open"
+
+
+if [ -x "$(command -v gedit)" ]; then
+    export EDITOR="gedit"
+    export VISUAL="gedit"
 fi
+
+if [ -x "$(command -v xed)" ]; then
+    export EDITOR="xed"
+    export VISUAL="xed"
+fi
+
+if [ -x "$(command -v emacs)" ]; then
+    export EDITOR="emacs"
+    export VISUAL="emacs"
+fi
+
 #+end_src
 
 *** Zsh
@@ -635,7 +673,7 @@ else
 end
 
 if type -q subl
-    set VISUAL "subl"
+    set VISUAL "vim"
 else
     set VISUAL "xdg-open"
 end
@@ -665,6 +703,26 @@ function fish_title
 end
 #+end_src
 
+** Make Xterm pretty again
+*** Bash
+#+NAME: XtermSettings
+#+begin_src shell :tangle my_settings_bash
+if [ -f "$HOME/.Xresources" ] && [ -x "$(command -v xrdb)" ]; then
+    printf '%b Reading in Xterm configurations!!\n' "${check_symbol}"
+    xrdb -merge "$HOME/.Xresources"
+fi
+#+end_src
+** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<XtermSettings>>
+#+end_src
+** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -f "$HOME/.Xresources" and test -x "(command -v xrdb)"
+    printf '%b Reading in Xterm configuraitons!!\n' "$check_symbol"
+    xrdb -merge "$HOME/.Xresources"
+end
+#+end_src
 * Hot Spot Installation
 ** Spark
 *** Bash
@@ -758,18 +816,95 @@ alias free='free -m'
 *** Bash
 #+NAME: alias_pkg_managers
 #+begin_src shell :tangle my_settings_bash
-if [ -x "$(command -v apt)" ] && [ -x "$(command -v apt-get)" ]; then
-	alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
-	alias aptin='sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install'
-fi
-if [ -x "$(command -v dnf)" ]; then
-	alias dnfup='sudo dnf -y update'
-	alias dnfin='sudo dnf -y install'
-fi
-if [ -x "$(command -v pacman)" ] && [ -x "$(command -v pamac)" ] && [ -x "$(command -v pacman-mirrors)" ]; then
-	alias pmyy='sudo pacman-mirrors --continent && sudo pacman -Syyu && sudo pamac upgrade -a'
-	alias pmin='sudo pacman -Syyu'
-fi
+function aptup () {
+    if [ -x "$(command -v apt-get)" ]; then
+        sudo apt-get -y update && sudo apt-get -y upgrade
+    elif [ -x "$(command -v apt)" ]; then
+        sudo apt -y update && sudo apt -y upgrade
+    else
+        printf 'ERROR: Cannot find apt or apt-get in the system.\n'
+        return 1
+    fi
+    return 0
+}
+
+function aptin () {
+    aptup && sudo apt-get -y install "$@"
+}
+
+function dnfup () {
+    if [ -x "$(command -v dnf)" ]; then
+        sudo dnf -y update
+    else
+        printf 'ERROR: Cannot find dnf in the system!! Maybe try with Yum?\n'
+        return 1
+    fi
+    return 0
+}
+
+function dnfin () {
+    dnfup && sudo dnf -y install "$@"
+}
+
+function yumup () {
+    if [ -x "$(command -v yum)" ]; then
+        sudo yum -y update
+    else
+        printf 'ERROR: Cannot find yum!\n'
+        return 1
+    fi
+    return 0
+}
+
+function yumin () {
+    yumup && yum -y install "$@"
+}
+
+function pacmansync () {
+    if [ -x "$(command -v pacman)" ] && [ -x "$(command -v pamac)" ] && [ -x "$(pacman-mirrors)" ]; then
+        sudo pacman-mirrors --continent
+        sudo pacman -Syuu
+        sudo pamac upgrade -a
+    else
+        printf 'pacman system seems to be incomplete!\n'
+        return 1
+    fi
+    return 0
+}
+
+function pacmanin () {
+    pacmansync && sudo pacman -Syuu "$@"
+}
+
+function pkgup () {
+    printf 'Updating the system with package manager!\n'
+    aptup 2>&1 && return 0
+    dnfup 2>&1 && return 0
+    yumup 2>&1 && return 0
+    pacmansync 2>&1 && return 0
+}
+
+function pkgin () {
+    aptin "$@" 2>&1 && return 0
+    dnfin "$@" 2>&1 && return 0
+    yumin "$@" 2>&1 && return 0
+    pacmanin "$@" 2>&1 && return 0
+}
+
+# if [ -x "$(command -v apt)" ] && [ -x "$(command -v apt-get)" ]; then
+# 	alias aptup='sudo apt-get -y update && sudo apt-get -y upgrade'
+# 	alias aptin='sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install'
+# fi
+# if [ -x "$(command -v dnf)" ]; then
+# 	alias dnfup='sudo dnf -y update'
+# 	alias dnfin='sudo dnf -y install'
+# fi
+# if [ -x "$(command -v pacman)" ] && [ -x "$(command -v pamac)" ] && [ -x "$(command -v pacman-mirrors)" ]; then
+# 	alias pmyy='sudo pacman-mirrors --continent && sudo pacman -Syyu && sudo pamac upgrade -a'
+# 	alias pmin='sudo pacman -Syyu'
+# fi
+
+
 #+end_src
 
 *** Zsh
@@ -1047,6 +1182,26 @@ else if type -q spark
 end
 #+end_src
 
+** Use UXterm instead of Xterm
+*** Bash
+#+NAME: URxvtInsteadXterm
+#+begin_src shell :tangle my_settings_bash
+[ -x "$(command -v uxterm)" ] && alias xterm='uxterm'
+[ -x "$(command -v urxvt)" ] && alias rxvt='urxvt'
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<URxvtInsteadXterm>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -f "(command -v uxterm)"
+    alias xterm='uxterm'
+end
+if test -f "(command -v urxvt)"
+    alias rxvt='urxvt'
+end
+#+end_src
 * Basic Functions for everyday use
 ** Prepending system PATH variable.
 Apparently, there are much better ways to handle this kind of job and many newer shell versions will provide some kind of macro or internal functions to do this. But I would rather stay safe.
@@ -1356,6 +1511,31 @@ end
 #+end_src
 
 * Settings for Custom installed programs!
+** Snapd stuff
+*** Bash
+#+NAME: prog_snapd
+#+begin_src shell :tangle my_settings_bash
+SNAP_BIN="/snap/bin"
+if [ -d "$SNAP_BIN" ]; then
+    printf "%b Snap executables have been found at %s\n" "${check_symbol}" "${SNAP_BIN}"
+    addpath "$SNAP_BIN"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_snapd>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set SNAP_BIN /snap/bin
+if test -d "$SNAP_BIN"
+    printf "$check_symbol Snap executables have been found at $SNAP_BIN\n"
+    addpath "$SNAP_BIN"
+end
+#+end_src
+
 ** Broot
 *** Bash
 #+NAME: prog_broot
@@ -1413,46 +1593,32 @@ Emacs runs much faster with emacsclient which runs a daemon. Also, we are trying
 *** Bash
 #+NAME: prog_emacs
 #+begin_src shell :tangle my_settings_bash
-emacs_cmd="$(command -v emacs)"
-emacsclient_cmd="$(command -v emacsclient)"
-unalias em emacs emacsclient 2> /dev/null
-if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
-    alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a 'emacs' "
-    alias em="${emacs_cmd} -nw"
-else
-    alias emacs="${emacsclient_cmd} -c -a 'emacs' "
-    alias em="${emacs_cmd} -nw"
-fi
-#+end_src
+# Emacs selection path: $HOMEBREW/bin/emacs > /snap/bin/emacs > system emacs such as ... /usr/bin/emacs
+emacs_candidates=( "$HOMEBREW/bin/emacs" "$SNAP_BIN/emacs" "/usr/local/bin/emacs" "/usr/bin/emacs" )
+for emacs_cand in "${emacs_candidates[@]}"
+do
+    if [ -x "$emacs_cand" ]; then
+        emacs_cmd="$emacs_cand"
+        emacsclient_cmd="$(dirname "$emacs_cand")"/emacsclient
+        break
+    fi
+done
 
-#+begin_src shell :tangle my_settings_bash
-# Aaaaand some shortcut for emacs
-emc() {
-	if [ $# -eq 0 ]; then
-		emacsclient &
-		>/dev/null &
-	else
-		emacsclient "$1" &
-		>/dev/null &
-	fi
-}
+unalias emc emt emacs emacsclient 2> /dev/null
+if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
+    alias emc="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a '$emacs_cmd' "
+    alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacs_cmd}"
+    alias emt="${emacs_cmd} -nw"
+else
+    alias emc="${emacsclient_cmd} -c -a '$emacs_cmd' "
+    alias emacs="${emacs_cmd}"
+    alias emt="${emacs_cmd} -nw"
+fi
 #+end_src
 
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh :noweb yes
 <<prog_emacs>>
-#+end_src
-
-#+begin_src shell :tangle my_settings_zsh
-emc() {
-	if [ $# -eq 0 ]; then
-		emacsclient &
-		disown
-	else
-		emacsclient "$1" &
-		disown
-	fi
-}
 #+end_src
 
 *** Fish
@@ -1604,31 +1770,6 @@ if test -d "$JULIA_ROOT"
 end
 #+end_src
 
-** Snapd stuff
-*** Bash
-#+NAME: prog_snapd
-#+begin_src shell :tangle my_settings_bash
-SNAP_BIN="/snap/bin"
-if [ -d "$SNAP_BIN" ]; then
-    printf "%b Snap executables have been found at %s\n" "${check_symbol}" "${SNAP_BIN}"
-    addpath "$SNAP_BIN"
-fi
-#+end_src
-
-*** Zsh
-#+begin_src shell :tangle my_settings_zsh :noweb yes
-<<prog_snapd>>
-#+end_src
-
-*** Fish
-#+begin_src fish :tangle my_settings_fish
-set SNAP_BIN /snap/bin
-if test -d "$SNAP_BIN"
-    printf "$check_symbol Snap executables have been found at $SNAP_BIN\n"
-    addpath "$SNAP_BIN"
-end
-#+end_src
-
 ** VNC setup
 *** Bash
 #+NAME: prog_vnc
@@ -1638,7 +1779,7 @@ if [ -x "$(command -v vncserver)" ]; then
     echo " To start: vncstart"
     echo " To end: vnckill"
     echo ""
-    alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+    alias vncstart="vncserver -localhost no -useold -geometry 1600x900 -depth 32"
     alias vnckill="vncserver -kill :1"
 fi
 #+end_src
@@ -1653,11 +1794,10 @@ if type -q vncserver
     echo "$check_symbol VNC server found!"
     echo "  To start: vncstart"
     echo "  To end: vnckill"
-    alias vncstart="vncserver -localhost no -useold -geometry 1200x800 -depth 32"
+    alias vncstart="vncserver -localhost no -useold -geometry 1600x900 -depth 32"
     alias vnckill="vncserver -kill :1"
 end
 #+end_src
-
 
 ** ROOT
 *** Bash
@@ -1681,6 +1821,32 @@ set ROOT_DIR "$HOMEBREW/.opt/ROOT"
 if type -q "$ROOT_DIR/bin/root"
     printf "$check_symbol ROOT Found! Applying its shell env.\n"
     alias thisroot="$ROOT_DIR/bin/thisroot.fish"
+end
+#+end_src
+
+** Vim
+*** Bash
+#+NAME: prog_vim
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v vim)" ]; then
+  printf "%b vim found! replacing stupid old vi!\n" "${check_symbol}"
+  sleep "${line_delay}"
+  unalias vi vim 2>/dev/null || true
+  alias vi='vim'
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_vim>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q vim
+    printf "$check_symbol Vim found! Replacing old vi!\n"
+    sleep $line_delay
+    alias vi='vim'
 end
 #+end_src
 
@@ -1794,6 +1960,8 @@ if [ -d "$PYENV_DIR" ]; then
     eval "$(pyenv init -)"
     eval "$(pyenv init --path)"
 fi
+
+alias pyenvup="cd $PYENV_DIR && git pull && cd -"
 #+end_src
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh :noweb yes
@@ -1852,12 +2020,20 @@ We can install bpytop through the pyenv's python. But these kind of tools are be
 *** Bash
 #+NAME: prog_bashtop
 #+begin_src shell :tangle my_settings_bash
-if [ -x "$(command -v $HOMEBREW/bin/pip3)" ] && [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
-    printf "%b Locally installed bpytop found!\n" "${check_symbol}"
+BPYTOP_PATH="$HOMEBREW/bin/bpytop"
+PIP3_PATH="$HOMEBREW/bin/pip3"
+
+if [ -x "$(command -v $HOME/.pyenv/shims/pip)" ]; then
+    BPYTOP_PATH="$HOME/.pyenv/shims/bpytop"
+    PIP3_PATH="$HOME/.pyenv/shims/pip"
+fi
+
+if [ -x "$(command -v $PIP3_PATH)" ] && [ -x "$(command -v $BPYTOP_PATH)" ]; then
+    printf '%b Locally installed bpytop found!\n' "${check_symbol}"
     sleep ${line_delay}
-    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
-    alias htop="$HOMEBREW/bin/bpytop"
-    alias top="$HOMEBREW/bin/bpytop"
+    alias bpytop="$PIP3_PATH install -U bpytop && $BPYTOP_PATH"
+    alias htop="$BPYTOP_PATH"
+    alias top="$BPYTOP_PATH"
 fi
 #+end_src
 
@@ -1870,7 +2046,7 @@ fi
 #+begin_src fish :tangle my_settings_fish
 if type -q $HOMEBREW/bin/pip3
     and type -q $HOMEBREW/bin/bpytop
-    printf "$check_symbol Locally installed bpytop found!\n"
+    printf '$check_symbol Locally installed bpytop found!\n'
     sleep $line_delay
     alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop; $HOMEBREW/bin/bpytop"
     alias htop="$HOMEBREW/bin/bpytop"
@@ -1883,7 +2059,7 @@ end
 #+NAME: prog_n
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v n)" ]; then
-    printf "%b n found!, Setting up N_PREFIX environment variable.\n" "${check_symbol}"
+    printf '%b n found!, Setting up N_PREFIX environment variable.\n' "${check_symbol}"
     sleep "${line_delay}"
     export N_PREFIX="$(command -v n | sed -E 's/\/bin\/n//')"
 fi
@@ -1897,7 +2073,7 @@ fi
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 if type -q n
-    printf "$check_symbol n found!, Setting up N_PREFIX for it!\n"
+    printf '$check_symbol n found!, Setting up N_PREFIX for it!\n'
     sleep "$line_delay"
     set -U N_PREFIX "(type -p n | sed -E 's/\/bin\/n//g')"
 end
@@ -1907,14 +2083,14 @@ end
 *** Bash
 #+NAME: prog_irfanview
 #+begin_src shell :tangle my_settings_bash
-iview64_path="$HOME/.wine/drive_c/Program\\ Files/IrfanView/i_view64.exe"
+iview64_path="$HOME/.wine/drive_c/Program Files/IrfanView/i_view64.exe"
 run_iview() {
 	wine "$iview64_path" "$(winepath --windows "$@")"
 }
 if [ -x "$(command -v wine)" ]; then
 	if [ -f "$iview64_path" ]; then
-		printf "%b Irfanview found!!\n" "${check_symbol}"
-		printf "  %b Usage: iview <files>\n" "${right_arrow_symbol}"
+		printf '%b Irfanview found!!\n' "${check_symbol}"
+		printf '  %b Usage: iview <files>\n' "${right_arrow_symbol}"
 		alias iview=run_iview
 		sleep ${line_delay}
 	fi
@@ -1934,8 +2110,8 @@ function run_iview
 end
 if type -q wine
     and test -f "$iview64_path"
-    printf "$check_symbol Irfanveiw found!\n"
-    printf "  $right_arrow_symbol Usage: iview <files>\n"
+    printf '%b Irfanveiw found!\n' "$check_symbol"
+    printf '  %b Usage: iview <files>\n' "$right_arrow_symbol"
     alias iview='run_iview'
     sleep $line_dealy
 end
@@ -1945,15 +2121,15 @@ end
 *** Bash
 #+NAME: prog_irfanview
 #+begin_src shell :tangle my_settings_bash
-ltspice_path="$HOME/.wine/drive_c/Program\\ Files/LTC/LTspiceXVII/XVIIx64.exe"
+ltspice_path="$HOME/.wine/drive_c/Program Files/LTC/LTspiceXVII/XVIIx64.exe"
 run_ltspice ()
 {
     wine "$ltspice_path" "$(winepath --windows "$@")"
 }
 if [ -x "$(command -v wine)" ]; then
     if [ -f "$ltspice_path" ]; then
-        printf "%b LTSpice found!!\n" "${check_symbol}"
-        printf "  %b Usage: ltspice \n" "${right_arrow_symbol}"
+        printf '%b LTSpice found!!\n' "${check_symbol}"
+        printf '  %b Usage: ltspice \n' "${right_arrow_symbol}"
         alias ltspice=run_ltspice
         sleep ${line_delay}
     fi
@@ -1985,8 +2161,13 @@ end
 #+NAME: prog_doomemacs
 #+begin_src shell :tangle my_settings_bash
 if [ -f "$HOME/.emacs.d/bin/doom" ]; then
-    printf "%b Doomemacs found! Adding to path!\n" "${check_symbol}"
+    printf '%b Doomemacs found! Adding to path!\n' "${check_symbol}"
     addpath "$HOME/.emacs.d/bin"
+    # Also, setting up some aliases
+    alias doomsync='~/.emacs.d/bin/doom sync'
+    alias doomdoctor='~/.emacs.d/bin/doom doctor'
+    alias doomupgrade='~/.emacs.d/bin/doom upgrade'
+    alias doompurge='~/.emacs.d/bin/doom purge'
 fi
 #+end_src
 
@@ -2000,16 +2181,45 @@ fi
 if test -f "$HOME/.emacs.d/bin/doom"
     printf "$check_symbol Doomemacs found! Adding to path!\n"
     addpath "$HOME/.emacs.d/bin"
+    alias doomsync='~/.emacs.d/bin/doom sync'
+    alias doomdoctor='~/.emacs.d/bin/doom doctor'
+    alias doomupgrade='~/.emacs.d/bin/doom upgrade'
+    alias doompurge='~/.emacs.d/bin/doom purge'
 end
 #+end_src
 
-** Cuda for NVIDIA 9600/9400m
+** CUDA Settings
+*** Bash
+#+NAME: prog_cuda
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v /usr/lib/cuda/bin/nvcc)" ]; then
+    printf '%b Package manager CUDA found! Doing some env stuff for it!\n' "${check_symbol}"
+    export LD_LIBRARY_PATH="/usr/lib/cuda/lib64:${LD_LIBRARY_PATH}"
+    export PATH="$PATH:/usr/lib/cuda/bin"
+fi
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_cuda>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -x "/usr/lib/cuda/bin/nvcc"
+    printf '%b Package manager CUDA found! Doing some env stuff for it!\n' "$check_symbol"
+    set -Ua LD_LIBRARY_PATH "/usr/lib/cuda/lib64"
+    set -Up fish_user_paths "/usr/lib/cuda/bin"
+end
+#+end_src
+
+** CUDA for NVIDIA 9600/9400m
 *** Bash
 #+NAME: prog_cuda_old
 #+begin_src shell :tangle my_settings_bash
 if [ -d "/usr/local/cuda-6.5" ]; then
-    printf "%b CUDA 6.5 found! Doing some env stuff for it.\n" "${check_symbol}"
-    export LD_LIBRARY_PATH="/usr/local/cuda-6.5/lib64":$LD_LIBRARY_PATH
+    printf '%b CUDA 6.5 found! Doing some env stuff for it.\n' "${check_symbol}"
+    export LD_LIBRARY_PATH="/usr/local/cuda-6.5/lib64:${LD_LIBRARY_PATH}"
     export PATH=$PATH:"/usr/local/cuda-6.5/bin"
 fi
 #+end_src
@@ -2020,7 +2230,7 @@ fi
 #+end_src
 
 *** Fish
-#+begin_src fish :my_settings_fish
+#+begin_src fish :tangle my_settings_fish
 if test -d "/usr/local/cuda-6.5"
     printf "$check_symbol CUDA 6.5 found! Doing some env stuff for it.\n"
     set -Ua LD_LIBRARY_PATH "/usr/local/cuda-6.5/lib64"
@@ -2033,7 +2243,7 @@ end
 #+NAME: prog_jq
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v jq)" ]; then
-    printf "%b jq found, we can use geolocation alias as: geoloc\n" "${check_symbol}"
+    printf '%b jq found, we can use geolocation alias as: geoloc\n' "${check_symbol}"
     alias geoloc="curl -s http://ip-api.com/json/$(curl -s https://ipinfo.io/ip) | jq '.lat, .lon, .city, .country'"
 fi
 #+end_src
@@ -2057,7 +2267,7 @@ end
 #+NAME: prog_dust
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v dust)" ]; then
-    printf "%b dust found! Using it instead of du!\n" "${check_symbol}"
+    printf '%b dust found! Using it instead of du!\n' "${check_symbol}"
     alias du='dust -r'
 else
     alias du='du -skh | sort -r'
@@ -2084,7 +2294,7 @@ end
 #+NAME: prog_bat
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v bat)" ]; then
-    printf "%b bat found! using it instead of cat\n" "${check_symbol}"
+    printf '%b bat found! using it instead of cat\n' "${check_symbol}"
     sleep "${line_delay}"
     bat_theme="$(cat $BATTHEMESAVE)"
     alias cat='bat --theme="$bat_theme"'
@@ -2146,7 +2356,7 @@ end
 #+begin_src shell :tangle my_settings_bash
 trash_location="$HOME/.local/share/Trash/files/"
 if [ -x "$(command -v rip)" ]; then
-    printf "%b rip, rm-improved found!\n  ${right_arrow_symbol} Setting up graveyard at $trash_location\n" "${check_symbol}"
+    printf '%b rip, rm-improved found!\n  %b Setting up graveyard at %s\n' "${check_symbol}" "${right_arrow_symbol}" "${trash_location}"
     sleep "${line_delay}"
     alias rip="rip --graveyard $trash_location"
 fi
@@ -2172,7 +2382,7 @@ end
 #+NAME: prog_zoxide
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v zoxide)" ]; then
-    printf "%b zoxide found! activating it!\n" "${check_symbol}"
+    printf '%b zoxide found! activating it!\n' "${check_symbol}"
     sleep "${line_delay}"
     case "$(echo $MYSHELL)" in
         ,*"bash") eval "$(zoxide init bash)"; alias cd='z' ;;
@@ -2204,15 +2414,15 @@ end
 if [ -x "$(command -v rclone)" ]; then
 
 	if [ ! -d "$GOOGLE_DRIVE" ]; then
-		printf "%b Google drive mount point not found! making one..\n" "${check_symbol}"
+		printf '%b Google drive mount point not found! making one..\n' "${check_symbol}"
 		mkdir -pv "$GOOGLE_DRIVE"
 	fi
 
 	if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'; then
-		printf "%b Google Drive already mounted at $GOOGLE_DRIVE\n" "${check_symbol}"
+		printf '%b Google Drive already mounted at $GOOGLE_DRIVE\n' "${check_symbol}"
 		sleep "${line_delay}"
 	elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-		printf "%b RClone was for Google drive not set up yet!\n" "${check_symbol}"
+		printf '%b RClone was for Google drive not set up yet!\n' "${check_symbol}"
 	else
 		if [ ! -z "$(grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
 			printf '%b Mounting Google Drive to %s\n' "${check_symbol}" "${GOOGLE_DRIVE}"
@@ -2257,13 +2467,13 @@ end
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v rclone)" ]; then
     if grep -qs "$ONE_DRIVE" '/proc/mounts'; then
-        printf "%b MS One Drive already mounted at $ONE_DRIVE\n" "${check_symbol}"
+        printf '%b MS One Drive already mounted at $ONE_DRIVE\n' "${check_symbol}"
         sleep "${line_delay}"
     elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-        printf "%b RClone for Onedrive was not set up yet!\n" "${check_symbol}"
+        printf '%b RClone for Onedrive was not set up yet!\n' "${check_symbol}"
     else
         if [ ! -z "$(grep -i "\[onedrive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
-            printf "%b Mounting MS One Drive to %s\n" "${check_symbol}" "${ONE_DRIVE}"
+            printf '%b Mounting MS One Drive to %s\n' "${check_symbol}" "${ONE_DRIVE}"
             rclone mount --vfs-cache-mode writes onedrive: "$ONE_DRIVE" &
             sleep 2
         fi
@@ -2307,16 +2517,16 @@ This part is also super duper dependent on shell type. Gotta isolate it when we 
 #+NAME: shellext_starship
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v starship)" ]; then
-    printf "%b Starship shell extension found! Let's start it!\n" "${check_symbol}"
+    printf '%b Starship shell extension found! Let''''s start it!\n' "${check_symbol}"
     sleep "${line_delay}"
 
     case "$(echo $MYSHELL)" in
         ,*"bash")
-            printf "  %b Running it as bash" "${right_arrow_symbol}"
+            printf '  %b Running it as bash\n' "${right_arrow_symbol}"
             eval "$(starship init bash)"
             ;;
         ,*"zsh")
-            printf "  %b Running it as zsh" "${right_arrow_symbol}"
+            printf '  %b Running it as zsh\n' "${right_arrow_symbol}"
             eval "$(starship init zsh)"
             ;;
         ,*) ;;
@@ -2329,7 +2539,6 @@ Come to think of Starship... We may not need it on Zsh if we have oh-my-zsh alre
 #+begin_src shell :tangle my_settings_zsh :noweb yes
 [ -x "$(command -v starship)" ] && [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ] && eval "$(starship init zsh)"
 #+end_src
-
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
@@ -2348,9 +2557,9 @@ end
 clear
 if [ -x "$(command -v figlet)" ]; then
     if [ -x $(command -v lolcat) ]; then
-        figlet -w "$(tput cols)" "$HOST" | lolcat
+        figlet -w "$(tput cols)" "$(uname -n)" | lolcat
     else
-        figlet -w "$(tput cols)" "$HOST"
+        figlet -w "$(tput cols)" "$(uname -n)"
     fi
 fi
 #+end_src

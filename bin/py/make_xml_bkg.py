@@ -9,7 +9,7 @@ import xml.dom.minidom as mdom
 
 image_exts = ["jpg", "jpeg", "png"]
 
-Version = [0, 2, 0]
+Version = [0, 2, 1]
 
 def_outf_name = "background.xml"
 def_duration = 900
@@ -18,9 +18,11 @@ def_transition = 5
 
 def display_help():
     ver_string = "{:d}.{:d}.{:d}".format(Version[0], Version[1], Version[2])
+    print()
     print("Dynamic Wallpaper Creator! Version {}".format(ver_string))
     print("Usage: make_xml_bkg.py <image_folder>")
     print("provide -h or --help option to show this message.")
+    print()
 
 
 #
@@ -128,7 +130,21 @@ class MakeXMLBackground(object):
     ):
         self.img_path = os.path.realpath(img_path)
         self.img_exts = image_extensions
-        self.outf_name = outf_name
+
+        # Sometimes, people supply directory instead of file path...
+        if not os.path.dirname(outf_name):
+            outf_name = os.path.join(os.getcwd(), outf_name)
+        else:
+            if os.path.isdir(outf_name):
+                self.outf_name = os.path.join(outf_name, def_outf_name)
+            else:
+                q_mdir = input("{} does not seem to exist. Make one? [Y/n]".format(outf_name))
+                self.outf_name = os.path.join(outf_name, def_outf_name)
+                if 'y' in q_mdir[0].lower():
+                    os.mkdir(outf_name)
+                else:
+                    print("Cannot continue without correct destination!")
+                    sys.exit(-1)
 
         # Slideshow setting (duration, transition)
         self.slideshow_setting = [duration - transition, transition]
@@ -293,7 +309,9 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
 
         parsed_args = p.parse_args(sys.argv[1:])
+        
         outfile_name = parsed_args.output_file
+
         image_dir = os.path.realpath(parsed_args.input_dir)
         dur = float(parsed_args.duration)
         tran = float(parsed_args.transition)
@@ -301,6 +319,9 @@ if __name__ == "__main__":
         if not os.path.exists(image_dir):
             print("It looks like the given directory for images does not exist!!")
             sys.exit(-1)
+    else:
+        display_help()
+        sys.exit(0)
 
     print("Image directory has been set:")
     print(image_dir)
