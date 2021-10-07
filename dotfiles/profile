@@ -14,14 +14,7 @@
 #export GTK_IM_MODULE=fcitx
 
 # Finally, run corresponding shell initialization scripts!!
-<<<<<<< HEAD
 #[ -n "$BASH_VERSION" ] && . "$HOME/.bashrc"
 #[ -n "$ZSH_VERSION" ] && . "$HOME/.zshrc"
 #[ -n "$FISH_VERSION" ] && . "$HOME/.config/fish/config.fish"
 . ~/.bashrc
-=======
-[ -n "$BASH_VERSION" ] && . "$HOME/.bashrc"
-[ -n "$ZSH_VERSION" ] && . "$HOME/.zshrc"
-[ -n "$FISH_VERSION" ] && . "$HOME/.config/fish/config.fish"
-[ -d "$HOME/.cargo/" ] && . "$HOME/.cargo/env"
->>>>>>> 9dd46fd76dada8df5ee1d360b31985ebfa6c11a9
