@@ -43,7 +43,7 @@ alias tmuxkillall='tmux kill-server'
 export TERM="xterm-256color"
 export HISTCONTROL="ignoredups:erasedups"
 
-[ -d "$HOME/.settings" ] && /bin/zsh -c 'cd "$HOME/.settings" && git pull'
+[ -d "$HOME/.settings" ] && cd "$HOME/.settings" && git pull && cd -
 
 export MYSETTINGSDIR="$HOME/.config/my_settings"
 [ ! -d "$MYSETTINGSDIR" ] && mkdir -p "$MYSETTINGSDIR"

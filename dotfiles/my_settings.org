@@ -289,12 +289,12 @@ Running 'git pull' each time is kind of a chore. Let us run it everytime we log 
 
 *** Bash
 #+begin_src shell :tangle my_settings_bash
-[ -d "$HOME/.settings" ] && /bin/bash -c 'cd "$HOME/.settings" && git pull'
+[ -d "$HOME/.settings" ] && cd "$HOME/.settings" && git pull && cd -
 #+end_src
 
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh
-[ -d "$HOME/.settings" ] && /bin/zsh -c 'cd "$HOME/.settings" && git pull'
+[ -d "$HOME/.settings" ] && cd "$HOME/.settings" && git pull && cd -
 #+end_src
 
 *** Fish
