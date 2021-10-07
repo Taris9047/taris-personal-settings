@@ -256,10 +256,9 @@ library_exists() {
 	local result=0
 	local output=$(pkg-config --exists --print-errors "$1" 2>&1 >/dev/null) || result=$?
 	if [ ! "$result" = "0" ]; then
-		return 1
+		return 0
 	fi
-
-	return 0
+	return 1
 }
 
 build_done() {
