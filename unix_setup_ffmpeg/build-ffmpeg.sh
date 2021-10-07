@@ -241,8 +241,8 @@ build() {
 }
 
 command_exists() {
-	if [ -z "$(command -v $1)" ]; then
-		return 0
+	if [ -z "$1" ]; then
+		return 1
 	fi
 	
 	if ! [[ -x $(command -v "$1") ]]; then
