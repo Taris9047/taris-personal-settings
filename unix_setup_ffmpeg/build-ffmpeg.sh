@@ -19,7 +19,7 @@ fi
 
 # Setting up build environments
 LDFLAGS_Z="-Wl,-rpath=${WORKSPACE}/lib -L${WORKSPACE}/lib"
-LDFLAGS="${LDFLAGS_Z} -lz -Wl,-rpath=/usr/lib -Wl,-rpath=/usr/lib64"
+LDFLAGS="${LDFLAGS_Z} -lz"
 LDEXEFLAGS=""
 EXTRALIBS="-ldl -lpthread -lm -lz"
 case "$CC" in
@@ -32,10 +32,7 @@ case "$CC" in
 *) ;;
 esac
 
-CXXFLAGS=$CFLAGS
-
-COMPILER_SET="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\" "
-COMPILER_SET_Z="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS_Z\" "
+CXXFLAGS="$CFLAGS"
 
 NVCC_VER_THRSH="8.0.13"
 
@@ -62,7 +59,7 @@ if [ -x "$(command -v python3)" ]; then
 elif [ -x "$(command -v python2)" ]; then
 	PYTHON="$(command -v python2)"
 else
-	PYTHON='i_have_no_python_booooz'
+	PYTHON=''
 fi
 
 if [ ! -x "$(command -v $CC)" ]; then
@@ -244,6 +241,10 @@ build() {
 }
 
 command_exists() {
+	if [ -z "$(command -v $1)" ]; then
+		return 0
+	fi
+	
 	if ! [[ -x $(command -v "$1") ]]; then
 		return 1
 	fi
@@ -349,6 +350,8 @@ verify_binary_type() {
 usage() {
     echo "Usage: $0"
     echo "   --build: start building process"
+    echo "     --nosrt: ignore srt build"
+    echo "     --sgcc: forces to use /usr/bin/gcc and /usr/bin/g++"
     echo "   --cleanup: remove all working dirs"
     echo "   --version: shows version info."
     echo "   --help: show this help"
@@ -358,6 +361,7 @@ usage() {
 bflag=''
 cflag=''
 nosrt=''
+sgcc=''
 
 while (($# > 0)); do
     case "$1" in
@@ -383,16 +387,21 @@ while (($# > 0)); do
         	fi
         	LDEXEFLAGS="-static"
 	    fi
-	    
+
 	    if [[ "$1" == "--cleanup" ]]; then
 	        cflag='-c'
 	        cleanup
 	    fi
-	    
+
+			if [[ "$1" == "--sgcc" ]]; then
+				CC="/usr/bin/gcc"
+				CXX="/usr/bin/g++"
+			fi
+
 	    if [[ "$1" == "--nosrt" ]]; then
 	        nosrt='yes'
 	    fi
-	    
+
 	    shift
 	    ;;
 	*)
@@ -413,6 +422,11 @@ fi
 echo "ffmpeg-build-script v$VERSION"
 echo "========================="
 echo ""
+
+COMPILER_SET="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\" "
+COMPILER_SET_Z="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS_Z\" "
+COMPILER_SET_GCC="CC=/usr/bin/gcc CXX=/usr/bin/g++ CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\" "
+
 echo "Compilers are..."
 echo "C Compiler=${CC}"
 echo "C++ Compiler=${CXX}"
@@ -645,7 +659,7 @@ CONFIGURE_OPTIONS+=("--enable-libmp3lame")
 if build "opencore"; then
 	download "https://deac-riga.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-${opencore_ver}.tar.gz" "opencore-amr-${opencore_ver}.tar.gz"
 	cd "$PACKAGES"/opencore-amr-${opencore_ver} || exit
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+	execute env "$COMPILER_SET_GCC" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
 
