@@ -59,16 +59,8 @@ WORK_DIR="$CWD/workspace"
 
 FONTS_TO_INSTALL=( \
   "BitstreamVeraSansMono" \
-  "DejaVuSansMono" \
-  "DroidSansMono" \
-  "Ubuntu" \
-  "UbuntuMono" \
   "SourceCodePro" \
   "SpaceMono" \
-  "Meslo" \
-  "FiraCode" \
-  "FiraMono" \
-  "Hack" \
   "Terminus" \
   "RobotoMono" \
   "Mononoki" \
