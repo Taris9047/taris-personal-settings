@@ -18,3 +18,4 @@
 #[ -n "$ZSH_VERSION" ] && . "$HOME/.zshrc"
 #[ -n "$FISH_VERSION" ] && . "$HOME/.config/fish/config.fish"
 . ~/.bashrc
+. "$HOME/.cargo/env"
