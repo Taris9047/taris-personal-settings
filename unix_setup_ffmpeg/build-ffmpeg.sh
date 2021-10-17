@@ -9,6 +9,7 @@ PACKAGES=$CWD/packages
 WORKSPACE=$CWD/workspace
 CC="$(command -v /usr/bin/clang)"
 CXX="$(command -v /usr/bin/clang++)"
+SYSTEM_CXX_MVER="10"
 
 # Fallback compilers
 if [ ! -x "$(command -v clang)" ]; then
@@ -25,14 +26,18 @@ EXTRALIBS="-ldl -lpthread -lm -lz"
 case "$CC" in
 *"clang")
 	CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIC -fPIE"
+	# CXXFLAGS="$CFLAGS"
+	CXXFLAGS="$CFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/$SYSTEM_CXX_MVER -I/usr/include/c++/$SYSTEM_CXX_MVER -I/usr/include/x86_64-linux-gnu/c++/$SYSTEM_CXX_MVER"
+	LDFLAGS="$LDFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/$SYSTEM_CXX_MVER"
 	;;
 *"gcc")
 	CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fno-semantic-interposition -fPIC -fPIE"
+	CXXFLAGS="$CFLAGS"
 	;;
 *) ;;
 esac
 
-CXXFLAGS="$CFLAGS"
+
 
 NVCC_VER_THRSH="8.0.13"
 
@@ -779,7 +784,7 @@ if build "x264"; then
 	cd "$PACKAGES"/x264-${x264_ver} || exit
 
 	if [[ "$OSTYPE" == "linux-gnu" ]]; then
-		execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS="-fPIC"
+		execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS=\"$CXXFLAGS\"
 	else
 		execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic
 	fi
@@ -796,7 +801,7 @@ if build "x265"; then
 	download "https://github.com/videolan/x265/archive/Release_${x265_ver}.tar.gz" "x265-${x265_ver}.tar.gz"
 	cd "$PACKAGES"/x265-*/ || exit
 	cd source || exit
-	execute env "$COMPILER_SET" cmake . -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DENABLE_SHARED=off -DBUILD_SHARED_LIBS=OFF
+	execute cmake . -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DCMAKE_C_COMPILER=\"$CC\" -DCMAKE_CXX_COMPILER=\"$CXX\" -DCMAKE_C_FLAGS=\"$CFLAGS\" -DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" -DENABLE_SHARED=off -DBUILD_SHARED_LIBS=OFF 
 	execute make -j $MJOBS
 	execute make install
 
@@ -811,7 +816,15 @@ CONFIGURE_OPTIONS+=("--enable-libx265")
 if build "vid_stab"; then
 	download "https://github.com/georgmartius/vid.stab/archive/v${vid_stab_ver}.tar.gz" "vid.stab-${vid_stab_ver}.tar.gz"
 	cd "$PACKAGES"/vid.stab-${vid_stab_ver} || exit
-	execute env "$COMPILER_SET" cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DUSE_OMP=OFF -DENABLE_SHARED:bool=off .
+	execute env "$COMPILER_SET" cmake . \
+		-DCMAKE_C_COMPILER=\"$CC\" \
+		-DCMAKE_CXX_COMPILER=\"$CXX\" \
+		-DCMAKE_C_FLAGS=\"$CFLAGS\" \
+		-DCMAKE_CXX_FLAGS=\"$CXXFLAGS\" \
+		-DBUILD_SHARED_LIBS=OFF \
+		-DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
+		-DUSE_OMP=OFF \
+		-DENABLE_SHARED:bool=off 
 	execute make
 	execute make install
 
@@ -851,6 +864,10 @@ if [ ! -n "$nosrt" ]; then
 	    export OPENSSL_LIB_DIR="${WORKSPACE}"/lib
 	    export OPENSSL_INCLUDE_DIR="${WORKSPACE}"/include/
 	    execute cmake . \
+	    	-DCMAKE_C_COMPILER=\"$CC\" \
+	    	-DCMAKE_CXX_COMPILER=\"$CXX\" \
+	    	-DCMAKE_C_FLAGS=\"$CFLAGS\" \
+	    	-DCMAKE_CXX_FLAGS=\"$CXXFLAGS\" \
 	        -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
 	        -DCMAKE_INSTALL_LIBDIR=lib \
 	        -DCMAKE_INSTALL_BINDIR=bin \
@@ -909,10 +926,11 @@ if build "ffmpeg"; then
 	# [ ! -d "$PACKAGES/FFMpeg" ] && git clone https://github.com/FFmpeg/FFmpeg.git "$PACKAGES"/FFMpeg
 	# cd "$PACKAGES/FFMpeg" || exit
 
-	./configure "${CONFIGURE_OPTIONS[@]}" \
+	execute ./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
-		--cc="$CC" \
-		--cxx="$CXX" \
+		--cc=\""$CC"\" \
+		--cxx=\""$CXX"\" \
+		--dep-cc=\""$CC"\" \
 		--disable-debug \
 		--disable-doc \
 		--disable-shared \
@@ -922,11 +940,13 @@ if build "ffmpeg"; then
 		--enable-static \
 		--enable-small \
 		--enable-version3 \
-		--extra-cflags="${CFLAGS}" \
-		--extra-ldexeflags="${LDEXEFLAGS}" \
-		--extra-ldflags="${LDFLAGS}" \
-        --extra-libs="${EXTRALIBS}" \
-		--pkgconfigdir="$WORKSPACE/lib/pkgconfig" \
+		--extra-cflags=\""${CFLAGS}"\" \
+		--extra-cxxflags=\""${CXXFLAGS}"\" \
+		--extra-ldexeflags=\""${LDEXEFLAGS}"\" \
+		--extra-ldflags=\""${LDFLAGS}"\" \
+        --extra-libs=\""${EXTRALIBS}"\" \
+        --optflags="-O3" \
+		--pkgconfigdir=\""${WORKSPACE}/lib/pkgconfig"\" \
 		--pkg-config-flags="--static" || exit 1
 	execute make -j $MJOBS || exit 1
 	execute make install || exit 1
