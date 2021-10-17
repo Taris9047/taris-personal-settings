@@ -9,7 +9,11 @@ PACKAGES=$CWD/packages
 WORKSPACE=$CWD/workspace
 CC="$(command -v /usr/bin/clang)"
 CXX="$(command -v /usr/bin/clang++)"
-SYSTEM_CXX_MVER="10"
+
+# Get system gcc version
+SYSTEM_GCC_ARCH=$(/usr/bin/gcc -dumpmachine)
+SYSTEM_GCC_VER=$(/usr/bin/gcc --version | grep ^gcc | sed 's/^.* //g')
+SYSTEM_CXX_MVER=$(echo $SYSTEM_GCC_VER | awk '{ split($0,a,/[.]/); print a[1] }')
 
 # Fallback compilers
 if [ ! -x "$(command -v clang)" ]; then
@@ -19,25 +23,28 @@ if [ ! -x "$(command -v clang)" ]; then
 fi
 
 # Setting up build environments
-LDFLAGS_Z="-Wl,-rpath=${WORKSPACE}/lib -L${WORKSPACE}/lib"
-LDFLAGS="${LDFLAGS_Z} -lz"
+LDLIBSTDCPP="-L/usr/lib/gcc/$SYSTEM_GCC_ARCH/$SYSTEM_CXX_MVER -L/usr/lib -L/usr/lib64"
+LDFLAGS_Z="-L${WORKSPACE}/lib"
+LDFLAGS="${LDFLAGS_Z} -lz $LDLIBSTDCPP"
 LDEXEFLAGS=""
 EXTRALIBS="-ldl -lpthread -lm -lz"
 case "$CC" in
 *"clang")
 	CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIC -fPIE"
 	# CXXFLAGS="$CFLAGS"
-	CXXFLAGS="$CFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/$SYSTEM_CXX_MVER -I/usr/include/c++/$SYSTEM_CXX_MVER -I/usr/include/x86_64-linux-gnu/c++/$SYSTEM_CXX_MVER"
-	LDFLAGS="$LDFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/$SYSTEM_CXX_MVER"
+	CXXFLAGS="$CFLAGS -I/usr/include/c++/$SYSTEM_CXX_MVER -I/usr/include/$SYSTEM_GCC_ARCH/c++/$SYSTEM_CXX_MVER"
 	;;
 *"gcc")
 	CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fno-semantic-interposition -fPIC -fPIE"
 	CXXFLAGS="$CFLAGS"
 	;;
-*) ;;
+*)
+	echo "We do not support current compilers..."
+	echo "CC=$CC"
+	echo "CXX=$CXX"
+	exit 1
+	;;
 esac
-
-
 
 NVCC_VER_THRSH="8.0.13"
 
@@ -51,22 +58,13 @@ fi
 # Setting up pkgconfig stuffs
 export PATH="${WORKSPACE}/bin:$PATH"
 PKG_CONFIG_PATH="${WORKSPACE}/lib/pkgconfig"
-PKG_CONFIG_PATH+="/usr/local/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig"
-PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig"
+PKG_CONFIG_PATH+="/usr/local/lib/$SYSTEM_GCC_ARCH/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib64/$SYSTEM_GCC_ARCH/pkgconfig:/usr/local/lib64/pkgconfig"
+PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/$SYSTEM_GCC_ARCH/pkgconfig:/usr/lib64/$SYSTEM_GCC_ARCH/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig"
 export PKG_CONFIG_PATH
 
 COMPILER_SET+=" PKG_CONFIG_PATH=\"$PKG_CONFIG_PATH\""
 
-
-PYTHON=''
-if [ -x "$(command -v python3)" ]; then
-	PYTHON="$(command -v python3)"
-elif [ -x "$(command -v python2)" ]; then
-	PYTHON="$(command -v python2)"
-else
-	PYTHON=''
-fi
-
+# Detect compiler... if it really exists!
 if [ ! -x "$(command -v $CC)" ]; then
 	echo "$CC"
 	echo "No compiler found!!"
@@ -83,9 +81,9 @@ if [ ! -x "$(command -v curl)" ]; then
 	exit 1
 fi
 
-if [ ! -x "$PYTHON" ]; then
-	echo "No Python found! Lv2 won't be available!"
-fi
+# Detect python3
+PYTHON="$(command -v python3)"
+[ ! -x "$PYTHON" ] && PYTHON='' && echo "No Python found! Lv2 won't be available!"
 
 # Speed up the process
 # Env Var NUMJOBS overrides automatic detection
@@ -102,6 +100,7 @@ fi
 
 # Versions
 pkgconfig_ver="0.29.2"
+libunistring_ver="0.9.10"
 yasm_ver="1.3.0"
 nasm_ver="2.15.05"
 zlib_ver="1.2.11"
@@ -110,6 +109,7 @@ autoconf_ver="2.71"
 automake_ver="1.16.4"
 libtool_ver="2.4.6"
 openssl_ver="1_1_1l"
+trousers_ver="0.3.15"
 cmake_ver="3.21.2"
 git_ver="2.33.0"
 dav1d_ver="0.9.2"
@@ -268,6 +268,9 @@ library_exists() {
 
 build_done() {
 	touch "$PACKAGES"/"$1.done"
+	if [ ! -z "$2" ]; then
+		echo "$2" > "$1.done"
+	fi
 }
 
 cleanup() {
@@ -509,6 +512,15 @@ if build "nasm"; then
 	build_done "nasm"
 fi
 
+if build "libunistring"; then
+	download "https://ftp.gnu.org/gnu/libunistring/libunistring-$libunistring_ver.tar.gz" "libunistring-$libunistring_ver.tar.gz"
+	cd "$PACKAGES"/libunistring-$libunistring_ver || exit
+	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+	execute make -j $MJOBS
+	execute make install
+	build_done "libunistring"
+fi
+
 if build "m4"; then
   download "https://ftp.gnu.org/gnu/m4/m4-${m4_ver}.tar.gz" "m4-${m4_ver}.tar.gz"
   cd "$PACKAGES"/m4-${m4_ver} || exit
@@ -567,6 +579,19 @@ if build "openssl"; then
 	build_done "openssl"
 fi
 CONFIGURE_OPTIONS+=("--enable-openssl")
+
+if build "trousers"; then
+	download "https://sourceforge.net/projects/trousers/files/trousers/$trousers_ver/trousers-$trousers_ver.tar.gz/download" "trousers-$trousers_ver.tar.gz"
+	cd "$PACKAGES"/trousers-$trousers_ver || exit
+	execute CC=\"$CC\" CXX=\"$CXX\" sh ./bootstrap.sh
+	execute CC=\"$CC\" CXX=\"$CXX\" ./configure \
+		--prefix="${WORKSPACE}" \
+		--enable-static --disable-shared
+	execute make -j $MJOBS
+	execute make install
+
+	build_done "trousers"
+fi
 
 # if build "git"; then
 #   download "https://www.kernel.org/pub/software/scm/git/git-${git_ver}.tar.xz" "git-${git_ver}.tar.gz"
