@@ -511,7 +511,7 @@ if [ -x "$(command -v broot)" ]; then
     alias bs='broot --sizes'
 fi
 
-JAVA_HOME=/opt/java
+export JAVA_HOME=/opt/java
 if [ -d "$JAVA_HOME" ]; then
     printf "%b Java (Possibly Oracle) found at %s\n" "${check_symbol}" "${JAVA_HOME}"
     sleep "${line_delay}"

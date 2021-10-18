@@ -1564,7 +1564,7 @@ end
 *** Bash
 #+NAME: prog_java
 #+begin_src shell :tangle my_settings_bash
-JAVA_HOME=/opt/java
+export JAVA_HOME=/opt/java
 if [ -d "$JAVA_HOME" ]; then
     printf "%b Java (Possibly Oracle) found at %s\n" "${check_symbol}" "${JAVA_HOME}"
     sleep "${line_delay}"
