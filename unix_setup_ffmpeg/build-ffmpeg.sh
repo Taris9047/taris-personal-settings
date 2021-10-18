@@ -7,8 +7,8 @@ VERSION=1.25
 CWD=$(pwd -P)
 PACKAGES=$CWD/packages
 WORKSPACE=$CWD/workspace
-CC="$(command -v /usr/bin/clang)"
-CXX="$(command -v /usr/bin/clang++)"
+CC="$(command -v clang)"
+CXX="$(command -v clang++)"
 
 # Get system gcc version
 SYSTEM_GCC_ARCH=$(/usr/bin/gcc -dumpmachine)
