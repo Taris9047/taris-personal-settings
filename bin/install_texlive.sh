@@ -93,13 +93,7 @@ else
 	die "O crap, we cannot find the profile file: $PROFILE anywhere!"
 fi
 
-if [ -z "$INST_SRC" ]; then
-	[ ! -f "$INST_SRC_DEFAULT/install-tl" ] && die "Local install-tl and packages are not found!!"
-	printf 'Using local installation source at: %s\n' "$INST_SRC_DEFAULT"
-	INST_SRC="$INST_SRC_DEFAULT"
-else
-	printf 'Installing Texlive from the Internet: %s\n' "$INST_SRC"
-fi
+
 
 ##### Ok, let's actually run the installation! #####
 
@@ -107,7 +101,7 @@ SRC_DIR=''
 TMP_TARBALL='./texlive_install_pkgs.tar.xz'
 
 # in terms of network downloading..
-if [[ "$INST_SRC" != "$INST_SRC_DEFAULT" ]]; then
+if [[ ! -z "$netflag" ]]; then
 	wget "$INST_SRC" -O "$TMP_TARBALL"
 	printf 'Extracting archive...\n'
 	if [ ! -d "$INST_SRC_DEFAULT" ]; then
@@ -119,6 +113,20 @@ if [[ "$INST_SRC" != "$INST_SRC_DEFAULT" ]]; then
 fi
 
 # If image file is given...
+if [ ! -z "$IMG_FILE" ]; then
+	printf 'Using image file at: %s\n' "$IMG_FILE"
+	printf 'Trying to mount the image  file...\n'
+	mkdir -p ./tmp_iso && sudo mount -t iso9660 -o loop "$IMG_FILE" ./tmp_iso
+	[ ! -d "$INST_SRC_DEFAULT" ] && mkdir -p "$INST_SRC_DEFAULT"
+	cp -pfr ./tmp_iso/* "$INST_SRC_DEFAULT/" && sudo umount ./tmp_iso && rm -rf ./tmp_iso
+fi
+
+if [ -z "$iflag" ] && [ -z "$netflag" ]; then
+	[ ! -f "$INST_SRC_DEFAULT/install-tl" ] && die "Local install-tl and packages are not found!!"
+	printf 'Using local installation source at: %s\n' "$INST_SRC_DEFAULT"
+	INST_SRC="$INST_SRC_DEFAULT"
+fi
+
 
 # Let's install the packages into $HOME/.texlive !!
 SRC_DIR="$INST_SRC_DEFAULT"
