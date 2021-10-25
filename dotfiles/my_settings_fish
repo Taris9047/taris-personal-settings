@@ -181,11 +181,11 @@ if not type -q spark
 end
 
 if not type -q rclone and test -z "$SSH_CLIENT"
-    printf "$check_symbol Installing RClone!!\n"
-    printf "  $right_arrow_symbol Type in your password if you feel it's halted!!\n"
+    printf '%b Installing RClone!!\n' "${check_symbol}"
+    printf '  %b Type in your password if you feel something is halted!!\n' "${right_arrow_symbol}"
     echo
     echo
-    curl https://rclone.org/install.sh | sudo -H bash
+    curl 'https://rclone.org/install.sh' | sudo -H bash
 end
 
 unalias rm mv cp grep egrep fgrep df rsync sudo free 2> /dev/null || true
@@ -261,7 +261,7 @@ if type -q zsh
 end
 
 if type -q youtube-dl
-    printf "$check_symbol youtube-dl found! setting up yta(ytv)-* commands.\n"
+    printf '%b youtube-dl found! setting up yta(ytv)-* commands.\n' "$check_symbol"
     alias yta-help="echo 'yta-aac yta-best yta-flac yta-m4a yta-mp3 yta-opus yta-vorbis yta-wav ytv-best'"
     alias yta-aac="youtube-dl --extract-audio --audio-format aac "
     alias yta-best="youtube-dl --extract-audio --audio-format best "
@@ -413,7 +413,7 @@ end
 
 set JAVA_HOME /opt/java
 if test -d $JAVA_HOME
-    printf "$check_symbol Java (Possibley Oracle) found at $JAVA_HOME\n"
+    printf '%b Java (Possibley Oracle) found at %s\n' "$check_symbol" "$JAVA_HOME"
     sleep $line_delay
     addpath "$JAVA_HOME/bin"
     set CLASSPATH=$JAVA_HOME/lib
@@ -432,7 +432,7 @@ function emacs
 end
 
 if test -d "$HOME/.cargo"
-    printf "$check_symbol Cargo directory detected at $HOME/.cargo\n"
+    printf '%b Cargo directory detected at %s\n' "$check_symbol" "$HOME/.cargo"
     sleep $line_delay
     addpath "$HOME/.cargo/bin"
 end
@@ -500,7 +500,7 @@ if type -q nvim
     end
 end
 
-set texlive_year "2020"
+set texlive_year "current"
 set texlive_arch "x86_64-linux"
 set texlive_bin_dir "$texlive_base_path/$texlive_year/bin/$texlive_arch"
 set texlive_bin_dir_woyear "$texlive_base_path/bin/$texlive_arch"

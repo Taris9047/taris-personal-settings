@@ -208,14 +208,14 @@ if [ -f "$HOME/.Xresources" ] && [ -x "$(command -v xrdb)" ]; then
 fi
 
 if [ ! -x "$(command -v spark)" ]; then
-	printf "%b Installing spark!!\n" "$check_symbol"
+	printf '%b Installing spark!!\n' "${check_symbol}"
 	[ ! -d "$HOMEBREW/bin" ] && mkdir -pv "$HOMEBREW/bin"
 	sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark" && "chmod +x $HOMEBREW/bin/spark" || true
     chmod +x "$HOMEBREW/bin/spark" || true
 fi
 
 if [ ! -x "$(command -v rclone)" ] && [ -z "$SSH_CLIENT" ]; then
-    printf "%b Installing RClone!!\n" "$check_symbol"
+    printf '%b Installing RClone!!\n' "${check_symbol}"
     echo; echo; curl 'https://rclone.org/install.sh' | sudo -H bash
 fi
 
@@ -328,8 +328,8 @@ alias psmem='ps auxf | sort -nr -k 4'
 alias psmem10='ps auxf | sort -nr -k 4 | head -10'
 alias pscpu='ps auxf | sort -nr -k 3'
 alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
-alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
-alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
+alias gpg-check='gpg2 --keyserver-options auto-key-retrieve --verify'
+alias gpg-retrieve='gpg2 --keyserver-options auto-key-retrieve --receive-keys'
 alias battery_stat='upower -i "$( upower -e | grep BAT )"'
 
 gitc() {
@@ -363,7 +363,7 @@ alias tb='nc termbin.com 9999'
 [ -x "$(command -v fish)" ] && alias tofish='sudo chsh "$USER" -s "$(command -v fish)" && echo "Now log out."'
 
 if [ -x "$(command -v youtube-dl)" ]; then
-    printf "%b youtube-dl found! setting up yta(ytv)-* commands.\n" "${check_symbol}"
+    printf '%b youtube-dl found! setting up yta(ytv)-* commands.\n' "${check_symbol}"
     alias yta-help="echo 'yta-aac yta-best yta-flac yta-m4a yta-mp3 yta-opus yta-vorbis yta-wav ytv-best'"
     alias yta-aac="youtube-dl --extract-audio --audio-format aac "
     alias yta-best="youtube-dl --extract-audio --audio-format best "
@@ -501,19 +501,19 @@ check_uptime() {
 
 SNAP_BIN="/snap/bin"
 if [ -d "$SNAP_BIN" ]; then
-    printf "%b Snap executables have been found at %s\n" "${check_symbol}" "${SNAP_BIN}"
+    printf '%b Snap executables have been found at %s\n' "${check_symbol}" "${SNAP_BIN}"
     addpath "$SNAP_BIN"
 fi
 
 if [ -x "$(command -v broot)" ]; then
-    printf "%b Broot found!\n" "${check_symbol}"
+    printf '%b Broot found!\n' "${check_symbol}"
     alias br='broot -dhp'
     alias bs='broot --sizes'
 fi
 
 export JAVA_HOME=/opt/java
 if [ -d "$JAVA_HOME" ]; then
-    printf "%b Java (Possibly Oracle) found at %s\n" "${check_symbol}" "${JAVA_HOME}"
+    printf '%b Java (Possibly Oracle) found at %s\n' "${check_symbol}" "${JAVA_HOME}"
     sleep "${line_delay}"
     addpath "${JAVA_HOME}/bin"
     export CLASSPATH="${JAVA_HOME}/lib"
@@ -542,39 +542,39 @@ else
 fi
 
 if [ -d "$HOME/.cargo" ]; then
-    printf "%b Cargo directory detected at %s\n" "${check_symbol}" "${HOME}/.cargo"
+    printf '%b Cargo directory detected at %s\n' "${check_symbol}" "${HOME}/.cargo"
     sleep ${line_delay}
     . "$HOME/.cargo/env"
 fi
 
 if [ -d "$HOMEBREW/.opt/gcc-jit" ]; then
-    printf "%b Gcc with libgccjit found in the system!\n" "${check_symbol}"
+    printf '%b Gcc with libgccjit found in the system!\n' "${check_symbol}"
     addpath "$HOMEBREW/.opt/gcc-jit/bin"
 fi
 if [ -d "$HOMEBREW/.opt/gcc9" ]; then
-    printf "%b Gcc9 found in the system!\n" "${check_symbol}"
+    printf '%b Gcc9 found in the system!\n' "${check_symbol}"
     addpath "$HOMEBREW/.opt/gcc9/bin"
 fi
 if [ -d "$HOMEBREW/.opt/gcc8" ]; then
-    printf "%b Gcc8 found in the system!\n" "${check_symbol}"
+    printf '%b Gcc8 found in the system!\n' "${check_symbol}"
     addpath "$HOMEBREW/.opt/gcc8/bin"
 fi
 if [ -d "$HOMEBREW/.opt/gcc4" ]; then
-    printf "%b Gcc4 found in the system!\n" "${check_symbol}"
+    printf '%b Gcc4 found in the system!\n' "${check_symbol}"
     addpath "$HOMEBREW/.opt/gcc4/bin"
 fi
 
 export GOROOT="$HOMEBREW/.opt/go"
 export GOPATH="$HOMEBREW/.opt/go/bin"
 if [ -d "$GOROOT" ]; then
-    printf "%b Golang has been found at %s\n" "${check_symbol}" "${GROOT}"
+    printf '%b Golang has been found at %s\n' "${check_symbol}" "${GROOT}"
     addpath "$GOPATH/bin:$GOPATH"
 fi
 
 JULIA_ROOT="$HOMEBREW/.opt/julia"
 JULIA_BIN="$JULIA_ROOT/bin"
 if [ -d "$JULIA_ROOT" ] && [ -f "$JULIA_BIN/julia" ]; then
-    printf "%b Julia has been found at %s\n" "${check_symbol}" "${JULIA_ROOT}"
+    printf '%b Julia has been found at %s\n' "${check_symbol}" "${JULIA_ROOT}"
     addpath "$JULIA_BIN"
 fi
 
@@ -589,7 +589,7 @@ fi
 
 ROOT_DIR=$HOMEBREW/.opt/ROOT
 if [ -x "$(command -v $ROOT_DIR/bin/root)" ]; then
-    printf "%b ROOT Found! Applying its shell env.\n" "${check_symbol}"
+    printf '%b ROOT Found! Applying its shell env.\n' "${check_symbol}"
     alias thisroot="$ROOT_DIR/bin/thisroot.sh"
 fi
 
@@ -601,7 +601,7 @@ if [ -x "$(command -v vim)" ]; then
 fi
 
 if [ -x "$(command -v nvim)" ]; then
-	printf "%b Neovim found! replacing vim!\n" "${check_symbol}"
+	printf '%b Neovim found! replacing vim!\n' "${check_symbol}"
 	sleep "${line_delay}"
 	unalias vi vim 2>/dev/null || true
 	alias vim="nvim"
@@ -612,16 +612,25 @@ if [ -x "$(command -v nvim)" ]; then
 	fi
 fi
 
-texlive_year="2020"
-texlive_arch=x86_64-linux
-texlive_bin_dir=$texlive_base_path/$texlive_year/bin/$texlive_arch/
-texlive_bin_dir_woyear=$texlive_base_path/bin/$texlive_arch/
+texlive_year='current'
+texlive_arch='x86_64-linux'
+texlive_bin_dir="$texlive_base_path/$texlive_year/bin/$texlive_arch/"
+texlive_bin_dir_woyear="$texlive_base_path/bin/$texlive_arch/"
+
+texlive_years=(2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027 2028 2029 2030)
+
+for yr in ${texlive_years[@]}; do
+    if [ ! -d "$texlive_base_path/$texlive_year" ] && [ -d "$texlive_base_path/$yr" ]; then
+        ln -sf "$texlive_base_path/$yr" "$texlive_base_path/current"
+    fi
+done
+
 if [ -d "$texlive_bin_dir" ]; then
-    printf "%b Texlive found at $texlive_bin_dir directory!!\n" "${check_symbol}"
-    export PATH=$texlive_bin_dir:$PATH
+    printf '%b Texlive found at %s directory!!\n' "${check_symbol}" "$texlive_bin_dir"
+    export PATH="$texlive_bin_dir:$PATH"
 elif [ -d "$texlive_bin_dir_woyear" ]; then
-    printf "%b Texlive found at $texlive_bin_dir_woyear directory!!\n" "${check_symbol}"
-    export PATH=$texlive_bin_dir_woyear:$PATH
+    printf '%b Texlive found at %s directory!!\n' "${check_symbol}" "$texlive_bin_dir_woyear"
+    export PATH="$texlive_bin_dir_woyear:$PATH"
 fi
 
 if [ -x "$(command -v $HOMEBREW/.opt/pypy/bin/pypy3)" ]; then
