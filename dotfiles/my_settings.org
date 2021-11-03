@@ -12,6 +12,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
 - [[#my-shell-settings][My Shell Settings]]
 - [[#exports][Exports]]
   - [[#she-bang-preambles][She-bang preambles]]
+  - [[#adding-path-to-my-settings-bin-dir][Adding path to My Settings bin dir]]
   - [[#some-warning-messages-and-interactive-session-check][Some Warning messages and Interactive Session Check]]
   - [[#some-decorative-stuffs][Some decorative stuffs]]
   - [[#prefer-tmux-if-available][Prefer Tmux if available.]]
@@ -125,6 +126,28 @@ Also, install oh-my-zsh if possible!
 set fish_greeting
 set MYSHELL "fish"
 #+end_src
+
+** Adding path to My Settings bin dir
+*** Bash
+#+NAME: AddSettingsPath
+#+begin_src shell :tangle my_settings_bash
+[ -d "$HOME/.settings/bin" ] && export PATH="$HOME/.settings/bin:$PATH"
+#+end_src
+
+*** Zsh
+
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<AddSettingsPath>>
+#+end_src
+
+*** Fish
+
+#+begin_src fish :tangle  my_settings_fish
+if test -d "$HOME/.settings/bin"
+    fish_add_path -aP "$HOME/.settings/bin"
+end
+#+end_src
+
 
 ** Some Warning messages and Interactive Session Check
 Also includes no-run line if the session is not interactive.
@@ -322,7 +345,6 @@ end
 #+begin_src shell :tangle my_settings_bash
 export MYSETTINGSDIR="$HOME/.config/my_settings"
 [ ! -d "$MYSETTINGSDIR" ] && mkdir -p "$MYSETTINGSDIR"
-export PATH="$MYSETTINGSDIR/bin:$PATH"
 #+end_src
 
 *** Zsh
