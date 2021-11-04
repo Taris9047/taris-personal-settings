@@ -164,9 +164,11 @@ elseif linux_type == 'elementary'
   set termguicolors
   set background=light
   colorscheme solarized
+elseif $SSH_CONNECTION
+  colorscheme monrovia
 else
-	set termguicolors
-	colorscheme monrovia
+  set termguicolors
+  colorscheme monrovia
 endif
 
 " Setting up font
