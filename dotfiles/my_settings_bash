@@ -295,7 +295,7 @@ function pacmanin () {
 
 function pkgup () {
     printf 'Updating the system with package manager!\n'
-    [ -x "$(command -v apt-get) "] && aptup 2>&1 && return 0
+    [ -x "$(command -v apt-get)" ] && aptup 2>&1 && return 0
     [ -x "$(command -v dnf)" ] && dnfup 2>&1 && return 0
     [ -x "$(command -v yum)" ] && yumup 2>&1 && return 0
     [ -x "$(command -v pacman)" ] && pacmansync 2>&1 && return 0
