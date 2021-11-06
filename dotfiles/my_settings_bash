@@ -488,6 +488,12 @@ check_uptime() {
     echo "$(awk '{print $1}' /proc/uptime)"
 }
 
+if [ -x "$(command -v alacritty)" ]; then
+    if [ -n "$(cat /proc/cpuinfo | grep 'hypervisor')" ]; then
+        alias alacritty="LIBGL_ALWAYS_SOFTWARE=1 alacritty"
+    fi
+fi
+
 SNAP_BIN="/snap/bin"
 if [ -d "$SNAP_BIN" ]; then
     printf '%b Snap executables have been found at %s\n' "${check_symbol}" "${SNAP_BIN}"

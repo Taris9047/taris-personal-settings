@@ -56,6 +56,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#universal-open-function][Universal 'open' function]]
   - [[#check-uptime][Check uptime]]
 - [[#settings-for-custom-installed-programs][Settings for Custom installed programs!]]
+  - [[#alacritty][Alacritty]]
   - [[#snapd-stuff][Snapd stuff]]
   - [[#broot][Broot]]
   - [[#java-runtime-environment-or-java-development-kit][Java Runtime Environment (or Java Development Kit)]]
@@ -1520,6 +1521,33 @@ end
 #+end_src
 
 * Settings for Custom installed programs!
+** Alacritty
+Sometimes, running Alacritty on a virtual machine can be painful due to lack of 3D acceleration library support of VM video card. So, let us add some env variable.
+
+*** Bash
+#+NAME: prog_alacritty
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v alacritty)" ]; then
+    if [ -n "$(cat /proc/cpuinfo | grep 'hypervisor')" ]; then
+        alias alacritty="LIBGL_ALWAYS_SOFTWARE=1 alacritty"
+    fi
+fi
+#+end_src
+
+***  Zsh
+#+begin_src :tangle my_settings_zsh
+<<prog_alacritty>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q alacritty
+    if test -n "$(cat /proc/cpuinfo | grep 'hypervisor')"
+        alias alacritty="LIBGL_ALWAYS_SOFTWARE=1 alacritty"
+    end
+end
+#+end_src
+
 ** Snapd stuff
 *** Bash
 #+NAME: prog_snapd
