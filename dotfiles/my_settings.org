@@ -60,6 +60,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#snapd-stuff][Snapd stuff]]
   - [[#broot][Broot]]
   - [[#java-runtime-environment-or-java-development-kit][Java Runtime Environment (or Java Development Kit)]]
+  - [[#jedit][jEdit]]
   - [[#emacs-aliases][EMACS Aliases]]
   - [[#rust-cargo-actually][Rust (Cargo, actually.)]]
   - [[#homebrewed-gcc][Homebrewed GCC]]
@@ -1622,6 +1623,34 @@ if test -d $JAVA_HOME
     addpath "$JAVA_HOME/bin"
     set CLASSPATH=$JAVA_HOME/lib
 end
+#+end_src
+
+** jEdit
+Recently started using this program... It's not really powerful nor versatile nor fast. But good enough to serve as TCAD input deck editor. Also, Java became not really heavy in these days. So, why not keep it!
+
+*** Bash
+#+NAME: jEdit_env
+#+begin_src shell :tangle my_settings_bash
+JEDIT_PATH="$HOMEBREW/.opt/jEdit/bin"
+[ -x "$(command -v $JEDIT_PATH/jedit)" ] && export PATH="$JEDIT_PATH:$PATH"
+[ -x "$(command -v "$HOMEBREW/bin/jedit")" ] &&  JEDIT_PATH="$HOMEBREW/bin/jedit"
+printf '%b jEdit found at %s\n' "$JEDIT_PATH"
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh
+<<jEdit_env>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set JEDIT_PATH "$HOMEBREW/.opt/jEdit/bin"
+if type -q "$JEDIT_PATH/jedit"
+    addpath "$JEDIT_PATH"
+else if type -q "$HOMEBREW/bin/jedit"
+    sleep 0.01
+end
+printf '%b jEdit found at %s\n' "$JEDIT_PATH"
 #+end_src
 
 ** EMACS Aliases

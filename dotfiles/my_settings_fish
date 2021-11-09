@@ -429,6 +429,14 @@ if test -d $JAVA_HOME
     set CLASSPATH=$JAVA_HOME/lib
 end
 
+set JEDIT_PATH "$HOMEBREW/.opt/jEdit/bin"
+if type -q "$JEDIT_PATH/jedit"
+    addpath "$JEDIT_PATH"
+else if type -q "$HOMEBREW/bin/jedit"
+    sleep 0.01
+end
+printf '%b jEdit found at %s\n' "$JEDIT_PATH"
+
 set emacs_cmd (command -v emacs)
 set emacsclient_cmd (command -v emacsclient)
 

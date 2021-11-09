@@ -18,6 +18,7 @@ usage() {
 	printf '[options]:\n'
 	printf '\t-n,--network [Network Address or install_tl]\n'
 	printf '\t-p,--profile [Profile Location]\n'
+  printf '\t-i,--image [iso image file location]\n'
 	printf '\n'
 }
 
