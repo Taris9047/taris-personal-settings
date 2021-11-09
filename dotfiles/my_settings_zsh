@@ -514,13 +514,18 @@ if [ -x "$(command -v broot)" ]; then
     alias bs='broot --sizes'
 fi
 
-export JAVA_HOME=/opt/java
+JAVA_HOME=/opt/java
+if [ -x "$(command -v java)" ]; then
+    JAVA_HOME="$(echo "$(command -v java)" | rev | cut -c10- | rev )"
+fi
+
 if [ -d "$JAVA_HOME" ]; then
     printf '%b Java (Possibly Oracle) found at %s\n' "${check_symbol}" "${JAVA_HOME}"
     sleep "${line_delay}"
     addpath "${JAVA_HOME}/bin"
     export CLASSPATH="${JAVA_HOME}/lib"
 fi
+export JAVA_HOME="$JAVA_HOME"
 
 <<jEdit_env>>
 
