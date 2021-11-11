@@ -519,6 +519,11 @@ if [ -x "$(command -v java)" ]; then
     JAVA_HOME="$(echo "$(command -v java)" | rev | cut -c10- | rev )"
 fi
 
+# Prefer /opt/java instead of system installed java
+if [ -x "$(command -v /opt/java/bin/java)" ]; then
+    JAVA_HOME=/opt/java
+fi
+
 if [ -d "$JAVA_HOME" ]; then
     printf '%b Java (Possibly Oracle) found at %s\n' "${check_symbol}" "${JAVA_HOME}"
     sleep "${line_delay}"
