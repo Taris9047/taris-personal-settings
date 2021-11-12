@@ -490,7 +490,7 @@ check_uptime() {
 
 if [ -x "$(command -v alacritty)" ]; then
     if [ -n "$(cat /proc/cpuinfo | grep 'hypervisor')" ]; then
-        alias alacritty="LIBGL_ALWAYS_SOFTWARE=1 alacritty"
+        alias alacritty="MESA_GL_VERSION_OVERRIDE=3.3 LIBGL_ALWAYS_SOFTWARE=1 alacritty"
     fi
 fi
 

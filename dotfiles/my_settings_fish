@@ -406,7 +406,7 @@ end
 
 if type -q alacritty
     if test -n "$(cat /proc/cpuinfo | grep 'hypervisor')"
-        alias alacritty="LIBGL_ALWAYS_SOFTWARE=1 alacritty"
+        alias alacritty="MESA_GL_VERSION_OVERRIDE=3.3 LIBGL_ALWAYS_SOFTWARE=1 alacritty"
     end
 end
 

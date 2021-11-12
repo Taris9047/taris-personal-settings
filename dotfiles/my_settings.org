@@ -1530,7 +1530,7 @@ Sometimes, running Alacritty on a virtual machine can be painful due to lack of 
 #+begin_src shell :tangle my_settings_bash
 if [ -x "$(command -v alacritty)" ]; then
     if [ -n "$(cat /proc/cpuinfo | grep 'hypervisor')" ]; then
-        alias alacritty="LIBGL_ALWAYS_SOFTWARE=1 alacritty"
+        alias alacritty="MESA_GL_VERSION_OVERRIDE=3.3 LIBGL_ALWAYS_SOFTWARE=1 alacritty"
     fi
 fi
 #+end_src
@@ -1544,7 +1544,7 @@ fi
 #+begin_src fish :tangle my_settings_fish
 if type -q alacritty
     if test -n "$(cat /proc/cpuinfo | grep 'hypervisor')"
-        alias alacritty="LIBGL_ALWAYS_SOFTWARE=1 alacritty"
+        alias alacritty="MESA_GL_VERSION_OVERRIDE=3.3 LIBGL_ALWAYS_SOFTWARE=1 alacritty"
     end
 end
 #+end_src
