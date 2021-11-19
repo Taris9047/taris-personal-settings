@@ -122,7 +122,7 @@ zimg_ver="3.0.3"
 lv2_ver="1.18.2"
 waflib_ver="b600c928b221a001faeab7bd92786d0b25714bc8"
 serd_ver="0.30.10"
-pcre_ver="8.44"
+pcre_ver="8.45"
 sord_ver="0.16.8"
 sratom_ver="0.6.8"
 lilv_ver="0.24.12"
@@ -136,7 +136,7 @@ fdk_aac_ver="2.0.2"
 libtiff_ver="4.3.0"
 libpng_ver="1.6.37"
 libwebp_ver="1.2.0"
-libsdl_ver="2.0.14"
+libsdl_ver="2.0.16"
 srt_ver="1.4.3"
 nvcodec_ver="11.1.5.0"
 amf_ver="1.4.21.0"
@@ -632,7 +632,7 @@ if command_exists $PYTHON; then
 	fi
 
 	if build "pcre"; then
-		download "https://ftp.pcre.org/pub/pcre/pcre-${pcre_ver}.tar.gz" "pcre-${pcre_ver}.tar.gz"
+		download "https://sourceforge.net/projects/pcre/files/pcre/${pcre_ver}/pcre-${pcre_ver}.tar.bz2"
 		execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 		execute make -j $MJOBS
 		execute make install
@@ -840,12 +840,12 @@ CONFIGURE_OPTIONS+=("--enable-libx265")
 
 if build "vid_stab"; then
 	download "https://github.com/georgmartius/vid.stab/archive/v${vid_stab_ver}.tar.gz" "vid.stab-${vid_stab_ver}.tar.gz"
-	cd "$PACKAGES"/vid.stab-${vid_stab_ver} || exit
-	execute env "$COMPILER_SET" cmake . \
-		-DCMAKE_C_COMPILER=\"$CC\" \
-		-DCMAKE_CXX_COMPILER=\"$CXX\" \
-		-DCMAKE_C_FLAGS=\"$CFLAGS\" \
-		-DCMAKE_CXX_FLAGS=\"$CXXFLAGS\" \
+	cd "${PACKAGES}"/vid.stab-${vid_stab_ver} || exit
+	execute env "${COMPILER_SET}" cmake . \
+		-DCMAKE_C_COMPILER=\"${CC}\" \
+		-DCMAKE_CXX_COMPILER=\"${CXX}\" \
+		-DCMAKE_C_FLAGS=\"${CFLAGS}\" \
+		-DCMAKE_CXX_FLAGS=\"${CXXFLAGS}\" \
 		-DBUILD_SHARED_LIBS=OFF \
 		-DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
 		-DUSE_OMP=OFF \
@@ -860,10 +860,10 @@ CONFIGURE_OPTIONS+=("--enable-libvidstab")
 if build "av1"; then
 	#download "https://aomedia.googlesource.com/aom/+archive/0f5cd05bb3d6209e2583ce682d1acd8e21ae24b8.tar.gz" "av1.tar.gz" "av1"
 	git clone https://aomedia.googlesource.com/aom "$PACKAGES"/av1
-	cd "$PACKAGES"/av1 || exit
-	mkdir -p "$PACKAGES"/aom_build
-	cd "$PACKAGES"/aom_build || exit
-	execute env "$COMPILER_SET" cmake -DENABLE_TESTS=0 -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib "$PACKAGES"/av1
+	cd "${PACKAGES}"/av1 || exit
+	mkdir -p "${PACKAGES}"/aom_build
+	cd "${PACKAGES}"/aom_build || exit
+	execute env "${COMPILER_SET}" cmake -DENABLE_TESTS=0 -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib "${PACKAGES}"/av1
 	execute make -j $MJOBS
 	execute make install
 
@@ -874,7 +874,16 @@ CONFIGURE_OPTIONS+=("--enable-libaom")
 ## Other Library
 if build "libsdl"; then
 	download "https://www.libsdl.org/release/SDL2-${libsdl_ver}.tar.gz"
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+#	execute env "$COMPILER_SET" ./autogen.sh && ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+    mkdir -p "${PACKAGES}/SDL2-${libsdl_ver}-build" && cd "${PACKAGES}/SDL2-${libsdl_ver}-build" || exit
+    execute cmake -S "${PACKAGES}/SDL2-${libsdl_ver}" -B . \
+    	-DCMAKE_C_COMPILER=\"$CC\" \
+    	-DCMAKE_CXX_COMPILER=\"$CXX\" \
+    	-DCMAKE_C_FLAGS=\"$CFLAGS\" \
+    	-DCMAKE_CXX_FLAGS=\"$CXXFLAGS\" \
+        -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
+        -DENABLE_SHARED=OFF \
+        -DSDL_STATIC=ON
 	execute make -j $MJOBS
 	execute make install
 
@@ -953,9 +962,9 @@ if build "ffmpeg"; then
 
 	execute ./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
-		--cc=\""$CC"\" \
-		--cxx=\""$CXX"\" \
-		--dep-cc=\""$CC"\" \
+		--cc=\""${CC}"\" \
+		--cxx=\""${CXX}"\" \
+		--dep-cc=\""${CC}"\" \
 		--disable-debug \
 		--disable-doc \
 		--disable-shared \
