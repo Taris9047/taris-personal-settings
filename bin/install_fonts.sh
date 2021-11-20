@@ -19,6 +19,11 @@ if [ -z "$(fc-list | grep -i "Nanum")" ]; then
 	"$SCRIPTPATH/install_nanum_fonts.sh" > /dev/null 2>&1
 fi
 
+if [ -z "$(fc-list | grep -i "Roboto Slab")" ]; then
+	echo 'Installing Roboto Slab! (Network)'
+	"$SCRIPTPATH/install_roboto_slab.sh" > /dev/null 2>&1
+fi
+
 if [ -z "$(fc-list | grep -i "fira code")" ]; then
 	echo 'Installing FiraCode! (Network)'
 	"$SCRIPTPATH/install_fira_code.sh" > /dev/null 2>&1
