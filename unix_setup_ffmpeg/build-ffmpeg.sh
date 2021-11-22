@@ -136,7 +136,7 @@ fdk_aac_ver="2.0.2"
 libtiff_ver="4.3.0"
 libpng_ver="1.6.37"
 libwebp_ver="1.2.0"
-libsdl_ver="2.0.16"
+libsdl_ver="2.0.14"
 srt_ver="1.4.3"
 nvcodec_ver="11.1.5.0"
 amf_ver="1.4.21.0"
@@ -872,23 +872,34 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libaom")
 
 ## Other Library
-if build "libsdl"; then
-	download "https://www.libsdl.org/release/SDL2-${libsdl_ver}.tar.gz"
-#	execute env "$COMPILER_SET" ./autogen.sh && ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-    mkdir -p "${PACKAGES}/SDL2-${libsdl_ver}-build" && cd "${PACKAGES}/SDL2-${libsdl_ver}-build" || exit
-    execute cmake -S "${PACKAGES}/SDL2-${libsdl_ver}" -B . \
-    	-DCMAKE_C_COMPILER=\"$CC\" \
-    	-DCMAKE_CXX_COMPILER=\"$CXX\" \
-    	-DCMAKE_C_FLAGS=\"$CFLAGS\" \
-    	-DCMAKE_CXX_FLAGS=\"$CXXFLAGS\" \
-        -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
-        -DENABLE_SHARED=OFF \
-        -DSDL_STATIC=ON
-	execute make -j $MJOBS
-	execute make install
+# if build "libsdl"; then
+# 	download "https://www.libsdl.org/release/SDL2-${libsdl_ver}.tar.gz"
+# #	execute env "$COMPILER_SET" ./autogen.sh && ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+#     mkdir -p "${PACKAGES}/SDL2-${libsdl_ver}-build" && cd "${PACKAGES}/SDL2-${libsdl_ver}-build" || exit
+#     execute cmake -S "${PACKAGES}/SDL2-${libsdl_ver}" -B . \
+#     	-DCMAKE_C_COMPILER=\"$CC\" \
+#     	-DCMAKE_CXX_COMPILER=\"$CXX\" \
+#     	-DCMAKE_C_FLAGS=\"$CFLAGS\" \
+#     	-DCMAKE_CXX_FLAGS=\"$CXXFLAGS\" \
+#         -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
+#         -DCMAKE_INSTALL_LIBDIR="lib" \
+#         -DENABLE_SHARED=OFF \
+#         -DSDL_STATIC=ON
+# 	execute make -j $MJOBS
+# 	execute make install
 
-	build_done "libsdl"
+# 	build_done "libsdl"
+# fi
+
+if build "libsdl"; then
+  download "https://www.libsdl.org/release/SDL2-${libsdl_ver}.tar.gz"
+  execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+  execute make -j $MJOBS
+  execute make install
+
+  build_done "libsdl" 
 fi
+
 
 if [ ! -n "$nosrt" ]; then
     if build "srt"; then
@@ -979,7 +990,7 @@ if build "ffmpeg"; then
 		--extra-ldexeflags=\""${LDEXEFLAGS}"\" \
 		--extra-ldflags=\""${LDFLAGS}"\" \
         --extra-libs=\""${EXTRALIBS}"\" \
-        --optflags="-O3" \
+        --optflags="\"-O3 -fomit-frame-pointer\"" \
 		--pkgconfigdir=\""${WORKSPACE}/lib/pkgconfig"\" \
 		--pkg-config-flags="--static" || exit 1
 	execute make -j $MJOBS || exit 1
