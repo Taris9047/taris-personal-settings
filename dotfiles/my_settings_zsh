@@ -532,7 +532,10 @@ if [ -d "$JAVA_HOME" ]; then
 fi
 export JAVA_HOME="$JAVA_HOME"
 
-<<jEdit_env>>
+JEDIT_PATH="$HOMEBREW/.opt/jEdit/bin"
+[ -x "$(command -v $JEDIT_PATH/jedit)" ] && export PATH="$JEDIT_PATH:$PATH"
+[ -x "$(command -v "$HOMEBREW/bin/jedit")" ] && JEDIT_PATH="$HOMEBREW/bin/jedit"
+printf '%b jEdit found at %s\n' "${check_symbol}" "$JEDIT_PATH"
 
 # Emacs selection path: $HOMEBREW/bin/emacs > /snap/bin/emacs > system emacs such as ... /usr/bin/emacs
 emacs_candidates=( "$HOMEBREW/bin/emacs" "$SNAP_BIN/emacs" "/usr/local/bin/emacs" "/usr/bin/emacs" )

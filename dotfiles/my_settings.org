@@ -1643,12 +1643,12 @@ Recently started using this program... It's not really powerful nor versatile no
 #+begin_src shell :tangle my_settings_bash
 JEDIT_PATH="$HOMEBREW/.opt/jEdit/bin"
 [ -x "$(command -v $JEDIT_PATH/jedit)" ] && export PATH="$JEDIT_PATH:$PATH"
-[ -x "$(command -v "$HOMEBREW/bin/jedit")" ] &&  JEDIT_PATH="$HOMEBREW/bin/jedit"
-printf '%b jEdit found at %s\n' "$JEDIT_PATH"
+[ -x "$(command -v "$HOMEBREW/bin/jedit")" ] && JEDIT_PATH="$HOMEBREW/bin/jedit"
+printf '%b jEdit found at %s\n' "${check_symbol}" "$JEDIT_PATH"
 #+end_src
 
 *** Zsh
-#+begin_src shell :tangle my_settings_zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
 <<jEdit_env>>
 #+end_src
 
@@ -1660,7 +1660,7 @@ if type -q "$JEDIT_PATH/jedit"
 else if type -q "$HOMEBREW/bin/jedit"
     sleep 0.01
 end
-printf '%b jEdit found at %s\n' "$JEDIT_PATH"
+printf '%b jEdit found at %s\n' "$check_symbol" "$JEDIT_PATH"
 #+end_src
 
 ** EMACS Aliases

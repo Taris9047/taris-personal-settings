@@ -435,7 +435,7 @@ if type -q "$JEDIT_PATH/jedit"
 else if type -q "$HOMEBREW/bin/jedit"
     sleep 0.01
 end
-printf '%b jEdit found at %s\n' "$JEDIT_PATH"
+printf '%b jEdit found at %s\n' "$check_symbol" "$JEDIT_PATH"
 
 set emacs_cmd (command -v emacs)
 set emacsclient_cmd (command -v emacsclient)
