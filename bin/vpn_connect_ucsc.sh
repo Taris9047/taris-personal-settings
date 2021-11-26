@@ -13,8 +13,11 @@ echo "Connectiong to UCSC Campus VPN"
 VPN="/opt/cisco/anyconnect/bin/vpn"
 
 "$VPN" disconnect
-sleep 1
-"$VPN" -s < "$HOME/.vpn_creds" connect "${VPN_SERVER}"
+
+connect_ucsc_vpn (){
+  sleep 1
+  "$VPN" -s < "$HOME/.vpn_creds" connect "${VPN_SERVER}" || connect_ucsc_vpn
+}; connect_ucsc_vpn
 
 # Restart the VNC server...
 SCRIPT_PATH="$HOME/.settings/bin/vncserver_restart.sh"
