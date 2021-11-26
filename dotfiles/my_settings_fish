@@ -164,6 +164,11 @@ else
     set VISUAL "xdg-open"
 end
 
+if test -n "$SSH_CLIENT" or test -n "$SSH_TTY"
+    set EDITOR "vi"
+    set VISUAL "vi"
+end
+
 function fish_title
     hostname
 end

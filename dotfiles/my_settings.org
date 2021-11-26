@@ -680,6 +680,11 @@ if [ -x "$(command -v emacs)" ]; then
     export VISUAL="emacs"
 fi
 
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+    export EDITOR="vi"
+    export VISUAL="vi"
+fi
+
 #+end_src
 
 *** Zsh
@@ -701,6 +706,11 @@ if type -q subl
     set VISUAL "vim"
 else
     set VISUAL "xdg-open"
+end
+
+if test -n "$SSH_CLIENT" or test -n "$SSH_TTY"
+    set EDITOR "vi"
+    set VISUAL "vi"
 end
 #+end_src
 
