@@ -12,11 +12,16 @@ echo "Connectiong to UCSC Campus VPN"
 # VPN PATH
 VPN="/opt/cisco/anyconnect/bin/vpn"
 
-"$VPN" disconnect
+# "$VPN" disconnect
 
 connect_ucsc_vpn (){
   sleep 1
-  "$VPN" -s < "$HOME/.vpn_creds" connect "${VPN_SERVER}" || connect_ucsc_vpn
+  if [ -n "$("${VPN}" state | grep -i 'Disconnected')" ]; then
+    "$VPN" -s < "$HOME/.vpn_creds" connect "${VPN_SERVER}" || connect_ucsc_vpn
+  else
+    printf 'It seems we are still on the VPN!\n'
+    exit 0
+  fi
 }; connect_ucsc_vpn
 
 # Restart the VNC server...
