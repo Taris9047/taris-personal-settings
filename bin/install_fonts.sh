@@ -11,8 +11,10 @@ fi
 
 SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
-echo 'Installing nerd fonts! (Network)'
-"$SCRIPTPATH/install_nerd_fonts.sh" > /dev/null 2>&1
+if [ -z "$(fc-list | grep -i "nerd font")" ]; then
+    echo 'Installing nerd fonts! (Network)'
+    "$SCRIPTPATH/install_nerd_fonts.sh" > /dev/null 2>&1
+fi
 
 if [ -z "$(fc-list | grep -i "Nanum")" ]; then
 	echo 'Installing nanum (naver) fonts! (Network)'
@@ -37,6 +39,11 @@ fi
 if [ -z "$(fc-list | grep -i "symbola.odf")" ]; then
 	echo 'Installing Symbola (Network)'
 	"$SCRIPTPATH/install_symbola_fonts.sh" > /dev/null 2>&1
+fi
+
+if [ -z "$(fc-list | grep -i "JoyPixels")" ]; then
+	echo 'Installing JoyPixels (Network)'
+	"$SCRIPTPATH/install_joypixels_font.sh" > /dev/null 2>&1
 fi
 
 echo 'Font installation complete!'
