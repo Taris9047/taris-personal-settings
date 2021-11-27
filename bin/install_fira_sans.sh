@@ -5,7 +5,7 @@
 
 font_path="https://github.com/bBoxType/FiraSans.git"
 SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-tmp_dir="$SCRIPTPATH/.inst_firasans_tmpdir/"
+tmp_dir="/tmp/.inst_firasans_tmpdir/"
 CWD="$(pwd -P)"
 
 font_dest_dir="${HOME}/.local/share/fonts/FiraSans/"

@@ -20,7 +20,7 @@ NF_URL="https://github.com/Taris9047/taris-personal-settings/releases/download/N
 # NGF_URL="http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip"
 # NGFC_URL="https://github.com/naver/nanumfont/releases/download/VER2.5/NanumGothicCoding-2.5.zip"
 
-TEMP_DIR="${CWD}/.temp_nanumfonts"
+TEMP_DIR="/tmp/.temp_nanumfonts"
 if [ ! -d "${TEMP_DIR}" ]; then
     mkdir -p "${TEMP_DIR}"
 fi

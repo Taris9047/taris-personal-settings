@@ -2,7 +2,7 @@
 
 CWD=$(pwd -P)
 
-tmp_dir="$CWD/.symbola_tmp"
+tmp_dir="/tmp/.symbola_tmp"
 dest_dir="$HOME/.local/share/fonts/SymbolaFonts"
 font_url="https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/Symbola.zip"
 

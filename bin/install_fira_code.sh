@@ -5,7 +5,7 @@
 
 firacode_url="https://github.com/tonsky/FiraCode/releases/download/5.2/Fira_Code_v5.2.zip"
 SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-tmp_dir="$SCRIPTPATH/.inst_firacode_tmpdir/"
+tmp_dir="/tmp/.inst_firacode_tmpdir/"
 CWD="$(pwd -P)"
 
 font_dest_dir="${HOME}/.local/share/fonts/FiraCode/"
