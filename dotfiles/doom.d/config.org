@@ -63,6 +63,7 @@
   - [[#graphviz][Graphviz]]
   - [[#iedit-settings][iEdit settings]]
   - [[#measure-time-macro][measure-time macro]]
+  - [[#initial-window-size][Initial Window Size]]
   - [[#exit-messages-are-annoying][Exit messages are... Annoying]]
 
 * Init file (init.el)
@@ -1146,6 +1147,13 @@ Pattern matching edit mode. Pretty useful!
   `(let ((time (current-time)))
      ,@body
      (float-time (time-since time))))
+#+end_src
+
+** Initial Window Size
+When not using automatic tiling window manager, this is useful...
+#+begin_src emacs-lisp
+(add-to-list 'default-frame-alist '(height . 45) )
+(add-to-list 'default-frame-alist '(width . 70) )
 #+end_src
 
 ** Exit messages are... Annoying

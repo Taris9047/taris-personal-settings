@@ -520,6 +520,9 @@ to allow the TOC to be a collapseable tree."
      ,@body
      (float-time (time-since time))))
 
+(add-to-list 'default-frame-alist '(height . 45) )
+(add-to-list 'default-frame-alist '(width . 70) )
+
 (defun save-buffers-kill-emacs-with-confirm ()
  "jsled's special save-buffers-kill-emacs, but with confirm"
  (interactive)
