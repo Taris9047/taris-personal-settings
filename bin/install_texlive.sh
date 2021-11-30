@@ -28,6 +28,13 @@ usage() {
 	printf '\n'
 }
 
+# If it's fedora... known for state-of-art packages.. just install texlive from the repo
+if [ ! -z "$(grep -i 'fedora' /etc/os-release)" ]; then
+	sudo dnf install -y texlive-scheme-full
+	exit 0
+fi
+
+
 # Checking prerequisites
 [ ! -x "$(command -v perl)" ] && die 'Oh boy, we need Perl!\n'
 [ ! -x "$(command -v wget)" ] && die 'wget is needed!\n'
