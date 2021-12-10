@@ -12,7 +12,9 @@ echo "Connectiong to UCSC Campus VPN"
 # VPN PATH
 VPN="/opt/cisco/anyconnect/bin/vpn"
 
-# "$VPN" disconnect
+if [ -n "$1" ] && [ "$1" = "-f" ]; then
+  "$VPN" disconnect
+fi
 
 connect_ucsc_vpn (){
   sleep 1
