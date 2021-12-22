@@ -1,6 +1,6 @@
 #!/bin/sh
 
-MYSHELL="$(ps -hp $$ | awk '{print $5}')"
+MYSHELL="$(ps --no-headers --pid $$ | awk '{print $5}')"
 
 # Installing oh-my-zsh
 [ ! -d "$HOME/.oh-my-zsh" ] && "$HOME/.settings/bin/install_ohmyzsh.sh"

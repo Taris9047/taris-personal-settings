@@ -107,13 +107,13 @@ For Bash and Zsh.. we are considering to change them to POSIX compliant ones rat
 #+begin_src shell :tangle my_settings_bash
 #!/bin/sh
 
-MYSHELL="$(ps -hp $$ | awk '{print $5}')"
+MYSHELL="$(ps --no-headers --pid $$ | awk '{print $5}')"
 #+end_src
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh
 #!/bin/sh
 
-MYSHELL="$(ps -hp $$ | awk '{print $5}')"
+MYSHELL="$(ps --no-headers --pid $$ | awk '{print $5}')"
 #+end_src
 
 Also, install oh-my-zsh if possible!
