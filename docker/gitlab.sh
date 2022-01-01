@@ -6,11 +6,13 @@ if [ ! -d "$GITLAB_HOME" ]; then
 	sudo mkdir -p "$GITLAB_HOME"
 fi
 
-sudo docker run --detach \
-  --hostname gitlab.example.com \
-  --env GITLAB_OMNIBUS_CONFIG="external_url 'taris9047.ddns.net:30000'; gitlab_rails['lfs_enabled'] = true;" \
-  --publish 443:443 --publish 30000:80 --publish 9022:22 \
-  --env GITLAB_ROOT_PASSWORD="password" \
+MAIN_PORT=30000
+
+HOSTNAME='taris9047.ddns.net'
+docker run --detach \
+  --hostname=$HOSTNAME \
+  --env GITLAB_OMNIBUS_CONFIG="gitlab_rails['lfs_enabled'] = true;" \
+  --publish 9443:443 --publish $MAIN_PORT:80 --publish 9022:22 \
   --name gitlab \
   --restart always \
   --volume $GITLAB_HOME/config:/etc/gitlab \
@@ -18,3 +20,5 @@ sudo docker run --detach \
   --volume $GITLAB_HOME/data:/var/opt/gitlab \
   --shm-size 256m \
   gitlab/gitlab-ce:latest
+
+#  --env GITLAB_OMNIBUS_CONFIG="external_url 'http://$HOSTNAME:30000'; gitlab_rails['lfs_enabled'] = true;" \
