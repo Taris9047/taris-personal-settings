@@ -165,7 +165,7 @@ elseif linux_type == 'elementary'
   set background=light
   colorscheme solarized
 elseif $SSH_CONNECTION
-  colorscheme monrovia
+  colorscheme base16-dracula
 else
   set termguicolors
   colorscheme monrovia
