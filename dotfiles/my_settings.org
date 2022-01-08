@@ -2608,6 +2608,8 @@ end
 ** Starship
 This part is also super duper dependent on shell type. Gotta isolate it when we finally move to POSIX shell for initialization.
 
+Odd, I'm not sure whey starship does not start on Elementary OS... this problem only persists on Elementary OS.
+
 *** Bash
 #+NAME: shellext_starship
 #+begin_src shell :tangle my_settings_bash
