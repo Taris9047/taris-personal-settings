@@ -110,7 +110,7 @@ NVIM_GTK_CONF_HOME="$USR_DIR/.config/nvim-gtk"
 [ ! -d "$NVIM_GTK_CONF_HOME" ] && mkdir -pv "$NVIM_GTK_CONF_HOME"
 rm -rf "$NVIM_CONF_HOME/*init.vim"
 ln -sf "$SETTINGS_DIR/dotfiles/init.vim.nvim" "$NVIM_CONF_HOME/init.vim" || true
-ln -sf "$SETTINGS_DIR/dotfiles/init.vim.nvim" "$NVIM_CONF_HIME/sysinit.vim" || true
+ln -sf "$SETTINGS_DIR/dotfiles/init.vim.nvim" "$NVIM_CONF_HOME/sysinit.vim" || true
 ln -sf "$SETTINGS_DIR/dotfiles/ginit.vim.nvim" "$NVIM_CONF_HOME/ginit.vim" || true
 
 # Micro Editor
@@ -274,10 +274,10 @@ if [ ! -d "$UDS_DIR" ]; then
 fi
 
 # Installing Rust stuffs
-printf 'Setting up Rust utilities.\n'
-if [ ! -d "$USR_DIR/.cargo" ]; then
-    /bin/bash -c "$SETTINGS_DIR/bin/setup_rust.sh"
-fi
+#printf 'Setting up Rust utilities.\n'
+#if [ ! -d "$USR_DIR/.cargo" ]; then
+#    /bin/bash -c "$SETTINGS_DIR/bin/setup_rust.sh"
+#fi
 
 printf '\n'
 printf '\n**** Closing Comments ****\n'
