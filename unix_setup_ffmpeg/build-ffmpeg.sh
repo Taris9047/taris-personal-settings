@@ -952,7 +952,7 @@ if command_exists "nvcc"; then
 		CONFIGURE_OPTIONS+=("--enable-libnpp") # Only libnpp cannot be statically linked.
 	fi
 
-	CONFIGURE_OPTIONS+=("--nvccflags=-gencode arch=compute_52,code=sm_52")
+	CONFIGURE_OPTIONS+=("--nvccflags=\"-gencode arch=compute_52,code=sm_52\"")
 
 	if [ -z "$LDEXEFLAGS" ]; then
 		if library_exists "libva"; then
