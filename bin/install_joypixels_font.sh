@@ -28,7 +28,7 @@ fi
 cd "${tmp_dir}"
 wget "${font_url}" -O /tmp/ttf-joypixels-6.6.0-1-any.pkg.tar.zst > /dev/null 2>&1
 tar --use-compress-program=unzstd -xvf /tmp/ttf-joypixels-6.6.0-1-any.pkg.tar.zst -C "${tmp_dir}"
-cp -vfr "${tmp_dir}/usr/share/fonts/joypixels/*.ttf "${font_dest_dir}/" > /dev/null 2>&1 
+cp -vfr "${tmp_dir}/usr/share/fonts/joypixels/*.ttf ${font_dest_dir}/" > /dev/null 2>&1 
 
 cd "${CWD}" 
 
@@ -38,4 +38,4 @@ rm -rf "${tmp_dir}"
 echo "Updating Fonts Cache"
 fc-cache -fv > /dev/null 2>&1
 
-echo "FiraCode fonts Installed!!"
+echo "Joypixels fonts Installed!!"
