@@ -5,8 +5,7 @@ if [ ! -x "$(command -v rclone)" ]; then
     exit
 fi
 
-
-RClone="($command -v rclone)"
+RClone="$(command -v rclone)"
 
 # Mounting Google Drive
 ${RClone} mount google-drive: /home/taris/.google-drive
