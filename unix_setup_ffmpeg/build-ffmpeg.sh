@@ -943,8 +943,8 @@ if command_exists "nvcc"; then
 		sed -i "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-${nvcodec_ver}/Makefile && execute make install
 		build_done "nv-codec"
 	fi
-	CFLAGS="$CFLAGS -I/usr/lib/cuda/include"
-	LDFLAGS="$LDFLAGS -L/usr/lib/cuda/lib64"
+	CFLAGS="$CFLAGS -I/usr/local/cuda/include"
+	LDFLAGS="$LDFLAGS -L/usr/local/cuda/lib64"
 	# CONFIGURE_OPTIONS+=("--nvccflags=-gencode arch=compute_52,code=sm_52")
 	CONFIGURE_OPTIONS+=("--enable-cuda-nvcc" "--enable-cuvid" "--enable-nvenc" "--enable-cuda-llvm")
 
