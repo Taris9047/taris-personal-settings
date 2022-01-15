@@ -135,7 +135,7 @@ libtheora_ver="1.1.1"
 fdk_aac_ver="2.0.2"
 libtiff_ver="4.3.0"
 libpng_ver="1.6.37"
-libwebp_ver="1.2.0"
+libwebp_ver="1.2.1"
 libsdl_ver="2.0.14"
 srt_ver="1.4.3"
 nvcodec_ver="11.1.5.0"
@@ -755,9 +755,8 @@ CONFIGURE_OPTIONS+=("--enable-libfdk-aac")
 ## Image Library
 if build "libwebp"; then
 	download "https://github.com/webmproject/libwebp/archive/v${libwebp_ver}.tar.gz" "libwebp-${libwebp_ver}.tar.gz"
-	make_dir "$PACKAGES"/libwebp-${libwebp_ver}/build
-	cd "$PACKAGES"/libwebp-${libwebp_ver}/build || exit
-	execute env "$COMPILER_SET" cmake -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_INSTALL_INCLUDEDIR=include -DENABLE_SHARED=OFF -DENABLE_STATIC=ON ../
+	cd "$PACKAGES"/libwebp-${libwebp_ver} && ./autogen.sh
+	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
 	execute make -j $MJOBS
 	execute make install
 
