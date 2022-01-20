@@ -674,7 +674,7 @@ if type -q rclone
     end
 
     if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'
-        printf "$check_symbol Google drive already mounted at $GOOGLE_DRIVE\n"
+        printf "$check_symbol Google drive already mounted at %s\n" "$GOOGLE_DRIVE"
         sleep $line_delay
     else if not test -f "$HOME/.config/rclone/rclone.conf"
         printf "$check_symbol RClone for Google drive has not set yet!\n"
@@ -694,13 +694,13 @@ if type -q rclone
     end
 
     if grep -qs "$ONE_DRIVE" /proc/mounts
-        printf "$check_symbol MS One drive already mounted at $ONE_DRIVE\n"
+        printf "$check_symbol MS One drive already mounted at %s\n" "$ONE_DRIVE"
         sleep "$line_delay"
     else if not test -f "$HOME/.config/rclone/rclone.conf"
         printf "$check_symbol RClone for Onedrive has not set yet!\n"
     else
         if test -n (cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive\]")
-            printf "$check_symbol Mounting MS One Drive to $ONE_DRIVE\n"
+            printf "$check_symbol Mounting MS One Drive to %s\n" "$ONE_DRIVE"
             rclone mount --vfs-cache-mode writes onedrive: "$ONE_DRIVE" &
             sleep 2
         end
