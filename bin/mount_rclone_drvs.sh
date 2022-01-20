@@ -8,21 +8,19 @@ fi
 RClone="$(command -v rclone)"
 
 # Mounting Google Drive
-if [ -x "$(command -v rclone)" ]; then
-
-	if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'; then
-		sleep 1.25
-	elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-	  sleep 1.25
-  else
-		if [ ! -z "$(grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
-			${RClone} mount google-drive: "$GOOGLE_DRIVE" &
-			sleep 2
-		fi
+if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'; then
+	sleep 1.25
+elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
+	sleep 1.25
+fi
+else
+	if [ ! -z "$(grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
+		${RClone} mount google-drive: "$GOOGLE_DRIVE" &
+		sleep 2
 	fi
 fi
 
-sleep 1.2
+sleep 2.0
 
 # Mounting MS Onedrive
 ${RClone} mount --vfs-cache-mode writes onedrive: /home/taris/.onedrive
