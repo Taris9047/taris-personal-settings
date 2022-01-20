@@ -12,7 +12,6 @@ if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'; then
 	sleep 1.25
 elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
 	sleep 1.25
-fi
 else
 	if [ ! -z "$(grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
 		${RClone} mount google-drive: "$GOOGLE_DRIVE" &
