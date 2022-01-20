@@ -5,32 +5,37 @@ if [ ! -x "$(command -v rclone)" ]; then
     exit
 fi
 
+# RClone command
 RClone="$(command -v rclone)"
+
+# Google drive location
+GOOGLE_DRIVE="/home/$(/usr/bin/whoami)/.google-drive"
+
+# Onedrive location
+ONEDRIVE="/home/$(/usr/bin/whoami)/.onedrive"
 
 # Mounting Google Drive
 if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'; then
-	sleep 1.25
+	sleep 2
 elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-	sleep 1.25
+	sleep 2
 else
-	if [ ! -z "$(grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
+    if [ ! -z "$(grep -i "\[google-drive\]" "/home/$(/usr/bin/whoami)/.config/rclone/rclone.conf")" ]; then
 		${RClone} mount google-drive: "$GOOGLE_DRIVE" &
 		sleep 2
 	fi
 fi
 
-sleep 2.0
+sleep 2
 
 # Mounting MS Onedrive
-${RClone} mount --vfs-cache-mode writes onedrive: /home/taris/.onedrive
-
-if grep -qs "$ONE_DRIVE" '/proc/mounts'; then
-    sleep "${line_delay}"
-elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-    sleep 1.25
+if grep -qs "$ONEDRIVE" '/proc/mounts'; then
+    sleep 2
+elif [ ! -f "/home/$(/usr/bin/whoami)/.config/rclone/rclone.conf" ]; then
+    sleep 2
 else
-    if [ ! -z "$(grep -i "\[onedrive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
-        ${RClone} mount --vfs-cache-mode writes onedrive: "$ONE_DRIVE" &
+    if [ ! -z "$(grep -i "\[onedrive\]" "/home/$(/usr/bin/whoami)/.config/rclone/rclone.conf")" ]; then
+        ${RClone} mount --vfs-cache-mode writes onedrive: "$ONEDRIVE" &
         sleep 2
     fi
 fi
