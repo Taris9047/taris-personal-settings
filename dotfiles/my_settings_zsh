@@ -809,13 +809,13 @@ fi
 
 if [ -x "$(command -v rclone)" ]; then
 
-	if [ ! -d "$GOOGLE_DRIVE" ]; then
+	if [ ! -d "${GOOGLE_DRIVE}" ]; then
 		printf '%b Google drive mount point not found! making one..\n' "${check_symbol}"
-		mkdir -pv "$GOOGLE_DRIVE"
+		mkdir -pv "${GOOGLE_DRIVE}"
 	fi
 
 	if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'; then
-		printf '%b Google Drive already mounted at $GOOGLE_DRIVE\n' "${check_symbol}"
+		printf '%b Google Drive already mounted at %s\n' "${check_symbol}" "${GOOGLE_DRIVE}"
 		sleep "${line_delay}"
 	elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
 		printf '%b RClone was for Google drive not set up yet!\n' "${check_symbol}"
@@ -830,7 +830,7 @@ fi
 
 if [ -x "$(command -v rclone)" ]; then
     if grep -qs "$ONE_DRIVE" '/proc/mounts'; then
-        printf '%b MS One Drive already mounted at %s\n' "$ONE_DRIVE" "${check_symbol}"
+        printf '%b MS One Drive already mounted at %s\n' "${check_symbol}" "${ONE_DRIVE}"
         sleep "${line_delay}"
     elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
         printf '%b RClone for Onedrive was not set up yet!\n' "${check_symbol}"
