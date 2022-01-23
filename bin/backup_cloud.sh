@@ -20,7 +20,7 @@ if [ -d "$BackupDestGoogle" ]; then
 	${RClone} copy --update --verbose \
 		--transfers 30 --checkers 8 --contimeout 60s --timeout 300s \
 		--retries 5 --low-level-retries 10 --stats 1s \
-		"$BackupDestGoogle" "google-drive:"
+		 "google-drive:" "$BackupDestGoogle"
 fi
 
 if [ -d "$BackupDestMSOne" ]; then
@@ -28,7 +28,7 @@ if [ -d "$BackupDestMSOne" ]; then
 	${RClone} copy --update --verbose \
 		--transfers 30 --checkers 8 --contimeout 60s --timeout 300s \
 		--retries 5 --low-level-retries 10 --stats 1s \
-		"$BackupDestMSOne" "onedrive:"
+		 "onedrive:" "$BackupDestMSOne"
 fi
 
 printf 'Backup done!!\n'
