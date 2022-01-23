@@ -10,8 +10,9 @@ if [ ! -x "$(command -v rclone)" ]; then
 fi
 
 RClone=$(which rclone)
-BackupDestGoogle=/data/Backup/GoogleDrive
-BackupDestMSOne=/data/Backup/Onedrive
+BackupRoot="/data/Backup"
+BackupDestGoogle="$BackupRoot"/GoogleDrive
+BackupDestMSOne="$BackupRoot"/Onedrive
 
 # Backing up GoogleDrive
 if [ -d "$BackupDestGoogle" ]; then
@@ -19,7 +20,7 @@ if [ -d "$BackupDestGoogle" ]; then
 	${RClone} copy --update --verbose \
 		--transfers 30 --checkers 8 --contimeout 60s --timeout 300s \
 		--retries 5 --low-level-retries 10 --stats 1s \
-		"$BackupDestGoogle" "google-drive"
+		"$BackupDestGoogle" "google-drive:"
 fi
 
 if [ -d "$BackupDestMSOne" ]; then
@@ -27,7 +28,7 @@ if [ -d "$BackupDestMSOne" ]; then
 	${RClone} copy --update --verbose \
 		--transfers 30 --checkers 8 --contimeout 60s --timeout 300s \
 		--retries 5 --low-level-retries 10 --stats 1s \
-		"$BackupDestMSOne" "onedrive"
+		"$BackupDestMSOne" "onedrive:"
 fi
 
 printf 'Backup done!!\n'
