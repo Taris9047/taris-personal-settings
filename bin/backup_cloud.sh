@@ -1,7 +1,7 @@
 #!/bin/sh
 
 die {
-  printf 'ERROR: %s\n' "%1"
+  printf 'ERROR: %s\n' "$1"
   exit 1
 }
 
