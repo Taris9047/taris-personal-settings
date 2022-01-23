@@ -1,6 +1,6 @@
 #!/bin/sh
 
-die {
+die () {
   printf 'ERROR: %s\n' "$1"
   exit 1
 }
