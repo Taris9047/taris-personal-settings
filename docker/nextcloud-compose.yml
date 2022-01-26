@@ -1,18 +1,39 @@
 version: '3'
 
 services:
+  
+  db:
+    container_name: nextcloud-mariadb
+    image: mariadb
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed 
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=nextcloud
+      - MYSQL_ROOT_PASSWORD=password
+    volumes:
+      - $CLOUD_LOCAL_ROOT/mysql:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+
   nextcloud:
+    container_name: nextcloud-app
     image: nextcloud:latest
     restart: unless-stopped
     ports:
       - 9099:80
+    depends_on:
+      - db
+    links:
+      - db
     environment:
-      - MYSQL_HOST=mysql
+      - MYSQL_HOST=db
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
       - MYSQL_PASSWORD=nextcloud
     volumes:
-      - nextcloud:/var/www/html
+      - ${CLOUD_LOCAL_ROOT}/nextcloud:/var/www/html
+      - /etc/localtime:/etc/localtime:ro
     deploy:
       resources:
         limits:
@@ -22,26 +43,10 @@ services:
           cpus: 0.25
           memory: 256M
 
-  mysql:
-    image: mysql:8.0
-    restart: unless-stopped
-    environment:
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=nextcloud
-      - MYSQL_ROOT_PASSWORD=password
-    volumes:
-      - mysql:/var/lib/mysql
-    deploy:
-      resources:
-        limits:
-          cpus: 1.25
-          memory: 1024M
-        reservations:
-          cpus: 0.25
-          memory: 256M
-
-
 volumes:
-  mysql:
   nextcloud:
+  db:
+
+networks:
+  nextcloud:
+
