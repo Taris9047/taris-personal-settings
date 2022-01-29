@@ -686,7 +686,7 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libmp3lame")
 
 if build "opencore"; then
-	download "https://deac-riga.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-${opencore_ver}.tar.gz" "opencore-amr-${opencore_ver}.tar.gz"
+	download "https://sourceforge.net/projects/opencore-amr/files/opencore-amr-${opencore_ver}.tar.gz/download?use_mirror=gitenet" "opencore-amr-${opencore_ver}.tar.gz"
 	cd "$PACKAGES"/opencore-amr-${opencore_ver} || exit
 	execute env "$COMPILER_SET_GCC" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
@@ -960,6 +960,17 @@ if command_exists "nvcc"; then
 			fi
 			CONFIGURE_OPTIONS+=("--enable-vaapi")
 		fi
+	fi
+
+	if build "amf" "${amf_ver}"; then
+		amf_ver_short="${amf_ver::-2}"
+		download "https://github.com/GPUOpen-LibrariesAndSDKs/AMF/archive/refs/tags/v.${amf_ver_short}.tar.gz" "AMF-${amf_ver_short}.tar.gz"
+		cd "$PACKAGES/AMF-${amf_ver_short}" || exit
+		execute rm -rf "${WORKSPACE}/include/AMF" 
+		execute mkdir -p "${WORKSPACE}/include/AMF"
+		execute cp -r "${PACKAGES}"/AMF-"${amf_ver_short}"/amf/public/include/* "${WORKSPACE}/include/AMF/"
+		build_done "amf" "${amf_ver}"
+		CONFIGURE_OPTIONS+=("--enable-amf")
 	fi
 
 fi
