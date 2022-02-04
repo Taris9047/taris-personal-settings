@@ -16,8 +16,24 @@ if [ -n "$1" ] && [ "$1" = "-f" ]; then
   "$VPN" disconnect
 fi
 
-connect_ucsc_vpn (){
-  sleep 1
+prog=''
+if [ ! -z "$1" ]; then
+  prog="$1"
+fi
+
+connect_ucsc_vpn () {
+
+  # sleep 1
+  
+  if [ ! -z "$prog" ]; then
+    prog_ps="$(ps -A | grep "$prog")"
+    if [ -z "$prog_ps" ]; then
+      printf 'Not running the progress "%s" in background.\n' "$prog"
+      printf 'Thus, no reason to connect to VPN again!\n'
+      exit 0
+    fi
+  fi
+    
   if [ -n "$("${VPN}" state | grep -i 'Disconnected')" ]; then
     "$VPN" -s < "$HOME/.vpn_creds" connect "${VPN_SERVER}" || connect_ucsc_vpn
   else
