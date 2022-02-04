@@ -360,6 +360,7 @@ usage() {
     echo "     --nosrt: ignore srt build"
     echo "     --sgcc: forces to use /usr/bin/gcc and /usr/bin/g++"
     echo "   --cleanup: remove all working dirs"
+		echo "   --clean: Same as cleanlup"
     echo "   --version: shows version info."
     echo "   --help: show this help"
     echo ""
@@ -369,53 +370,63 @@ bflag=''
 cflag=''
 nosrt=''
 sgcc=''
+custom_gcc_suffix=''
 
 while (($# > 0)); do
-    case "$1" in
+  case "$1" in
     -h | --help)
         usage
 	    exit 0
 	    ;;
 
-	--version)
+		--version)
 	    version
 	    exit 0
 	    ;;
 	
     -*)
-        if [[ "$1" == "--build" ]]; then
-            bflag='-b'
-        fi
-
-        if [[ "$1" == "--full-static" ]]; then
-        	if [[ "$OSTYPE" == "darwin"* ]]; then
-        		echo "Error: A full static binary can only be build on Linux."
-        		exit 1
-        	fi
-        	LDEXEFLAGS="-static"
+      if [[ "$1" == "--build" ]]; then
+        bflag='-b'
+      fi
+      if [[ "$1" == "--full-static" ]]; then
+      	if [[ "$OSTYPE" == "darwin"* ]]; then
+       		echo "Error: A full static binary can only be build on Linux."
+       		exit 1
+       	fi
+       	LDEXEFLAGS="-static"
 	    fi
 
-	    if [[ "$1" == "--cleanup" ]]; then
-	        cflag='-c'
-	        cleanup
+	    if [[ "$1" == "--cleanup" ]] || [[ "$1" == "--clean"  ]]; then
+        cflag='-c'
+        cleanup
 	    fi
 
 			if [[ "$1" == "--sgcc" ]]; then
-				CC="/usr/bin/gcc"
-				CXX="/usr/bin/g++"
+				sgcc='sgcc'
+			  CC="/usr/bin/gcc"
+			  CXX="/usr/bin/g++"
+			fi
+
+			if [[ "$1" =~ "--gcc_suffix="* ]]; then
+				if [ ! -z "$sgcc" ]; then
+					custom_gcc_suffix="$(echo "$1" | awk '{split($1,arr,"="); print arr[length(arr)]}')"
+					printf 'Selecting custom GCC with suffix: %s\n' "$custom_gcc_suffix"
+					CC="$CC$custom_gcc_suffix"
+					CXX="$CXX$custom_gcc_suffix"
+				fi
 			fi
 
 	    if [[ "$1" == "--nosrt" ]]; then
-	        nosrt='yes'
+        nosrt='yes'
 	    fi
 
 	    shift
 	    ;;
-	*)
+	  *)
 	    usage
 	    exit 1
 	    ;;
-    esac
+  esac
 done
 
 if [ -z "$bflag" ]; then
@@ -942,21 +953,30 @@ if command_exists "nvcc"; then
 		sed -i "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-${nvcodec_ver}/Makefile && execute make install
 		build_done "nv-codec"
 	fi
-	CFLAGS="$CFLAGS -I/usr/local/cuda/include"
-	LDFLAGS="$LDFLAGS -L/usr/local/cuda/lib64"
-	# CONFIGURE_OPTIONS+=("--nvccflags=-gencode arch=compute_52,code=sm_52")
+
+	# Extracting cuda path
+	CUDA_BASE_PATH=''
+	if [ ! -z "$CUDA_PATH"  ]; then
+		CUDA_BASE_PATH="$CUDA_PATH"
+	else
+		CUDA_BASE_PATH="$( command -v nvcc | awk '{split($1,A,"/"); for (i=1; i<length(A)-1; i++ ) (i==1) ? jp = A[i] : jp = jp"/"A[i]; printf "%s", jp}')"
+	fi
+
+	CFLAGS="$CFLAGS -I$CUDA_BASE_PATH/include"
+	LDFLAGS="$LDFLAGS -L$CUDA_BASE_PATH/lib64"
+	#CONFIGURE_OPTIONS+=("--nvccflags=-gencode arch=compute_52,code=sm_52")
 	CONFIGURE_OPTIONS+=("--enable-cuda-nvcc" "--enable-cuvid" "--enable-nvenc" "--enable-cuda-llvm")
 
 	if [ -z "$LDEXEFLAGS" ]; then
 		CONFIGURE_OPTIONS+=("--enable-libnpp") # Only libnpp cannot be statically linked.
 	fi
 
-	CONFIGURE_OPTIONS+=("--nvccflags=\"-gencode arch=compute_52,code=sm_52\"")
+	CONFIGURE_OPTIONS+=("--nvccflags=\"-allow-unsupported-compiler -gencode arch=compute_52,code=sm_52 \"")
 
 	if [ -z "$LDEXEFLAGS" ]; then
 		if library_exists "libva"; then
 			if build "vaapi"; then
-				build_done "vaapi"
+				build_done "vaapi"su
 			fi
 			CONFIGURE_OPTIONS+=("--enable-vaapi")
 		fi
@@ -978,8 +998,6 @@ fi
 if build "ffmpeg"; then
 	download "https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2" "ffmpeg-snapshot.tar.bz2"
 	cd "$PACKAGES"/ffmpeg-snapshot/ || exit
-	# [ ! -d "$PACKAGES/FFMpeg" ] && git clone https://github.com/FFmpeg/FFmpeg.git "$PACKAGES"/FFMpeg
-	# cd "$PACKAGES/FFMpeg" || exit
 
 	execute ./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
@@ -999,8 +1017,8 @@ if build "ffmpeg"; then
 		--extra-cxxflags=\""${CXXFLAGS}"\" \
 		--extra-ldexeflags=\""${LDEXEFLAGS}"\" \
 		--extra-ldflags=\""${LDFLAGS}"\" \
-        --extra-libs=\""${EXTRALIBS}"\" \
-        --optflags="\"-O3 -fomit-frame-pointer\"" \
+    --extra-libs=\""${EXTRALIBS}"\" \
+    --optflags="\"-O3 -fomit-frame-pointer\"" \
 		--pkgconfigdir=\""${WORKSPACE}/lib/pkgconfig"\" \
 		--pkg-config-flags="--static" || exit 1
 	execute make -j $MJOBS || exit 1
