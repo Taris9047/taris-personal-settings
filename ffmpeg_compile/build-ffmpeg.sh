@@ -331,9 +331,20 @@ get_nvcc_ver() {
 nvcc_ver_chk() {
 	vercomp $(get_nvcc_ver) $NVCC_VER_THRSH
 	case $? in
-	0) echo 'Pass' ;;
-	1) echo 'Pass' ;;
-	2) echo 'Fail' ;;
+	  0) echo 'Pass' ;;
+	  1) echo 'Pass' ;;
+	  2) echo 'Fail' ;;
+	esac
+}
+
+# Implemented due to gcc version mismatching problem on Ubuntu...
+#
+nvcc_ver_chk_ubuntu() {
+	vercomp $(get_nvcc_ver) "11.5.0"
+	case $? in
+	  0) echo 'Pass' ;;
+	  1) echo 'Pass' ;;
+	  2) echo 'Fail' ;;
 	esac
 }
 
@@ -767,7 +778,7 @@ CONFIGURE_OPTIONS+=("--enable-libfdk-aac")
 if build "libwebp"; then
 	download "https://github.com/webmproject/libwebp/archive/v${libwebp_ver}.tar.gz" "libwebp-${libwebp_ver}.tar.gz"
 	cd "$PACKAGES"/libwebp-${libwebp_ver} && ./autogen.sh
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
+	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
 
@@ -999,6 +1010,12 @@ if build "ffmpeg"; then
 	download "https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2" "ffmpeg-snapshot.tar.bz2"
 	cd "$PACKAGES"/ffmpeg-snapshot/ || exit
 
+  if [ "&(nvcc_ver_chk_ubuntu)" = "Fail" ] & [ -x "$(command -v gcc-10)" ]; then
+    CC="$(command -v gcc-10)"
+    CXX="$(command -v g++-10)"
+    CONFIGURE_OPTIONS+=("--nvccflags=\"-ccbin $CC\"")
+  fi
+
 	execute ./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
 		--cc=\""${CC}"\" \
@@ -1018,7 +1035,7 @@ if build "ffmpeg"; then
 		--extra-ldexeflags=\""${LDEXEFLAGS}"\" \
 		--extra-ldflags=\""${LDFLAGS}"\" \
     --extra-libs=\""${EXTRALIBS}"\" \
-    --optflags="\"-O3 -fomit-frame-pointer\"" \
+    --optflags="\"-O3 -march=native -fomit-frame-pointer -pipe\"" \
 		--pkgconfigdir=\""${WORKSPACE}/lib/pkgconfig"\" \
 		--pkg-config-flags="--static" || exit 1
 	execute make -j $MJOBS || exit 1

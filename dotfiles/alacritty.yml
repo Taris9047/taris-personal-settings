@@ -39,8 +39,8 @@ window:
   # Blank space added around the window in pixels. This padding is scaled
   # by DPI and the specified value is always added at both opposing sides.
   padding:
-    x: 6
-    y: 6
+    x: 5
+    y: 5
 
   # Spread additional padding evenly around the terminal content.
   #dynamic_padding: false
@@ -333,8 +333,6 @@ colors:
 # Window opacity
 window.opacity: 0.75
 
-
-
 #selection:
 #semantic_escape_chars: ",│`|:\"' ()[]{}<>\t"
 
@@ -352,6 +350,8 @@ window.opacity: 0.75
 #   - _ Underline
 #   - | Beam
 #style: Block
+cursor:
+  style: Beam
 
 # If this is `true`, the cursor will be rendered as a hollow box when the
 # window is not focused.
