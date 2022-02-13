@@ -31,8 +31,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#default-cligui-editor-set][Default CLI/GUI editor set]]
   - [[#change-terminal-titles][Change terminal titles]]
   - [[#make-xterm-pretty-again][Make Xterm pretty again]]
-  - [[#zsh][Zsh]]
-  - [[#fish][Fish]]
+  - [[#display-set-up-for-wsl][DISPLAY Set up for WSL]]
 - [[#hot-spot-installation][Hot Spot Installation]]
   - [[#spark][Spark]]
   - [[#rclone][RClone]]
@@ -747,17 +746,39 @@ if [ -f "$HOME/.Xresources" ] && [ -x "$(command -v xrdb)" ]; then
     xrdb -merge "$HOME/.Xresources"
 fi
 #+end_src
-** Zsh
+*** Zsh
 #+begin_src shell :tangle my_settings_zsh :noweb yes
 <<XtermSettings>>
 #+end_src
-** Fish
+*** Fish
 #+begin_src fish :tangle my_settings_fish
 if test -f "$HOME/.Xresources" and test -x "(command -v xrdb)"
     printf '%b Reading in Xterm configuraitons!!\n' "$check_symbol"
     xrdb -merge "$HOME/.Xresources"
 end
 #+end_src
+
+** DISPLAY Set up for WSL
+*** Bash
+#+NAME: DISPLAYforWSL
+#+begin_src shell :tangle my_settings_bash
+if [ ! -z "$(grep -i 'Microsoft' /proc/version)" ]; then
+    export DISPLAY=$(ip route|awk '/^default/{print $3}'):0.0
+    printf '%b Setting up DISPLAY for WSL: %s\n' "$check_symbol" "$DISPLAY"
+fi
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<DISPLAYforWSL>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if test -n "(grep -i 'Microsoft' /proc/version)"
+    set DISPLAY=$(ip route|awk '/^default/{print $3}'):0.0
+    printf '%b Setting up DISPLAY for WSL: %s\n' "$check_symbol" "$DISPLAY"
+end
+#+end_src
+
 * Hot Spot Installation
 ** Spark
 *** Bash

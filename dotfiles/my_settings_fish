@@ -178,6 +178,11 @@ if test -f "$HOME/.Xresources" and test -x "(command -v xrdb)"
     xrdb -merge "$HOME/.Xresources"
 end
 
+if test -n "(grep -i 'Microsoft' /proc/version)"
+    set DISPLAY=$(ip route|awk '/^default/{print $3}'):0.0
+    printf '%b Setting up DISPLAY for WSL: %s\n' "$check_symbol" "$DISPLAY"
+end
+
 if not type -q spark
     printf "%b Installing spark!!\n" "$check_symbol"
     printf "  %b Type in your password if you feel it's stuck!!\n" "$right_arrow_symbol"

@@ -203,6 +203,11 @@ if [ -f "$HOME/.Xresources" ] && [ -x "$(command -v xrdb)" ]; then
     xrdb -merge "$HOME/.Xresources"
 fi
 
+if [ ! -z "$(grep -i 'Microsoft' /proc/version)" ]; then
+    export DISPLAY=$(ip route|awk '/^default/{print $3}'):0.0
+    printf '%b Setting up DISPLAY for WSL: %s\n' "$check_symbol" "$DISPLAY"
+fi
+
 if [ ! -x "$(command -v spark)" ]; then
 	printf '%b Installing spark!!\n' "${check_symbol}"
 	[ ! -d "$HOMEBREW/bin" ] && mkdir -pv "$HOMEBREW/bin"
