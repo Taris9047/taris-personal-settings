@@ -558,17 +558,19 @@ do
     fi
 done
 
-unalias emc emt emacs emacsclient 2> /dev/null
-# Checking whether /etc/os-release exists... some old distros do not have os-release...
-if [ -f '/etc/os-release' ]; then
-    if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
-        alias emc="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a '$emacs_cmd' "
-        alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacs_cmd}"
-        alias emt="${emacs_cmd} -nw"
-    else
-        alias emc="${emacsclient_cmd} -c -a '$emacs_cmd' "
-        alias emacs="${emacs_cmd}"
-        alias emt="${emacs_cmd} -nw"
+if [ -x "$(command -v emacs)" ] && [ -x "$(command -v emacsclient)" ]; then
+    unalias emc emt emacs emacsclient 2> /dev/null
+    # Checking whether /etc/os-release exists... some old distros do not have os-release...
+    if [ -f '/etc/os-release' ]; then
+        if [ ! -z "$(cat /etc/os-release | grep ID | grep elementary)" ]; then
+            alias emc="env XLIB_SKIP_ARGB_VISUALS=1 ${emacsclient_cmd} -c -a '$emacs_cmd' "
+            alias emacs="env XLIB_SKIP_ARGB_VISUALS=1 ${emacs_cmd}"
+            alias emt="${emacs_cmd} -nw"
+        else
+            alias emc="${emacsclient_cmd} -c -a '$emacs_cmd' "
+            alias emacs="${emacs_cmd}"
+            alias emt="${emacs_cmd} -nw"
+        fi
     fi
 fi
 
