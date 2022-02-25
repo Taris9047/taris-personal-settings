@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 VPN_SERVER="vpn.ucsc.edu"
 
@@ -7,12 +7,41 @@ if [ ! -f "$HOME/.vpn_creds" ]; then
   exit 1
 fi
 
-echo "Connectiong to UCSC Campus VPN"
-
 # VPN PATH
 VPN="/opt/cisco/anyconnect/bin/vpn"
 
-if [ -n "$1" ] && [ "$1" = "-f" ]; then
+echo "Connectiong to UCSC Campus VPN"
+
+# Prints simple usage function
+usage() {
+  printf 'usage: vpn_connect_ucsc.sh <options> <program>\n'
+  printf 'options:\n'
+  printf '-h or --help: Prints out this message.\n'
+  printf '-f or --force: Disconnects vpn then try to reconnect\n'
+}
+
+# Parsing arguments
+prog=''
+while (($# > 0)); do
+  case "$1" in
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    -f | --force)
+      printf 'Forcefully disconnecting the VPN to re-establish the connection\n'
+      "$VPN" disconnect
+      ;;
+    *)
+      prog="$1"
+      ;;
+  esac
+done
+
+
+
+if [ -n "$1" ] && [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
+  printf 'Forcefully disconnecting the VPN to re-establish the connection\n'
   "$VPN" disconnect
 fi
 
