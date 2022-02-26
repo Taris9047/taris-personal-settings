@@ -33,7 +33,7 @@ do
             exit 0
             ;;
         *)
-            PYTHON_CONFIGURE_OPTS="\"$PYCONF_OPTS\"" CFLAGS="\"$PY_CFLAGS\"" \
+            PYTHON_CONFIGURE_OPTS="$PYCONF_OPTS" CFLAGS="$PY_CFLAGS" \
               $PYENV_CMD install -f "$arg"
             ;;
     esac
