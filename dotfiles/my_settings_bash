@@ -673,7 +673,10 @@ if [ -d "$PYENV_DIR" ]; then
     eval "$(pyenv init --path)"
 fi
 
-alias pyenvup="cd $PYENV_DIR && git pull && cd -"
+if [ -x "$(command -x pyenv)" ]; then
+    alias pyenvup="cd $PYENV_DIR && git pull && cd -"
+    export PYTHON_CONFIGURE_OPTS="--enable-shared --enable-ipv6 --enable-unicode=ucs4 --with-threads --with-ensurepip=yes --enable-optimizations"
+fi
 
 RBENV_DIR="$HOME/.rbenv"
 if [ -d "$RBENV_DIR" ]; then
