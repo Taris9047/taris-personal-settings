@@ -681,7 +681,7 @@ if [ -d "$PYENV_DIR" ]; then
     eval "$(pyenv init --path)"
 fi
 
-if [ -x "$(command -x pyenv)" ]; then
+if [ -d "$PYENV_DIR" ]; then
     alias pyenvup="cd $PYENV_DIR && git pull && cd -"
     export PYTHON_CONFIGURE_OPTS="--enable-shared --enable-ipv6 --enable-unicode=ucs4 --with-threads --with-ensurepip=yes --enable-optimizations"
 fi
