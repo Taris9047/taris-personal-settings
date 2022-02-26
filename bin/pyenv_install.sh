@@ -7,7 +7,7 @@ fi
 
 PYENV_CMD="$(command -v pyenv)"
 
-PYCONF_OPTS='--enable-shared --enable-ipv6 --enable-unicode=ucs4 --with-threads --with-ensurepip=yes --enable-optimizations'
+PYCONF_OPTS='--enable-shared --enable-ipv6 --enable-unicode=ucs4 --with-threads --with-ensurepip=yes'
 
 PY_CFLAGS='-O2 -march=native -fomit-frame-pointer'
 
