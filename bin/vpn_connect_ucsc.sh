@@ -64,7 +64,8 @@ connect_ucsc_vpn() {
     fi
 
     if [ -n "$("${VPN}" state | grep -i 'Disconnected')" ]; then
-        "$VPN" -s connect "${VPN_SERVER}" <"$HOME/.vpn_creds" || connect_ucsc_vpn
+        "$VPN" -s connect "${VPN_SERVER}" <"$HOME/.vpn_creds" || \
+            printf 'VPN Connection failed due to MFA authentication failure!!\n'; exit 1
     else
         printf 'It seems we are still on the VPN!\n'
         exit 0
