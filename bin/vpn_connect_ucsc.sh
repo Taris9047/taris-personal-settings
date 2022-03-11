@@ -33,6 +33,11 @@ while (($# > 0)); do
             "$VPN" disconnect
             shift
             ;;
+        -d | --disconnect)
+            printf 'Disconnecting from VPN\n'
+            "$VPN" disconnect
+            exit 0
+            ;;
         *)
             prog="$1"
             shift
