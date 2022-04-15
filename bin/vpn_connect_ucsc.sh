@@ -106,7 +106,6 @@ connect_ucsc_vpn() {
             echo "${array[0]}" | tee -a "$tmp_file" > /dev/null
             echo "${array[1]}" | base64 --decode | tee -a "$tmp_file" > /dev/null
             echo "${array[2]}" | tee -a "$tmp_file" > /dev/null
-            cat "$tmp_file"
             "$VPN" -s connect "${VPN_SERVER}" <"$tmp_file" || \
                 printf 'VPN Connection failed due to MFA authentication failure!!\n'
             rm -rf "$tmp_file"
