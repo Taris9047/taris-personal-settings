@@ -133,7 +133,7 @@ class MakeXMLBackground(object):
 
         # Sometimes, people supply directory instead of file path...
         if not os.path.dirname(outf_name):
-            outf_name = os.path.join(os.getcwd(), outf_name)
+            self.outf_name = os.path.join(os.getcwd(), outf_name)
         else:
             if os.path.isdir(outf_name):
                 self.outf_name = os.path.join(outf_name, def_outf_name)
