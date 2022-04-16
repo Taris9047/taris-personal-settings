@@ -34,7 +34,7 @@ commit_hash_length = 8
 style = "bold white"
 
 [git_state]
-disabled = "false"
+disabled = false
 
 [git_status]
 conflicted = "⚔️ "

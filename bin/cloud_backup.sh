@@ -15,10 +15,11 @@ fi
 #
 if [ "$#" -ne 2 ]; then
     printf 'Usage: %s <source dir> <target dir>\n' "$0"
+    exit 0
 fi
 
-src_dir = "$1"
-tgt_dir = "$2"
+src_dir="$1"
+tgt_dir="$2"
 
 # Actually running the syncing
 printf 'Running sync operation for %s to %s\n' "$src_dir" "$tgt_dir"
