@@ -1,7 +1,7 @@
 #!/bin/sh
 
 SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-new_git_ver='2.33.1'
+new_git_ver='2.36.0'
 GIT_PREFIX="$HOME/.local"
 
 n_proc="$(cat /proc/cpuinfo | grep -ic "Processor")"

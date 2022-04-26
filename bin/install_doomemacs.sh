@@ -3,8 +3,8 @@
 SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 # Minimum allowed git version
-git_minimal='2.28.1'
-new_git_ver='2.33.0'
+git_minimal='2.23.0'
+new_git_ver='2.36.0'
 
 version_greater_equal() {
 	printf '%s\n%s\n' "$2" "$1" | sort -V -C
