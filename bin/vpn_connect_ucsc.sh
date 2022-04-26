@@ -1,10 +1,26 @@
 #!/bin/bash
 
 VPN_SERVER="vpn.ucsc.edu"
+VPN_CREDS="$HOME/.vpn_creds"
 
-if [ ! -f "$HOME/.vpn_creds" ]; then
+write_vpn_creds () {
+    touch "$VPN_CREDS"
+    read -p 'VPN Username: ' username
+    echo "$username" | tee -a "$VPN_CREDS" > /dev/null
+    read -sp 'VPN (Gold) Password: ' userpass
+    if [ -x "$(command -v base64)" ]; then
+        echo "$userpass" | base64 - | tee -a "$VPN_CREDS" > /dev/null
+    else
+        echo "$userpass" | tee -a "$VPN_CREDS" > /dev/null
+    fi
+    # and finally push..
+    echo "push" | tee -a "$VPN_CREDS" > /dev/null
+    printf '%s generated!\n' "$VPN_CREDS"
+}
+
+if [ ! -f "$VPN_CREDS" ]; then
     printf 'We are lacking .vpn_creds in the users home dir.\n'
-    exit 1
+    write_vpn_creds
 fi
 
 # VPN PATH
@@ -55,6 +71,15 @@ if [ ! -z "$1" ]; then
     prog="$1"
 fi
 
+# Restart the VNC server...
+restart_realvnc_server () {
+    SCRIPT_PATH="$HOME/.settings/bin/vncserver_restart.sh"
+    if [ "$(id -u)" -eq 0 ]; then
+        printf 'Restarting RealVNC Server\n'
+        $SCRIPT_PATH
+    fi
+}
+
 connect_ucsc_vpn() {
 
     # sleep 1
@@ -69,18 +94,30 @@ connect_ucsc_vpn() {
     fi
 
     if [ -n "$("${VPN}" state | grep -i 'Disconnected')" ]; then
-        "$VPN" -s connect "${VPN_SERVER}" <"$HOME/.vpn_creds" || \
-            printf 'VPN Connection failed due to MFA authentication failure!!\n'; exit 1
+        if [ -x "$(command -v base64)" ]; then
+            declare -a arr=()
+            i=0
+            while IFS= read -r line; do
+                array[i]="$line"
+                let "i++"
+            done <"$VPN_CREDS"
+            tmp_file="$(mktemp)"
+            # echo "" | tee "$tmp_file" > /dev/null
+            echo "${array[0]}" | tee -a "$tmp_file" > /dev/null
+            echo "${array[1]}" | base64 --decode | tee -a "$tmp_file" > /dev/null
+            echo "${array[2]}" | tee -a "$tmp_file" > /dev/null
+            "$VPN" -s connect "${VPN_SERVER}" <"$tmp_file" || \
+                printf 'VPN Connection failed due to MFA authentication failure!!\n'
+            rm -rf "$tmp_file"
+            exit 0
+        else
+            "$VPN" -s connect "${VPN_SERVER}" <"$HOME/.vpn_creds" || \
+                printf 'VPN Connection failed due to MFA authentication failure!!\n'; exit 1
+        fi
     else
         printf 'It seems we are still on the VPN!\n'
         exit 0
     fi
 }
-connect_ucsc_vpn
 
-# Restart the VNC server...
-SCRIPT_PATH="$HOME/.settings/bin/vncserver_restart.sh"
-if [ "$(id -u)" -eq 0 ]; then
-    printf 'Restarting RealVNC Server\n'
-    sudo $SCRIPT_PATH
-fi
+connect_ucsc_vpn && restart_realvnc_server

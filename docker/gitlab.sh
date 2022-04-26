@@ -7,6 +7,8 @@ if [ ! -d "$GITLAB_HOME" ]; then
 fi
 
 MAIN_PORT="30000"
+SSH_PORT="30001"
+HTTPS_PORT="30443"
 
 if [ "$MAIN_PORT" = '80' ]; then
   EXT_URL="taris9047.ddns.net"
@@ -24,8 +26,9 @@ if [ -z "$(docker ps | grep gitlab)" ]; then
   printf "Running gitlab docker!!\n"
   docker run --detach \
     --hostname="$EXT_URL" \
-    --env GITLAB_OMNIBUS_CONFIG="external_url 'http://$EXT_URL/';gitlab_rails['lfs_enabled'] = true;puma['worker_processes'] = 0;sidekiq['max_concurrency'] = 10;" \
-    --publish $MAIN_PORT:$MAIN_PORT --publish 9022:22 \
+    --env GITLAB_OMNIBUS_CONFIG="external_url 'http://$EXT_URL/';gitlab_rails['lfs_enabled'] = true;puma['worker_processes'] = 0;sidekiq['max_concurrency'] = 10;gitlab_rails['gitlab_shell_ssh_port'] = $SSH_PORT" \
+    --publish $MAIN_PORT:$MAIN_PORT  \
+    --publish $SSH_PORT:22 \
     --name gitlab \
     --restart always \
     --volume $GITLAB_HOME/config:/etc/gitlab \
