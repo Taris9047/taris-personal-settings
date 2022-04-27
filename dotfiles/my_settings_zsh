@@ -524,23 +524,27 @@ if [ -x "$(command -v broot)" ]; then
     alias bs='broot --sizes'
 fi
 
-JAVA_HOME=/opt/java
+DEFAULT_JAVA_HOME=/opt/java
+JAVA_HOME=''
 if [ -x "$(command -v java)" ]; then
     JAVA_HOME="$(echo "$(command -v java)" | rev | cut -c10- | rev )"
 fi
 
 # Prefer /opt/java instead of system installed java
-if [ -x "$(command -v /opt/java/bin/java)" ]; then
-    JAVA_HOME=/opt/java
+if [ -x "$(command -v "$DEFAULT_JAVA/bin/java")" ]; then
+    JAVA_HOME="${DEFAULT_JAVA}"
 fi
 
 if [ -d "$JAVA_HOME" ]; then
     printf '%b Java (Possibly Oracle) found at %s\n' "${check_symbol}" "${JAVA_HOME}"
     sleep "${line_delay}"
     addpath "${JAVA_HOME}/bin"
+    export JAVA_HOME="${JAVA_HOME}"
     export CLASSPATH="${JAVA_HOME}/lib"
+else
+    printf '%b Java was not found in the system!\n' "${check_symbol}"
+    unset JAVA_HOME
 fi
-export JAVA_HOME="$JAVA_HOME"
 
 JEDIT_PATH="$HOMEBREW/.opt/jEdit/bin"
 [ -x "$(command -v $JEDIT_PATH/jedit)" ] && export PATH="$JEDIT_PATH:$PATH"
