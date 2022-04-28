@@ -862,9 +862,9 @@ fi
 clear
 if [ -x "$(command -v figlet)" ]; then
     if [ -x $(command -v lolcat) ]; then
-        figlet -w "$(tput cols)" "$(uname -n)" | lolcat
+        figlet -w "$(/usr/bin/tput cols)" "$(uname -n)" | lolcat
     else
-        figlet -w "$(tput cols)" "$(uname -n)"
+        figlet -w "$(/usr/bin/tput cols)" "$(uname -n)"
     fi
 fi
 
