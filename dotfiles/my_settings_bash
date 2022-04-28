@@ -519,12 +519,12 @@ fi
 DEFAULT_JAVA_HOME=/opt/java
 JAVA_HOME=''
 if [ -x "$(command -v java)" ]; then
-    JAVA_HOME="$(echo "$(command -v java)" | rev | cut -c10- | rev )"
+    export JAVA_HOME="$(echo "$(command -v java)" | rev | cut -c10- | rev )"
 fi
 
 # Prefer /opt/java instead of system installed java
-if [ -x "$(command -v "$DEFAULT_JAVA/bin/java")" ]; then
-    JAVA_HOME="${DEFAULT_JAVA}"
+if [ -x "$(command -v "$DEFAULT_JAVA_HOME/bin/java")" ]; then
+    export JAVA_HOME="${DEFAULT_JAVA_HOME}"
 fi
 
 if [ -d "$JAVA_HOME" ]; then
