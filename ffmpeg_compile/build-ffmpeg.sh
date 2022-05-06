@@ -3,23 +3,26 @@
 # Referenced:
 # https://github.com/markus-perl/ffmpeg-build-script
 
-VERSION=1.25
+VERSION=1.26
 CWD=$(pwd -P)
 PACKAGES=$CWD/packages
 WORKSPACE=$CWD/workspace
 CC="$(command -v clang)"
 CXX="$(command -v clang++)"
+RETRY_DELAY=5
 
 # Get system gcc version
-SYSTEM_GCC_ARCH=$(/usr/bin/gcc -dumpmachine)
-SYSTEM_GCC_VER=$(/usr/bin/gcc --version | grep ^gcc | sed 's/^.* //g')
+SYSTEM_GCC="/usr/bin/gcc"
+SYSTEM_CXX="/usr/bin/g++"
+SYSTEM_GCC_ARCH=$("$SYSTEM_GCC" -dumpmachine)
+SYSTEM_GCC_VER=$("$SYSTEM_GCC" --version | grep ^gcc | sed 's/^.* //g')
 SYSTEM_CXX_MVER=$(echo $SYSTEM_GCC_VER | awk '{ split($0,a,/[.]/); print a[1] }')
 
 # Fallback compilers
 if [ ! -x "$(command -v clang)" ]; then
 	echo "Oops, clang can't be found!! Falling back to system GCC."
-	CC="$(command -v /usr/bin/gcc)"
-	CXX="$(command -v /usr/bin/g++)"
+	CC="$(command -v gcc)"
+	CXX="$(command -v g++)"
 fi
 
 # Setting up build environments
@@ -29,12 +32,12 @@ LDFLAGS="${LDFLAGS_Z} -lz $LDLIBSTDCPP"
 LDEXEFLAGS=""
 EXTRALIBS="-ldl -lpthread -lm -lz"
 case "$CC" in
-*"clang")
+*/gcc | */clang)
 	CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIC -fPIE"
 	# CXXFLAGS="$CFLAGS"
-	CXXFLAGS="$CFLAGS -I/usr/include/c++/$SYSTEM_CXX_MVER -I/usr/include/$SYSTEM_GCC_ARCH/c++/$SYSTEM_CXX_MVER"
+	CXXFLAGS="$CFLAGS -I/usr/include/c++/$SYSTEM_CXX_MVER -I/usr/include/$SYSTEM_GCC_ARCH/c++/$SYSTEM_CXX_MVER $LDLIBSTDCPP"
 	;;
-*"gcc")
+"$SYSTEM_GCC")
 	CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fno-semantic-interposition -fPIC -fPIE"
 	CXXFLAGS="$CFLAGS"
 	;;
@@ -179,10 +182,22 @@ download() {
 		EXITCODE=$?
 		if [ "$EXITCODE" -ne 0 ]; then
 			echo ""
-			echo "Failed to download $1. Exitcode $EXITCODE. Retrying in 10 seconds"
-			sleep 10
+			echo "Failed to download $1. Exitcode $EXITCODE. Retrying in $RETRY_DELAY seconds"
+			sleep $RETRY_DELAY
+			echo "Retrying to download $1...as $DOWNLOAD_FILE"
 			curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
 		fi
+		
+		EXITCODE=$?
+		if [ "$EXITCODE" -ne 0 ]; then
+            echo ""
+            echo "The main download link could have died. Can you provide a mirror?"
+            read -r -p "[URL]: " line
+            echo "Setting up new download path as..."
+            ALT_URL="$line"
+            echo "$ALT_URL"
+            curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$ALT_URL"
+        fi		
 
 		EXITCODE=$?
 		if [ "$EXITCODE" -ne 0 ]; then
@@ -371,7 +386,7 @@ usage() {
     echo "     --nosrt: ignore srt build"
     echo "     --sgcc: forces to use /usr/bin/gcc and /usr/bin/g++"
     echo "   --cleanup: remove all working dirs"
-		echo "   --clean: Same as cleanlup"
+	echo "   --clean: Same as cleanlup"
     echo "   --version: shows version info."
     echo "   --help: show this help"
     echo ""
@@ -414,8 +429,8 @@ while (($# > 0)); do
 
 			if [[ "$1" == "--sgcc" ]]; then
 				sgcc='sgcc'
-			  CC="/usr/bin/gcc"
-			  CXX="/usr/bin/g++"
+			  CC="$SYSTEM_GCC"
+			  CXX="$SYSTEM_CXX"
 			fi
 
 			if [[ "$1" =~ "--gcc_suffix="* ]]; then
@@ -847,7 +862,14 @@ if build "x265"; then
 	download "https://github.com/videolan/x265/archive/Release_${x265_ver}.tar.gz" "x265-${x265_ver}.tar.gz"
 	cd "$PACKAGES"/x265-*/ || exit
 	cd source || exit
-	execute cmake . -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DCMAKE_C_COMPILER=\"$CC\" -DCMAKE_CXX_COMPILER=\"$CXX\" -DCMAKE_C_FLAGS=\"$CFLAGS\" -DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" -DENABLE_SHARED=off -DBUILD_SHARED_LIBS=OFF 
+	execute cmake . \
+	  -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
+	  -DCMAKE_C_COMPILER=\""${CC}"\" \
+	  -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
+	  -DCMAKE_C_FLAGS=\""${CFLAGS}"\" \
+	  -DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
+	  -DENABLE_SHARED=OFF \
+	  -DBUILD_SHARED_LIBS=OFF 
 	execute make -j $MJOBS
 	execute make install
 
@@ -863,10 +885,10 @@ if build "vid_stab"; then
 	download "https://github.com/georgmartius/vid.stab/archive/v${vid_stab_ver}.tar.gz" "vid.stab-${vid_stab_ver}.tar.gz"
 	cd "${PACKAGES}"/vid.stab-${vid_stab_ver} || exit
 	execute env "${COMPILER_SET}" cmake . \
-		-DCMAKE_C_COMPILER=\"${CC}\" \
-		-DCMAKE_CXX_COMPILER=\"${CXX}\" \
-		-DCMAKE_C_FLAGS=\"${CFLAGS}\" \
-		-DCMAKE_CXX_FLAGS=\"${CXXFLAGS}\" \
+		-DCMAKE_C_COMPILER=\""${CC}"\" \
+		-DCMAKE_CXX_COMPILER=\""${CXX}"\" \
+		-DCMAKE_C_FLAGS=\""${CFLAGS}"\" \
+		-DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
 		-DBUILD_SHARED_LIBS=OFF \
 		-DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
 		-DUSE_OMP=OFF \
@@ -930,10 +952,10 @@ if [ ! -n "$nosrt" ]; then
 	    export OPENSSL_LIB_DIR="${WORKSPACE}"/lib
 	    export OPENSSL_INCLUDE_DIR="${WORKSPACE}"/include/
 	    execute cmake . \
-	    	-DCMAKE_C_COMPILER=\"$CC\" \
-	    	-DCMAKE_CXX_COMPILER=\"$CXX\" \
-	    	-DCMAKE_C_FLAGS=\"$CFLAGS\" \
-	    	-DCMAKE_CXX_FLAGS=\"$CXXFLAGS\" \
+	    	-DCMAKE_C_COMPILER=\""$CC"\" \
+	    	-DCMAKE_CXX_COMPILER=\""$CXX"\" \
+	    	-DCMAKE_C_FLAGS=\""$CFLAGS"\" \
+	    	-DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
 	        -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
 	        -DCMAKE_INSTALL_LIBDIR=lib \
 	        -DCMAKE_INSTALL_BINDIR=bin \
@@ -1031,7 +1053,7 @@ if build "ffmpeg"; then
 		--enable-small \
 		--enable-version3 \
 		--extra-cflags=\""${CFLAGS}"\" \
-		--extra-cxxflags=\""${CXXFLAGS}"\" \
+		--extra-cxxflags=\""${CXXFLAGS} ${LDLIBSTDCPP}"\" \
 		--extra-ldexeflags=\""${LDEXEFLAGS}"\" \
 		--extra-ldflags=\""${LDFLAGS}"\" \
     --extra-libs=\""${EXTRALIBS}"\" \
