@@ -628,6 +628,9 @@ if type -q jq
     alias geoloc="curl -s https://ipvigilante.com/(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
 end
 
+set JUPYTER_DATA_DIR /home/$USER/Public
+set JUPYTER_RUNTIME_DIR /home/$USER/Public
+
 if type -q dust
     printf "$check_symbol dust found! Using it instead of du!\n"
     alias du='dust -r'

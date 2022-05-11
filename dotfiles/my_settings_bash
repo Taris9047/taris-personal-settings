@@ -766,6 +766,9 @@ if [ -x "$(command -v jq)" ]; then
     alias geoloc="curl -s http://ip-api.com/json/$(curl -s https://ipinfo.io/ip) | jq '.lat, .lon, .city, .country'"
 fi
 
+export JUPYTER_DATA_DIR=/home/$USER/Public
+export JUPYTER_RUNTIME_DIR=/home/$USER/Public
+
 if [ -x "$(command -v dust)" ]; then
     printf '%b dust found! Using it instead of du!\n' "${check_symbol}"
     alias du='dust -r'

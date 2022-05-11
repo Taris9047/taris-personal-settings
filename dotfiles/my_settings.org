@@ -81,6 +81,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#cuda-settings][CUDA Settings]]
   - [[#cuda-for-nvidia-96009400m][CUDA for NVIDIA 9600/9400m]]
   - [[#geolocation][Geolocation]]
+  - [[#jupyter][Jupyter]]
 - [[#rust-replacements][Rust replacements]]
   - [[#du-dust---du-replacement][Du-dust - du replacement]]
   - [[#bat---cat-replacement][Bat - cat replacement]]
@@ -2385,6 +2386,27 @@ if type -q jq
     printf "$check_symbol jq found, we can use geolocation alias as: geoloc\n"
     alias geoloc="curl -s https://ipvigilante.com/(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
 end
+#+end_src
+
+** Jupyter
+Due to recent changes, snap Firefox has problem with permission. Thus, adding a few more environment variables to the system.
+
+*** Bash
+#+NAME: prog_jupyter
+#+begin_src shell :tangle my_settings_bash
+export JUPYTER_DATA_DIR=/home/$USER/Public
+export JUPYTER_RUNTIME_DIR=/home/$USER/Public
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_jupyter>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set JUPYTER_DATA_DIR /home/$USER/Public
+set JUPYTER_RUNTIME_DIR /home/$USER/Public
 #+end_src
 
 * Rust replacements
