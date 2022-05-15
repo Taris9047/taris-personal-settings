@@ -628,10 +628,12 @@ if type -q jq
     alias geoloc="curl -s https://ipvigilante.com/(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
 end
 
+set BROWSER "(command -v firefox)"
+set JUPYTER_TMP_DIR "$HOME/.jupyter_tmp"
 if grep -q "snap" <<< "(command -v firefox)"; then
-    printf '%b System browser seems to be snap. Exporting some envs for Jupyter\n' "${check_symbol}"
-    set JUPYTER_DATA_DIR /home/$USER/.jupyter_tmp
-    set JUPYTER_RUNTIME_DIR /home/$USER/.jupyter_tmp
+    printf '%b System browser seems to be snap version. Exporting some envs for Jupyter\n' "${check_symbol}"
+    set -Ua JUPYTER_DATA_DIR "$JUPYTER_TMP_DIR"
+    set -Ua JUPYTER_RUNTIME_DIR "$JUPYTER_TMP_DIR"
 end
 
 if type -q dust

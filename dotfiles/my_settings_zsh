@@ -774,10 +774,11 @@ if [ -x "$(command -v jq)" ]; then
 fi
 
 BROWSER="$(command -v firefox)"
+JUPYTER_TMP_DIR="$HOME/.jupyter_tmp"
 if grep -q "snap" <<< "$BROWSER"; then
-    printf '%b System browser seems to be snap. Exporting some envs for Jupyter\n' "${check_symbol}"
-    export JUPYTER_DATA_DIR=/home/$USER/.jupyter_tmp
-    export JUPYTER_RUNTIME_DIR=/home/$USER/.jupyter_tmp
+    printf '%b System browser seems to be snap version. Exporting some envs for Jupyter\n' "${check_symbol}"
+    export JUPYTER_DATA_DIR="$JUPYTER_TMP_DIR"
+    export JUPYTER_RUNTIME_DIR="$JUPYTER_TMP_DIR"
 fi
 
 if [ -x "$(command -v dust)" ]; then

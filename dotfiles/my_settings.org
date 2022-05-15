@@ -2395,10 +2395,11 @@ Due to recent changes, snap Firefox has problem with permission. Thus, adding a 
 #+NAME: prog_jupyter
 #+begin_src shell :tangle my_settings_bash
 BROWSER="$(command -v firefox)"
+JUPYTER_TMP_DIR="$HOME/.jupyter_tmp"
 if grep -q "snap" <<< "$BROWSER"; then
-    printf '%b System browser seems to be snap. Exporting some envs for Jupyter\n' "${check_symbol}"
-    export JUPYTER_DATA_DIR=/home/$USER/.jupyter_tmp
-    export JUPYTER_RUNTIME_DIR=/home/$USER/.jupyter_tmp
+    printf '%b System browser seems to be snap version. Exporting some envs for Jupyter\n' "${check_symbol}"
+    export JUPYTER_DATA_DIR="$JUPYTER_TMP_DIR"
+    export JUPYTER_RUNTIME_DIR="$JUPYTER_TMP_DIR"
 fi
 #+end_src
 
@@ -2409,10 +2410,12 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
+set BROWSER "(command -v firefox)"
+set JUPYTER_TMP_DIR "$HOME/.jupyter_tmp"
 if grep -q "snap" <<< "(command -v firefox)"; then
-    printf '%b System browser seems to be snap. Exporting some envs for Jupyter\n' "${check_symbol}"
-    set JUPYTER_DATA_DIR /home/$USER/.jupyter_tmp
-    set JUPYTER_RUNTIME_DIR /home/$USER/.jupyter_tmp
+    printf '%b System browser seems to be snap version. Exporting some envs for Jupyter\n' "${check_symbol}"
+    set -Ua JUPYTER_DATA_DIR "$JUPYTER_TMP_DIR"
+    set -Ua JUPYTER_RUNTIME_DIR "$JUPYTER_TMP_DIR"
 end
 #+end_src
 
