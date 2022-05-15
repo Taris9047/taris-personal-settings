@@ -629,11 +629,15 @@ if type -q jq
 end
 
 set BROWSER "(command -v firefox)"
-set JUPYTER_TMP_DIR "$HOME/.jupyter_tmp"
-if grep -q "snap" <<< "(command -v firefox)"; then
-    printf '%b System browser seems to be snap version. Exporting some envs for Jupyter\n' "${check_symbol}"
-    set -Ua JUPYTER_DATA_DIR "$JUPYTER_TMP_DIR"
-    set -Ua JUPYTER_RUNTIME_DIR "$JUPYTER_TMP_DIR"
+set JUPYTER_DIR "$HOME/.jupyter_tmp"
+set JUPYTER_CONFIG "$JUPYTER_DIR/jupyter_notebook_config.py"
+if grep -q "snap" <<< "(command -v firefox)"
+    printf '%b System browser seems to be snap version. Generating config file to aver this problem!!\n' "${check_symbol}"
+    mkdir -p "$JUPYTER_DIR"
+    if not test -f "$JUPYTER_CONFIG"
+        touch "$JUPYTER_CONFIG"
+    end
+    echo 'c.NotebookApp.use_redirect_file = False' >> "$JUPYTER_CONFIG"
 end
 
 if type -q dust
