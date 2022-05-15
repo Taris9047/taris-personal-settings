@@ -168,7 +168,7 @@ download() {
 	if [ ! -f "$DOWNLOAD_PATH/$DOWNLOAD_FILE" ]; then
 		echo "Downloading $1 as $DOWNLOAD_FILE"
 		# curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
-		wget "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -O "$1"
+		wget "$1" -O "$DOWNLOAD_PATH/$DOWNLOAD_FILE"
 
 		EXITCODE=$?
 		if [ "$EXITCODE" -ne 0 ]; then
@@ -177,7 +177,7 @@ download() {
 			sleep $RETRY_DELAY
 			echo "Retrying to download $1...as $DOWNLOAD_FILE"
 			# curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
-			wget "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -O "$1"
+			wget "$1" -O "$DOWNLOAD_PATH/$DOWNLOAD_FILE"
 			
 		fi
 		
@@ -190,7 +190,7 @@ download() {
             ALT_URL="$line"
             echo "$ALT_URL"
             # curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$ALT_URL"
-            wget "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -O "$ALT_URL"
+            wget "$ALT_URL" -O "$DOWNLOAD_PATH/$DOWNLOAD_FILE"
         fi		
 
 		EXITCODE=$?
