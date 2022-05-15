@@ -628,8 +628,11 @@ if type -q jq
     alias geoloc="curl -s https://ipvigilante.com/(curl -s https://ipinfo.io/ip) | jq '.data.latitude, .data.longitude, .data.city_name, .data.country_name'"
 end
 
-set JUPYTER_DATA_DIR /home/$USER/Public
-set JUPYTER_RUNTIME_DIR /home/$USER/Public
+if grep -q "snap" <<< "(command -v firefox)"; then
+    printf '%b System browser seems to be snap. Exporting some envs for Jupyter\n' "${check_symbol}"
+    set JUPYTER_DATA_DIR /home/$USER/.jupyter_tmp
+    set JUPYTER_RUNTIME_DIR /home/$USER/.jupyter_tmp
+end
 
 if type -q dust
     printf "$check_symbol dust found! Using it instead of du!\n"

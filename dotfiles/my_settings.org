@@ -2394,8 +2394,12 @@ Due to recent changes, snap Firefox has problem with permission. Thus, adding a 
 *** Bash
 #+NAME: prog_jupyter
 #+begin_src shell :tangle my_settings_bash
-export JUPYTER_DATA_DIR=/home/$USER/Public
-export JUPYTER_RUNTIME_DIR=/home/$USER/Public
+BROWSER="$(command -v firefox)"
+if grep -q "snap" <<< "$BROWSER"; then
+    printf '%b System browser seems to be snap. Exporting some envs for Jupyter\n' "${check_symbol}"
+    export JUPYTER_DATA_DIR=/home/$USER/.jupyter_tmp
+    export JUPYTER_RUNTIME_DIR=/home/$USER/.jupyter_tmp
+fi
 #+end_src
 
 *** Zsh
@@ -2405,8 +2409,11 @@ export JUPYTER_RUNTIME_DIR=/home/$USER/Public
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-set JUPYTER_DATA_DIR /home/$USER/Public
-set JUPYTER_RUNTIME_DIR /home/$USER/Public
+if grep -q "snap" <<< "(command -v firefox)"; then
+    printf '%b System browser seems to be snap. Exporting some envs for Jupyter\n' "${check_symbol}"
+    set JUPYTER_DATA_DIR /home/$USER/.jupyter_tmp
+    set JUPYTER_RUNTIME_DIR /home/$USER/.jupyter_tmp
+end
 #+end_src
 
 * Rust replacements

@@ -773,8 +773,12 @@ if [ -x "$(command -v jq)" ]; then
     alias geoloc="curl -s http://ip-api.com/json/$(curl -s https://ipinfo.io/ip) | jq '.lat, .lon, .city, .country'"
 fi
 
-export JUPYTER_DATA_DIR=/home/$USER/Public
-export JUPYTER_RUNTIME_DIR=/home/$USER/Public
+BROWSER="$(command -v firefox)"
+if grep -q "snap" <<< "$BROWSER"; then
+    printf '%b System browser seems to be snap. Exporting some envs for Jupyter\n' "${check_symbol}"
+    export JUPYTER_DATA_DIR=/home/$USER/.jupyter_tmp
+    export JUPYTER_RUNTIME_DIR=/home/$USER/.jupyter_tmp
+fi
 
 if [ -x "$(command -v dust)" ]; then
     printf '%b dust found! Using it instead of du!\n' "${check_symbol}"
