@@ -1,7 +1,0 @@
-* Perl module FindBin is missing.
- >> Fedora might probably missing perl package entirely.
- >> Try to install FindBin by calling perl package manager: cpan.
- >> Then install all the packages to run cpan.
- >> After running cpan, type install FindBin
-
-

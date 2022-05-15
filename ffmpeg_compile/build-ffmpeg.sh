@@ -3,7 +3,7 @@
 # Referenced:
 # https://github.com/markus-perl/ffmpeg-build-script
 
-VERSION=1.26
+VERSION=1.26.1
 CWD=$(pwd -P)
 PACKAGES=$CWD/packages
 WORKSPACE=$CWD/workspace
@@ -71,16 +71,6 @@ COMPILER_SET+=" PKG_CONFIG_PATH=\"$PKG_CONFIG_PATH\""
 if [ ! -x "$(command -v $CC)" ]; then
 	echo "$CC"
 	echo "No compiler found!!"
-	exit 1
-fi
-
-if [ ! -x "$(command -v make)" ]; then
-	echo "No make in this system!!"
-	exit 1
-fi
-
-if [ ! -x "$(command -v curl)" ]; then
-	echo "No curl found in this system!!"
 	exit 1
 fi
 
@@ -177,7 +167,8 @@ download() {
 
 	if [ ! -f "$DOWNLOAD_PATH/$DOWNLOAD_FILE" ]; then
 		echo "Downloading $1 as $DOWNLOAD_FILE"
-		curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
+		# curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
+		wget "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -O "$1"
 
 		EXITCODE=$?
 		if [ "$EXITCODE" -ne 0 ]; then
@@ -185,7 +176,9 @@ download() {
 			echo "Failed to download $1. Exitcode $EXITCODE. Retrying in $RETRY_DELAY seconds"
 			sleep $RETRY_DELAY
 			echo "Retrying to download $1...as $DOWNLOAD_FILE"
-			curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
+			# curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
+			wget "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -O "$1"
+			
 		fi
 		
 		EXITCODE=$?
@@ -196,7 +189,8 @@ download() {
             echo "Setting up new download path as..."
             ALT_URL="$line"
             echo "$ALT_URL"
-            curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$ALT_URL"
+            # curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$ALT_URL"
+            wget "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -O "$ALT_URL"
         fi		
 
 		EXITCODE=$?
@@ -487,20 +481,18 @@ make_dir "$WORKSPACE"
 
 export PATH=${WORKSPACE}/bin:$PATH
 
-if ! command_exists "make"; then
-	echo "make not installed."
-	exit 1
-fi
+check_command () {
+    if ! command_exists "$1"; then
+	    echo "$1 not installed on the system\!\!"
+	    exit 1
+    fi
+}
 
-if ! command_exists "g++"; then
-	echo "g++ not installed."
-	exit 1
-fi
+check_command "make"
+check_command "g++"
+#check_command "curl"
+check_command "wget"
 
-if ! command_exists "curl"; then
-	echo "curl not installed."
-	exit 1
-fi
 
 # if ! command_exists "cmake"; then
 # 	echo "cmake not installed."
@@ -821,7 +813,8 @@ CONFIGURE_OPTIONS+=("--enable-libvpx")
 
 ## Video Library
 if build "xvidcore"; then
-	download "https://downloads.xvid.com/downloads/xvidcore-${xvidcore_ver}.tar.gz" "xvidcore-${xvidcore_ver}.tar.gz"
+	# download "https://downloads.xvid.com/downloads/xvidcore-${xvidcore_ver}.tar.gz" "xvidcore-${xvidcore_ver}.tar.gz"
+	download "https://fossies.org/linux/misc/xvidcore-${xvidcore_ver}.tar.gz" "xvidcore-${xvidcore_ver}.tar.gz"
 	cd "$PACKAGES"/xvidcore-${xvidcore_ver} || exit
 	cd build/generic || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
