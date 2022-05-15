@@ -2,7 +2,7 @@
 
 CWD="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 GITHUB_URL='https://github.com/ryanoasis/nerd-fonts.git'
-WORK_DIR="/tmp/.inst_nerd_fonts_workspace"
+WORK_DIR="~/.tmp/.inst_nerd_fonts_workspace"
 
 # ALL_FONTS:
 # 3270
