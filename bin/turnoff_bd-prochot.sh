@@ -10,6 +10,11 @@
 
 set -u
 
+if [ ! -x "$(command -v rdmsr)" ]; then
+	printf 'msr-tools not found on system. Installing...\n'
+	apt install -y msr-tools &&	printf 'msr-tools has been installed!\n'
+fi
+
 /sbin/modprobe msr
 # sudo touch temp
 r=`/usr/sbin/rdmsr 0x1FC`

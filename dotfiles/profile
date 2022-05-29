@@ -19,3 +19,6 @@
 #[ -n "$FISH_VERSION" ] && . "$HOME/.config/fish/config.fish"
 . ~/.bashrc
 . "$HOME/.cargo/env"
+
+# opam configuration
+test -r /home/taris/.opam/opam-init/init.sh && . /home/taris/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
