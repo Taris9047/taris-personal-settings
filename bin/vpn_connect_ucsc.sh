@@ -26,7 +26,7 @@ fi
 # VPN PATH
 VPN="/opt/cisco/anyconnect/bin/vpn"
 
-echo "Connectiong to UCSC Campus VPN"
+echo "Connecting to UCSC Campus VPN"
 
 # Prints simple usage function
 usage() {
@@ -66,11 +66,6 @@ if [ -n "$1" ] && [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
     "$VPN" disconnect
 fi
 
-prog=''
-if [ ! -z "$1" ]; then
-    prog="$1"
-fi
-
 # Restart the VNC server...
 restart_realvnc_server () {
     SCRIPT_PATH="$HOME/.settings/bin/vncserver_restart.sh"
@@ -85,11 +80,13 @@ connect_ucsc_vpn() {
     # sleep 1
 
     if [ ! -z "$prog" ]; then
-        prog_ps="$(ps -A | grep "$prog")"
+        prog_ps="$(ps -A | grep -e "$prog")"
         if [ -z "$prog_ps" ]; then
             printf 'Not running the progress "%s" in background.\n' "$prog"
             printf 'Thus, no reason to connect to VPN again!\n'
             exit 0
+        else
+            printf '%s is running... trying to reconnect to VPM.\n' "$prog"
         fi
     fi
 
@@ -120,4 +117,4 @@ connect_ucsc_vpn() {
     fi
 }
 
-connect_ucsc_vpn && restart_realvnc_server
+connect_ucsc_vpn && sleep 1.0 && restart_realvnc_server
