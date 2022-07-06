@@ -86,7 +86,7 @@ connect_ucsc_vpn() {
             printf 'Thus, no reason to connect to VPN again!\n'
             exit 0
         else
-            printf '%s is running... trying to reconnect to VPM.\n' "$prog"
+            printf '%s is running... trying to reconnect to VPN.\n' "$prog"
         fi
     fi
 
