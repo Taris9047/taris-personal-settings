@@ -1,0 +1,30 @@
+version: '3.6'
+services:
+  web:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+      #    hostname: 'ufsdcadsim.ucsc.edu:30000'
+    hostname: 'ufsdcadsim.ucsc.edu'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://ufsdcadsim.ucsc.edu'
+        gitlab_rails['lfs_enabled'] = true
+        puma['worker_processes'] = 0
+        sidekiq['min_concurrency'] = 1
+        sidekiq['max_concurrency'] = 6
+        gitlab_rails['gitlab_shell_ssh_port'] = 30022
+        letsencrypt['enable'] = true
+        letsencrypt['contact_emails'] = ['tashin@ucsc.edu']
+        letsencrypt['auto_renew_hour'] = "12"
+        letsencrypt['auto_renew_minute'] = "30"
+        letsencrypt['auto_renew_day_of_month'] = "*/15"
+        letsencrypt['auto_renew'] = true
+    ports:
+      - '30000:30000'
+      - '443:443'
+      - '30022:22'
+    volumes:
+      - '/srv/gitlab/config:/etc/gitlab'
+      - '/srv/gitlab/logs:/var/log/gitlab'
+      - '/srv/gitlab/data:/var/opt/gitlab'
+    shm_size: '256m'
