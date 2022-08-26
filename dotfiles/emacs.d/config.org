@@ -10,7 +10,7 @@
 - [[#essential-stuffs][Essential Stuffs..]]
   - [[#the-essential---evil-mode][the essential - Evil Mode!!]]
   - [[#general-keybindings][General Keybindings]]
-  - [[#icons-icons][Icons! Icons!]]
+  - [[#icons-icons-all-the-icons][Icons! Icons! All The Icons]]
   - [[#buffers-and-bookmarks][Buffers and bookmarks]]
   - [[#company-mode][Company Mode]]
   - [[#code-editing-shortcuts][Code editing shortcuts]]
@@ -55,7 +55,7 @@
 - [[#neotree][Neotree]]
 - [[#the-org-mode][The ORG MODE!!!!]]
   - [[#a-few-things-like-doomemacs][A few things like Doomemacs!]]
-  - [[#bullets][Bullets]]
+  - [[#bullets-for-orgmode][Bullets for Orgmode]]
   - [[#org-link-abbreviations][Org Link abbreviations]]
   - [[#automatic-tangle][Automatic Tangle]]
   - [[#org-todo-keywords][Org TODO Keywords]]
@@ -82,6 +82,9 @@
 - [[#korean-language-stuffs][Korean Language Stuffs]]
   - [[#input-method-settings][Input Method Settings]]
   - [[#font-size-matching][Font Size Matching]]
+- [[#startup-performance][Startup Performance]]
+  - [[#garbate-collection][Garbate Collection]]
+  - [[#native-compilation][Native Compilation]]
 - [[#misc-stuffs][Misc Stuffs]]
   - [[#file-management-stuff][File management stuff]]
   - [[#more-undos][More Undos!]]
@@ -90,6 +93,7 @@
   - [[#iedit-settings][iEdit settings]]
   - [[#measure-time-macro][measure-time macro]]
 - [[#which-key][Which Key]]
+- [[#even-more-runtime-performance-stuff][Even more runtime performance stuff]]
 - [[#writeroom-mode][Writeroom Mode]]
 - [[#lastly-wakku-stuff][Lastly, Wakku stuff]]
 
@@ -138,7 +142,7 @@ Let's not stick to C-x C-... blah blah anymore!
   (general-evil-setup t))
 #+end_src
 
-** Icons! Icons!
+** Icons! Icons! All The Icons
 #+begin_src emacs-lisp
 (use-package all-the-icons)
 #+end_src
@@ -274,6 +278,7 @@ This line causes error. Not sure why. We are supposed to find *dashboard* buffer
 (use-package recentf
   :config
   (recentf-mode))
+(use-package sudo-edit) ;; when editing files with Sudo
 #+end_src
 
 #+begin_src emacs-lisp
@@ -703,7 +708,7 @@ Well, let's use it!!
       org-edit-src-content-indentation 0)
 #+end_src
 
-** Bullets
+** Bullets for Orgmode
 #+begin_src emacs-lisp
 (use-package org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -746,43 +751,8 @@ Well, let's use it!!
 
 ** Source Block Tag Expansion
 #+begin_src emacs-lisp
-(setq old-structure-template-alist
-      '(("py" "#+BEGIN_SRC python :results output\n?\n#+END_SRC" "")
-        ("ipy" "#+BEGIN_SRC ipython :results output\n?\n#+END_SRC" "")
-        ("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "")
-        ("hs" "#+BEGIN_SRC haskell\n?\n#+END_SRC" "")
-        ("laeq" "#+BEGIN_LaTeX\n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}\n#+END_LaTeX" "")
-        ("sh" "#+BEGIN_SRC shell\n?\n#+END_SRC" "")
-        ("r" "#+BEGIN_SRC R\n?\n#+END_SRC" "")
-        ("js" "#+BEGIN_SRC js\n?\n#+END_SRC" "")
-        ("http" "#+BEGIN_SRC http\n?\n#+END_SRC" "")
-        ("ditaa" "#+BEGIN_SRC ditaa :file\n?\n#+END_SRC" "")
-        ("dot" "#+BEGIN_SRC dot :file\n?\n#+END_SRC" "")
-        ("rp" "#+BEGIN_SRC R :results output graphics :file \n?\n#+END_SRC" "")
-        ("plantuml" "#+BEGIN_SRC plantuml :file\n?\n#+END_SRC" "")
-        ("n" "#+NAME: ?")
-        ("cap" "#+CAPTION: ?")))
-;; For Org-mode >= 9.2
-(setq new-structure-template-alist
-      '(("py" . "src python :results output")
-        ("ipy" . "src ipython :results output")
-        ("el" . "src emacs-lisp")
-        ("hs" . "src haskell")
-        ("laeq" . "latex \n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}")
-        ("sh" . "src shell")
-        ("r" . "src R")
-        ("js" . "src js")
-        ("http" . "src http")
-        ("ditaa" . "src ditaa :file")
-        ("dot" . "src dot :file")
-        ("rp" . "src R :results output graphics :file ")
-        ("plantuml" . "src plantuml :file")
-        ))
-;; Keyword expansion also changed in 9.2
-(setq my-tempo-keywords-alist
-      '(("n" . "NAME")
-        ("cap" . "CAPTION")))
-
+(use-package org-tempo
+  :ensure nil) 
 #+end_src
 
 ** Source Code Block Syntax highlighting
@@ -1014,6 +984,41 @@ Well, it needs a lot of iterative effort to make it work... Check up the table w
 #+end_src
 
 Even though you successfully match the width.. the height difference will be pretty drastic... and ugly.
+* Startup Performance
+** Garbate Collection
+Reducing the frequency of grabate collection to speed up.
+#+begin_src emacs-lisp
+;; Using garbage magic hack.
+ (use-package gcmh
+   :config
+   (gcmh-mode 1))
+;; Setting garbage collection threshold
+(setq gc-cons-threshold 402653184
+      gc-cons-percentage 0.6)
+
+;; Profile emacs startup
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "*** Emacs loaded in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+
+;; Silence compiler warnings as they can be pretty disruptive (setq comp-async-report-warnings-errors nil)
+#+end_src
+
+** Native Compilation
+#+begin_src emacs-lisp
+;; Silence compiler warnings as they can be pretty disruptive
+(if (boundp 'comp-deferred-compilation)
+    (setq comp-deferred-compilation nil)
+    (setq native-comp-deferred-compilation nil))
+;; In noninteractive sessions, prioritize non-byte-compiled source files to
+;; prevent the use of stale byte-code. Otherwise, it saves us a little IO time
+;; to skip the mtime checks on every *.elc file.
+(setq load-prefer-newer noninteractive)
+#+end_src
 
 * Misc Stuffs
 ** File management stuff
@@ -1094,6 +1099,11 @@ Pattern matching edit mode. Pretty useful!
         which-key-allow-imprecise-window-fit t
         which-key-separator " → " ))
 (which-key-mode)
+#+end_src
+
+* Even more runtime performance stuff
+#+begin_src emacs-lisp
+(setq gc-cons-threshold (* 2 1000 1000))
 #+end_src
 
 * Writeroom Mode
