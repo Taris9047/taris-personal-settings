@@ -114,7 +114,7 @@ if [ -d "$HOME/.emacs.d" ] || [ -e "$HOME/.emacs" ] || [ -L "$HOME/.emacs.d" ]; 
 fi
 
 echo "Let's install Doomemacs!!"
-git clone --depth 1 https://github.com/hlissner/doom-emacs "$HOME/.emacs.d" && "$HOME/.emacs.d/bin/doom" --yes install
+git clone --depth 1 https://github.com/hlissner/doom-emacs "$HOME/.emacs.d" && "$HOME/.emacs.d/bin/doom" -! install
 
 echo "Ok, updating the doom.d setting files!!"
 rm -rvf ${HOME}/.doom.d/*
@@ -125,7 +125,7 @@ ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/config.org" "${HOME}/.doom.d/config.org
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/aliases" "${HOME}/.doom.d/aliases" || true
 
 echo "Re-compiling doomemacs with the updated setting files!!"
-"$HOME/.emacs.d/bin/doom" -y sync -u
+"$HOME/.emacs.d/bin/doom" -! sync -u
 
 echo ""
 echo "Doomemacs installed and Updated!!"
