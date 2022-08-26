@@ -48,6 +48,7 @@
   - [[#javascript][Javascript]]
   - [[#lua][Lua]]
   - [[#markdown][Markdown]]
+  - [[#gnu-octave][GNU Octave]]
 - [[#magit][Magit]]
   - [[#setup-magit][Setup Magit]]
   - [[#hotkeys-for-magit][Hotkeys for Magit]]
@@ -620,8 +621,15 @@ Some handy keybindings for JSON Mode.
 #+end_src
 
 ** Markdown
+Who doesn't use markdown these days?
 #+begin_src emacs-lisp
 (use-package markdown-mode)
+#+end_src
+
+** GNU Octave
+Matlab alternative, GNU Octave. I'm not using it as any primary activity. But still too many people prefers those .m stuffs.
+#+begin_src emacs-lisp
+(autoload 'octave-mode "octave-mod" nil t)
 #+end_src
 
 * Magit
