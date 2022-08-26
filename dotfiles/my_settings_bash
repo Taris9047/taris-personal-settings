@@ -244,6 +244,12 @@ alias sudo='sudo -H'
 alias free='free -m'
 
 function aptup () {
+    if [ -x "$(command -v nala)" ]; then
+        printf 'nala detected!! Using it!!\n'
+        sudo nala update && sudo nala upgrade -y
+        return 0
+    fi
+
     if [ -x "$(command -v apt-get)" ]; then
         sudo apt-get -y update && sudo apt-get -y upgrade
     elif [ -x "$(command -v apt)" ]; then
@@ -256,7 +262,12 @@ function aptup () {
 }
 
 function aptin () {
-    aptup && sudo apt-get -y install "$@"
+    if [ -x "$(command -v nala)" ]; then
+        printf 'nala detected!! Using it!!\n'
+        aptup && sudo nala install -y "$@"
+    else
+        aptup && sudo apt-get -y install "$@"
+    fi
 }
 
 function dnfup () {
