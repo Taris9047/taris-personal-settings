@@ -1,0 +1,15 @@
+To fix NUMA node -1 error!
+
+Actually, we are not really fixing the error.. it's just a walkaround.
+
+According to some people's research in...
+https://stackoverflow.com/questions/44232898/memoryerror-in-tensorflow-and-successful-numa-node-read-from-sysfs-had-negativ
+
+We can 'fool' the system by just correcting the system descriptor file of the GPU.
+
+Therefore, we can just simply implement the crontab command as root to be triggered on each reboot.
+
+for pcidev in $(lspci -D|grep 'VGA compatible controller: NVIDIA'|sed -e 's/[[:space:]].*//'); do echo 0 > /sys/bus/pci/devices/${pcidev}/numa_node; done
+
+What a mess... nvidia-smi doesn't accept it either. Maybe we need to set up this NUMA node crap on the BIOS?
+
