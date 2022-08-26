@@ -147,6 +147,14 @@ ALACRITTY_CONF_FILE="$USR_DIR/.config/alacritty.yml"
 rm -rf "$ALACRITTY_CONF_FILE"
 ln -sf "$SETTINGS_DIR/dotfiles/alacritty.yml" "$ALACRITTY_CONF_FILE" || true
 
+# Kitty - A highly customizable terminal
+printf 'Setting up Kitty config file\n'
+KITTY_CONF_FILE="$USR_DIR/.config/kitty/kitty.conf"
+rm -rf "$KITTY_CONF_FILE"
+rm -rf "$USR_DIR/.config/kitty"
+mkdir -p "$USR_DIR/.config/kitty"
+ln -sf "$SETTINGS_DIR/dotfiles/kitty.conf" "$KITTY_CONF_FILE" || true
+
 # Emacs - Not Doom nor Space. Just Emacs.
 if [ ! -d "$HOME/.doom.d" ]; then
 	printf 'Setting up Default emacsd.d\n'
