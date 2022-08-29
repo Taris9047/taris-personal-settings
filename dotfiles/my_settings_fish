@@ -79,7 +79,8 @@ if test -d "$HBREW_PATH"
 end
 printf "%b HOMEBREW directory is %s\n" "$check_symbol" "$HOMEBREW"
 sleep "$line_delay"
-set fish_user_paths "$HOMEBREW/bin" "$fish_user_paths"
+fish_add_path -aP "$HOMEBREW/bin"
+fish_add_path -aP "$HOMEBREW/.opt/bin"
 
 # Let's set up ls as lsd or exa (default is lsd as of now.)
 function set_ls_as_ls
@@ -179,7 +180,7 @@ if test -f "$HOME/.Xresources" and test -x "(command -v xrdb)"
 end
 
 if test -n "(grep -i 'Microsoft' /proc/version)"
-    set DISPLAY=$(ip route|awk '/^default/{print $3}'):0.0
+    set DISPLAY="(ip route|awk '/^default/{print $3}'):0.0"
     printf '%b Setting up DISPLAY for WSL: %s\n' "$check_symbol" "$DISPLAY"
 end
 
@@ -195,8 +196,8 @@ if not type -q spark
 end
 
 if not type -q rclone and test -z "$SSH_CLIENT"
-    printf '%b Installing RClone!!\n' "${check_symbol}"
-    printf '  %b Type in your password if you feel something is halted!!\n' "${right_arrow_symbol}"
+    printf '%b Installing RClone!!\n' "$check_symbol"
+    printf '  %b Type in your password if you feel something is halted!!\n' "$right_arrow_symbol"
     echo
     echo
     curl 'https://rclone.org/install.sh' | sudo -H bash
@@ -415,7 +416,7 @@ function check_uptime
 end
 
 if type -q alacritty
-    if test -n "$(cat /proc/cpuinfo | grep 'hypervisor')"
+    if test -n "(cat /proc/cpuinfo | grep 'hypervisor')"
         alias alacritty="MESA_GL_VERSION_OVERRIDE=3.3 LIBGL_ALWAYS_SOFTWARE=1 alacritty"
     end
 end
@@ -631,8 +632,9 @@ end
 set BROWSER "(command -v firefox)"
 set JUPYTER_DIR "$HOME/.jupyter_tmp"
 set JUPYTER_CONFIG "$JUPYTER_DIR/jupyter_notebook_config.py"
-if grep -q "snap" <<< "(command -v firefox)"
-    printf '%b System browser seems to be snap version. Generating config file to aver this problem!!\n' "${check_symbol}"
+switch "(command -v firefox)"
+case "*snap*"
+    printf '%b System browser seems to be snap version. Generating config file to aver this problem!!\n' "$check_symbol"
     mkdir -p "$JUPYTER_DIR"
     if not test -f "$JUPYTER_CONFIG"
         touch "$JUPYTER_CONFIG"
