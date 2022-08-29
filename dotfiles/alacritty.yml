@@ -224,7 +224,7 @@ draw_bold_text_with_bright_colors: true
 colors:
   # Default colors
   primary:
-    background: "0x110643"
+    background: "0x1e1f33"
     foreground: "0xdbd2df"
 
     # Bright and dim foreground colors
@@ -233,7 +233,7 @@ colors:
     # If the bright foreground color is not set, or `draw_bold_text_with_bright_colors`
     # is `false`, the normal foreground color will be used.
     dim_foreground: '0x9a9a9a'
-    bright_foreground: '0xffffff'
+    bright_foreground: '0xf8f8f2'
 
   # Cursor colors
   #
@@ -249,7 +249,7 @@ colors:
   # background is unset, selection color will be the inverse of the cell colors.
   # If only text is unset the cell text color will remain the same.
   selection:
-    text: "0xbbc2cf"
+    text: "0x010101"
 
   # Normal colors
   normal:
