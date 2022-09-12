@@ -98,9 +98,20 @@ A lot of packages will install.
 
 Finally, let's call the `amdgpu-install` script.
 ```bash
-amdgpu-install --no-dkms --no-32 --usecase=rocm
+amdgpu-install --no-dkms --usecase=rocm,opencl
 ```
-The reasoning of `--no-dkms` is because all the linux Kernels ship with AMD GPU drivers. And we do not obviously need 32 bit libraries. Lastly, we are installing `ROCm` with `--usecase=rocm`.
+The reasoning of `--no-dkms` is because all the linux Kernels ship with AMD GPU drivers. Lastly, we are installing `ROCm` with `--usecase=rocm,opencl`.
+
+To use tensorflow and other stuffs, we need to install a few more libraries such as, `rocm-dev, rccl, rocm-hip-sdk, rocm-hip-runtime, rocm-opencl-sdk`. Install then to finalize the environment!!
+
+`sudo apt install rocm-dev rccl rocm-hip-sdk rocm-hip-runtime rocm-opencl-sdk`
+
+On the other hand, we can also assign more usecases but I haven't tested yet.
+
+```
+amdgpu-install --no-dkms --usecase=rocm,opencl,hiplibsdk,openclsdk
+```
+
 
 ## Conclusion
 That's all. Due to lack of pre-packaged solutions unlike NVIDIA's CUDA, we had to work on some bash Fu's. But this is worth it since we don't need to update ROCm packages every time the graphics driver updates. Also, recent ROCm actually supports all those AMD's newest RDNA2 GPUs. Now, let's get back to work!
