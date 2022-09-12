@@ -257,10 +257,10 @@ colors:
     red: "0xff6c6b"
     green: "0x98be65"
     yellow: "0xda8548"
-    blue: "0x51afef"
+    blue: "0x51efff"
     magenta: "0xc678dd"
-    cyan: "0x5699af"
-    white: "0x202328"
+    cyan: "0x56a9af"
+    white: "0xff2328"
 
   # Bright colors
   bright:
