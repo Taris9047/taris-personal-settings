@@ -251,6 +251,10 @@ Plug 'jceb/vim-orgmode'
 " Big comment! NERDCommenter
 Plug 'preservim/nerdcommenter'
 
+" FZF stuffs...
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
 " End of Vim Plug managed addons...
 "
 call plug#end()
