@@ -101,7 +101,7 @@ m4_ver="1.4.19"
 autoconf_ver="2.71"
 automake_ver="1.16.4"
 libtool_ver="2.4.6"
-openssl_ver="1_1_1n"
+openssl_ver="1_1_1q"
 trousers_ver="0.3.15"
 cmake_ver="3.21.2"
 git_ver="2.33.0"
@@ -1019,17 +1019,19 @@ if command_exists "nvcc"; then
 		CONFIGURE_OPTIONS+=("--enable-amf")
 	fi
 
+elif command_exists "clinfo"; then
+  CONFIGURE_OPTIONS+=("--enable-opencl")
 fi
 
 if build "ffmpeg"; then
 	download "https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2" "ffmpeg-snapshot.tar.bz2"
 	cd "$PACKAGES"/ffmpeg-snapshot/ || exit
 
-  if [ "&(nvcc_ver_chk_ubuntu)" = "Fail" ] & [ -x "$(command -v gcc-10)" ]; then
-    CC="$(command -v gcc-10)"
-    CXX="$(command -v g++-10)"
-    CONFIGURE_OPTIONS+=("--nvccflags=\"-ccbin $CC\"")
-  fi
+#  if [ "&(nvcc_ver_chk_ubuntu)" = "Fail" ] & [ -x "$(command -v gcc-10)" ]; then
+#    CC="$(command -v gcc-10)"
+#    CXX="$(command -v g++-10)"
+#    CONFIGURE_OPTIONS+=("--nvccflags=\"-ccbin $CC\"")
+#  fi
 
 	execute ./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
@@ -1079,7 +1081,7 @@ if build "ffmpeg"; then
 	elif [[ ! $SKIPINSTALL == "yes" ]]; then
 		read -r -p "Install the binary to your $INSTALL_FOLDER folder? [Y/n] " response
 		case $response in
-		[yY][eE][sS] | [yY])
+		[yY][eE][sS] | [yY] | "")
 			if [ ! -w "$INSTALL_FOLDER" ]; then
 				sudo cp -vfr "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
 				sudo cp -vfr "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"

@@ -10,3 +10,11 @@
 Alternatively, you can use:
 https://fossies.org/linux/misc/xvidcore-1.3.7.tar.gz
 
+### OpenCL
+If the system does not have CUDA and has OpenCL (detects `clinfo` command), it will automatically add `--enable-opencl` into FFMpeg's configure. In that case, you need to install a few packages to compile successfully. 
+
+For Ubuntu:
+ocl-icd-opencl-dev
+opencl-headers
+
+
