@@ -304,21 +304,26 @@ function pacmanin () {
 }
 
 function flatpakup () {
-    flatpak update && flatpak upgrade
+    printf 'Updating Flatpak and its packages\n'
+    flatpak upgrade
 }
 
 function snapup () {
-    snap refresh
+    printf 'Updating Snap packages\n'
+    sudo snap refresh
+}
+
+function universal_pkgman_up () {
+    [ -x "$(command -v flatpak)" ] && flatpakup 2>&1
+    [ -x "$(command -v snap)" ] && snapup 2>&1
 }
 
 function pkgup () {
     printf 'Updating the system with package manager!\n'
-    [ -x "$(command -v apt-get)" ] && aptup 2>&1 && return 0
-    [ -x "$(command -v dnf)" ] && dnfup 2>&1 && return 0
-    [ -x "$(command -v yum)" ] && yumup 2>&1 && return 0
-    [ -x "$(command -v pacman)" ] && pacmansync 2>&1 && return 0
-    [ -x "$(command -v flatpak)" ] && flatpakup 2>&1 && return 0
-    [ -x "$(command -v snap)" ] && snapup 2>&1 && return 0
+    [ -x "$(command -v apt-get)" ] && aptup 2>&1 && universal_pkgman_up 2>&1 && return 0
+    [ -x "$(command -v dnf)" ] && dnfup 2>&1 && universal_pkgman_up 2>&1 && return 0
+    [ -x "$(command -v yum)" ] && yumup 2>&1 && universal_pkgman_up 2>&1 && return 0
+    [ -x "$(command -v pacman)" ] && pacmansync 2>&1 && universal_pkgman_up 2>&1 && return 0
 }
 
 function pkgin () {
