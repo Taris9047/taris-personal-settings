@@ -212,5 +212,8 @@
 	helper = store
 [cola]
 	spellcheck = false
+	tabwidth = 4
 [pull]
 	rebase = false
+[gui]
+	editor = gedit
