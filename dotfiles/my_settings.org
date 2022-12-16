@@ -947,7 +947,7 @@ function pacmanin () {
 
 function flatpakup () {
     printf 'Updating Flatpak and its packages\n'
-    flatpak upgrade
+    flatpak upgrade -y
 }
 
 function snapup () {
