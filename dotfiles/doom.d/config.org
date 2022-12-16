@@ -65,6 +65,7 @@
   - [[#measure-time-macro][measure-time macro]]
   - [[#initial-window-size][Initial Window Size]]
   - [[#exit-messages-are-annoying][Exit messages are... Annoying]]
+  - [[#lisp-eval-depth-crap][Lisp Eval Depth Crap]]
 
 * Init file (init.el)
 Here's init.el file for Doomemacs. Fundamental set ups are all done here. However, in openSUSE, they have some other settings on =/usr/share/X11/app-defaults/Emacs= file. I'm not sure why custom compiled Emacs follows this file's configuration though. The gnu.org clearly mentions that Emacs will search user's directory first.
@@ -1152,8 +1153,8 @@ Pattern matching edit mode. Pretty useful!
 ** Initial Window Size
 When not using automatic tiling window manager, this is useful...
 #+begin_src emacs-lisp
-(add-to-list 'default-frame-alist '(height . 45) )
-(add-to-list 'default-frame-alist '(width . 80) )
+(add-to-list 'default-frame-alist '(height . 60) )
+(add-to-list 'default-frame-alist '(width . 100) )
 #+end_src
 
 ** Exit messages are... Annoying

@@ -30,4 +30,3 @@
 (package! ob-cfengine3)
 (package! iedit)
 (package! annotate)
-(package! memoize)
