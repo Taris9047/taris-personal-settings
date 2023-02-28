@@ -7,7 +7,11 @@ apt update && apt upgrade -y
 if [ -f /var/run/reboot-required ]; then
   /usr/bin/wall -n "System will be reboot after 5 minutes for update."
   /usr/bin/sleep 300
-  /usr/sbin/reboot
+  if [ -z "$(ps -A | grep -E 'swb|sdevice|sde')" ]; then
+    /usr/sbin/reboot
+  elif
+    /usr/bin/wall -n "It seems someone is using Sentaurus. Exiting. Be sure to reboot the system ASAP."
+  fi
 else
   /usr/bin/wall -n "System packages updated."
 fi
