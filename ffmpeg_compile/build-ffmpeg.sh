@@ -514,10 +514,12 @@ if build "zlib"; then
 fi
 LDFLAGS+=" -L/zlib/lib"
 
+# -Wno-int-conversion added to CFLAG to avoid error with clang.
+# reference: https://gitlab.freedesktop.org/pkg-config/pkg-config/-/issues/77
 if build "pkg-config"; then
 	download "https://pkgconfig.freedesktop.org/releases/pkg-config-$pkgconfig_ver.tar.gz" "pkg-config-$pkgconfig_ver.tar.gz"
 	cd "$PACKAGES"/pkg-config-$pkgconfig_ver || exit
-	execute env "$COMPILER_SET" ./configure --silent --prefix="${WORKSPACE}" --with-pc-path="${WORKSPACE}"/lib/pkgconfig --with-internal-glib --disable-host-tool
+	execute env "$COMPILER_SET \"CFLAGS=$CFLAGS -Wno-int-conversion\"" ./configure --silent --prefix="${WORKSPACE}" --with-pc-path="${WORKSPACE}"/lib/pkgconfig --with-internal-glib --disable-host-tool -disable-shared 
 	execute make -j $MJOBS
 	execute make install
 	build_done "pkg-config"
