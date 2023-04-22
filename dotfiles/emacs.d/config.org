@@ -310,7 +310,7 @@ This line causes error. Not sure why. We are supposed to find *dashboard* buffer
 ** Settings the font face!!
 #+begin_src emacs-lisp
 (set-face-attribute 'default nil
-                    :font "mononoki Nerd Font Mono"
+                    :font "Monospace"
                     :height 110
                     :weight 'medium)
 (set-face-attribute 'variable-pitch nil
@@ -318,7 +318,7 @@ This line causes error. Not sure why. We are supposed to find *dashboard* buffer
                     :height 120
                     :weight 'medium)
 (set-face-attribute 'fixed-pitch nil
-                    :font "mononoki Nerd Font Mono"
+                    :font "Monospace"
                     :height 110
                     :weight 'medium)
 ;; Makes commented text and keywords italics.
@@ -333,7 +333,7 @@ This line causes error. Not sure why. We are supposed to find *dashboard* buffer
 (setq-default line-spacing 0.12)
 
 ;; Needed if using emacsclient. Otherwise, your fonts will be smaller than expected.
-(add-to-list 'default-frame-alist '(font . "mononoki Nerd Font Mono-11"))
+(add-to-list 'default-frame-alist '(font . "Monospace-11"))
 ;; changes certain keywords to symbols, such as lamda!
 (setq global-prettify-symbols-mode t)
 #+end_src
