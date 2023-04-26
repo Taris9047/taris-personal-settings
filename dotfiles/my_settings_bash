@@ -227,8 +227,10 @@ if [ ! -x "$(command -v spark)" ]; then
 fi
 
 if [ ! -x "$(command -v rclone)" ] && [ -z "$SSH_CLIENT" ]; then
-    printf '%b Installing RClone!!\n' "${check_symbol}"
-    echo; echo; curl 'https://rclone.org/install.sh' | sudo -H bash
+    #printf '%b Installing RClone!!\n' "${check_symbol}"
+    #echo; echo; curl 'https://rclone.org/install.sh' | sudo -H bash
+    printf '%b rclone command not found, you can install it with install_rclone alias.\n' "${check_symbol}"
+    alias install_rclone="curl \"https://rclone.org/install.sh\" | sudo -H bash"
 fi
 
 unalias rm mv cp grep egrep fgrep df rsync sudo free 2> /dev/null || true
@@ -299,19 +301,23 @@ function yumin () {
 }
 
 function pacmansync () {
-    if [ -x "$(command -v pacman)" ] && [ -x "$(command -v pamac)" ] && [ -x "$(pacman-mirrors)" ]; then
+    if [ ! -z "$1" ] && [ -x "$(command -v pacman-mirrors)" ]; then
         sudo pacman-mirrors --continent
-        sudo pacman -Syuu
-        sudo pamac upgrade -a
-    else
-        printf 'pacman system seems to be incomplete!\n'
-        return 1
     fi
-    return 0
+    if [ -x "$(command -v pacman)" ]; then
+        sudo pacman -Syuu
+    fi
+    if [ -x "$(command -v pamac)" ]; then
+        sudo pamac upgrade -a
+    fi
 }
 
 function pacmanin () {
-    pacmansync && sudo pacman -Syuu "$@"
+    if [ -x "$(command -v pamac)" ]; then
+        sudo pamac upgrade -a && sudo pamac install "$@"
+    else
+        sudo pacman -Syuu "$@"
+    fi
 }
 
 function flatpakup () {

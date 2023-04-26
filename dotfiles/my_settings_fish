@@ -196,11 +196,13 @@ if not type -q spark
 end
 
 if not type -q rclone and test -z "$SSH_CLIENT"
-    printf '%b Installing RClone!!\n' "$check_symbol"
-    printf '  %b Type in your password if you feel something is halted!!\n' "$right_arrow_symbol"
-    echo
-    echo
-    curl 'https://rclone.org/install.sh' | sudo -H bash
+#    printf '%b Installing RClone!!\n' "$check_symbol"
+#    printf '  %b Type in your password if you feel something is halted!!\n' "$right_arrow_symbol"
+#    echo
+#    echo
+#    curl 'https://rclone.org/install.sh' | sudo -H bash
+    printf '%b rclone command not found, youcan install it with install_rclone alias command. \n' "$check_symbol"
+    alias install_rclone="curl \"https://rclone.org/install.sh\" | sudo -H bash"
 end
 
 unalias rm mv cp grep egrep fgrep df rsync sudo free 2> /dev/null || true
