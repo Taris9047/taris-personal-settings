@@ -131,7 +131,7 @@ libpng_ver="1.6.37"
 libwebp_ver="1.2.1"
 libsdl_ver="2.0.14"
 srt_ver="1.4.3"
-nvcodec_ver="11.1.5.0"
+nvcodec_ver="11.1.5.2"
 amf_ver="1.4.21.0"
 
 # Functions...
