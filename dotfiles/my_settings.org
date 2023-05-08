@@ -82,6 +82,8 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#cuda-for-nvidia-96009400m][CUDA for NVIDIA 9600/9400m]]
   - [[#geolocation][Geolocation]]
   - [[#jupyter][Jupyter]]
+  - [[#synopsys][Synopsys]]
+  - [[#xilinx][Xilinx]]
 - [[#rust-replacements][Rust replacements]]
   - [[#du-dust---du-replacement][Du-dust - du replacement]]
   - [[#bat---cat-replacement][Bat - cat replacement]]
@@ -2462,6 +2464,32 @@ case "*snap*"
     echo 'c.NotebookApp.use_redirect_file = False' >> "$JUPYTER_CONFIG"
 end
 
+#+end_src
+
+** Synopsys
+Adding environment variables for Synopsys tools.
+*** Bash
+#+NAME: prog_synopsys
+#+begin_src shell :tangle my_settings_bash
+. $HOME/.settings/Synopsys.sh
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_synopsys>>
+#+end_src
+
+** Xilinx
+Xilinx tools environment variable. Not so mandatory with modern Xilinx software.
+*** Bash
+#+NAME: prog_xilinx
+#+begin_src shell :tangle my_settings_bash :noweb yes
+. $HOME/.settings/Xilinx.sh
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_xilinx>>
 #+end_src
 
 * Rust replacements
