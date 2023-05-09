@@ -59,6 +59,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#snapd-stuff][Snapd stuff]]
   - [[#broot][Broot]]
   - [[#java-runtime-environment-or-java-development-kit][Java Runtime Environment (or Java Development Kit)]]
+  - [[#apache-maven][Apache Maven]]
   - [[#jedit][jEdit]]
   - [[#emacs-aliases][EMACS Aliases]]
   - [[#rust-cargo-actually][Rust (Cargo, actually.)]]
@@ -215,7 +216,7 @@ line_delay=0.12
 #+begin_src fish :tangle my_settings_fish
 set check_symbol "\033[1;32m\u2713\033[0m"
 set right_arrow_symbol "\033[1;37m\u2192\033[0m"
-set line_delay 0.12
+set line_delay 0.05
 #+end_src
 
 ** Prefer Tmux if available.
@@ -1708,6 +1709,51 @@ if test -d $JAVA_HOME
     set CLASSPATH=$JAVA_HOME/lib
 end
 #+end_src
+
+** Apache Maven
+Java development platform from Amazon. Needed for Minecraft server compilation.
+
+*** Bash
+#+NAME: prog_maven
+#+begin_src shell :tangle my_settings_bash
+DEFAULT_M2_HOME=/opt/maven
+M2_HOME=''
+if [ -x "$(command -v mvn)" ]; then
+    export M2_HOME="$(echo "$(command -v mvn)" | rev | cut -c10- | rev )"
+fi
+
+# Prefer /opt/java instead of system installed java
+if [ -x "$(command -v "$DEFAULT_M2_HOME/bin/mvn")" ]; then
+    export M2_HOME="${DEFAULT_M2_HOME}"
+fi
+
+if [ -d "$M2_HOME" ]; then
+    printf '%b Apache Maven found at %s\n' "${check_symbol}" "${M2_HOME}"
+    sleep "${line_delay}"
+    addpath "${M2_HOME}/bin"
+    export M2_HOME="${M2_HOME}"
+    export CLASSPATH="${M2_HOME}/lib"
+else
+    printf '%b Apache Maven was not found in the system!\n' "${check_symbol}"
+    unset M2_HOME
+fi
+
+#+end_src
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<prog_maven>>
+#+end_src
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+set M2_HOME /opt/maven
+if test -d $M2_HOME
+    printf '%b Apache Maven found at %s\n' "$check_symbol" "$M2_HOME"
+    sleep $line_delay
+    addpath "$M2_HOME/bin"
+    set CLASSPATH=$M2_HOME/lib
+end
+#+end_src
+
 
 ** jEdit
 Recently started using this program... It's not really powerful nor versatile nor fast. But good enough to serve as TCAD input deck editor. Also, Java became not really heavy in these days. So, why not keep it!

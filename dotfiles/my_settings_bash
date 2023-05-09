@@ -570,6 +570,28 @@ else
     unset JAVA_HOME
 fi
 
+DEFAULT_M2_HOME=/opt/maven
+M2_HOME=''
+if [ -x "$(command -v mvn)" ]; then
+    export M2_HOME="$(echo "$(command -v mvn)" | rev | cut -c10- | rev )"
+fi
+
+# Prefer /opt/java instead of system installed java
+if [ -x "$(command -v "$DEFAULT_M2_HOME/bin/mvn")" ]; then
+    export M2_HOME="${DEFAULT_M2_HOME}"
+fi
+
+if [ -d "$M2_HOME" ]; then
+    printf '%b Apache Maven found at %s\n' "${check_symbol}" "${M2_HOME}"
+    sleep "${line_delay}"
+    addpath "${M2_HOME}/bin"
+    export M2_HOME="${M2_HOME}"
+    export CLASSPATH="${M2_HOME}/lib"
+else
+    printf '%b Apache Maven was not found in the system!\n' "${check_symbol}"
+    unset M2_HOME
+fi
+
 JEDIT_PATH="$HOMEBREW/.opt/jEdit/bin"
 [ -x "$(command -v $JEDIT_PATH/jedit)" ] && export PATH="$JEDIT_PATH:$PATH"
 [ -x "$(command -v "$HOMEBREW/bin/jedit")" ] && JEDIT_PATH="$HOMEBREW/bin/jedit"

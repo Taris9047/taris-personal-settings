@@ -23,7 +23,7 @@ end
 
 set check_symbol "\033[1;32m\u2713\033[0m"
 set right_arrow_symbol "\033[1;37m\u2192\033[0m"
-set line_delay 0.12
+set line_delay 0.05
 
 alias tmuxkillall='tmux kill-server'
 if type -q tmux
@@ -440,6 +440,14 @@ if test -d $JAVA_HOME
     sleep $line_delay
     addpath "$JAVA_HOME/bin"
     set CLASSPATH=$JAVA_HOME/lib
+end
+
+set M2_HOME /opt/maven
+if test -d $M2_HOME
+    printf '%b Apache Maven found at %s\n' "$check_symbol" "$M2_HOME"
+    sleep $line_delay
+    addpath "$M2_HOME/bin"
+    set CLASSPATH=$M2_HOME/lib
 end
 
 set JEDIT_PATH "$HOMEBREW/.opt/jEdit/bin"
