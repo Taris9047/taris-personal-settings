@@ -1,7 +1,7 @@
 #!/bin/sh
 
 XILINX_DIR="/opt/Xilinx/"
-XILINX_VERSION="2022.2"
+XILINX_VERSION="2023.1"
 
 if [ -d "$XILINX_DIR" ]; then
     export XILINX="$XILINX_DIR"
