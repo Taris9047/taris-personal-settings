@@ -2517,7 +2517,7 @@ Adding environment variables for Synopsys tools.
 *** Bash
 #+NAME: prog_synopsys
 #+begin_src shell :tangle my_settings_bash
-. $HOME/.settings/Synopsys.sh
+. $HOME/.settings/dotfiles/Synopsys.sh
 #+end_src
 
 *** Zsh
@@ -2530,7 +2530,7 @@ Xilinx tools environment variable. Not so mandatory with modern Xilinx software.
 *** Bash
 #+NAME: prog_xilinx
 #+begin_src shell :tangle my_settings_bash :noweb yes
-. $HOME/.settings/Xilinx.sh
+. $HOME/.settings/dotfiles/Xilinx.sh
 #+end_src
 
 *** Zsh

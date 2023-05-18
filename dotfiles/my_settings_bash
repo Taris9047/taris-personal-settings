@@ -832,9 +832,9 @@ if grep -q "snap" <<< "$BROWSER"; then
     echo 'c.NotebookApp.use_redirect_file = False' >> "$JUPYTER_CONFIG"
 fi
 
-. $HOME/.settings/Synopsys.sh
+. $HOME/.settings/dotfiles/Synopsys.sh
 
-. $HOME/.settings/Xilinx.sh
+. $HOME/.settings/dotfiles/Xilinx.sh
 
 if [ -x "$(command -v dust)" ]; then
     printf '%b dust found! Using it instead of du!\n' "${check_symbol}"
