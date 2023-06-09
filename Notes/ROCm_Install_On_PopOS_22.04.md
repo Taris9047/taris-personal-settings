@@ -29,6 +29,8 @@ ubuntu|linuxmint|debian|pop)
 ```
 As you can see here, they even support Linux Mint!!
 
+This part is no longer needed as of now:
+
 Now, we need to remove checking on `kernel-modules-extra` packages. Scroll down to the function: `function debian_build_package_list()` and comment out `if` directive on `linux-modules-extra`. It will look like this after  making edits:
 ```bash
 function debian_build_package_list() {
@@ -45,7 +47,7 @@ function debian_build_package_list() {
 ```
 Once done, save it and head to next step.
 
-### rocm-llvm repackaging.
+### rocm-llvm repackaging. -- This part is no longer needed!
 Not sure why, but some of amd's packages are not very friendly even to Ubuntu 22.04. Huh? Whaaaat? That one is `rocm-llvm`. If we do not massage this package, `amdgpu-install` will complain `rocm-llvm` cannot be installed due to package dependency mismatches. Therefore, we need to install `rocm-llvm` manually from massaged package. This section can be found on the [Ref. 2][2].
 
 1. Download `rocm-llvm` deb file...
@@ -74,10 +76,14 @@ ar rcs rocm-llvm_14.0.0.22204.50200-65_amd64.deb debian-binary control.tar.xz da
 ```
 Note that the rocm-llvm_xxxx might differ in later time. But make sure the orders of those `tar.xz` files are listed correctly.
 
+This part also no longer needed:
+
 Now, then install those `-10-dev` stuffs.
 ```bash
 sudo apt install libstdc++-10-dev libstdc-10-dev
 ```
+
+But this part is necessary:
 
 Also, manage some group privilege stuffs for current user.
 ```bash
