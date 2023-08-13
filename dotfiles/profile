@@ -17,8 +17,14 @@
 #[ -n "$BASH_VERSION" ] && . "$HOME/.bashrc"
 #[ -n "$ZSH_VERSION" ] && . "$HOME/.zshrc"
 #[ -n "$FISH_VERSION" ] && . "$HOME/.config/fish/config.fish"
-. ~/.bashrc
-. "$HOME/.cargo/env"
+
+if [ -f "$HOME/.bashrc" ]; then
+  . ~/.bashrc
+fi
+
+if [ -d "$HOME/.cargo" ]; then
+  . "$HOME/.cargo/env"
+fi
 
 # opam configuration
 test -r /home/taris/.opam/opam-init/init.sh && . /home/taris/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
