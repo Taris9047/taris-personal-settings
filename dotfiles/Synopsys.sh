@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
+if [ $# -eq 0 ]; then
+  SYNOPSYS_PATH="/opt/Synopsys"
+else
+  SYNOPSYS_PATH="$1"
+fi
+
 # Synopsys directory
-SYNOPSYS_DIR="/opt/Synopsys"
+SYNOPSYS_DIR="$SYNOPSYS_PATH"
 SYNOPSYS_LICENSE='27000@license.soe.ucsc.edu'
 SYNOPSYS_VER='K_2015.06-SP2'
 
