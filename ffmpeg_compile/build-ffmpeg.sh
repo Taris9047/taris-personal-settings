@@ -49,6 +49,15 @@ case "$CC" in
 	;;
 esac
 
+# Checking if it is ARM based CPU
+MACHINE=`uname -p`
+
+BLD_TYPE="x86_64-unknown-linux-gnu"
+if [ "$MACHINE" == "aarch64" ]; then
+	BLD_TYPE="aarch64-unknown-linux-gnu"
+fi
+
+
 NVCC_VER_THRSH="8.0.13"
 
 CONFIGURE_OPTIONS=()
@@ -96,7 +105,7 @@ pkgconfig_ver="0.29.2"
 libunistring_ver="0.9.10"
 yasm_ver="1.3.0"
 nasm_ver="2.15.05"
-zlib_ver="1.2.13"
+zlib_ver="1.3"
 m4_ver="1.4.19"
 autoconf_ver="2.71"
 automake_ver="1.16.4"
@@ -764,7 +773,7 @@ if build "libtheora"; then
 	sed "s/-fforce-addr//g" configure >configure.patched
 	chmod +x configure.patched
 	mv configure.patched configure
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --with-vorbis-libraries="${WORKSPACE}"/lib --with-vorbis-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest --disable-vorbistest --disable-examples --disable-asm --disable-spec
+	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --build="${BLD_TYPE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --with-vorbis-libraries="${WORKSPACE}"/lib --with-vorbis-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest --disable-vorbistest --disable-examples --disable-asm --disable-spec
 	execute make -j $MJOBS
 	execute make install
 
