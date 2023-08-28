@@ -138,7 +138,7 @@ fdk_aac_ver="2.0.2"
 libtiff_ver="4.3.0"
 libpng_ver="1.6.37"
 libwebp_ver="1.2.1"
-libsdl_ver="2.0.14"
+libsdl_ver="2.28.2"
 srt_ver="1.4.3"
 nvcodec_ver="11.1.5.2"
 amf_ver="1.4.21.0"
@@ -939,7 +939,7 @@ CONFIGURE_OPTIONS+=("--enable-libaom")
 # fi
 
 if build "libsdl"; then
-  download "https://www.libsdl.org/release/SDL2-${libsdl_ver}.tar.gz"
+  download "https://github.com/libsdl-org/SDL/archive/refs/tags/release-${libsdl_ver}.tar.gz"
   execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
   execute make -j $MJOBS
   execute make install
