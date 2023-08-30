@@ -2,6 +2,7 @@
 
 # Referenced:
 # https://github.com/markus-perl/ffmpeg-build-script
+#
 
 VERSION=1.26.1
 CWD=$(pwd -P)
@@ -110,7 +111,7 @@ m4_ver="1.4.19"
 autoconf_ver="2.71"
 automake_ver="1.16.4"
 libtool_ver="2.4.6"
-openssl_ver="1_1_1q"
+openssl_ver="1_1_1v"
 trousers_ver="0.3.15"
 cmake_ver="3.21.2"
 git_ver="2.33.0"
