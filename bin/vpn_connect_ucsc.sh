@@ -24,7 +24,21 @@ if [ ! -f "$VPN_CREDS" ]; then
 fi
 
 # VPN PATH
-VPN="/opt/cisco/anyconnect/bin/vpn"
+VPN_ANYCONNECT="/opt/cisco/anyconnect/bin/vpn"
+VPN_SECURECLIENT="/opt/cisco/secureclient/bin/vpn"
+
+if [ -f "$VPN_ANYCONNECT" ]; then
+    VPN="$VPN_ANYCONNECT"
+elif [ -f "$VPN_SECURECLIENT" ]; then
+    VPN="$VPN_SECURECLIENT"
+fi
+
+if [ -f "$VPN" ]; then
+    printf 'VPN client detected at %s\n' "$VPN"
+else
+    printf 'VPN client has not found! Install Cisco VPN first!\n'
+    exit -1
+fi
 
 echo "Connecting to UCSC Campus VPN"
 
