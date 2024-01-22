@@ -287,6 +287,13 @@ fi
 #    /bin/bash -c "$SETTINGS_DIR/bin/setup_rust.sh"
 #fi
 
+# Adding WSL specific environment file for WSL
+if [ ! -z "$(grep -i Microsoft /proc/version)" ]; then
+	echo "Bash is running on WSL... Reading in WSL.sh"
+	append_source "$HOME/.bashrc" "$DOTFILESDIR/WSL.sh"
+fi
+
+
 printf '\n'
 printf '\n**** Closing Comments ****\n'
 printf 'Run %s dir to set up Doomemacs stuffs.\n\n' "$SETTINGS_DIR/bin/install_doomemacs.sh"

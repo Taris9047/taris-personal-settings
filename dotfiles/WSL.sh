@@ -8,7 +8,7 @@ echo "Windows User: ${WIN_USR}"
 code_path="/mnt/c/Users/${WIN_USR}/AppData/Local/Programs/Microsoft VS Code/bin"
 code_cmd="${code_path}/code"
 
-echo "${code_cmd}"
+#echo "${code_cmd}"
 
 if [ -f "${code_cmd}" ]; then
   printf 'VSCode found at: %s\n' "${code_cmd}"
