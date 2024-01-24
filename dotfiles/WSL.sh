@@ -4,7 +4,7 @@ check_symbol="\033[1;32m\u2713\033[0m"
 
 printf '\n%b WSL environment detected!! Activating it ...\n' "${check_symbol}"
 
-WIN_USR="$(/mnt/c/Windows/System32/cmd.exe "/c" "echo %USERNAME%" 2>nul | tr -d '\r')"
+WIN_USR="$(/mnt/c/Windows/System32/cmd.exe "/c" "echo %USERNAME%" 2>/dev/null | tr -d '\r')"
 
 printf '%b Windows User: %s' "${check_symbol}" "${WIN_USR}"
 
