@@ -304,4 +304,5 @@ printf '\n'
 printf '\n**** Closing Comments ****\n'
 printf 'Run %s dir to set up Doomemacs stuffs.\n\n' "$SETTINGS_DIR/bin/install_doomemacs.sh"
 printf 'TODO: Also, don''t forget to populate %s\n\n' "$HOME/.gitconfig.local"
+printf 'For Ubuntu 22.04 or below based distros: neovim may be too old for NvChad.\n\n'
 printf 'Have a nice day!\n\n'
