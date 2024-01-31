@@ -17,11 +17,11 @@ fi
 if [ -z "$(docker ps | grep portainer)" ]; then
 	printf 'Running portainer docker image!!\n'
 	cd $PORTAINER_HOME && \
-	docker run -d -p 8000:8000 -p 9091:9000 --name portainer \
-		--restart=always \
+	docker run -d -p 9092:9443 -p 9091:9000 --name portainer \
+		--restart unless-stopped \
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $PORTAINER_HOME/portainer_data:/data \
-		cr.portainer.io/portainer/portainer-ce:latest
+		portainer/portainer-ce:latest
 fi
 
 
