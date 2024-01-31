@@ -102,16 +102,22 @@ ln -sf "$VIM_SETTINGS_DIR/colors" "$VIM_CONF_DIR/colors"
 mkdir -p "$VIM_CONF_DIR/pack"
 mkdir -p "$VIM_CONF_DIR/terminal_colors"
 
-# NVIM
+# NVIM - or Neovim
 printf 'Setting up NVIM config file\n'
-NVIM_CONF_HOME="$USR_DIR/.config/nvim"
+NVIM_CONF_HOME="${USR_DIR}/.config/nvim"
 NVIM_GTK_CONF_HOME="$USR_DIR/.config/nvim-gtk"
-[ ! -d "$NVIM_CONF_HOME" ] && mkdir -pv "$NVIM_CONF_HOME"
-[ ! -d "$NVIM_GTK_CONF_HOME" ] && mkdir -pv "$NVIM_GTK_CONF_HOME"
-rm -rf "$NVIM_CONF_HOME/*init.vim"
-ln -sf "$SETTINGS_DIR/dotfiles/init.vim.nvim" "$NVIM_CONF_HOME/init.vim" || true
-ln -sf "$SETTINGS_DIR/dotfiles/init.vim.nvim" "$NVIM_CONF_HOME/sysinit.vim" || true
-ln -sf "$SETTINGS_DIR/dotfiles/ginit.vim.nvim" "$NVIM_CONF_HOME/ginit.vim" || true
+#[ ! -d "$NVIM_CONF_HOME" ] && mkdir -pv "$NVIM_CONF_HOME"
+#[ ! -d "$NVIM_GTK_CONF_HOME" ] && mkdir -pv "$NVIM_GTK_CONF_HOME"
+#rm -rf "$NVIM_CONF_HOME/*init.vim"
+#ln -sf "$SETTINGS_DIR/dotfiles/init.vim.nvim" "$NVIM_CONF_HOME/init.vim" || true
+#ln -sf "$SETTINGS_DIR/dotfiles/init.vim.nvim" "$NVIM_CONF_HOME/sysinit.vim" || true
+#ln -sf "$SETTINGS_DIR/dotfiles/ginit.vim.nvim" "$NVIM_CONF_HOME/ginit.vim" || true
+#
+# Now installs NvChad instead of copying VIM's setting directly.
+#
+rm -rf "${NVIM_CONF_HOME}" "${NVIM_GTK_CONF_HOME}"
+rm -rf "${USR_DIR}/.local/share/nvim"
+yes | git clone "https://github.com/NvChad/NvChad" "${HOME}/.config/nvim" --depth 1 
 
 # Micro Editor
 printf 'Setting up micro config files\n'
