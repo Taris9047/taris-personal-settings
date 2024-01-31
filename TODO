@@ -1,0 +1,3 @@
+1. Now, NvChad obviously needs a newer Neovim other than the one comes with the Ubuntu packages. We can install the newer version with snap, or even uds. But how can we encourage it before running nvim?
+2. On a media center PC, we can install very simple bash environment extension... such as `pkgup` or so... can we automate it? Without cloning git? Hmm...
+
