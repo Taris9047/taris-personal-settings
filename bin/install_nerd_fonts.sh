@@ -66,6 +66,7 @@ FONTS_TO_INSTALL=( \
   "Mononoki" \
   "OpenDyslexic" \
   "3270" \
+  "JetBrainsMono" \
 )
 
 echo "Nerd Font installer! - From github repo."
