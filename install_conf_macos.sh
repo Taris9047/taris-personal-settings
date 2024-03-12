@@ -286,11 +286,13 @@ fi
 
 # List of Brew packages to install
 printf 'Installing Brew Packages\n'
-BREW_PKGS=$(array 'wget' 'emacs' 'openssh' 'neovim' 'gnuplot' 'cmake' 'flex' 'bison' 'node' 'neofetch' 'figlet' 'lolcat' 'duf' 'golang' 'tmux')
+BREW_PKGS=$(array 'wget' 'emacs' 'openssh' 'neovim' 'gnuplot' 'cmake' 'flex' 'bison' 'node' 'neofetch' 'figlet' 'lolcat' 'duf' 'golang' 'tmux' 'btop' 'htop' 'meld')
 do_brew_inst() {
 	BREW_CMD="$(command -v brew)"
 	if [ ! -z "${BREW_CMD}" ]; then 
 		if [ "${1}" = "emacs" ]; then
+			"${BREW_CMD}" install --cask "${1}"
+		elif [ "${1}" = "meld" ]; then
 			"${BREW_CMD}" install --cask "${1}"
 		else
 			"${BREW_CMD}" install "${1}"
@@ -325,5 +327,8 @@ printf 'Run %s dir to set up Doomemacs stuffs.\n\n' "$SETTINGS_DIR/bin/install_d
 if [ -z "${HOME}/.gitconfig.local" ]; then
 	printf 'TODO: Also, don''t forget to populate %s\n\n' "$HOME/.gitconfig.local"
 fi
+
+if [ -x "$(command -v tmux)" ]; then
+	printf 'Sometimes tmux does not run install packages automatically: Ctrl+B Shift+I will do it manually.\n'
 
 printf 'Have a nice day!\n\n'

@@ -19,6 +19,10 @@ SYSTEM_GCC_ARCH=$("$SYSTEM_GCC" -dumpmachine)
 SYSTEM_GCC_VER=$("$SYSTEM_GCC" --version | grep ^gcc | sed 's/^.* //g')
 SYSTEM_CXX_MVER=$(echo $SYSTEM_GCC_VER | awk '{ split($0,a,/[.]/); print a[1] }')
 
+# Temporary storage for package version control
+LATEST=false
+CURRENT_PACKAGE_VERSION=0
+
 # Fallback compilers
 if [ ! -x "$(command -v clang)" ]; then
 	echo "Oops, clang can't be found!! Falling back to system GCC."
@@ -56,6 +60,14 @@ MACHINE=`uname -p`
 BLD_TYPE="x86_64-unknown-linux-gnu"
 if [ "$MACHINE" == "aarch64" ]; then
 	BLD_TYPE="aarch64-unknown-linux-gnu"
+fi
+
+APPLE_SILICON=false
+if [[ ("$(uname -m)" == "arm64") && ("$OSTYPE" == "darwin"*) ]]; then
+  # If arm64 AND darwin (macOS)
+  export ARCH=arm64
+  export MACOSX_DEPLOYMENT_TARGET=11.0
+  APPLE_SILICON=true
 fi
 
 
@@ -106,12 +118,12 @@ pkgconfig_ver="0.29.2"
 libunistring_ver="0.9.10"
 yasm_ver="1.3.0"
 nasm_ver="2.15.05"
-zlib_ver="1.3"
+zlib_ver="1.3.1"
 m4_ver="1.4.19"
 autoconf_ver="2.71"
 automake_ver="1.16.4"
 libtool_ver="2.4.6"
-openssl_ver="1_1_1v"
+openssl_ver="3.2.1"
 trousers_ver="0.3.15"
 cmake_ver="3.21.2"
 git_ver="2.33.0"
@@ -253,12 +265,18 @@ execute() {
 
 build() {
 	echo ""
-	echo "building $1"
+	echo "building $1 - Version $2"
 	echo "======================="
 
 	if [ -f "$PACKAGES/$1.done" ]; then
-		echo "$1 already built. Remove $PACKAGES/$1.done lockfile to rebuild it."
+		if grep -Fx "$2" "$PACKAGES/$1.done" >/dev/null; then
+			echo "$1 version $2 already built. Remove $PACKAGES/$1.done lockfile to rebuild it."
+		elif $LATEST; then
+			echo "$1 is outdated and will be rebuilt with latest version $2"
+		else
+			echo "$1 is outdated, but will not be rebuilt. Pass in --latest to rebuild it or remove $PACKAGES/$1.done lockfile."
 		return 1
+		
 	fi
 
 	return 0
@@ -447,8 +465,12 @@ while (($# > 0)); do
 			fi
 
 	    if [[ "$1" == "--nosrt" ]]; then
-        nosrt='yes'
+        	nosrt='yes'
 	    fi
+		
+		if [[ "$1" == "--latest" ]]; then
+			LATEST=true
+		fi
 
 	    shift
 	    ;;
@@ -610,10 +632,15 @@ if [ ! -x "$(command -v cmake)" ]; then
 fi
 
 
-if build "openssl"; then
-	download "https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_${openssl_ver}.tar.gz" "openssl-${openssl_ver}.tar.gz"
-	cd "$PACKAGES"/openssl-${openssl_ver} || exit
-	execute env "$COMPILER_SET" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
+if build "openssl"; then 
+	download "https://github.com/openssl/openssl/releases/download/openssl-${openssl_ver}/openssl-${openssl_ver}.tar.gz" "openssl-${openssl_ver}.tar.gz"
+	cd "$PACKAGES"/openssl-${openssl_ver} || exit 
+	if "${APPLE_SILICON}"; then
+		sed -n 's/\(##### GNU Hurd\)/"darwin64-arm64-cc" => { \n    inherit_from     => [ "darwin-common", asm("aarch64_asm") ],\n    CFLAGS           => add("-Wall"),\n    cflags           => add("-arch arm64 "),\n    lib_cppflags     => add("-DL_ENDIAN"),\n    bn_ops           => "SIXTY_FOUR_BIT_LONG", \n    perlasm_scheme   => "macosx", \n}, \n\1/g' Configurations/10-main.conf
+		execute env "$COMPILER_SET" ./Configure --prefix="${WORKSPACE}" no-shared no-asm darwin64-arm64-cc
+	else	
+		execute env "$COMPILER_SET" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
+	fi
 	execute make -j $MJOBS
 	execute make install_sw
 
@@ -627,7 +654,9 @@ if build "trousers"; then
 	execute CC=\"$CC\" CXX=\"$CXX\" sh ./bootstrap.sh
 	execute CC=\"$CC\" CXX=\"$CXX\" ./configure \
 		--prefix="${WORKSPACE}" \
-		--enable-static --disable-shared
+		--enable-static \
+		--disable-shared \
+		--with-openssl="${WORKSPACE}"
 	execute make -j $MJOBS
 	execute make install
 
