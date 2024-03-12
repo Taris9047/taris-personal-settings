@@ -2,7 +2,7 @@
 set -e
 
 # My settings Initial installation script
-printf '**** Setting up Taris'' Environments ****'
+printf '**** Setting up Taris'' Environments (MacOS version) ****'
 
 USR_DIR="$HOME"
 SETTINGS_DIR="$HOME/.settings"
@@ -40,18 +40,16 @@ set_os_type() {
 	*) PLATFORM="general_unix" ;;
 	esac
 
-	printf 'Setting platform as: %s\n' "$PLATFORM"
+	# printf 'Setting platform as: %s\n' "$PLATFORM"
 }
 
 # Set OS Type
 set_os_type
 
-# If Mac OS is detected, use the other script...
-if [ "${PLATFORM}" = "darwin" ]; then
-	. "$(pwd -P)/install_conf_macos.sh"
-	exit 0
+if [ "$PLATFORM" != "darwin" ]; then
+	printf 'Looks like the system is not OS X. Exiting...\n'
+	exit 1
 fi
-	
 
 # Implementing a poor man's array in POSIX way.
 # referenced: https://github.com/krebs/array/blob/master/array
@@ -98,16 +96,16 @@ printf '%s\n' "$CONF_LIST" |
 # Still linking dotfiles... but to some odd locations.
 # i.e. .config or .local/config directories etc.
 printf '\nWorking on other config files ...\n'
-# VIM
+# VIM -- MacOS comes with VIM. Thus installing it.
 printf 'Setting up VIM package directory\n'
-VIM_CONF_DIR="$USR_DIR/.vim"
-VIM_SETTINGS_DIR="$SETTINGS_DIR/dotfiles/vim"
-[ ! -d "$VIM_CONF_DIR" ] && rm -rf "$VIM_CONF_DIR"
-mkdir -pv "$VIM_CONF_DIR"
+VIM_CONF_DIR="${USR_DIR}/.vim"
+VIM_SETTINGS_DIR="${SETTINGS_DIR}/dotfiles/vim"
+[ ! -d "${VIM_CONF_DIR}" ] && rm -rf "$VIM_CONF_DIR"
+mkdir -pv "${VIM_CONF_DIR}"
 # ln -sf "$VIM_SETTINGS_DIR/autoload" "$VIM_CONF_DIR/autoload"
-ln -sf "$VIM_SETTINGS_DIR/colors" "$VIM_CONF_DIR/colors"
-mkdir -p "$VIM_CONF_DIR/pack"
-mkdir -p "$VIM_CONF_DIR/terminal_colors"
+ln -sf "${VIM_SETTINGS_DIR}/colors" "${VIM_CONF_DIR}/colors"
+mkdir -p "${VIM_CONF_DIR}/pack"
+mkdir -p "${VIM_CONF_DIR}/terminal_colors"
 
 # NVIM - or Neovim
 printf 'Setting up NVIM config file\n'
@@ -123,106 +121,38 @@ NVIM_GTK_CONF_HOME="$USR_DIR/.config/nvim-gtk"
 # Now installs NvChad instead of copying VIM's setting directly.
 #
 rm -rf "${NVIM_CONF_HOME}" "${NVIM_GTK_CONF_HOME}"
-find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "${USR_DIR}/.local/share/nvim/" -prune -name "runtime" -type d -exec rm -rf {} +
+if [ -d "${USR_DIR}/.local/share/nvim" ]; then
+	find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "nvim" -prune -name "runtime" -type d -exec rm -rf {} +
+fi
 #rm -rf "${USR_DIR}/.local/share/nvim"
 git clone "https://github.com/NvChad/NvChad" "${HOME}/.config/nvim" --depth 1 
 
-# Micro Editor
-printf 'Setting up micro config files\n'
-MICRO_CONF_HOME="$USR_DIR/.config/micro"
-[ ! -d "$MICRO_CONF_HOME" ] && mkdir -pv "$MICRO_CONF_HOME"
-rm -rf "${MICRO_CONF_HOME:?}/*"
-ln -sf "$SETTINGS_DIR/dotfiles/micro/bindings.json" "$MICRO_CONF_HOME/bindings.json"
-ln -sf "$SETTINGS_DIR/dotfiles/micro/settings.json" "$MICRO_CONF_HOME/settings.json"
-ln -sf "$SETTINGS_DIR/dotfiles/micro/init.lua" "$MICRO_CONF_HOME/init.lua"
-
-# Fish
-printf 'Setting up fish config file\n'
-FISH_CONF_HOME="$USR_DIR/.config/fish"
-[ ! -d "$FISH_CONF_HOME" ] && mkdir -pv "$FISH_CONF_HOME"
-rm -rf "${FISH_CONF_HOME:?}/*"
-ln -sf "$SETTINGS_DIR/dotfiles/my_settings_fish" "$FISH_CONF_HOME/config.fish" || true
-
-# Fontconfig
-printf 'Setting up Fontconfig dir\n'
-FONTCONFIG_DIR="$HOME/.config/fontconfig"
-[ ! -d "$FONTCONFIG_DIR" ] && mkdir -pv "$FONTCONFIG_DIR"
-rm -rf "${FONTCONFIG_DIR}/fonts.conf"
-ln -sf "${SETTINGS_DIR}/dotfiles/fonts.conf" "${FONTCONFIG_DIR}/fonts.conf" || true
-
 # Starship
 printf 'Setting up starship config file\n'
-STARSHIP_CONF_FILE="$USR_DIR/.config/starship.toml"
-[ ! -f "$STARSHIP_CONF_FILE" ] && (ln -sfv "$SETTINGS_DIR/dotfiles/starship.toml" "$STARSHIP_CONF_FILE" || true)
-
-# Alacritty - an OpenGL based terminal
-printf 'Setting up Alacritty config file\n'
-ALACRITTY_CONF_FILE="$USR_DIR/.config/alacritty.yml"
-rm -rf "$ALACRITTY_CONF_FILE"
-ln -sf "$SETTINGS_DIR/dotfiles/alacritty.yml" "$ALACRITTY_CONF_FILE" || true
-
-# Kitty - A highly customizable terminal
-printf 'Setting up Kitty config file\n'
-KITTY_CONF_FILE="$USR_DIR/.config/kitty/kitty.conf"
-rm -rf "$KITTY_CONF_FILE"
-rm -rf "$USR_DIR/.config/kitty"
-mkdir -p "$USR_DIR/.config/kitty"
-ln -sf "$SETTINGS_DIR/dotfiles/kitty.conf" "$KITTY_CONF_FILE" || true
+STARSHIP_CONF_FILE="${USR_DIR}/.config/starship.toml"
+[ ! -f "${STARSHIP_CONF_FILE}" ] && (ln -sfv "${SETTINGS_DIR}/dotfiles/starship.toml" "${STARSHIP_CONF_FILE}" || true)
 
 # Emacs - Not Doom nor Space. Just Emacs.
-if [ ! -d "$HOME/.doom.d" ]; then
+if [ ! -d "${HOME}/.doom.d" ]; then
 	printf 'Setting up Default emacsd.d\n'
-	EMACSD="$HOME/.emacs.d"
-	[ ! -d "$EMACSD" ] && mkdir -pv "$EMACSD"
+	EMACSD="${HOME}/.emacs.d"
+	[ ! -d "${EMACSD}" ] && mkdir -pv "${EMACSD}"
 	rm -rf "${EMACSD:?}/*"
-	ln -sf "$SETTINGS_DIR/dotfiles/emacs.d/init.el" "$EMACSD/init.el" || true
-	ln -sf "$SETTINGS_DIR/dotfiles/emacs.d/config.org" "$EMACSD/config.org" || true
+	ln -sf "${SETTINGS_DIR}/dotfiles/emacs.d/init.el" "${EMACSD}/init.el" || true
+	ln -sf "${SETTINGS_DIR}/dotfiles/emacs.d/config.org" "${EMACSD}/config.org" || true
 fi
 
 # Tmux!
 printf 'Setting up Tmux Package Manager (TPM)\n'
-[ ! -d "$HOME/.tmux/plugins/tpm" ] && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
-# Awesome desktop - Just for my Arcolinux
-ASMWM_CNFDIR="$HOME/.config/awesome"
-if [ -d "$ASMWM_CNFDIR" ]; then
-	printf 'Setting up Awesome desktop - Why hate lua?\n'
-	mv -f "$ASMWM_CNFDIR/autostart.sh" "$ASMWM_CNFDIR/autostart.sh.bak"
-	ln -sf "$SETTINGS_DIR/dotfiles/awesome/autostart.sh" "$ASMWM_CNFDIR/autostart.sh"
-	mv -f "$ASMWM_CNFDIR/system-overview" "$ASMWM_CNFDIR/system-overview.bak"
-	ln -sf "$SETTINGS_DIR/dotfiles/awesome/system-overview" "$ASMWM_CNFDIR/system-overview"
-	mv -f "$ASMWM_CNFDIR/rc.lua" "$ASMWM_CNFDIR/rc.lua.bak"
-	ln -sf "$SETTINGS_DIR/dotfiles/awesome/rc.lua" "$ASMWM_CNFDIR/rc.lua"
-fi
-
-# Setting up RClone directories.
-printf 'Setting up RClone directories\n'
-GOOGLE_DRIVE="$HOME/.google-drive"
-GOOGLE_DRIVE_SYM="$HOME/GoogleDrive"
-ONE_DRIVE="$HOME/.onedrive"
-ONE_DRIVE_SYM="$HOME/OneDrive"
-[ ! -d "$GOOGLE_DRIVE" ] && mkdir -pv "$GOOGLE_DRIVE"
-rm -rf "$GOOGLE_DRIVE_SYM"
-ln -sf "$GOOGLE_DRIVE" "$GOOGLE_DRIVE_SYM" || true
-
-[ ! -d "$ONE_DRIVE" ] && mkdir -pv "$ONE_DRIVE"
-rm -rf "$ONE_DRIVE_SYM"
-ln -sf "$ONE_DRIVE" "$ONE_DRIVE_SYM" || true
-
-printf 'Setting up Homebrew/opt\n'
-HOMEBREW_OPT=$HOMEBREW/.opt
-HOMEBREW_OPT_SYM=$HOMEBREW/opt
-[ ! -d "$HOMEBREW_OPT" ] && mkdir -pv "$HOMEBREW_OPT"
-rm -rf "$HOMEBREW_OPT_SYM"
-ln -sf "$HOMEBREW_OPT" "$HOMEBREW_OPT_SYM" || true
+[ ! -d "${HOME}/.tmux/plugins/tpm" ] && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # Setting up Orgmode Agenda directory
 printf 'Setting up Orgmode directory\n'
-ORGMODE_DIR="$HOME/.org_agenda"
-ORGMODE_DIR_SYM="$HOME/Org"
-[ ! -d "$ORGMODE_DIR" ] && mkdir -pv "$ORGMODE_DIR"
-rm -rf "$ORGMODE_DIR_SYM"
-ln -sf "$ORGMODE_DIR" "$ORGMODE_DIR_SYM"
+ORGMODE_DIR="${HOME}/.org_agenda"
+ORGMODE_DIR_SYM="${HOME}/Org"
+[ ! -d "${ORGMODE_DIR}" ] && mkdir -pv "${ORGMODE_DIR}"
+rm -rf "${ORGMODE_DIR_SYM}"
+ln -sf "${ORGMODE_DIR}" "${ORGMODE_DIR_SYM}"
 
 append_string() {
 	if ! grep -Fxq "${2}" "${1}"; then
@@ -240,7 +170,7 @@ DOTFILESDIR="$SETTINGS_DIR/dotfiles"
 LINUXBASHFILE="$DOTFILESDIR/bashrc_linux"
 LINUXZSHFILE="$DOTFILESDIR/zshrc_linux"
 DARWINBASHFILE="$DOTFILESDIR/bash_profile_osx"
-# DARWINZSHFILE="$DOTFILESDIR/zshrc_osx"
+DARWINZSHFILE="$DOTFILESDIR/zshrc_osx"
 # SHELL_TYPE="$(echo $SHELL)"
 
 inst_env_linux() {
@@ -256,11 +186,11 @@ inst_env_cygwin() {
 }
 
 inst_env_darwin() {
-	[ ! -f "$HOME/.bash_profile" ] && touch "$HOME/.bash_profile"
-	append_source "$HOME/.bash_profile" "$DARWINBASHFILE"
+#	[ ! -f "$HOME/.bash_profile" ] && touch "$HOME/.bash_profile"
+#	append_source "$HOME/.bash_profile" "$DARWINBASHFILE"
 
 	[ ! -f "$HOME/.zshrc" ] && touch "$HOME/.zshrc"
-	append_source "$HOME/.zshrc" "$DARWINBASHFILE"
+	append_source "$HOME/.zshrc" "$DARWINZSHFILE"
 }
 
 #
@@ -295,24 +225,68 @@ if [ ! -d "$UDS_DIR" ]; then
 	ln -sf "$UDS_DIR" "$UDS_LNK"
 fi
 
-# Installing Rust stuffs
-#printf 'Setting up Rust utilities.\n'
-#if [ ! -d "$USR_DIR/.cargo" ]; then
-#    /bin/bash -c "$SETTINGS_DIR/bin/setup_rust.sh"
-#fi
+# Installing rust stuffs
+#
+# Rust tool list
+# --> Note that some rust tools cannot be compiled on MacOS due to 
+# lack of convenient openssl library link.
+# We need to handle it for some way.
+#
+RUST_LIST=$(array 'exa' 'bat' 'rm-improved' 'diskonaut' 'ripgrep' 'fd-find' 'tokei' 'lsd' 'procs' 'hjson')
 
-# Adding WSL specific environment file for WSL
-if [ ! -z "$(grep -i Microsoft /proc/version)" ]; then
-	echo "Bash is running on WSL... Reading in WSL.sh"
-	append_source "$HOME/.bashrc" "$DOTFILESDIR/WSL.sh"
+# Rust tool install
+do_rust_inst () {
+	CARGO_BIN="$(command -v cargo)"
+	if [ -z "$(command -v ${1})" ]; then
+		"${CARGO_BIN}" install "${1}"
+	fi
+}
+
+# Install Cargo
+if [ -z "$(command -v cargo)" ]; then
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
+
+# Install Rust tools
+printf '%s\n' "${RUST_LIST}" |
+	while IFS= read -r element; do
+		do_rust_inst "$(printf '%s\n' "$element" | array_element_decode)"
+	done
+
+# Installing Starship
+if [ -z "$(command -v starship)" ]; then
+	CARGO_BIN="$(command -v cargo)"
+	# Starship cannot be installed with cargo.. Unless openssl is installed with brew.
+	# So, just taking the binary way...
+	#"${CARGO_BIN}" install starship --locked
+ 	curl -sS https://starship.rs/install.sh | sh
+fi
+
+#
+# Setting up Homebrew: Yes, you don't need my crappy install scripts for MacOS!!
+#
+if [ -z "$(command -v brew)" ]; then
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+# List of Brew packages to install
+BREW_PKGS=$(array 'wget' 'emacs' 'openssh' 'neovim' 'gnuplot' 'cmake' 'flex' 'bison')
+do_brew_inst() {
+	BREW_CMD="/usr/local/bin/brew"
+	[ ! -z "(command -v ${BREW_CMD})" ] && "${BREW_CMD}" install "${1}"
+}
+printf '%s\n' "${BREW_PKGS}" |
+	while IFS= read -r element; do
+		do_brew_inst "$(printf '%s\n' "$element" | array_element_decode)"
+	done
 
 
 printf '\n'
 printf '\n**** Closing Comments ****\n'
 printf 'Run %s dir to set up Doomemacs stuffs.\n\n' "$SETTINGS_DIR/bin/install_doomemacs.sh"
+
 if [ -z "${HOME}/.gitconfig.local" ]; then
 	printf 'TODO: Also, don''t forget to populate %s\n\n' "$HOME/.gitconfig.local"
 fi
-printf 'For Ubuntu 22.04 or below based distros: neovim may be too old for NvChad.\n\n'
+
 printf 'Have a nice day!\n\n'

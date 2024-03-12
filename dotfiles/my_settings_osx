@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Default Homebrew Path
 HBREW_PATH=$HOME/.local
@@ -76,20 +76,6 @@ if [ -d $HBREW_PATH ]; then
   export PATH=$HOMEBREW/bin:$HOMEBREW/opt/bin:/opt/bin/:$PATH
 fi
 
-# Setting for JRE
-JAVA_HOME=/opt/java
-if [ -d $JAVA_HOME ]; then
-    echo "Java (Possibly Oracle) found at $JAVAHOME"
-    export PATH=$JAVA_HOME/bin:$PATH
-	export CLASSPATH=$JAVA_HOME/lib
-fi
-# Javafx
-# JAVAFX_HOME=/opt/javafx
-# if [ -d $JAVAFX_HOME ]; then
-# 	echo "JavaFX found!"
-# 	export JAVAFX_HOME=/opt/javafx/lib
-# fi
-
 # Rust
 if [ -d $HOME/.cargo ]; then
 	echo "Cargo directory detected at $HOME/.cargo"
@@ -160,23 +146,6 @@ if [ -x "$(command -v $HOMEBREW/opt/pypy/bin/pypy3)" ]; then
   export PATH=$HOMEBREW/opt/pypy/bin:$PATH
 fi
 
-# starship
-if [[ "$(echo $0)" == *bash ]]; then
-  if [ -x "$(command -v starship)" ]; then
-    echo "Starship found! Let's start it!"
-	eval "$(starship init bash)"
-  fi
-fi
+# Enabling Starship
+[ -x "$(command -v starship)" ] && [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ] && eval "$(starship init zsh)"
 
-# zoxide
-if [ -x "$(command -v zoxide)" ]; then
-  echo "zoxide found! activating it!"
-  if [[ "$(echo $0)" == *bash ]]; then
-    eval "$(zoxide init bash)"
-  elif [[ "$(echo $0)" == *zsh ]]; then
-    eval "$(zoxide init zsh)"
-  else
-    eval "$(zoxide init posix --hook prompt)"
-  fi
-  alias cd='z'
-fi
