@@ -126,26 +126,67 @@ fi
 # fi
 
 # Rip
-trash_location="$HOME/.local/share/Trash/files/"
+trash_location="${HOME}/.local/share/Trash/files/"
 if [ -x "$(command -v rip)" ]; then
-	echo "rip, rm-improved found! Setting up graveyard at $trash_location"
-	alias rip="rip --graveyard $trash_location"
+	echo "rip, rm-improved found! Setting up graveyard at ${trash_location}"
+	alias rip="rip --graveyard ${trash_location}"
 fi
 
 # bpytop
-if [ -x "$(command -v $HOMEBREW/bin/pip3)" ]; then
-  if [ -x "$(command -v $HOMEBREW/bin/bpytop)" ]; then
+if [ -x "$(command -v ${HOMEBREW}/bin/pip3)" ]; then
+  if [ -x "$(command -v ${HOMEBREW}/bin/bpytop)" ]; then
     echo "Locally installed bpytop found!"
-	alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop && bpytop"
+	alias bpytop="${HOMEBREW}/bin/pip3 install -U bpytop && bpytop"
   fi
 fi
 
 # pypy
-if [ -x "$(command -v $HOMEBREW/opt/pypy/bin/pypy3)" ]; then
-  echo "pypy3 found in $HOMEBREW/opt/pypy/bin/pypy3 !! Extending PATH!"
+if [ -x "$(command -v ${HOMEBREW}/opt/pypy/bin/pypy3)" ]; then
+  echo "pypy3 found in ${HOMEBREW}/opt/pypy/bin/pypy3 !! Extending PATH!"
   export PATH=$HOMEBREW/opt/pypy/bin:$PATH
 fi
 
 # Enabling Starship
-[ -x "$(command -v starship)" ] && [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ] && eval "$(starship init zsh)"
+[ -x "$(command -v starship)" ] && [ ! -f "${HOME}/.oh-my-zsh/oh-my-zsh.sh" ] && eval "$(starship init zsh)"
 
+# Brew - Done with .zprofile
+# [ -f "$(/opt/homebrew/bin/brew)" ] && eval "$(/opt/homebrew/bin/brew shellenv)" &> /dev/null
+
+# Setting up miniconda3
+MINICONDA3_HOME="${HOME}/.miniconda3"
+if [ -f "${MINICONDA3_HOME}/bin/conda" ]; then
+	printf 'Miniconda3 found! Initializing it\n'
+# >>> conda initialize >>>
+	# !! Contents within this block are managed by 'conda init' !!
+	__conda_setup="$('${MINICONDA3_HOME}/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+	if [ $? -eq 0 ]; then
+	    eval "$__conda_setup"
+	else
+	    if [ -f "${MINICONDA3_HOME}/etc/profile.d/conda.sh" ]; then
+	        . "${MINICONDA3_HOME}/etc/profile.d/conda.sh"
+	    else
+	        export PATH="${MINICONDA3_HOME}/bin:$PATH"
+	    fi
+	fi
+	unset __conda_setup
+# <<< conda initialize <<<
+fi
+
+# Showing hostname
+clear
+if [ -x "$(command -v figlet)" ]; then
+    if [ -x $(command -v lolcat) ]; then
+        figlet -w "$(/usr/bin/tput cols)" "$(uname -n)" | lolcat
+    else
+        figlet -w "$(/usr/bin/tput cols)" "$(uname -n)"
+    fi
+fi
+
+# Showing system info with neofetch
+if [ -x "$(command -v neofetch)" ]; then
+	neofetch
+fi
+
+# Sanitizing path
+path_sanitized=$(printf "%s" "$PATH" | awk -v RS=':' '!a[$1]++ { if (NR > 1) printf RS; printf $1 }')
+export PATH="${path_sanitized}"

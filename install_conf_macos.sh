@@ -236,8 +236,17 @@ RUST_LIST=$(array 'exa' 'bat' 'rm-improved' 'diskonaut' 'ripgrep' 'fd-find' 'tok
 
 # Rust tool install
 do_rust_inst () {
+	CMD_TO_INST="${1}"
 	CARGO_BIN="$(command -v cargo)"
-	if [ -z "$(command -v ${1})" ]; then
+	if [ "${1}" = "fd-find" ]; then
+		CMD_TO_INST="fd"
+	elif [ "${1}" = "ripgrep" ]; then
+		CMD_TO_INST="rg"
+	elif [ "${1}" = "rm-improved" ]; then
+		CMD_TO_INST="rip"
+	fi
+	
+	if [ -z "$(command -v ${CMD_TO_INST})" ]; then
 		"${CARGO_BIN}" install "${1}"
 	fi
 }
@@ -267,18 +276,46 @@ fi
 #
 if [ -z "$(command -v brew)" ]; then
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	#append_source 'eval "$(/opt/homebrew/bin/brew shellenv)"' "${HOME}/.zprofile"
+    if [ ! -f "${HOME}/.zprofile" ]; then
+		touch "${HOME}/.zprofile"
+	fi
+	(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> "${HOME}/.zprofile"
 fi
+[ -f "/opt/homebrew/bin/brew" ] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # List of Brew packages to install
-BREW_PKGS=$(array 'wget' 'emacs' 'openssh' 'neovim' 'gnuplot' 'cmake' 'flex' 'bison')
+printf 'Installing Brew Packages\n'
+BREW_PKGS=$(array 'wget' 'emacs' 'openssh' 'neovim' 'gnuplot' 'cmake' 'flex' 'bison' 'node' 'neofetch' 'figlet' 'lolcat' 'duf' 'golang' 'tmux')
 do_brew_inst() {
-	BREW_CMD="/usr/local/bin/brew"
-	[ ! -z "(command -v ${BREW_CMD})" ] && "${BREW_CMD}" install "${1}"
+	BREW_CMD="$(command -v brew)"
+	if [ ! -z "${BREW_CMD}" ]; then 
+		if [ "${1}" = "emacs" ]; then
+			"${BREW_CMD}" install --cask "${1}"
+		else
+			"${BREW_CMD}" install "${1}"
+		fi
+	fi
 }
 printf '%s\n' "${BREW_PKGS}" |
 	while IFS= read -r element; do
 		do_brew_inst "$(printf '%s\n' "$element" | array_element_decode)"
 	done
+
+# Setting up NVChad
+if [ -x "$(command -v nvim)" ]; then
+	printf 'Setting up NVIM config files for NvChad\n'
+	NVIM_CONF_HOME="${USR_DIR}/.config/nvim"
+	NVIM_GTK_CONF_HOME="$USR_DIR/.config/nvim-gtk"
+	rm -rf "${NVIM_CONF_HOME}" "${NVIM_GTK_CONF_HOME}"
+	find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "${USR_DIR}/.local/share/nvim/" -prune -name "runtime" -type d -exec rm -rf {} +
+	#rm -rf "${USR_DIR}/.local/share/nvim"
+	git clone "https://github.com/NvChad/starter" "${HOME}/.config/nvim" --depth 1 
+fi
+
+# Tmux!
+printf 'Setting up Tmux Package Manager (TPM)\n'
+[ ! -d "$HOME/.tmux/plugins/tpm" ] && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 
 printf '\n'
