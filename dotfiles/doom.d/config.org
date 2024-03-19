@@ -800,10 +800,10 @@ I was trying out a few different nerd fonts but decided to settle down to monono
 You can download them from my Github repo as well: [[https://github.com/Taris9047/taris-personal-settings/releases/download/Nanum/NanumFonts.zip][Download Nanum Fonts]]
 
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 15)
-      doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
+(setq doom-font (font-spec :family "Mononoki Nerd Font" :size 15)
+      doom-big-font (font-spec :family "Mononoki Nerd Font" :size 26)
       doom-variable-pitch-font (font-spec :family "NanumSquare" :size 15)
-      doom-serif-font (font-spec :family "mononoki Nerd Font Mono" :size 15))
+      doom-serif-font (font-spec :family "Mononoki Nerd Font" :size 15))
 (after! doom-themes
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t))

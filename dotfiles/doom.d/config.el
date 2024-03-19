@@ -344,10 +344,10 @@ to allow the TOC to be a collapseable tree."
     (replace-regexp-in-string "<input [^>]+><label [^>]+>\\(.+?\\)</label></li>" "\\1</li>"
                               (funcall orig-fn toc-entries))))
 
-(setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 15)
-      doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 26)
+(setq doom-font (font-spec :family "Mononoki Nerd Font" :size 15)
+      doom-big-font (font-spec :family "Mononoki Nerd Font" :size 26)
       doom-variable-pitch-font (font-spec :family "NanumSquare" :size 15)
-      doom-serif-font (font-spec :family "mononoki Nerd Font Mono" :size 15))
+      doom-serif-font (font-spec :family "Mononoki Nerd Font" :size 15))
 (after! doom-themes
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t))
