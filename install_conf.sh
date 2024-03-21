@@ -128,7 +128,7 @@ if [ -x "$(command -v nvim)" ] & [ -x "$(command -v lua)" ]; then
 		find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "hvim" -prune -name "runtime" -type d -exec rm -rf {} +
 	fi
 	rm -rf "${USR_DIR}/.local/share/nvim"
-	git clone "https://github.com/NvChad/NvChad" "${HOME}/.config/nvim" --depth 1 
+	git clone https://github.com/NvChad/starter ~/.config/nvim
 fi
 
 # Micro Editor
