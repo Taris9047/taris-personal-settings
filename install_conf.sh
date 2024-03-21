@@ -122,10 +122,12 @@ NVIM_GTK_CONF_HOME="$USR_DIR/.config/nvim-gtk"
 #
 # Now installs NvChad instead of copying VIM's setting directly.
 #
-rm -rf "${NVIM_CONF_HOME}" "${NVIM_GTK_CONF_HOME}"
-find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "${USR_DIR}/.local/share/nvim/" -prune -name "runtime" -type d -exec rm -rf {} +
-#rm -rf "${USR_DIR}/.local/share/nvim"
-git clone "https://github.com/NvChad/NvChad" "${HOME}/.config/nvim" --depth 1 
+if [ -x "$(command -v nvim)" ]; then
+	rm -rf "${NVIM_CONF_HOME}" "${NVIM_GTK_CONF_HOME}"
+	find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "${USR_DIR}/.local/share/nvim/" -prune -name "runtime" -type d -exec rm -rf {} +
+	#rm -rf "${USR_DIR}/.local/share/nvim"
+	git clone "https://github.com/NvChad/NvChad" "${HOME}/.config/nvim" --depth 1 
+fi
 
 # Micro Editor
 printf 'Setting up micro config files\n'
