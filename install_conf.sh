@@ -110,7 +110,6 @@ mkdir -p "$VIM_CONF_DIR/pack"
 mkdir -p "$VIM_CONF_DIR/terminal_colors"
 
 # NVIM - or Neovim
-printf 'Setting up NVIM config file\n'
 NVIM_CONF_HOME="${USR_DIR}/.config/nvim"
 NVIM_GTK_CONF_HOME="$USR_DIR/.config/nvim-gtk"
 #[ ! -d "$NVIM_CONF_HOME" ] && mkdir -pv "$NVIM_CONF_HOME"
@@ -122,10 +121,13 @@ NVIM_GTK_CONF_HOME="$USR_DIR/.config/nvim-gtk"
 #
 # Now installs NvChad instead of copying VIM's setting directly.
 #
-if [ -x "$(command -v nvim)" ]; then
+if [ -x "$(command -v nvim)" ] & [ -x "$(command -v lua)" ]; then
+	printf 'Setting up NVIM config file\n'
 	rm -rf "${NVIM_CONF_HOME}" "${NVIM_GTK_CONF_HOME}"
-	find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "${USR_DIR}/.local/share/nvim/" -prune -name "runtime" -type d -exec rm -rf {} +
-	#rm -rf "${USR_DIR}/.local/share/nvim"
+	if [ -d "${NVIM_CONF_HOME}" ]; then
+		find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "hvim" -prune -name "runtime" -type d -exec rm -rf {} +
+	fi
+	rm -rf "${USR_DIR}/.local/share/nvim"
 	git clone "https://github.com/NvChad/NvChad" "${HOME}/.config/nvim" --depth 1 
 fi
 
