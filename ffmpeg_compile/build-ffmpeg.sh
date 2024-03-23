@@ -590,8 +590,8 @@ if [ ! -x "$(command -v cmake)" ]; then
 fi
 
 
-if build "openssl" "1.1.1v"; then 
-	download "https://github.com/openssl/openssl/releases/download/openssl-${CURRENT_PACKAGE_VERSION}/openssl-${CURRENT_PACKAGE_VERSION}.tar.gz" "openssl-${CURRENT_PACKAGE_VERSION}.tar.gz"
+if build "openssl" "3.0.13"; then
+	download "https://www.openssl.org/source/openssl-${CURRENT_PACKAGE_VERSION}.tar.gz" "openssl-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/openssl-${CURRENT_PACKAGE_VERSION}" || exit 
 	if "${APPLE_SILICON}"; then
 		sed -n 's/\(##### GNU Hurd\)/"darwin64-arm64-cc" => { \n    inherit_from     => [ "darwin-common", asm("aarch64_asm") ],\n    CFLAGS           => add("-Wall"),\n    cflags           => add("-arch arm64 "),\n    lib_cppflags     => add("-DL_ENDIAN"),\n    bn_ops           => "SIXTY_FOUR_BIT_LONG", \n    perlasm_scheme   => "macosx", \n}, \n\1/g' Configurations/10-main.conf
