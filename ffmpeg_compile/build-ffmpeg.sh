@@ -603,12 +603,12 @@ if build "openssl" "3.0.13"; then
 	execute make install_sw
 
 	build_done "openssl"
-fi
+fi 
 CONFIGURE_OPTIONS+=("--enable-openssl")
 
 if build "trousers" "0.3.15"; then
 	download "https://sourceforge.net/projects/trousers/files/trousers/${CURRENT_PACKAGE_VERSION}/trousers-${CURRENT_PACKAGE_VERSION}.tar.gz/download" "trousers-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES"/trousers-$trousers_ver || exit
+	cd "$PACKAGES/trousers-${CURRENT_PACKAGE_VERSION}" || exit
 	execute CC=\"$CC\" CXX=\"$CXX\" sh ./bootstrap.sh
 	execute CC=\"$CC\" CXX=\"$CXX\" ./configure \
 		--prefix="${WORKSPACE}" \
