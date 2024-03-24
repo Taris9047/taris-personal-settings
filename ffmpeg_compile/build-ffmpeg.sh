@@ -931,7 +931,7 @@ CONFIGURE_OPTIONS+=("--enable-libaom")
 # 	build_done "libsdl"
 # fi
 
-if build "libsdl" "2.28.2"; then
+if build "libsdl" "2.30.1"; then
   download "https://github.com/libsdl-org/SDL/archive/refs/tags/release-${CURRENT_PACKAGE_VERSION}.tar.gz"
   execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
   execute make -j $MJOBS
@@ -977,7 +977,7 @@ fi
 ##
 if command_exists "nvcc"; then
 
-	if build "nv-codec" "11.1.5.2"; then
+	if build "nv-codec" "12.1.14.0"; then
 		download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n${CURRENT_PACKAGE_VERSION}/nv-codec-headers-${CURRENT_PACKAGE_VERSION}.tar.gz" "nv-codec-headers-${CURRENT_PACKAGE_VERSION}.tar.gz"
 		cd "$PACKAGES/nv-codec-headers-${CURRENT_PACKAGE_VERSION}" || exit
 		sed -i "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-${CURRENT_PACKAGE_VERSION}/Makefile && execute make install
@@ -994,8 +994,9 @@ if command_exists "nvcc"; then
 
 	CFLAGS="$CFLAGS -I$CUDA_BASE_PATH/include"
 	LDFLAGS="$LDFLAGS -L$CUDA_BASE_PATH/lib64"
+
 	#CONFIGURE_OPTIONS+=("--nvccflags=-gencode arch=compute_52,code=sm_52")
-	CONFIGURE_OPTIONS+=("--enable-cuda-nvcc" "--enable-cuvid" "--enable-nvenc" "--enable-cuda-llvm")
+	CONFIGURE_OPTIONS+=("--enable-cuda-nvcc" "--enable-cuvid" "--enable-nvdec" "--enable-nvenc" "--enable-cuda-llvm" "--enable-ffnvcodec")
 
 	if [ -z "$LDEXEFLAGS" ]; then
 		CONFIGURE_OPTIONS+=("--enable-libnpp") # Only libnpp cannot be statically linked.
@@ -1012,7 +1013,7 @@ if command_exists "nvcc"; then
 		fi
 	fi
 
-	if build "amf" "1.4.21.0"; then
+	if build "amf" "1.4.33.0"; then
 		amf_ver_short="${CURRENT_PACKAGE_VERSION::-2}"
 		download "https://github.com/GPUOpen-LibrariesAndSDKs/AMF/archive/refs/tags/v.${amf_ver_short}.tar.gz" "AMF-${amf_ver_short}.tar.gz"
 		cd "$PACKAGES/AMF-${amf_ver_short}" || exit
