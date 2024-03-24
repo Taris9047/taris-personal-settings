@@ -524,7 +524,7 @@ if build "yasm" "1.3.0"; then
 	build_done "yasm"
 fi
 
-if build "nasm" "2.15.05"; then
+if build "nasm" "2.16.01"; then
 	download "https://www.nasm.us/pub/nasm/releasebuilds/${CURRENT_PACKAGE_VERSION}/nasm-${CURRENT_PACKAGE_VERSION}.tar.xz" "nasm-${CURRENT_PACKAGE_VERSION}.tar.xz"
 	cd "$PACKAGES"/nasm-${CURRENT_PACKAGE_VERSION} || exit
 	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
@@ -533,7 +533,7 @@ if build "nasm" "2.15.05"; then
 	build_done "nasm"
 fi
 
-if build "libunistring" "0.9.10"; then
+if build "libunistring" "1.2"; then
 	download "https://ftp.gnu.org/gnu/libunistring/libunistring-${CURRENT_PACKAGE_VERSION}.tar.gz" "libunistring-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/libunistring-${CURRENT_PACKAGE_VERSION}" || exit
 	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
@@ -551,7 +551,7 @@ if build "m4" "1.4.19"; then
   build_done "m4"
 fi
 
-if build "autoconf" "2.71"; then
+if build "autoconf" "2.72"; then
   download "https://ftp.gnu.org/gnu/autoconf/autoconf-${CURRENT_PACKAGE_VERSION}.tar.gz" "autoconf-${CURRENT_PACKAGE_VERSION}.tar.gz"
   cd "$PACKAGES/autoconf-${CURRENT_PACKAGE_VERSION}" || exit
   execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
@@ -560,7 +560,7 @@ if build "autoconf" "2.71"; then
   build_done "autoconf"
 fi
 
-if build "automake" "1.16.4"; then
+if build "automake" "1.16.5"; then
   download "https://ftp.gnu.org/gnu/automake/automake-${CURRENT_PACKAGE_VERSION}.tar.gz" "automake-${CURRENT_PACKAGE_VERSION}.tar.gz"
   cd "$PACKAGES/automake-${CURRENT_PACKAGE_VERSION}" || exit
   execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
@@ -569,7 +569,7 @@ if build "automake" "1.16.4"; then
   build_done "automake"
 fi
 
-if build "libtool" "2.4.6"; then
+if build "libtool" "2.4.7"; then
   download "https://ftpmirror.gnu.org/libtool/libtool-${CURRENT_PACKAGE_VERSION}.tar.gz" "libtool-${CURRENT_PACKAGE_VERSION}.tar.gz"
   cd "$PACKAGES/libtool-${CURRENT_PACKAGE_VERSION}" || exit
   execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --enable-static --disable-shared
@@ -579,7 +579,7 @@ if build "libtool" "2.4.6"; then
 fi
 
 if [ ! -x "$(command -v cmake)" ]; then
-	if build "cmake" "3.21.2"; then
+	if build "cmake" "3.29.0"; then
 	  download "https://cmake.org/files/LatestRelease/cmake-${CURRENT_PACKAGE_VERSION}.tar.gz" "cmake-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	  cd "$PACKAGES/cmake-${CURRENT_PACKAGE_VERSION}" || exit
 	  execute ./configure --prefix="${WORKSPACE}" --parallel="${MJOBS}" -- -DCMAKE_USE_OPENSSL=OFF
@@ -590,7 +590,7 @@ if [ ! -x "$(command -v cmake)" ]; then
 fi
 
 
-if build "openssl" "3.0.13"; then
+if build "openssl" "3.2.1"; then
 	download "https://www.openssl.org/source/openssl-${CURRENT_PACKAGE_VERSION}.tar.gz" "openssl-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/openssl-${CURRENT_PACKAGE_VERSION}" || exit 
 	if "${APPLE_SILICON}"; then
@@ -624,7 +624,7 @@ fi
 # install git if the systen don't have git... probably won't happen in many cases.
 GIT="$(command -v git)"
 if [ ! -x  "${GIT}" ]; then
-	if build "git" "2.33.0"; then
+	if build "git" "2.44.0"; then
 		download "https://www.kernel.org/pub/software/scm/git/git-${CURRENT_PACKAGE_VERSION}.tar.xz" "git-${CURRENT_PACKAGE_VERSION}.tar.gz"
 		cd "$PACKAGES"/git-${CURRENT_PACKAGE_VERSION} || exit
 		execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --with-openssl --with-zlib="${WORKSPACE}/lib" --with-lib="${WORKSPACE}/lib"
@@ -638,72 +638,74 @@ fi
 
 ## Media Libraries
 
-# Lv2 crap
-if command_exists $PYTHON; then
+# Lv2 crap -- Now the build system is meson not waf. So skipping it for now..
+if command_exists "meson"; then
+	if command_exists $PYTHON; then
 
-	if build "lv2" "1.18.2"; then
-		download "https://lv2plug.in/spec/lv2-${CURRENT_PACKAGE_VERSION}.tar.bz2" "lv2-${CURRENT_PACKAGE_VERSION}.tar.bz2"
-		execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --lv2-user
-		execute $PYTHON ./waf
-		execute $PYTHON ./waf install
+		if build "lv2" "1.18.10"; then
+			download "https://lv2plug.in/spec/lv2-${CURRENT_PACKAGE_VERSION}.tar.xz" "lv2-${CURRENT_PACKAGE_VERSION}.tar.xz"
+			execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --lv2-user
+			execute $PYTHON ./waf
+			execute $PYTHON ./waf install
 
-		build_done "lv2"
+			build_done "lv2"
+		fi
+
+		if build "waflib" "b600c928b221a001faeab7bd92786d0b25714bc8"; then
+			download "https://gitlab.com/drobilla/autowaf/-/archive/${CURRENT_PACKAGE_VERSION}/autowaf-${CURRENT_PACKAGE_VERSION}.tar.gz" "autowaf.tar.gz"
+			build_done "waflib"
+		fi
+
+		if build "serd" "0.30.10"; then
+			download "https://gitlab.com/drobilla/serd/-/archive/v${CURRENT_PACKAGE_VERSION}/serd-v${CURRENT_PACKAGE_VERSION}.tar.gz" "serd-v${CURRENT_PACKAGE_VERSION}.tar.gz"
+			execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/serd-v${CURRENT_PACKAGE_VERSION}/waflib/"
+			execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared --no-posix
+			execute $PYTHON ./waf
+			execute $PYTHON ./waf install
+			build_done "serd"
+		fi
+
+		if build "pcre" "8.45"; then
+			download "https://sourceforge.net/projects/pcre/files/pcre/${CURRENT_PACKAGE_VERSION}/pcre-${CURRENT_PACKAGE_VERSION}.tar.bz2"
+			execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+			execute make -j $MJOBS
+			execute make install
+
+			build_done "pcre"
+		fi
+
+		if build "sord" "0.16.8"; then
+			download "https://gitlab.com/drobilla/sord/-/archive/v${CURRENT_PACKAGE_VERSION}/sord-v${CURRENT_PACKAGE_VERSION}.tar.gz" "sord-v${CURRENT_PACKAGE_VERSION}.tar.gz"
+			execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sord-v${CURRENT_PACKAGE_VERSION}/waflib/"
+			execute $PYTHON ./waf configure --prefix="${WORKSPACE}" CFLAGS="\"${CFLAGS}\"" --static --no-shared --no-utils
+			execute $PYTHON ./waf CFLAGS="\"${CFLAGS}\""
+			execute $PYTHON ./waf install
+
+			build_done "sord"
+		fi
+
+		if build "sratom" "0.6.16"; then
+			download "https://gitlab.com/lv2/sratom/-/archive/v${CURRENT_PACKAGE_VERSION}/sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz" "sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz"
+			execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sratom-v${CURRENT_PACKAGE_VERSION}/waflib/"
+			execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared
+			execute $PYTHON ./waf
+			execute $PYTHON ./waf install
+
+			build_done "sratom"
+		fi
+
+		if build "lilv" "0.24.12"; then
+			download "https://gitlab.com/lv2/lilv/-/archive/v${CURRENT_PACKAGE_VERSION}/lilv-v${CURRENT_PACKAGE_VERSION}.tar.gz" "lilv-v${CURRENT_PACKAGE_VERSION}.tar.gz"
+			execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/lilv-v${CURRENT_PACKAGE_VERSION}/waflib/"
+			execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared --no-utils
+			execute $PYTHON ./waf
+			execute $PYTHON ./waf install
+			CFLAGS+=" -I$WORKSPACE/include/lilv-0"
+			build_done "lilv"
+		fi
+
+		CONFIGURE_OPTIONS+=("--enable-lv2")
 	fi
-
-	if build "waflib" "b600c928b221a001faeab7bd92786d0b25714bc8"; then
-		download "https://gitlab.com/drobilla/autowaf/-/archive/${CURRENT_PACKAGE_VERSION}/autowaf-${CURRENT_PACKAGE_VERSION}.tar.gz" "autowaf.tar.gz"
-		build_done "waflib"
-	fi
-
-	if build "serd" "0.30.10"; then
-		download "https://gitlab.com/drobilla/serd/-/archive/v${CURRENT_PACKAGE_VERSION}/serd-v${CURRENT_PACKAGE_VERSION}.tar.gz" "serd-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/serd-v${CURRENT_PACKAGE_VERSION}/waflib/"
-		execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared --no-posix
-		execute $PYTHON ./waf
-		execute $PYTHON ./waf install
-		build_done "serd"
-	fi
-
-	if build "pcre" "8.45"; then
-		download "https://sourceforge.net/projects/pcre/files/pcre/${CURRENT_PACKAGE_VERSION}/pcre-${CURRENT_PACKAGE_VERSION}.tar.bz2"
-		execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-		execute make -j $MJOBS
-		execute make install
-
-		build_done "pcre"
-	fi
-
-	if build "sord" "0.16.8"; then
-		download "https://gitlab.com/drobilla/sord/-/archive/v${CURRENT_PACKAGE_VERSION}/sord-v${CURRENT_PACKAGE_VERSION}.tar.gz" "sord-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sord-v${CURRENT_PACKAGE_VERSION}/waflib/"
-		execute $PYTHON ./waf configure --prefix="${WORKSPACE}" CFLAGS="\"${CFLAGS}\"" --static --no-shared --no-utils
-		execute $PYTHON ./waf CFLAGS="\"${CFLAGS}\""
-		execute $PYTHON ./waf install
-
-		build_done "sord"
-	fi
-
-	if build "sratom" "0.6.8"; then
-		download "https://gitlab.com/lv2/sratom/-/archive/v${CURRENT_PACKAGE_VERSION}/sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz" "sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sratom-v${CURRENT_PACKAGE_VERSION}/waflib/"
-		execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared
-		execute $PYTHON ./waf
-		execute $PYTHON ./waf install
-
-		build_done "sratom"
-	fi
-
-	if build "lilv" "0.24.12"; then
-		download "https://gitlab.com/lv2/lilv/-/archive/v${CURRENT_PACKAGE_VERSION}/lilv-v${CURRENT_PACKAGE_VERSION}.tar.gz" "lilv-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-		execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/lilv-v${CURRENT_PACKAGE_VERSION}/waflib/"
-		execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared --no-utils
-		execute $PYTHON ./waf
-		execute $PYTHON ./waf install
-		CFLAGS+=" -I$WORKSPACE/include/lilv-0"
-		build_done "lilv"
-	fi
-
-	CONFIGURE_OPTIONS+=("--enable-lv2")
 fi
 
 ## Audio Library
@@ -718,7 +720,7 @@ if build "lame" "3.100"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libmp3lame")
 
-if build "opencore" "0.1.5"; then
+if build "opencore" "0.1.6"; then
 	download "https://sourceforge.net/projects/opencore-amr/files/opencore-amr-${CURRENT_PACKAGE_VERSION}.tar.gz/download?use_mirror=gitenet" "opencore-amr-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/opencore-amr-${CURRENT_PACKAGE_VERSION}" || exit
 	execute env "$COMPILER_SET_GCC" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
@@ -729,8 +731,8 @@ if build "opencore" "0.1.5"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libopencore_amrnb" "--enable-libopencore_amrwb")
 
-if build "opus" "1.3.1"; then
-	download "https://archive.mozilla.org/pub/opus/opus-${CURRENT_PACKAGE_VERSION}.tar.gz" "opus-${CURRENT_PACKAGE_VERSION}.tar.gz"
+if build "opus" "1.5.1"; then
+	download https://downloads.xiph.org/releases/opus/opus-${CURRENT_PACKAGE_VERSION}.tar.gz "opus-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/opus-${CURRENT_PACKAGE_VERSION}" || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
@@ -774,7 +776,7 @@ if build "libtheora" "1.1.1"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libtheora")
 
-if build "fdk_aac" "2.0.2"; then
+if build "fdk_aac" "2.0.3"; then
 	download "https://sourceforge.net/projects/opencore-amr/files/fdk-aac/fdk-aac-${CURRENT_PACKAGE_VERSION}.tar.gz/download?use_mirror=gigenet" "fdk-aac-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/fdk-aac-${CURRENT_PACKAGE_VERSION}" || exit
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
@@ -786,7 +788,7 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libfdk-aac")
 
 ## Image Library
-if build "libwebp" "1.2.1"; then
+if build "libwebp" "1.3.2"; then
 	download "https://github.com/webmproject/libwebp/archive/v${CURRENT_PACKAGE_VERSION}.tar.gz" "libwebp-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/libwebp-${CURRENT_PACKAGE_VERSION}" && ./autogen.sh
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
@@ -797,7 +799,7 @@ if build "libwebp" "1.2.1"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libwebp")
 
-if build "libvpx" "1.10.0"; then
+if build "libvpx" "1.14.0"; then
 	download "https://github.com/webmproject/libvpx/archive/v${CURRENT_PACKAGE_VERSION}.tar.gz" "libvpx-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/libvpx-${CURRENT_PACKAGE_VERSION}" || exit
 
@@ -856,7 +858,7 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
 
 if build "x265" "3.5"; then
-	download "https://github.com/videolan/x265/archive/Release_${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
+	download "https://bitbucket.org/multicoreware/x265_git/downloads/x265_${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES"/x265-*/ || exit
 	cd source || exit
 	execute cmake . \
@@ -878,7 +880,7 @@ if build "x265" "3.5"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libx265")
 
-if build "vid_stab" "1.1.0"; then
+if build "vid_stab" "1.1.1"; then
 	download "https://github.com/georgmartius/vid.stab/archive/v${CURRENT_PACKAGE_VERSION}.tar.gz" "vid.stab-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "${PACKAGES}/vid.stab-${CURRENT_PACKAGE_VERSION}" || exit
 	execute env "${COMPILER_SET}" cmake . \
@@ -1015,7 +1017,7 @@ if command_exists "nvcc"; then
 
 	if build "amf" "1.4.33.0"; then
 		amf_ver_short="${CURRENT_PACKAGE_VERSION::-2}"
-		download "https://github.com/GPUOpen-LibrariesAndSDKs/AMF/archive/refs/tags/v.${amf_ver_short}.tar.gz" "AMF-${amf_ver_short}.tar.gz"
+		download "https://github.com/GPUOpen-LibrariesAndSDKs/AMF/archive/refs/tags/v${amf_ver_short}.tar.gz" "AMF-${amf_ver_short}.tar.gz"
 		cd "$PACKAGES/AMF-${amf_ver_short}" || exit
 		execute rm -rf "${WORKSPACE}/include/AMF" 
 		execute mkdir -p "${WORKSPACE}/include/AMF"
