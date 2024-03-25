@@ -82,8 +82,8 @@ fi
 
 # Setting up pkgconfig stuffs
 export PATH="${WORKSPACE}/bin:$PATH"
-PKG_CONFIG_PATH="${WORKSPACE}/lib/pkgconfig"
-PKG_CONFIG_PATH+="/usr/local/lib/$SYSTEM_GCC_ARCH/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib64/$SYSTEM_GCC_ARCH/pkgconfig:/usr/local/lib64/pkgconfig"
+PKG_CONFIG_PATH="${WORKSPACE}/lib/pkgconfig:${WORKSPACE}/lib/${SYSTEM_GCC_ARCH}/pkgconfig"
+PKG_CONFIG_PATH+=":/usr/local/lib/$SYSTEM_GCC_ARCH/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib64/$SYSTEM_GCC_ARCH/pkgconfig:/usr/local/lib64/pkgconfig"
 PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/$SYSTEM_GCC_ARCH/pkgconfig:/usr/lib64/$SYSTEM_GCC_ARCH/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig"
 export PKG_CONFIG_PATH
 
@@ -569,9 +569,22 @@ if build "automake" "1.16.5"; then
   build_done "automake"
 fi
 
-if build "libtool" "2.4.7"; then
-  download "https://ftpmirror.gnu.org/libtool/libtool-${CURRENT_PACKAGE_VERSION}.tar.gz" "libtool-${CURRENT_PACKAGE_VERSION}.tar.gz"
-  cd "$PACKAGES/libtool-${CURRENT_PACKAGE_VERSION}" || exit
+if build "help2man" "1.49.3"; then
+	download "https://ftp.gnu.org/gnu/help2man/help2man-${CURRENT_PACKAGE_VERSION}.tar.xz" "help2man-${CURRENT_PACKAGE_VERSION}.tar.xz"
+	execute ./configure --prefix="${WORKSPACE}"
+	execute make -j "${MJOBS}"
+	execute make install
+	build_done "help2man"
+fi
+
+if build "libtool" "Git"; then
+  #download "https://ftpmirror.gnu.org/libtool/libtool-${CURRENT_PACKAGE_VERSION}.tar.gz" "libtool-${CURRENT_PACKAGE_VERSION}.tar.gz"
+  #cd "$PACKAGES/libtool-${CURRENT_PACKAGE_VERSION}" || exit
+  if [ -d "${PACKAGES}/libtool" ]; then
+  	rm -rf "${PACKAGES}/libtool"
+  fi
+  git clone git://git.savannah.gnu.org/libtool.git "${PACKAGES}/libtool" && cd "${PACKAGES}/libtool"
+  execute ./bootstrap
   execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --enable-static --disable-shared
   execute make -j $MJOBS
   execute make install
@@ -642,12 +655,27 @@ fi
 if command_exists "meson"; then
 	if command_exists $PYTHON; then
 
+		if build "zix" "0.4.2"; then
+			download "https://gitlab.com/drobilla/zix/-/archive/v${CURRENT_PACKAGE_VERSION}/zix-v${CURRENT_PACKAGE_VERSION}.tar.gz" "zix-v${CURRENT_PACKAGE_VERSION}.tar.gz"
+			execute env "${COMPILER_SET}" meson setup build -Ddefault_library=static -Db_staticpic=true 
+			cd ./build
+			execute meson configure -Dprefix="${WORKSPACE}" 
+			execute meson compile
+			execute meson install
+
+			build_done "zix"
+		fi
+
 		if build "lv2" "1.18.10"; then
 			download "https://lv2plug.in/spec/lv2-${CURRENT_PACKAGE_VERSION}.tar.xz" "lv2-${CURRENT_PACKAGE_VERSION}.tar.xz"
-			execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --lv2-user
-			execute $PYTHON ./waf
-			execute $PYTHON ./waf install
-
+			# execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --lv2-user
+			# execute $PYTHON ./waf
+			# execute $PYTHON ./waf install
+			execute env "${COMPILER_SET}" meson setup build -Ddefault_library=static -Db_staticpic=true -Db_pie=true 
+			cd ./build
+			execute meson configure -Dprefix="${WORKSPACE}" 
+			execute meson compile
+			execute meson install
 			build_done "lv2"
 		fi
 
@@ -656,12 +684,14 @@ if command_exists "meson"; then
 			build_done "waflib"
 		fi
 
-		if build "serd" "0.30.10"; then
+		if build "serd" "0.32.2"; then
 			download "https://gitlab.com/drobilla/serd/-/archive/v${CURRENT_PACKAGE_VERSION}/serd-v${CURRENT_PACKAGE_VERSION}.tar.gz" "serd-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-			execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/serd-v${CURRENT_PACKAGE_VERSION}/waflib/"
-			execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared --no-posix
-			execute $PYTHON ./waf
-			execute $PYTHON ./waf install
+			execute env "${COMPILER_SET}" meson setup build -Dc_arg="--disable-shared" -Db_staticpic=true -Ddefault_library=static
+			cd ./build
+			execute meson configure -Dprefix="${WORKSPACE}" 
+			execute meson compile
+			execute meson install
+
 			build_done "serd"
 		fi
 
@@ -674,33 +704,39 @@ if command_exists "meson"; then
 			build_done "pcre"
 		fi
 
-		if build "sord" "0.16.8"; then
-			download "https://gitlab.com/drobilla/sord/-/archive/v${CURRENT_PACKAGE_VERSION}/sord-v${CURRENT_PACKAGE_VERSION}.tar.gz" "sord-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-			execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sord-v${CURRENT_PACKAGE_VERSION}/waflib/"
-			execute $PYTHON ./waf configure --prefix="${WORKSPACE}" CFLAGS="\"${CFLAGS}\"" --static --no-shared --no-utils
-			execute $PYTHON ./waf CFLAGS="\"${CFLAGS}\""
-			execute $PYTHON ./waf install
+		if build "sord" "0.16.16"; then
+			download "https://download.drobilla.net/sord-${CURRENT_PACKAGE_VERSION}.tar.xz" "sord-${CURRENT_PACKAGE_VERSION}.tar.xz"
+			execute env "${COMPILER_SET}" meson setup build -Dc_arg="-I${WORKSPACE}/include" -Db_staticpic=true -Ddefault_library=static
+			cd ./build
+			execute meson configure -Dprefix="${WORKSPACE}"
+			execute meson compile
+			execute meson install
 
 			build_done "sord"
 		fi
 
 		if build "sratom" "0.6.16"; then
 			download "https://gitlab.com/lv2/sratom/-/archive/v${CURRENT_PACKAGE_VERSION}/sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz" "sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-			execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/sratom-v${CURRENT_PACKAGE_VERSION}/waflib/"
-			execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared
-			execute $PYTHON ./waf
-			execute $PYTHON ./waf install
+			execute env "${COMPILER_SET}" meson setup build -Db_staticpic=true -Ddefault_library=static
+			cd ./build
+			execute meson configure -Dprefix="${WORKSPACE}"
+			execute meson compile
+			execute meson install			
 
 			build_done "sratom"
 		fi
 
-		if build "lilv" "0.24.12"; then
-			download "https://gitlab.com/lv2/lilv/-/archive/v${CURRENT_PACKAGE_VERSION}/lilv-v${CURRENT_PACKAGE_VERSION}.tar.gz" "lilv-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-			execute cp -r ${PACKAGES}/autowaf/* "${PACKAGES}/lilv-v${CURRENT_PACKAGE_VERSION}/waflib/"
-			execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --static --no-shared --no-utils
-			execute $PYTHON ./waf
-			execute $PYTHON ./waf install
-			CFLAGS+=" -I$WORKSPACE/include/lilv-0"
+		if build "lilv" "0.24.24"; then
+			download "https://download.drobilla.net/lilv-${CURRENT_PACKAGE_VERSION}.tar.xz" "lilv-${CURRENT_PACKAGE_VERSION}.tar.xz"
+			execute env "${COMPILER_SET}" meson setup build -Db_staticpic=true -Ddefault_library=static -Dbindings_cpp=disabled
+			cd ./build
+			execute meson configure -Dprefix="${WORKSPACE}"
+			execute meson compile
+			execute meson install	
+
+			#CFLAGS+=" -I${WORKSPACE}/include/lilv-0"
+			#CXXFLAGS="${CFLAGS}"
+
 			build_done "lilv"
 		fi
 
