@@ -6,7 +6,7 @@ printf '\n%b WSL environment detected!! Activating it ...\n' "${check_symbol}"
 
 WIN_USR="$(/mnt/c/Windows/System32/cmd.exe "/c" "echo %USERNAME%" 2>/dev/null | tr -d '\r')"
 
-printf '%b Windows User: %s' "${check_symbol}" "${WIN_USR}"
+printf '%b Windows User: %s\n' "${check_symbol}" "${WIN_USR}"
 
 # Adding Windows VSCode path to WSL shell...
 code_path="/mnt/c/Users/${WIN_USR}/AppData/Local/Programs/Microsoft VS Code/bin"
