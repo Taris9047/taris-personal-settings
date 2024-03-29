@@ -745,9 +745,9 @@ end
 clear
 if type -q figlet
     if type -q lolcat
-        figlet -w (/usr/bin/tput cols) "$hostname" | lolcat
+        figlet -f future -w (/usr/bin/tput cols) "$hostname" | lolcat
     else
-        figlet -w (/usr/bin/tput cols) "$hostname"
+        figlet -f future -w (/usr/bin/tput cols) "$hostname"
     end
 end
 

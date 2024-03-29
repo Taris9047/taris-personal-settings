@@ -2835,10 +2835,10 @@ end
 #+begin_src shell :tangle my_settings_bash
 clear
 if [ -x "$(command -v figlet)" ]; then
-    if [ -x $(command -v lolcat) ]; then
-        figlet -w "$(/usr/bin/tput cols)" "$(uname -n)" | lolcat
+    if [ -x "$(command -v lolcat)" ]; then
+        figlet -f future -w "$(/usr/bin/tput cols)" "$(uname -n)" | "$(command -v lolcat)"
     else
-        figlet -w "$(/usr/bin/tput cols)" "$(uname -n)"
+        figlet -f future -w "$(/usr/bin/tput cols)" "$(uname -n)"
     fi
 fi
 #+end_src
@@ -2853,9 +2853,9 @@ fi
 clear
 if type -q figlet
     if type -q lolcat
-        figlet -w (/usr/bin/tput cols) "$hostname" | lolcat
+        figlet -f future -w (/usr/bin/tput cols) "$hostname" | lolcat
     else
-        figlet -w (/usr/bin/tput cols) "$hostname"
+        figlet -f future -w (/usr/bin/tput cols) "$hostname"
     end
 end
 #+end_src
