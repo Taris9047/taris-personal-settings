@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 die () {
   printf 'ERROR: %s\n' "$1"
@@ -10,7 +10,7 @@ if [ ! -x "$(command -v rclone)" ]; then
 fi
 
 RClone=$(which rclone)
-BackupRoot="/data/Backup"
+BackupRoot="/data/"
 BackupDestGoogle="$BackupRoot"/GoogleDrive
 BackupDestMSOne="$BackupRoot"/Onedrive
 
