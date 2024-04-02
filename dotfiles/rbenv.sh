@@ -7,5 +7,5 @@ RBENV_EXE="${RBENV_DIR}/bin/rbenv"
 if [ -x "${RBENV_EXE}" ]; then
   RBENV_ROOT="${RBENV_DIR}"
   PATH="${RBENV_DIR}/bin:${RBENV_DIR}/shims/:${PATH}" 
-  eval $(rbenv init - bash)
+  eval "$(rbenv init - bash)"
 fi
