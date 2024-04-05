@@ -952,3 +952,7 @@ path_sanitized=$(printf "%s" "$PATH" | awk -v RS=':' '!a[$1]++ { if (NR > 1) pri
 export PATH="$path_sanitized"
 
 set_ls
+
+VPN_PATH="/opt/cisco/secureclient/bin/vpn"
+[ -x "${VPN_PATH}" ] && \
+    alias ucsc_vpn="${HOME}/.settings/bin/vpn_connect_ucsc.sh"
