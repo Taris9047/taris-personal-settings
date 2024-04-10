@@ -147,6 +147,7 @@ end
 set_ls
 
 set GOOGLE_DRIVE "$HOME/.google-drive"
+set GOOGLE_PHOTOS "$HOME/.google-photos"
 set ONE_DRIVE "$HOME/.onedrive"
 
 set texlive_base_path "$HOME/.texlive"
@@ -759,3 +760,8 @@ end
 # Fish don't need to clean up the PATH
 
 set_ls
+
+set VPN_PATH "/opt/cisco/secureclient/bin/vpn"
+if type -q "$VPN_PATH"
+    alias ucsc_vpn="$HOME/.settings/bin/vpn_connect_ucsc.sh"
+end
