@@ -1,0 +1,14 @@
+[Unit]
+Description=No-IP DUC Runner
+After=network-online.target
+
+[Install]
+WantedBy=multi-user.target
+#WantedBy=graphical.target
+
+[Service]
+ExecStart=/bin/bash -c /home/taris/.settings/bin/run_noip-duc.sh
+User=taris
+WorkingDirectory=/tmp
+Restart=on-failure
+Type=simple
