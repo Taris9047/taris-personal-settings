@@ -3,7 +3,7 @@
 # Installs rclone mounting with systemd: No more shell login needed...
 #
 
-cwd="$(dirname $0)"
+cwd="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 if [ ! -x "$(command -v /usr/bin/rclone)" ]; then
   printf 'rclone is not installed in the system!! Quitting!!\n'
