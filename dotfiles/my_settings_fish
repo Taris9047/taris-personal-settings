@@ -697,46 +697,6 @@ if type -q zoxide
     zoxide init fish | source
 end
 
-if type -q rclone
-    if not test -d "$GOOGLE_DRIVE"
-        printf "$check_symbol Google drive mount point not found! making one...\n"
-        mkdir -pv "$GOOGLE_DRIVE"
-    end
-
-    if grep -qs "$GOOGLE_DRIVE" '/proc/mounts'
-        printf "$check_symbol Google drive already mounted at %s\n" "$GOOGLE_DRIVE"
-        sleep $line_delay
-    else if not test -f "$HOME/.config/rclone/rclone.conf"
-        printf "$check_symbol RClone for Google drive has not set yet!\n"
-    else
-        if test -n (grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")
-            printf "$check_symbol Mounting Google Drive to $GOOGLE_DRIVE\n"
-            rclone mount google-drive: "$GOOGLE_DRIVE" &
-            sleep 2
-        end
-    end
-end
-
-if type -q rclone
-    if not test -d "$ONE_DRIVE"
-        printf "$check_symbol MS One Drive mount point not found! making one...\n"
-        mkdir -pv "$ONE_DRIVE"
-    end
-
-    if grep -qs "$ONE_DRIVE" /proc/mounts
-        printf "$check_symbol MS One drive already mounted at %s\n" "$ONE_DRIVE"
-        sleep "$line_delay"
-    else if not test -f "$HOME/.config/rclone/rclone.conf"
-        printf "$check_symbol RClone for Onedrive has not set yet!\n"
-    else
-        if test -n (cat $HOME/.config/rclone/rclone.conf | grep "\[onedrive\]")
-            printf "$check_symbol Mounting MS One Drive to %s\n" "$ONE_DRIVE"
-            rclone mount --vfs-cache-mode writes onedrive: "$ONE_DRIVE" &
-            sleep 2
-        end
-    end
-end
-
 if type -q starship
     printf "$check_symbol Starship shell extension found! Let's start it as fish!\n"
     sleep "$line_delay"

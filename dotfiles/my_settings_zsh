@@ -892,57 +892,6 @@ if [ -x "$(command -v zoxide)" ]; then
     esac
 fi
 
-if [ -x "$(command -v rclone)" ]; then
-
-	if [ ! -d "${GOOGLE_DRIVE}" ]; then
-		printf '%b Google drive mount point not found! making one..\n' "${check_symbol}"
-		mkdir -pv "${GOOGLE_DRIVE}"
-	fi
-
-	if grep -qs "${GOOGLE_DRIVE}" '/proc/mounts'; then
-		printf '%b Google Drive already mounted at %s\n' "${check_symbol}" "${GOOGLE_DRIVE}"
-		sleep "${line_delay}"
-	elif [ ! -f "$HOME/.config/rclone/rclone.conf" ]; then
-		printf '%b RClone for Google Drive not set up yet!\n' "${check_symbol}"
-	else
-		if [ ! -z "$(grep -i "\[google-drive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
-			printf '%b Mounting Google Drive to %s\n' "${check_symbol}" "${GOOGLE_DRIVE}"
-			rclone mount google-drive: "${GOOGLE_DRIVE}" &
-        fi
-	fi
-
-    if [ ! -d "${GOOGLE_PHOTOS}" ]; then
-        printf '%b Google photos mount point not found! Skipping...' "${check_symbol}"
-    else
-        if grep -qs "${GOOGLE_PHOTOS}" '/proc/mounts'; then
-            printf '%b Google Photos already mounted at %s\n' "${check_symbol}" "${GOOGLE_PHOTOS}"
-            sleep "${line_delay}"
-        elif [ ! -f "${HOME}/.config/rclone/rclone.conf" ]; then
-            printf '%b RClone for Google Photos not set up yet!\n' "${check_symbol}"
-        else
-            if [ ! -z "" ]; then
-                printf '%b Mounting Google Photos to %s\n' "${check_symbol}" "${GOOGLE_PHOTOS}"
-                rclone mount google-photos: --vfs-cache-mode full "${GOOGLE_PHOTOS}" &
-            fi
-        fi
-    fi
-fi
-
-if [ -x "$(command -v rclone)" ]; then
-    if grep -qs "${ONE_DRIVE}" '/proc/mounts'; then
-        printf '%b MS One Drive already mounted at %s\n' "${check_symbol}" "${ONE_DRIVE}"
-        sleep "${line_delay}"
-    elif [ ! -f "${HOME}/.config/rclone/rclone.conf" ]; then
-        printf '%b RClone for Onedrive was not set up yet!\n' "${check_symbol}"
-    else
-        if [ ! -z "$(grep -i "\[onedrive\]" "$HOME/.config/rclone/rclone.conf")" ]; then
-            printf '%b Mounting MS One Drive to %s\n' "${check_symbol}" "${ONE_DRIVE}"
-            rclone mount --vfs-cache-mode writes onedrive: "${ONE_DRIVE}" &
-            sleep 2
-        fi
-    fi
-fi
-
 [ -x "$(command -v starship)" ] && [ ! -f "${HOME}/.oh-my-zsh/oh-my-zsh.sh" ] && eval "$(starship init zsh)"
 
 clear
