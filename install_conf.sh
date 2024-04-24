@@ -200,18 +200,27 @@ if [ -d "$ASMWM_CNFDIR" ]; then
 fi
 
 # Setting up RClone directories.
-printf 'Setting up RClone directories\n'
-GOOGLE_DRIVE="$HOME/.google-drive"
-GOOGLE_DRIVE_SYM="$HOME/GoogleDrive"
-ONE_DRIVE="$HOME/.onedrive"
-ONE_DRIVE_SYM="$HOME/OneDrive"
-[ ! -d "$GOOGLE_DRIVE" ] && mkdir -pv "$GOOGLE_DRIVE"
-rm -rf "$GOOGLE_DRIVE_SYM"
-ln -sf "$GOOGLE_DRIVE" "$GOOGLE_DRIVE_SYM" || true
+if [ -x "$(command -v rclone)" ]; then
+  printf 'Setting up RClone directories\n'
+  
+  GOOGLE_DRIVE="$HOME/.google-drive"
+  GOOGLE_DRIVE_SYM="$HOME/GoogleDrive"
+  ONE_DRIVE="$HOME/.onedrive"
+  ONE_DRIVE_SYM="$HOME/OneDrive"
+  GOOGLE_PHOTOS="${HOME}/.google-photos"
+  GOOGLE_PHOTOS_SYM="${HOME}/GooglePhotos"
 
-[ ! -d "$ONE_DRIVE" ] && mkdir -pv "$ONE_DRIVE"
-rm -rf "$ONE_DRIVE_SYM"
-ln -sf "$ONE_DRIVE" "$ONE_DRIVE_SYM" || true
+[ ! -d "${GOOGLE_DRIVE}" ] && mkdir -pv "${GOOGLE_DRIVE}"
+  rm -rf "${GOOGLE_DRIVE_SYM}" && ln -sf "${GOOGLE_DRIVE}" "${GOOGLE_DRIVE_SYM}" || true
+
+  [ ! -d "${ONE_DRIVE}" ] && mkdir -pv "${ONE_DRIVE}"
+  rm -rf "${ONE_DRIVE_SYM}"
+  ln -sf "${ONE_DRIVE}" "${ONE_DRIVE_SYM}" || true
+
+  [ ! -d "${GOOGLE_PHOTOS}" ] && mkdir -pv "${GOOGLE_PHOTOS}"
+  rm -rf "${GOOGLE_PHOTOS_SYM}" && ln -sf "${GOOGLE_PHOTOS}" "${GOOGLE_PHOTOS_SYM}" || true
+fi
+
 
 printf 'Setting up Homebrew/opt\n'
 HOMEBREW_OPT=$HOMEBREW/.opt

@@ -12,7 +12,7 @@ fi
 RClone=$(which rclone)
 BackupRoot="/data/"
 BackupDestGoogle="$BackupRoot"/GoogleDrive
-BackupDestMSOne="$BackupRoot"/Onedrive
+BackupDestMSOne="$BackupRoot"/OneDrive
 
 # Backing up GoogleDrive
 if [ -d "$BackupDestGoogle" ]; then
