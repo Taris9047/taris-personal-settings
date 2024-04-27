@@ -59,7 +59,6 @@ gitaly['env'] = {
   'GITALY_COMMAND_SPAWN_MAX_PARALLEL' => '2'
 }
 
-]
 EOL
 
 docker exec gitlab update-permissions
