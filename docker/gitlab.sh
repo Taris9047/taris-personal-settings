@@ -59,14 +59,6 @@ gitaly['env'] = {
   'GITALY_COMMAND_SPAWN_MAX_PARALLEL' => '2'
 }
 
-gitaly['concurrency'] = [
-  {
-    'rpc' => "/gitaly.SmartHTTPService/PostReceivePack",
-    'max_per_repo' => 3
-  }, {
-    'rpc' => "/gitaly.SSHService/SSHUploadPack",
-    'max_per_repo' => 3
-  }
 ]
 EOL
 
