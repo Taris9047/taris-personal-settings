@@ -610,7 +610,7 @@ if build "openssl" "3.2.1"; then
 		sed -n 's/\(##### GNU Hurd\)/"darwin64-arm64-cc" => { \n    inherit_from     => [ "darwin-common", asm("aarch64_asm") ],\n    CFLAGS           => add("-Wall"),\n    cflags           => add("-arch arm64 "),\n    lib_cppflags     => add("-DL_ENDIAN"),\n    bn_ops           => "SIXTY_FOUR_BIT_LONG", \n    perlasm_scheme   => "macosx", \n}, \n\1/g' Configurations/10-main.conf
 		execute env "${COMPILER_SET}" ./Configure --prefix="${WORKSPACE}" no-shared no-asm darwin64-arm64-cc
 	else	
-    execute env "${COMPILER_SET}" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib '-Wl,-rpath,$(LIBRPATH)'
+    execute env "${COMPILER_SET}" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib 
 	fi
 	execute make -j $MJOBS
 	execute make install_sw
