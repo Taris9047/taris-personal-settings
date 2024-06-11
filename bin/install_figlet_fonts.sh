@@ -155,7 +155,7 @@ function figlet_main {
 	git_download 'https://github.com/xero/figlet-fonts'     ''
 	git_download 'https://github.com/phracker/figlet-fonts' ''
 	git_download 'https://github.com/cmatsuoka/figlet'      'fonts'
-  git_download 'https://github.com/xero/figlet-fonts.git' ''
+  git_download 'https://github.com/xero/figlet-fonts'     ''
 	#
 	#  WWW Download figlet fonts
 	#
