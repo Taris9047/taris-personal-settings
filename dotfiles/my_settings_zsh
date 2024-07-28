@@ -639,7 +639,7 @@ if [ -d "${HOME}/.cargo" ]; then
     . "${HOME}/.cargo/env"
 fi
 
-alias cargo-update='cargo install $(cargo install --list | egrep '\''^[a-z0-9_-]+ v[0-9.]+:$'\'' | cut -f1 -d'\'' '\'')'
+alias cargo-update='rustup update && cargo install $(cargo install --list | egrep '\''^[a-z0-9_-]+ v[0-9.]+:$'\'' | cut -f1 -d'\'' '\'')'
 
 if [ -d "${HOMEBREW}/.opt/gcc-jit" ]; then
     printf '%b Gcc with libgccjit found in the system!\n' "${check_symbol}"
