@@ -26,7 +26,7 @@ if [ -z "$(docker ps | grep gitlab)" ]; then
   printf "Running gitlab docker!!\n"
   docker run --detach \
     --hostname="$EXT_URL" \
-    --env GITLAB_OMNIBUS_CONFIG="external_url 'http://$EXT_URL/';gitlab_rails['lfs_enabled'] = true;puma['worker_processes'] = 0;sidekiq['max_concurrency'] = 10;gitlab_rails['gitlab_shell_ssh_port'] = $SSH_PORT" \
+    --env GITLAB_OMNIBUS_CONFIG="external_url 'http://$EXT_URL/';gitlab_rails['lfs_enabled'] = true;puma['worker_processes'] = 0;gitlab_rails['gitlab_shell_ssh_port'] = $SSH_PORT" \
     --publish $MAIN_PORT:$MAIN_PORT  \
     --publish $SSH_PORT:22 \
     --name gitlab \
@@ -41,9 +41,6 @@ fi
 sudo -H truncate -s 0 $GITLAB_HOME/config/gitlab.rb
 sudo -H tee -a $GITLAB_HOME/config/gitlab.rb > /dev/null <<EOL
 puma['worker_processes'] = 0
-
-sidekiq['min_concurrency'] = 1
-sidekiq['max_concurrency'] = 6
 
 postgresql['shared_buffers'] = "256MB"
 
