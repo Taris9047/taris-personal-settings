@@ -63,7 +63,7 @@ run_NoIP-DUC() {
   done <"${tmp_file}"
 
   # Finally running the NoIP-DUC
-  "${DUC_EXE}" --username "${key_data[0]}" --password "${key_data[1]}" -g "${key_data[2]}"
+  "${DUC_EXE}" --username "${key_data[0]}" --password "${key_data[1]}" -g "${key_data[2]}" &
 
   rm -rf "${tmp_file}"
 }
