@@ -22,6 +22,9 @@ if [ -z "$(docker ps | grep portainer)" ]; then
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $PORTAINER_HOME/portainer_data:/data \
 		portainer/portainer-ce:latest
+else
+  printf 'Docker container seems to be working... updating images instead...\n'
+  docker pull portainer/portainer-ce:latest 
 fi
 
 
