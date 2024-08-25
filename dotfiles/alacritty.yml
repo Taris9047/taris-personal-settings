@@ -311,15 +311,6 @@ colors:
 #  duration: 0
 #  color: '0xffffff'
 
-# DEPRECATED
-# Background opacity
-#
-# Window opacity as a floating point number from `0.0` to `1.0`.
-# The value `0.0` is completely transparent and `1.0` is opaque.
-
-# Window opacity
-window:
-  opacity: 0.8
 
 #selection:
 #semantic_escape_chars: ",│`|:\"' ()[]{}<>\t"

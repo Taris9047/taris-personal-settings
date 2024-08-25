@@ -162,8 +162,10 @@ STARSHIP_CONF_FILE="$USR_DIR/.config/starship.toml"
 # Alacritty - an OpenGL based terminal
 printf 'Setting up Alacritty config file\n'
 ALACRITTY_CONF_FILE="$USR_DIR/.config/alacritty.yml"
-rm -rf "$ALACRITTY_CONF_FILE"
+ALACRITTY_CONF_FILE_TOML="${USR_DIR}/.config/alacritty.toml"
+rm -rf "$ALACRITTY_CONF_FILE" "${ALACRITTY_CONF_FILE_TOML}"
 ln -sf "$SETTINGS_DIR/dotfiles/alacritty.yml" "$ALACRITTY_CONF_FILE" || true
+ln -sf "${SETTINGS_DIR}/dotfiles/alacritty.toml" "${ALACRITTY_CONF_FILE_TOML}" || true
 
 # Kitty - A highly customizable terminal
 printf 'Setting up Kitty config file\n'
