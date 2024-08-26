@@ -5,12 +5,12 @@ if [ ! -x "$(command -v docker)" ]; then
 	exit 1
 fi
 
-PORTAINER_HOME=/srv/portainer
+PORTAINER_HOME="/srv/portainer"
 
-if [ ! -d "$PORTAINER_HOME" ]; then
-	sudo -p mkdir "$PORTAINER_HOME"
+if [ ! -d "${PORTAINER_HOME}" ]; then
+	sudo -p mkdir "${PORTAINER_HOME}"
 	printf "Portainer directory generated. Make sure you have write permission.\n"
-	printf '--> %s\n' "$PORTAINER_HOME"
+	printf ' %s\n' "${PORTAINER_HOME}"
 	exit 0
 fi
 
