@@ -16,7 +16,7 @@ fi
 # Tightvnc case
 
 # Preferred port: 5907
-VNCPORT=7
+VNCPORT=':7'
 
 all_vnc_servers="$(ps -ef | grep 'Xtightvnc' | awk 'match($0, / :[0-9]+/) {print substr( $0, RSTART, RLENGTH)}')"
 my_vnc_servers="$(ps -ef | grep 'Xtightvnc' | awk 'match($0, / :[0-9]+/) {print substr( $0, RSTART, RLENGTH)}')"
