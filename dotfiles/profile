@@ -45,3 +45,10 @@ case ":$PATH:" in
 esac
 
 # <<< juliaup initialize <<<
+
+# Runs Starship on Tmux?
+if [ -x "$(command -v starship)" ]; then
+  eval "$(starship init bash)"
+fi
+
+
