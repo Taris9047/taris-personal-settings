@@ -48,3 +48,10 @@ esac
 
 # Re-adding /usr/local/bin
 export PATH="/usr/local/bin:${PATH}"
+
+# Runs Starship on Tmux?
+if [ -x "$(command -v starship)" ]; then
+  eval "$(starship init bash)"
+fi
+
+
