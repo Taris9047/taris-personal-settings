@@ -220,3 +220,8 @@
 [user]
 	email = talezshin@gmail.com
 	name = Taylor Shin
+[safe]
+	directory = /storage/build/buildroot/output/build/bcc-v0.31.0
+	directory = /storage/build/buildroot/output/build/bcc-v0.31.0/libbpf-tools/blazesym
+	directory = /storage/build/buildroot/output/build/bcc-v0.31.0/src/cc/libbpf
+	directory = /storage/build/buildroot/output/build/bcc-v0.31.0/libbpf-tools/bpftool

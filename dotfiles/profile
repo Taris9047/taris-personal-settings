@@ -45,3 +45,6 @@ case ":$PATH:" in
 esac
 
 # <<< juliaup initialize <<<
+
+# Re-adding /usr/local/bin
+export PATH="/usr/local/bin:${PATH}"
