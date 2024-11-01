@@ -12,7 +12,7 @@ Due to the nature of being 'mobile', Raspberry Pi seems to be the only option we
 Basically, we will connect the Thunderbolt 4 port of the iPad to Raspberry Pi's USB-C power port. In other words, we will run the Raspberry Pi 4 from iPad's power pack. This set up will work without too much problem for a short session. But if we need a constant power supply, we can also bring in a USB hub that has PD charging capability. And those USB hubs usually provide USB Type A ports instead. So, for this case, you may need USB-A to C PD charging data cable. If you want to way more mobile, the PD charging port of the USB hub can be connected to a battery pack with PD charging capability. Say, 23 W of power delivery would be enough.
 
 ## Settig up Raspberry Pi 4
-We will use the Raspbian OS which is an 'official' OS for Raspberry Pi. Write a SD card with Raspbian image first, then some config files needs to be edited to make sure the USB-C port to be configured as a USB LAN card.
+We will use the Raspbian OS which is an 'official' OS for Raspberry Pi. Write a SD card with Raspbian image first, then some config files needs to be edited to make sure the USB-C port to be configured as a USB LAN card. In fact, this guide almost works with RPi 5 as well. Just a few changes...
 
 
 ### Enabling SSHd 
@@ -65,6 +65,12 @@ Here, list of config files to edit.
 /etc/modules
 /etc/dhcpcd.conf
 ```
+For RPi5, you should rather change...
+```
+/boot/firmware/config.txt
+/boot/firmware/cmdline.txt
+/etc/modules
+```
 
 #### `/boot/config.txt`
 Add following to the end of file:
@@ -84,6 +90,7 @@ libcomposite
 ```
 #### `/etc/dhcdcd.conf`
 Add following to the end of the file.
+** This part is NOT needed for RPi5 **
 ```
 denyiterfaces usb0
 ```
@@ -115,11 +122,12 @@ Now we need to write a shell script that will run every boot to set up the Netwo
 Write a file, possibly named as: `usb.sh`, somewhere you want, then fill out the file with the content below:
 ```
 #!/bin/sh
+OTG_Pi='display-pi'
 cd /sys/kernel/config/usb_gadget/
-mkdir -p pi4
-cd pi4
+mkdir -p "${OTG_Pi}"
+cd "${OTG_Pi}"
 
-MY_NAME='my_name'
+MY_NAME="${USER}"
 PI_NAME="${HOSTNAME}"
 
 echo 0x1d6b > idVendor # Linux Foundation
@@ -152,14 +160,131 @@ ls /sys/class/udc > UDC
 ifup usb0
 service dnsmasq restart
 ```
+
+For Raspberry Pi 5, a few bits for hardware description has changed. Thus, you can rather use this code below...
+```
+#!/bin/bash
+
+OTG_Pi=display-pi
+cd /sys/kernel/config/usb_gadget/
+mkdir -p "${OTG_Pi}"
+cd "${OTG_Pi}"
+echo 0x1d6b > idVendor # Linux Foundation
+echo 0x0104 > idProduct # Multifunction Composite Gadget
+echo 0x0103 > bcdDevice # v1.0.3
+echo 0x0320 > bcdUSB # USB2
+echo 2 > bDeviceClass
+mkdir -p strings/0x409
+echo "fedcba9876543213" > strings/0x409/serialnumber
+echo "Some User" > strings/0x409/manufacturer
+echo "Display-Pi USB Device" > strings/0x409/product
+mkdir -p configs/c.1/strings/0x409
+echo "CDC" > configs/c.1/strings/0x409/configuration
+echo 250 > configs/c.1/MaxPower
+echo 0x80 > configs/c.1/bmAttributes
+
+#ECM
+mkdir -p functions/ecm.usb0
+HOST="00:dc:c8:f7:75:15" # "HostPC"
+SELF="00:dd:dc:eb:6d:a1" # "BadUSB"
+echo $HOST > functions/ecm.usb0/host_addr
+echo $SELF > functions/ecm.usb0/dev_addr
+ln -s functions/ecm.usb0 configs/c.1/
+
+#RNDIS
+mkdir -p configs/c.2
+echo 0x80 > configs/c.2/bmAttributes
+echo 0x250 > configs/c.2/MaxPower
+mkdir -p configs/c.2/strings/0x409
+echo "RNDIS" > configs/c.2/strings/0x409/configuration
+
+echo "1" > os_desc/use
+echo "0xcd" > os_desc/b_vendor_code
+echo "MSFT100" > os_desc/qw_sign
+
+mkdir -p functions/rndis.usb0
+HOST_R="00:dc:c8:f7:75:16"
+SELF_R="00:dd:dc:eb:6d:a2"
+echo $HOST_R > functions/rndis.usb0/dev_addr
+echo $SELF_R > functions/rndis.usb0/host_addr
+echo "RNDIS" >   functions/rndis.usb0/os_desc/interface.rndis/compatible_id
+echo "5162001" > functions/rndis.usb0/os_desc/interface.rndis/sub_compatible_id
+
+ln -s functions/rndis.usb0 configs/c.2
+ln -s configs/c.2 os_desc
+
+udevadm settle -t 5 || :
+ls /sys/class/udc > UDC
+
+sleep 5
+
+nmcli connection up bridge-br0
+nmcli connection up bridge-slave-usb0
+nmcli connection up bridge-slave-usb1
+sleep 5
+service dnsmasq restart
+```
+
+
+
 Usually, you can put this `usb.sh` file into the `root` user's home directory.
 ```
 sudo cp -vf ./usb.sh /root/ 
 ```
+Or, you would rather place the file as```/usr/local/sbin/usb-gadget.sh``` for Pi 5.
+On both cases, Pi 4 or 5, dont' forget to add executable privilege on this file.
+
 Then, add the script to `/etc/rc.local` to make sure this script runs on each boot.
 ```
 echo "sh /root/usb.sh" >> /etc/rc.local
 ```
+** This is not needed for Pi5 **
+For Pi 5, we would rather use systemd. Prepare a systemd command unit as described here:
+```
+[Unit]
+Description=My USB gadget
+After=network-online.target
+Wants=network-online.target
+#After=systemd-modules-load.service
+  
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/usb-gadget.sh
+  
+[Install]
+WantedBy=sysinit.target
+```
+Place this file at ```/lib/systemd/system/usbgadget.service``` and enable the service.
+```
+sudo systemctl enable usbgadget.service
+```
+
+### [Pi 5 Only] Network Manager
+The OTG IP address will be set here in case of RPi 5.
+```
+nmcli con add type bridge ifname br0
+nmcli con add type bridge-slave ifname usb0 master br0
+nmcli con add type bridge-slave ifname usb1 master br0
+nmcli connection modify bridge-br0 ipv4.method manual ipv4.addresses 10.55.0.1/24
+```
+Here, we set up the Pi 5's USB-C IP address as 10.55.0.1.
+You can set it up as you want, i.e. 192.168.42.1 (MilkV like), 192.168.7.1 (Beaglebone Black), etc.
+
+### [Pi 5 Only] Also, you need to work with DNSMASQ
+```
+sudo apt-get install dnsmasq
+
+dhcp-authoritative
+dhcp-rapid-commit
+no-ping
+interface=br0
+dhcp-range=10.55.0.2,10.55.0.6,255.255.255.248,1h
+dhcp-option=3
+leasefile-ro
+```
+You will have to adjust this mask address to apply different IP address as mentioned above.
+
 
 ### Zeroconf (MDNS) set up (optional)
 Lastly, we will establish a Zeroconf functionality so that we do not need to remember the draded IP address number every time.
@@ -175,6 +300,8 @@ sudo systemctl enable avahi-daemon
 sudo systemctl start avahi-daemon
 ```
 Then you will be able to connect to Pi with the `hostname.local` you have defined at `/etc/hostname`.
+
+In fact, this part would have already been dealt with Pi 5's most recent Raspbian!!
 
 ### VNC Server 
 Raspberry pi comes with a built-in RealVNC server which is really handy. You can enable it by accessing the `raspi-config` anytime!!
