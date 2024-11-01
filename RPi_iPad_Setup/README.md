@@ -272,9 +272,10 @@ Here, we set up the Pi 5's USB-C IP address as 10.55.0.1.
 You can set it up as you want, i.e. 192.168.42.1 (MilkV like), 192.168.7.1 (Beaglebone Black), etc.
 
 ### [Pi 5 Only] Also, you need to work with DNSMASQ
-```
-sudo apt-get install dnsmasq
+Now you have to use dnsmasq which is not installed on the system by default. Install it with ```sudo apt-get install -y dnsmasq```.
 
+Then add the lines below to ```/etc/dnsmasq.d/br0```
+```
 dhcp-authoritative
 dhcp-rapid-commit
 no-ping
