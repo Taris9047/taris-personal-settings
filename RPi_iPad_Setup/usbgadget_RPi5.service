@@ -1,0 +1,13 @@
+[Unit]
+Description=RPi5 as Gadget
+After=network-online.target
+Wants=network-online.target
+#After=systemd-modules-load.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/usb-gadget.sh
+
+[Install]
+WantedBy=sysinit.target
