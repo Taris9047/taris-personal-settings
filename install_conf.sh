@@ -75,7 +75,8 @@ array_element_decode() {
 
 # Config Files - This part needs to be POSIXified!
 # CONF_LIST=("vimrc" "gitignore" "gitconfig" "gdbinit" "Xresources" "tmux.conf")
-CONF_LIST=$(array 'vimrc' 'gitignore' 'gitconfig' 'gdbinit' 'Xresources' 'tmux.conf' 'profile')
+# CONF_LIST=$(array 'vimrc' 'gitignore' 'gitconfig' 'gdbinit' 'Xresources' 'tmux.conf' 'profile')
+CONF_LIST=$(array 'vimrc' 'gitignore' 'gitconfig' 'gdbinit' 'tmux.conf')
 
 # Linking dotfiles
 printf "\nLinking dotfiles from settings dir ...\n"
