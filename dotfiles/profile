@@ -1,57 +1,19 @@
 # Profile...
+
 . /etc/profile
 
-# SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+# If on SSH...
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
 
-# Mounting cloud directories.
-# --> Need to install RClone and set them up. 
-# . "$HOME/.settings/bin/mount_cloud_dirs.sh"
+  if [ -f "${HOME}/.bashrc" ]; then
+    . "${HOME}/.bashrc"
+  fi
 
-# hangul stuffs
-#export INPUT_METHOD="fcitx"
-#export XMODIFIERS=@im=fcitx
-#export QT_IM_MODULE=fcitx
-#export GTK_IM_MODULE=fcitx
+  # Re-adding /usr/local/bin
+  export PATH="/usr/local/bin:${PATH}"
 
-# Finally, run corresponding shell initialization scripts!!
-#[ -n "$BASH_VERSION" ] && . "$HOME/.bashrc"
-#[ -n "$ZSH_VERSION" ] && . "$HOME/.zshrc"
-#[ -n "$FISH_VERSION" ] && . "$HOME/.config/fish/config.fish"
-
-if [ -f "$HOME/.bashrc" ]; then
-  . ~/.bashrc
+  # Runs Starship on Tmux?
+  if [ -x "$(command -v starship)" ]; then
+    eval "$(starship init bash)"
+  fi
 fi
-
-if [ -d "$HOME/.cargo" ]; then
-  . "$HOME/.cargo/env"
-fi
-
-# opam configuration
-test -r /home/taris/.opam/opam-init/init.sh && . /home/taris/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
-
-if [ -e /home/taris/.nix-profile/etc/profile.d/nix.sh ]; then . /home/taris/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
-
-# >>> juliaup initialize >>>
-
-# !! Contents within this block are managed by juliaup !!
-
-case ":$PATH:" in
-    *:/home/taris/.juliaup/bin:*)
-        ;;
-
-    *)
-        export PATH=/home/taris/.juliaup/bin${PATH:+:${PATH}}
-        ;;
-esac
-
-# <<< juliaup initialize <<<
-
-# Re-adding /usr/local/bin
-export PATH="/usr/local/bin:${PATH}"
-
-# Runs Starship on Tmux?
-if [ -x "$(command -v starship)" ]; then
-  eval "$(starship init bash)"
-fi
-
-
