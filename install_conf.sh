@@ -325,7 +325,7 @@ fi
 
 # VTE stuff for Tilix
 if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
-  echo "VTE Stuffs"
+  echo "Setting up VTE Stuffs"
   append_source "${HOME}/.bashrc" "${DOTFILESDIR}/vte.sh"
 fi
 
