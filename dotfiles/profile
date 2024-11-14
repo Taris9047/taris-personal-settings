@@ -3,7 +3,7 @@
 . /etc/profile
 
 # If on SSH...
-if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] || [ -n "$TMUX" ]; then
 
   if [ -f "${HOME}/.bashrc" ]; then
     . "${HOME}/.bashrc"

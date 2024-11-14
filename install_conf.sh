@@ -323,6 +323,11 @@ if [ ! -z "$(grep -i Microsoft /proc/version)" ]; then
 	append_source "$HOME/.bashrc" "$DOTFILESDIR/WSL.sh"
 fi
 
+# VTE stuff for Tilix
+if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+  echo "Setting up VTE Stuffs"
+  append_source "${HOME}/.bashrc" "${DOTFILESDIR}/vte.sh"
+fi
 
 printf '\n'
 printf '\n**** Closing Comments ****\n'
