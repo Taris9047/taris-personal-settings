@@ -5,7 +5,7 @@
 
 cwd="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
-if [ ! -x "$(command -v /usr/bin/rclone)" ]; then
+if [ ! -x "$(command -v rclone)" ]; then
   printf 'rclone is not installed in the system!! Quitting!!\n'
   exit 1
 fi
