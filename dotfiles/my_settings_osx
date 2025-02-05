@@ -4,7 +4,10 @@
 HBREW_PATH=$HOME/.local
 
 # Default texlive base path
-texlive_base_path=$HOME/.texlive
+#
+# --> MacTex is more preferred.
+#
+texlive_base_path="/Library/Tex"
 
 # Aliases Added for my convenience
 alias ls='ls -pFhG'
@@ -88,6 +91,12 @@ if [ -x "$(command -v exa)" ]; then
 	alias ls='exa -hF'
 	alias ll='exa -lahF'
 	alias l='exa -hF'
+	alias lst='exa -hFT'
+	
+	# Also expanding exa aliases
+	alias exa='exa -hF'
+	alias exal='exa -lahF'
+	alias exat='exa -hFT'
 fi
 
 # Lsd
@@ -96,6 +105,11 @@ if [ -x "$(command -v lsd)" ]; then
 	alias ls='lsd -hFX'
 	alias ll='lsd -lahFX'
 	alias l='lsd -hFX'
+	
+	# Also expanding lsd aliases
+	alias lsd='lsd -hFX'
+	alias lsdl='lsd -lahFX'
+	alias lsdR='lsd -hFXR'
 fi
 
 # Bat
@@ -155,13 +169,22 @@ fi
 MINICONDA3_HOME="${HOME}/.miniconda3"
 if [ -f "${MINICONDA3_HOME}/bin/conda" ]; then
 	printf 'Miniconda3 found! Initializing it\n'
-  
-  . "${MINICONDA3_HOME}/etc/profile.d/conda.sh" 
+
+	. "${MINICONDA3_HOME}/etc/profile.d/conda.sh" 
 
 fi
 
-# Showing hostname
+# Showing hostname with decorations
 clear
+
+if [ -x "$(command -v spark)" ]; then
+    if [ -x "$(command -v lolcat)" ]; then
+        seq 1 $(/usr/bin/tput cols) | sort -R | spark | lolcat; echo; echo
+    else
+        seq 1 $(/usr/bin/tput cols) | sort -R | spark | echo; echo
+    fi
+fi
+
 if [ -x "$(command -v figlet)" ]; then
     if [ -x $(command -v lolcat) ]; then
         figlet -w "$(/usr/bin/tput cols)" "$(uname -n)" | lolcat
@@ -171,8 +194,11 @@ if [ -x "$(command -v figlet)" ]; then
 fi
 
 # Showing system info with neofetch
+check_uptime() {
+    echo "$(sysctl kern.boottime | awk -F'[ ,]' '{print $5}')"
+}
 if [ -x "$(command -v neofetch)" ]; then
-	neofetch
+	([ "$(printf '%.0f' "$(check_uptime)")" -lt 2400 ]) && neofetch
 fi
 
 # Sanitizing path
