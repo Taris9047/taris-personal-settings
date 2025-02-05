@@ -48,7 +48,7 @@ set_os_type
 
 # If Mac OS is detected, use the other script...
 if [ "${PLATFORM}" = "darwin" ]; then
-	. "$(pwd -P)/install_conf_macos.sh"
+	. "${SETTINGS_DIR}/ianstall_conf_macos.sh"
 	exit 0
 fi
 	
