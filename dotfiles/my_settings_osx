@@ -15,7 +15,6 @@ alias mv='mv -i'
 alias cp='cp -i'
 alias grep='grep --color'
 alias df='df -h'
-alias ps='ps -W'
 alias sudo='sudo -H'
 
 # Delete certain files recursively!!
