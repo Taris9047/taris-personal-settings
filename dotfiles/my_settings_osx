@@ -179,5 +179,16 @@ fi
 path_sanitized=$(printf "%s" "$PATH" | awk -v RS=':' '!a[$1]++ { if (NR > 1) printf RS; printf $1 }')
 export PATH="${path_sanitized}"
 
+#
 # Adding some more fun stuffs
+#
 
+# Sublime Text3
+if [ -d "/Applications/Sublime Text.app" ]; then
+  export PATH="/Applications/Sublime Text.app/Contents/SharedSupport/bin/:$PATH"
+fi
+
+# jEdit
+if [ -d "/Applications/jEdit.app" ]; then
+  export PATH="/Applications/jEdit.app/Contents/MacOS/:$PATH"
+fi
