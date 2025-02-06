@@ -232,7 +232,7 @@ fi
 # lack of convenient openssl library link.
 # We need to handle it for some way.
 #
-RUST_LIST=$(array 'exa' 'bat' 'rm-improved' 'diskonaut' 'ripgrep' 'fd-find' 'tokei' 'lsd' 'procs' 'hjson')
+RUST_LIST=$(array 'exa' 'bat' 'rm-improved' 'diskonaut' 'ripgrep' 'fd-find' 'tokei' 'lsd' 'procs' 'hjson' 'eza')
 
 # Rust tool install
 do_rust_inst () {
