@@ -26,29 +26,29 @@ printf 'Source directory: %s\n' "${SETTINGS_DIR}"
 
 # OS Detection
 lowercase() {
-	printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
+  printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
 }
 
 PLATFORM='none'
 set_os_type() {
-	UNAMESTR=$(lowercase "$(uname)")
+  UNAMESTR=$(lowercase "$(uname)")
 
-	case "$UNAMESTR" in
-	*"cygwin"*) PLATFORM="cygwin" ;;
-	*"linux"*) PLATFORM="linux" ;;
-	*"darwin"*) PLATFORM="darwin" ;;
-	*) PLATFORM="general_unix" ;;
-	esac
+  case "$UNAMESTR" in
+  *"cygwin"*) PLATFORM="cygwin" ;;
+  *"linux"*) PLATFORM="linux" ;;
+  *"darwin"*) PLATFORM="darwin" ;;
+  *) PLATFORM="general_unix" ;;
+  esac
 
-	# printf 'Setting platform as: %s\n' "$PLATFORM"
+  # printf 'Setting platform as: %s\n' "$PLATFORM"
 }
 
 # Set OS Type
 set_os_type
 
 if [ "$PLATFORM" != "darwin" ]; then
-	printf 'Looks like the system is not OS X. Exiting...\n'
-	exit 1
+  printf 'Looks like the system is not OS X. Exiting...\n'
+  exit 1
 fi
 
 # Implementing a poor man's array in POSIX way.
@@ -56,18 +56,18 @@ fi
 #
 # Array constructor
 array() {
-	for i in "$@"; do
-		printf '%s\n' "$i" | array_element_encode
-	done
+  for i in "$@"; do
+    printf '%s\n' "$i" | array_element_encode
+  done
 }
 
 # Array element eocode/decode
 array_element_encode() {
-	sed 's/%/%25/g' | sed -e :a -e '$!N; s/\n/%0A/; ta'
+  sed 's/%/%25/g' | sed -e :a -e '$!N; s/\n/%0A/; ta'
 }
 
 array_element_decode() {
-	sed -e 's/%0[aA]/\
+  sed -e 's/%0[aA]/\
 /g' -e 's/%25/%/g'
 }
 
@@ -81,15 +81,15 @@ printf "\nLinking dotfiles from settings dir ...\n"
 #
 # Do this stuff for each element
 do_inst() {
-	printf 'Installing: %s\n' ".${1}"
-	rm -rf "${USR_DIR}/.${1}"
-	ln -sf "${SETTINGS_DIR}/dotfiles/${1}" "${USR_DIR}/.${1}" || true
+  printf 'Installing: %s\n' ".${1}"
+  rm -rf "${USR_DIR}/.${1}"
+  ln -sf "${SETTINGS_DIR}/dotfiles/${1}" "${USR_DIR}/.${1}" || true
 }
 # Iterate through the array...
 printf '%s\n' "$CONF_LIST" |
-	while IFS= read -r element; do
-		do_inst "$(printf '%s\n' "$element" | array_element_decode)"
-	done
+  while IFS= read -r element; do
+    do_inst "$(printf '%s\n' "$element" | array_element_decode)"
+  done
 # Lastly, prepare the gitconfig.local
 [ -L "$HOME/.gitconfig" ] && [ ! -f "$HOME/.gitconfig.local" ] && touch "$HOME/.gitconfig.local"
 
@@ -122,7 +122,7 @@ NVIM_GTK_CONF_HOME="$USR_DIR/.config/nvim-gtk"
 #
 rm -rf "${NVIM_CONF_HOME}" "${NVIM_GTK_CONF_HOME}"
 if [ -d "${USR_DIR}/.local/share/nvim" ]; then
-	find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "nvim" -prune -name "runtime" -type d -exec rm -rf {} +
+  find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "nvim" -prune -name "runtime" -type d -exec rm -rf {} +
 fi
 #rm -rf "${USR_DIR}/.local/share/nvim"
 git clone "https://github.com/NvChad/NvChad" "${HOME}/.config/nvim" --depth 1 
@@ -134,12 +134,12 @@ STARSHIP_CONF_FILE="${USR_DIR}/.config/starship.toml"
 
 # Emacs - Not Doom nor Space. Just Emacs.
 if [ ! -d "${HOME}/.doom.d" ]; then
-	printf 'Setting up Default emacsd.d\n'
-	EMACSD="${HOME}/.emacs.d"
-	[ ! -d "${EMACSD}" ] && mkdir -pv "${EMACSD}"
-	rm -rf "${EMACSD:?}/*"
-	ln -sf "${SETTINGS_DIR}/dotfiles/emacs.d/init.el" "${EMACSD}/init.el" || true
-	ln -sf "${SETTINGS_DIR}/dotfiles/emacs.d/config.org" "${EMACSD}/config.org" || true
+  printf 'Setting up Default emacsd.d\n'
+  EMACSD="${HOME}/.emacs.d"
+  [ ! -d "${EMACSD}" ] && mkdir -pv "${EMACSD}"
+  rm -rf "${EMACSD:?}/*"
+  ln -sf "${SETTINGS_DIR}/dotfiles/emacs.d/init.el" "${EMACSD}/init.el" || true
+  ln -sf "${SETTINGS_DIR}/dotfiles/emacs.d/config.org" "${EMACSD}/config.org" || true
 fi
 
 # Tmux!
@@ -155,13 +155,13 @@ rm -rf "${ORGMODE_DIR_SYM}"
 ln -sf "${ORGMODE_DIR}" "${ORGMODE_DIR_SYM}"
 
 append_string() {
-	if ! grep -Fxq "${2}" "${1}"; then
-		# printf 'Appending %s with %s\n' "${2}" "${1}"
-		printf "\n\n%s\n" "${2}" >>"${1}"
-	fi
+  if ! grep -Fxq "${2}" "${1}"; then
+    # printf 'Appending %s with %s\n' "${2}" "${1}"
+    printf "\n\n%s\n" "${2}" >>"${1}"
+  fi
 }
 append_source() {
-	append_string "${1}" ". ${2}"
+  append_string "${1}" ". ${2}"
 }
 
 printf 'Setting up shell environments\n'
@@ -174,23 +174,23 @@ DARWINZSHFILE="$DOTFILESDIR/zshrc_osx"
 # SHELL_TYPE="$(echo $SHELL)"
 
 inst_env_linux() {
-	[ ! -f "$HOME/.bashrc" ] && touch "$HOME/.bashrc"
-	append_source "$HOME/.bashrc" "$LINUXBASHFILE"
+  [ ! -f "$HOME/.bashrc" ] && touch "$HOME/.bashrc"
+  append_source "$HOME/.bashrc" "$LINUXBASHFILE"
 
-	[ ! -f "$HOME/.zshrc" ] && touch "$HOME/.zshrc"
-	append_source "$HOME/.zshrc" "$LINUXZSHFILE"
+  [ ! -f "$HOME/.zshrc" ] && touch "$HOME/.zshrc"
+  append_source "$HOME/.zshrc" "$LINUXZSHFILE"
 }
 
 inst_env_cygwin() {
-	append_source "$HOME/.bashrc" "$LINUXBASHFILE"
+  append_source "$HOME/.bashrc" "$LINUXBASHFILE"
 }
 
 inst_env_darwin() {
-#	[ ! -f "$HOME/.bash_profile" ] && touch "$HOME/.bash_profile"
-#	append_source "$HOME/.bash_profile" "$DARWINBASHFILE"
+# [ ! -f "$HOME/.bash_profile" ] && touch "$HOME/.bash_profile"
+# append_source "$HOME/.bash_profile" "$DARWINBASHFILE"
 
-	[ ! -f "$HOME/.zshrc" ] && touch "$HOME/.zshrc"
-	append_source "$HOME/.zshrc" "$DARWINZSHFILE"
+  [ ! -f "$HOME/.zshrc" ] && touch "$HOME/.zshrc"
+  append_source "$HOME/.zshrc" "$DARWINZSHFILE"
 }
 
 #
@@ -198,20 +198,20 @@ inst_env_darwin() {
 #
 case "$PLATFORM" in
 "linux")
-	inst_env_linux
-	;;
+  inst_env_linux
+  ;;
 
 "cygwin")
-	inst_env_cygwin
-	;;
+  inst_env_cygwin
+  ;;
 
 "darwin")
-	inst_env_darwin
-	;;
+  inst_env_darwin
+  ;;
 
 "*") # Considering general Unix OS as Linux
-	inst_env_linux
-	;;
+  inst_env_linux
+  ;;
 esac
 
 # Downloading unix_dev_setup
@@ -220,9 +220,9 @@ printf 'Setting up Unix Development Setup to %s\n' "$HOME/.uds"
 UDS_DIR="$HOME/.uds"
 UDS_LNK="$SETTINGS_DIR/unix_dev_setup"
 if [ ! -d "$UDS_DIR" ]; then
-	git clone "$MY_UDS_GIT_REPO" "$UDS_DIR"
-	rm -rf "$UDS_LNK"
-	ln -sf "$UDS_DIR" "$UDS_LNK"
+  git clone "$MY_UDS_GIT_REPO" "$UDS_DIR"
+  rm -rf "$UDS_LNK"
+  ln -sf "$UDS_DIR" "$UDS_LNK"
 fi
 
 # Installing rust stuffs
@@ -236,83 +236,93 @@ RUST_LIST=$(array 'exa' 'bat' 'rm-improved' 'diskonaut' 'ripgrep' 'fd-find' 'tok
 
 # Rust tool install
 do_rust_inst () {
-	CMD_TO_INST="${1}"
-	CARGO_BIN="$(command -v cargo)"
-	if [ "${1}" = "fd-find" ]; then
-		CMD_TO_INST="fd"
-	elif [ "${1}" = "ripgrep" ]; then
-		CMD_TO_INST="rg"
-	elif [ "${1}" = "rm-improved" ]; then
-		CMD_TO_INST="rip"
-	fi
-	
-	if [ -z "$(command -v ${CMD_TO_INST})" ]; then
-		"${CARGO_BIN}" install "${1}"
-	fi
+  CMD_TO_INST="${1}"
+  CARGO_BIN="$(command -v cargo)"
+  if [ "${1}" = "fd-find" ]; then
+    CMD_TO_INST="fd"
+  elif [ "${1}" = "ripgrep" ]; then
+    CMD_TO_INST="rg"
+  elif [ "${1}" = "rm-improved" ]; then
+    CMD_TO_INST="rip"
+  fi
+  
+  if [ -z "$(command -v ${CMD_TO_INST})" ]; then
+    "${CARGO_BIN}" install "${1}"
+  fi
 }
 
 # Install Cargo
 if [ -z "$(command -v cargo)" ]; then
-	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 
 # Install Rust tools
 printf '%s\n' "${RUST_LIST}" |
-	while IFS= read -r element; do
-		do_rust_inst "$(printf '%s\n' "$element" | array_element_decode)"
-	done
+  while IFS= read -r element; do
+    do_rust_inst "$(printf '%s\n' "$element" | array_element_decode)"
+  done
 
 # Installing Starship
 if [ -z "$(command -v starship)" ]; then
-	CARGO_BIN="$(command -v cargo)"
-	# Starship cannot be installed with cargo.. Unless openssl is installed with brew.
-	# So, just taking the binary way...
-	#"${CARGO_BIN}" install starship --locked
- 	curl -sS https://starship.rs/install.sh | sh
+  CARGO_BIN="$(command -v cargo)"
+  # Starship cannot be installed with cargo.. Unless openssl is installed with brew.
+  # So, just taking the binary way...
+  #"${CARGO_BIN}" install starship --locked
+  curl -sS https://starship.rs/install.sh | sh
+fi
+
+#
+# Node.JS
+#
+if [ -z "$(command -v node)" ]; then
+  # Install command from 'nodejs.org/en/download' as of Feb. 2025
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+  nvm install 22
+  printf 'node+npm installation finished!\n'
 fi
 
 #
 # Setting up Homebrew: Yes, you don't need my crappy install scripts for MacOS!!
 #
 if [ -z "$(command -v brew)" ]; then
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-	#append_source 'eval "$(/opt/homebrew/bin/brew shellenv)"' "${HOME}/.zprofile"
-    if [ ! -f "${HOME}/.zprofile" ]; then
-		touch "${HOME}/.zprofile"
-	fi
-	(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> "${HOME}/.zprofile"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  #append_source 'eval "$(/opt/homebrew/bin/brew shellenv)"' "${HOME}/.zprofile"
+  if [ ! -f "${HOME}/.zprofile" ]; then
+    touch "${HOME}/.zprofile"
+  fi
+  (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> "${HOME}/.zprofile"
 fi
 [ -f "/opt/homebrew/bin/brew" ] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # List of Brew packages to install
 printf 'Installing Brew Packages\n'
-BREW_PKGS=$(array 'wget' 'emacs' 'openssh' 'neovim' 'gnuplot' 'cmake' 'flex' 'bison' 'node' 'neofetch' 'figlet' 'lolcat' 'duf' 'golang' 'tmux' 'btop' 'htop' 'meld')
+BREW_PKGS=$(array 'wget' 'emacs' 'openssh' 'neovim' 'gnuplot' 'cmake' 'flex' 'bison' 'neofetch' 'figlet' 'lolcat' 'duf' 'golang' 'tmux' 'btop' 'htop' 'meld' 'spark' 'fzf')
 do_brew_inst() {
-	BREW_CMD="$(command -v brew)"
-	if [ ! -z "${BREW_CMD}" ]; then 
-		if [ "${1}" = "emacs" ]; then
-			"${BREW_CMD}" install --cask "${1}"
-		elif [ "${1}" = "meld" ]; then
-			"${BREW_CMD}" install --cask "${1}"
-		else
-			"${BREW_CMD}" install "${1}"
-		fi
-	fi
+  BREW_CMD="$(command -v brew)"
+  if [ ! -z "${BREW_CMD}" ]; then 
+    if [ "${1}" = "emacs" ]; then
+      "${BREW_CMD}" install --cask "${1}"
+    elif [ "${1}" = "meld" ]; then
+      "${BREW_CMD}" install --cask "${1}"
+    else
+      "${BREW_CMD}" install "${1}"
+    fi
+  fi
 }
 printf '%s\n' "${BREW_PKGS}" |
-	while IFS= read -r element; do
-		do_brew_inst "$(printf '%s\n' "$element" | array_element_decode)"
-	done
+  while IFS= read -r element; do
+    do_brew_inst "$(printf '%s\n' "$element" | array_element_decode)"
+  done
 
 # Setting up NVChad
 if [ -x "$(command -v nvim)" ]; then
-	printf 'Setting up NVIM config files for NvChad\n'
-	NVIM_CONF_HOME="${USR_DIR}/.config/nvim"
-	NVIM_GTK_CONF_HOME="$USR_DIR/.config/nvim-gtk"
-	rm -rf "${NVIM_CONF_HOME}" "${NVIM_GTK_CONF_HOME}"
-	find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "${USR_DIR}/.local/share/nvim/" -prune -name "runtime" -type d -exec rm -rf {} +
-	#rm -rf "${USR_DIR}/.local/share/nvim"
-	git clone "https://github.com/NvChad/starter" "${HOME}/.config/nvim" --depth 1 
+  printf 'Setting up NVIM config files for NvChad\n'
+  NVIM_CONF_HOME="${USR_DIR}/.config/nvim"
+  NVIM_GTK_CONF_HOME="$USR_DIR/.config/nvim-gtk"
+  rm -rf "${NVIM_CONF_HOME}" "${NVIM_GTK_CONF_HOME}"
+  find "${USR_DIR}/.local/share/nvim/" -maxdepth 1 ! -name "${USR_DIR}/.local/share/nvim/" -prune -name "runtime" -type d -exec rm -rf {} +
+  #rm -rf "${USR_DIR}/.local/share/nvim"
+  git clone "https://github.com/NvChad/starter" "${HOME}/.config/nvim" --depth 1 
 fi
 
 # Tmux!
@@ -325,10 +335,10 @@ printf '\n**** Closing Comments ****\n'
 printf 'Run %s dir to set up Doomemacs stuffs.\n\n' "$SETTINGS_DIR/bin/install_doomemacs.sh"
 
 if [ -z "${HOME}/.gitconfig.local" ]; then
-	printf 'TODO: Also, don''t forget to populate %s\n\n' "$HOME/.gitconfig.local"
+  printf 'TODO: Also, don''t forget to populate %s\n\n' "$HOME/.gitconfig.local"
 fi
 
 if [ -x "$(command -v tmux)" ]; then
-	printf 'Sometimes tmux does not run install packages automatically: Ctrl+B Shift+I will do it manually.\n'
+  printf 'Sometimes tmux does not run install packages automatically: Ctrl+B Shift+I will do it manually.\n'
 
 printf 'Have a nice day!\n\n'
