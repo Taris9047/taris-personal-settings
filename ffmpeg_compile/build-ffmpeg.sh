@@ -896,8 +896,7 @@ if build "x264" "5db6aa6cab1b146e07b60cc1736a01f21da01154"; then
 	build_done "x264"
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
-
-if build "x265" "3.5"; then
+if build "x265" "4.1"; then
 	download "https://bitbucket.org/multicoreware/x265_git/downloads/x265_${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES"/x265-*/ || exit
 	cd source || exit
