@@ -89,6 +89,11 @@ export PKG_CONFIG_PATH
 
 COMPILER_SET+=" PKG_CONFIG_PATH=\"$PKG_CONFIG_PATH\""
 
+# Compiler Set reset for MacOS
+if [[ "${OSTYPE}" == "darwin"* ]]; then
+  COMPILER_SET=''
+fi
+
 # Detect compiler... if it really exists!
 if [ ! -x "$(command -v $CC)" ]; then
 	echo "$CC"
@@ -500,7 +505,7 @@ if build "zlib" "1.3.1"; then
 	execute env "${COMPILER_SET_Z}" ./configure --static --prefix="${WORKSPACE}"
 	execute make -j $MJOBS
 	execute make install
-	build_done "zlib"
+	build_done "zlib" "${CURRENT_PACKAGE_VERSION}"
 fi
 LDFLAGS+=" -L/zlib/lib"
 
@@ -512,7 +517,7 @@ if build "pkg-config" "0.29.2"; then
 	execute env "${COMPILER_SET} \"CFLAGS=$CFLAGS -Wno-int-conversion\"" ./configure --silent --prefix="${WORKSPACE}" --with-pc-path="${WORKSPACE}"/lib/pkgconfig --with-internal-glib --disable-host-tool -disable-shared 
 	execute make -j $MJOBS
 	execute make install
-	build_done "pkg-config"
+	build_done "pkg-config" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "yasm" "1.3.0"; then
@@ -521,7 +526,7 @@ if build "yasm" "1.3.0"; then
 	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}"
 	execute make -j $MJOBS
 	execute make install
-	build_done "yasm"
+	build_done "yasm" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "nasm" "2.16.01"; then
@@ -530,7 +535,7 @@ if build "nasm" "2.16.01"; then
 	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
-	build_done "nasm"
+	build_done "nasm" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "libunistring" "1.2"; then
@@ -539,7 +544,7 @@ if build "libunistring" "1.2"; then
 	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
-	build_done "libunistring"
+	build_done "libunistring" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "m4" "1.4.19"; then
@@ -548,7 +553,7 @@ if build "m4" "1.4.19"; then
   execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}"
   execute make -j $MJOBS
   execute make install
-  build_done "m4"
+  build_done "m4" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "autoconf" "2.72"; then
@@ -557,16 +562,16 @@ if build "autoconf" "2.72"; then
   execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
   execute make -j $MJOBS
   execute make install
-  build_done "autoconf"
+  build_done "autoconf" "${CURRENT_PACKAGE_VERSION}"
 fi
 
-if build "automake" "1.16.5"; then
+if build "automake" "1.17"; then
   download "https://ftp.gnu.org/gnu/automake/automake-${CURRENT_PACKAGE_VERSION}.tar.gz" "automake-${CURRENT_PACKAGE_VERSION}.tar.gz"
   cd "$PACKAGES/automake-${CURRENT_PACKAGE_VERSION}" || exit
   execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}"
   execute make -j $MJOBS
   execute make install
-  build_done "automake"
+  build_done "automake" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "help2man" "1.49.3"; then
@@ -574,7 +579,7 @@ if build "help2man" "1.49.3"; then
 	execute ./configure --prefix="${WORKSPACE}"
 	execute make -j "${MJOBS}"
 	execute make install
-	build_done "help2man"
+	build_done "help2man" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "libtool" "Git"; then
@@ -588,17 +593,17 @@ if build "libtool" "Git"; then
   execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --enable-static --disable-shared
   execute make -j $MJOBS
   execute make install
-  build_done "libtool"
+  build_done "libtool" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if [ ! -x "$(command -v cmake)" ]; then
-	if build "cmake" "3.29.0"; then
+	if build "cmake" "3.31.0"; then
 	  download "https://cmake.org/files/LatestRelease/cmake-${CURRENT_PACKAGE_VERSION}.tar.gz" "cmake-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	  cd "$PACKAGES/cmake-${CURRENT_PACKAGE_VERSION}" || exit
 	  execute ./configure --prefix="${WORKSPACE}" --parallel="${MJOBS}" -- -DCMAKE_USE_OPENSSL=OFF
 	  execute make -j $MJOBS
 	  execute make install
-	  build_done "cmake"
+	  build_done "cmake" "${CURRENT_PACKAGE_VERSION}"
 	fi
 fi
 
@@ -615,7 +620,7 @@ if build "openssl" "3.4.0"; then
 	execute make -j $MJOBS
 	execute make install_sw
 
-	build_done "openssl"
+	build_done "openssl" "${CURRENT_PACKAGE_VERSION}"
 fi 
 CONFIGURE_OPTIONS+=("--enable-openssl")
 
@@ -635,7 +640,7 @@ CONFIGURE_OPTIONS+=("--enable-openssl")
 #	execute make -j $MJOBS
 #	execute make install
 
-#	build_done "trousers"
+#	build_done "trousers" "${CURRENT_PACKAGE_VERSION}"
 #fi
 
 # install git if the systen don't have git... probably won't happen in many cases.
@@ -647,7 +652,7 @@ if [ ! -x  "${GIT}" ]; then
 #		execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --with-openssl --with-zlib="${WORKSPACE}/lib" --with-lib="${WORKSPACE}/lib"
 		execute make -j $MJOBS
 		execute make install
-		build_done "git"
+		build_done "git" "${CURRENT_PACKAGE_VERSION}"
 		GIT="${WORKSPACE}/bin/git"
 	fi
 fi
@@ -667,7 +672,7 @@ if command_exists "meson"; then
 			execute meson compile
 			execute meson install
 
-			build_done "zix"
+			build_done "zix" "${CURRENT_PACKAGE_VERSION}"
 		fi
 
 		if build "lv2" "1.18.10"; then
@@ -680,12 +685,12 @@ if command_exists "meson"; then
 			execute meson configure -Dprefix="${WORKSPACE}" 
 			execute meson compile
 			execute meson install
-			build_done "lv2"
+			build_done "lv2" "${CURRENT_PACKAGE_VERSION}"
 		fi
 
 		if build "waflib" "b600c928b221a001faeab7bd92786d0b25714bc8"; then
 			download "https://gitlab.com/drobilla/autowaf/-/archive/${CURRENT_PACKAGE_VERSION}/autowaf-${CURRENT_PACKAGE_VERSION}.tar.gz" "autowaf.tar.gz"
-			build_done "waflib"
+			build_done "waflib" "${CURRENT_PACKAGE_VERSION}"
 		fi
 
 		if build "serd" "0.32.2"; then
@@ -696,7 +701,7 @@ if command_exists "meson"; then
 			execute meson compile
 			execute meson install
 
-			build_done "serd"
+			build_done "serd" "${CURRENT_PACKAGE_VERSION}"
 		fi
 
 		if build "pcre" "8.45"; then
@@ -705,7 +710,7 @@ if command_exists "meson"; then
 			execute make -j $MJOBS
 			execute make install
 
-			build_done "pcre"
+			build_done "pcre" "${CURRENT_PACKAGE_VERSION}"
 		fi
 
 		if build "sord" "0.16.16"; then
@@ -716,7 +721,7 @@ if command_exists "meson"; then
 			execute meson compile
 			execute meson install
 
-			build_done "sord"
+			build_done "sord" "${CURRENT_PACKAGE_VERSION}"
 		fi
 
 		if build "sratom" "0.6.16"; then
@@ -727,7 +732,7 @@ if command_exists "meson"; then
 			execute meson compile
 			execute meson install			
 
-			build_done "sratom"
+			build_done "sratom" "${CURRENT_PACKAGE_VERSION}"
 		fi
 
 		if build "lilv" "0.24.24"; then
@@ -741,7 +746,7 @@ if command_exists "meson"; then
 			#CFLAGS+=" -I${WORKSPACE}/include/lilv-0"
 			#CXXFLAGS="${CFLAGS}"
 
-			build_done "lilv"
+			build_done "lilv" "${CURRENT_PACKAGE_VERSION}"
 		fi
 
 		CONFIGURE_OPTIONS+=("--enable-lv2")
@@ -756,7 +761,7 @@ if build "lame" "3.100"; then
 	execute make -j $MJOBS
 	execute make install
 
-	build_done "lame"
+	build_done "lame" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libmp3lame")
 
@@ -767,7 +772,7 @@ if build "opencore" "0.1.6"; then
 	execute make -j $MJOBS
 	execute make install
 
-	build_done "opencore"
+	build_done "opencore" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libopencore_amrnb" "--enable-libopencore_amrwb")
 
@@ -778,7 +783,7 @@ if build "opus" "1.5.1"; then
 	execute make -j $MJOBS
 	execute make install
 
-	build_done "opus"
+	build_done "opus" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libopus")
 
@@ -788,17 +793,21 @@ if build "libogg" "1.3.3"; then
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
-	build_done "libogg"
+	build_done "libogg" "${CURRENT_PACKAGE_VERSION}"
 fi
 
-if build "libvorbis" "1.3.6"; then
+if build "libvorbis" "1.3.7"; then
 	download "https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-${CURRENT_PACKAGE_VERSION}.tar.gz" "libvorbis-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/libvorbis-${CURRENT_PACKAGE_VERSION}" || exit
+	cd "$PACKAGES/libvorbis-${CURRENT_PACKAGE_VERSION}" || exit 
+  sed "s/-force_cpusubtype_ALL//g" configure.ac >configure.ac.patched && \
+    rm configure.ac && \
+    mv configure.ac.patched configure.ac
+  execute env "$COMPILER_SET" ./autogen.sh --prefix="${WORKSPACE}"
 	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest
 	execute make -j $MJOBS
 	execute make install
 
-	build_done "libvorbis"
+	build_done "libvorbis" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libvorbis")
 
@@ -812,7 +821,7 @@ if build "libtheora" "1.1.1"; then
 	execute make -j $MJOBS
 	execute make install
 
-	build_done "libtheora"
+	build_done "libtheora" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libtheora")
 
@@ -835,25 +844,26 @@ if build "libwebp" "1.3.2"; then
 	execute make -j $MJOBS
 	execute make install
 
-	build_done "libwebp"
+	build_done "libwebp" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libwebp")
 
-if build "libvpx" "1.14.0"; then
-	download "https://github.com/webmproject/libvpx/archive/v${CURRENT_PACKAGE_VERSION}.tar.gz" "libvpx-${CURRENT_PACKAGE_VERSION}.tar.gz"
+if build "libvpx" "1.15.0"; then
+	download "https://github.com/webmproject/libvpx/archive/refs/tags/v${CURRENT_PACKAGE_VERSION}.tar.gz" "libvpx-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/libvpx-${CURRENT_PACKAGE_VERSION}" || exit
 
-	if [[ "$OSTYPE" == "darwin"* ]]; then
-		echo "Applying Darwin patch"
-		sed "s/,--version-script//g" build/make/Makefile >build/make/Makefile.patched
-		sed "s/-Wl,--no-undefined -Wl,-soname/-Wl,-undefined,error -Wl,-install_name/g" build/make/Makefile.patched >build/make/Makefile
-	fi
-
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-unit-tests --disable-shared
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Applying Darwin patch"
+    sed "s/,--version-script//g" build/make/Makefile >build/make/Makefile.patched
+    sed "s/-Wl,--no-undefined -Wl,-soname/-Wl,-undefined,error -Wl,-install_name/g" build/make/Makefile.patched >build/make/Makefile
+  fi
+  
+  COMPILER_SET_BCK="${COMPILER_SET}"
+	execute env ./configure --prefix="${WORKSPACE}" --disable-unit-tests --disable-shared --disable-examples --as=yasm --enable-vp9-highbitdepth
 	execute make -j $MJOBS
 	execute make install
 
-	build_done "libvpx"
+	build_done "libvpx" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libvpx")
 
@@ -875,12 +885,12 @@ if build "xvidcore" "1.3.7"; then
 		execute rm "${WORKSPACE}"/lib/libxvidcore.so*
 	fi
 
-	build_done "xvidcore"
+	build_done "xvidcore" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libxvid")
 
-if build "x264" "5db6aa6cab1b146e07b60cc1736a01f21da01154"; then
-	download "https://code.videolan.org/videolan/x264/-/archive/${CURRENT_PACKAGE_VERSION}/x264-${CURRENT_PACKAGE_VERSION}.tar.gz" "x264-${CURRENT_PACKAGE_VERSION}.tar.gz"
+if build "x264" "be4f0200"; then
+	download "https://code.videolan.org/videolan/x264/-/archive/$CURRENT_PACKAGE_VERSION/x264-$CURRENT_PACKAGE_VERSION.tar.gz" "x264-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES"/x264-${CURRENT_PACKAGE_VERSION} || exit
 
 	if [[ "$OSTYPE" == "linux-gnu" ]]; then
@@ -893,30 +903,75 @@ if build "x264" "5db6aa6cab1b146e07b60cc1736a01f21da01154"; then
 	execute make install
 	execute make install-lib-static
 
-	build_done "x264"
+	build_done "x264" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
+
 if build "x265" "3.4"; then
-	download "https://github.com/videolan/x265/archive/refs/tags/${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES"/x265-*/ || exit
-	cd source || exit
-	execute cmake . \
-	  -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
-	  -DCMAKE_C_COMPILER=\""${CC}"\" \
-	  -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
-	  -DCMAKE_C_FLAGS=\""${CFLAGS}"\" \
-	  -DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
-	  -DENABLE_SHARED=OFF \
-	  -DBUILD_SHARED_LIBS=OFF 
-	execute make -j $MJOBS
-	execute make install
+  download "https://github.com/videolan/x265/archive/refs/tags/${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
+  cd "$PACKAGES"/x265-*/ || exit
+  cd source || exit
+  execute cmake . \
+    -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
+    -DCMAKE_C_COMPILER=\""${CC}"\" \
+    -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
+    -DCMAKE_C_FLAGS=\""${CFLAGS}"\" \
+    -DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
+    -DENABLE_SHARED=OFF \
+    -DBUILD_SHARED_LIBS=OFF
+  execute make -j $MJOBS
+  execute make install
 
-	if [ -n "${LDEXEFLAGS}" ]; then
-		sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}/lib/pkgconfig/x265.pc" # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
-	fi
+  if [ -n "${LDEXEFLAGS}" ]; then
+    sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}/lib/pkgconfig/x265.pc" # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
+  fi
 
-	build_done "x265"
+  build_done "x265" "${CURRENT_PACKAGE_VERSION}"
 fi
+
+#
+# x265 4.0 ... issue with mirror site. Rolling back to 3.4 which is hosted by Github
+#
+# if build "x265" "4.0"; then
+#   download "https://bitbucket.org/multicoreware/x265_git/downloads/x265_$CURRENT_PACKAGE_VERSION.tar.gz" "x265-$CURRENT_PACKAGE_VERSION.tar.gz"
+#   cd "${PACKAGES}/x265-${CURRENT_PACKAGE_VERSION}" || exit
+#   cd build/linux || exit
+#   rm -rf 8bit 10bit 12bit 2>/dev/null
+#   mkdir -p 8bit 10bit 12bit
+#   cd 12bit || exit
+#   execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF -DMAIN12=ON
+#   execute make -j $MJOBS
+#   cd ../10bit || exit
+#   execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF
+#   execute make -j $MJOBS
+#   cd ../8bit || exit
+#   ln -sf ../10bit/libx265.a libx265_main10.a
+#   ln -sf ../12bit/libx265.a libx265_main12.a
+#   execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DEXTRA_LIB="x265_main10.a;x265_main12.a;-ldl" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON
+#   execute make -j $MJOBS
+#
+#   mv libx265.a libx265_main.a
+#
+#   if [[ "$OSTYPE" == "darwin"* ]]; then
+#     execute "${MACOS_LIBTOOL}" -static -o libx265.a libx265_main.a libx265_main10.a libx265_main12.a 2>/dev/null
+#   else
+#     execute ar -M <<EOF
+# CREATE libx265.a
+# ADDLIB libx265_main.a
+# ADDLIB libx265_main10.a
+# ADDLIB libx265_main12.a
+# SAVE
+# END
+# EOF
+#   fi
+#
+#   execute make install
+#
+#   if [ -n "$LDEXEFLAGS" ]; then
+#     sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}/lib/pkgconfig/x265.pc" # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
+#   fi
+#  build_done "x265" "${CURRENT_PACKAGE_VERSION}"
+#fi
 CONFIGURE_OPTIONS+=("--enable-libx265")
 
 if build "vid_stab" "1.1.1"; then
@@ -934,7 +989,7 @@ if build "vid_stab" "1.1.1"; then
 	execute make
 	execute make install
 
-	build_done "vid_stab"
+	build_done "vid_stab" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libvidstab")
 
@@ -948,7 +1003,7 @@ if build "av1" "Git"; then
 	execute make -j $MJOBS
 	execute make install
 
-	build_done "av1"
+	build_done "av1" "GIT"
 fi
 CONFIGURE_OPTIONS+=("--enable-libaom")
 
@@ -978,7 +1033,7 @@ if build "libsdl" "2.30.1"; then
   execute make -j $MJOBS
   execute make install
 
-  build_done "libsdl" 
+  build_done "libsdl" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 
@@ -1008,7 +1063,7 @@ if [ ! -n "$nosrt" ]; then
 		    sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}"/lib/pkgconfig/srt.pc # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
 	    fi
 
-	    build_done "srt"
+	    build_done "srt" "${CURRENT_PACKAGE_VERSION}"
     fi
     CONFIGURE_OPTIONS+=("--enable-libsrt")
 fi
@@ -1022,7 +1077,7 @@ if command_exists "nvcc"; then
 		download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n${CURRENT_PACKAGE_VERSION}/nv-codec-headers-${CURRENT_PACKAGE_VERSION}.tar.gz" "nv-codec-headers-${CURRENT_PACKAGE_VERSION}.tar.gz"
 		cd "$PACKAGES/nv-codec-headers-${CURRENT_PACKAGE_VERSION}" || exit
 		sed -i "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-${CURRENT_PACKAGE_VERSION}/Makefile && execute make install
-		build_done "nv-codec"
+		build_done "nv-codec" "${CURRENT_PACKAGE_VERSION}"
 	fi
 
 	# Extracting cuda path
