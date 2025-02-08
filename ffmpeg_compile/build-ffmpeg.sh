@@ -603,7 +603,7 @@ if [ ! -x "$(command -v cmake)" ]; then
 fi
 
 
-if build "openssl" "3.2.1"; then
+if build "openssl" "3.4.0"; then
 	download "https://www.openssl.org/source/openssl-${CURRENT_PACKAGE_VERSION}.tar.gz" "openssl-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/openssl-${CURRENT_PACKAGE_VERSION}" || exit 
 	if "${APPLE_SILICON}"; then
@@ -619,24 +619,24 @@ if build "openssl" "3.2.1"; then
 fi 
 CONFIGURE_OPTIONS+=("--enable-openssl")
 
-if build "trousers" "0.3.15"; then
-  ARCH="$(uname -m)"
-  OPENSSL_LIB="/usr"
-  if [[ "x86_64" == "${ARCH}" ]]; then
-    OPENSSL_LIB="${WORKSPACE}"
-  fi
-	download "https://sourceforge.net/projects/trousers/files/trousers/${CURRENT_PACKAGE_VERSION}/trousers-${CURRENT_PACKAGE_VERSION}.tar.gz/download" "trousers-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/trousers-${CURRENT_PACKAGE_VERSION}" || exit
-	execute CC=\"$CC\" CXX=\"$CXX\" sh ./bootstrap.sh
-	execute CC=\"$CC\" CXX=\"$CXX\" ./configure \
-		--prefix="${WORKSPACE}" \
-		--enable-static \
-		--with-openssl="${OPENSSL_LIB}"
-	execute make -j $MJOBS
-	execute make install
+#if build "trousers" "0.3.15"; then
+#  ARCH="$(uname -m)"
+#  OPENSSL_LIB="/usr"
+#  if [[ "x86_64" == "${ARCH}" ]]; then
+#    OPENSSL_LIB="${WORKSPACE}"
+#  fi
+#	download "https://sourceforge.net/projects/trousers/files/trousers/${CURRENT_PACKAGE_VERSION}/trousers-${CURRENT_PACKAGE_VERSION}.tar.gz/download" "trousers-${CURRENT_PACKAGE_VERSION}.tar.gz"
+#	cd "$PACKAGES/trousers-${CURRENT_PACKAGE_VERSION}" || exit
+#	execute CC=\"$CC\" CXX=\"$CXX\" sh ./bootstrap.sh
+#	execute CC=\"$CC\" CXX=\"$CXX\" ./configure \
+#		--prefix="${WORKSPACE}" \
+#		--enable-static \
+#		--with-openssl="${OPENSSL_LIB}"
+#	execute make -j $MJOBS
+#	execute make install
 
-	build_done "trousers"
-fi
+#	build_done "trousers"
+#fi
 
 # install git if the systen don't have git... probably won't happen in many cases.
 GIT="$(command -v git)"
@@ -644,7 +644,7 @@ if [ ! -x  "${GIT}" ]; then
 	if build "git" "2.44.0"; then
 		download "https://www.kernel.org/pub/software/scm/git/git-${CURRENT_PACKAGE_VERSION}.tar.xz" "git-${CURRENT_PACKAGE_VERSION}.tar.gz"
 		cd "$PACKAGES"/git-${CURRENT_PACKAGE_VERSION} || exit
-		execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --with-openssl --with-zlib="${WORKSPACE}/lib" --with-lib="${WORKSPACE}/lib"
+#		execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --with-openssl --with-zlib="${WORKSPACE}/lib" --with-lib="${WORKSPACE}/lib"
 		execute make -j $MJOBS
 		execute make install
 		build_done "git"
@@ -896,8 +896,8 @@ if build "x264" "5db6aa6cab1b146e07b60cc1736a01f21da01154"; then
 	build_done "x264"
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
-if build "x265" "4.1"; then
-	download "https://bitbucket.org/multicoreware/x265_git/downloads/x265_${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
+if build "x265" "3.4"; then
+	download "https://github.com/videolan/x265/archive/refs/tags/${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES"/x265-*/ || exit
 	cd source || exit
 	execute cmake . \
