@@ -6,20 +6,20 @@ printf '** Setting up Open-Webui docker continer. **\n'
 # Checking if docker exists...
 if [ ! -x "$(command -v docker)" ]; then
   printf 'Docker not found!! exiting!!\n'
-  exit -1
+  exit 1;
 fi
 
 # Dedicated Ollama Model directory
 DEF_OLLAMA_MODEL_DIR="/srv/ollama"
-
-if [ "$#" -ne 1 ]; then
+OLLAMA_MODEL_DIR="${DEF_OLLAMA_MODEL_DIR}"
+if [ ! -z "$1" ]; then
   printf 'Ollama Model directory given: %s\n' "$1"
-  if [ -d "$1" ]; then
+  if [ ! -z "$1" ]; then
     OLLAMA_MODEL_DIR="$1"
     printf 'Setting up the Ollama Model directory: %s\n' "$1"
   else
     printf 'Given directory: %s not found! Exiting...\n' "$1"
-    exit -1
+    exit 1;
   fi
 else
   OLLAMA_MODEL_DIR="/app/backend/data"
@@ -45,7 +45,7 @@ if [ ! -z "${DOCKER_CONTAINER_ID}" ]; then
   docker container rm "${DOCKER_CONTAINER_ID}"
   DOCKER_IMG_ID="$(docker image ls | grep open-webui | awk '{print $3}')"
   docker image rm "${DOCKER_IMG_ID}" || printf 'Previous Docker image deletion failed!!\n' \
-    && exit -1
+    && exit 1
 fi
 
 # Running the docker install
