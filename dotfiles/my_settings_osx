@@ -1,7 +1,30 @@
 #!/bin/sh
 
-# Default Homebrew Path
-HBREW_PATH=$HOME/.local
+#
+# Default Paths
+#
+# Homebrew (not the Brew. My own homebrew dir)
+HBREW_PATH="${HOME}/.local"
+# Settings
+SETTINGS_DIR="${HOME}/.settings"
+# UDS
+UDS_DIR="${HOME}/.uds"
+
+# Update settings directories if git exists
+#
+# --> Blocked it out since the git update process sometimes causes 
+#     significant login delay
+#
+# if [ -x "$(command -v git)" ]; then
+#   if [ -d "${SETTINGS_DIR}" ]; then
+#     cd "${SETTINGS_DIR}" && git pull
+#     cd -
+#   fi
+#   if [ -d "${UDS_DIR}" ]; then
+#     cd "${UDS_DIR}" && git pull
+#     cd -
+#   fi
+# fi
 
 # Default texlive base path
 #
@@ -60,29 +83,29 @@ delete_recursive ()
 ARCH=$(uname -m)
 KERNEL=$(uname -r)
 if [ -n "$(command -v lsb_release)" ]; then
-    DISTRONAME=$(lsb_release -s -d)
+    DISTRONAME="$(lsb_release -s -d)"
 elif [ -f "/etc/os-release" ]; then
-    DISTRONAME=$(grep PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME=//g' | tr -d '="')
+    DISTRONAME="$(grep PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME=//g' | tr -d '="')"
 elif [ -f "/etc/debian_version" ]; then
     DISTRONAME="Debian $(cat /etc/debian_version)"
 elif [ -f "/etc/redhat-release" ]; then
-    DISTRONAME=$(cat /etc/redhat-release)
+    DISTRONAME="$(cat /etc/redhat-release)"
 else
     DISTRONAME="$(uname -s) $(uname -r)"
 fi
 
 # The homebrew path!!
-if [ -d $HBREW_PATH ]; then
-  export HOMEBREW=$HBREW_PATH
-  echo "HOMEBREW directory is $HOMEBREW"
-  export PATH=$HOMEBREW/bin:$HOMEBREW/opt/bin:/opt/bin/:$PATH
+if [ -d "${HBREW_PATH}" ]; then
+  export HOMEBREW="${HBREW_PATH}"
+  echo "HOMEBREW directory is ${HOMEBREW}"
+  export PATH="${HOMEBREW}/bin:${HOMEBREW}/opt/bin:/opt/bin/:${PATH}"
 fi
 
 # Rust
-if [ -d $HOME/.cargo ]; then
+if [ -d "${HOME}/.cargo" ]; then
   echo "Cargo directory detected at $HOME/.cargo"
   # export PATH=$HOME/.cargo/bin:$PATH
-  source $HOME/.cargo/env
+  source "${HOME}/.cargo/env"
 fi
 
 # Exa
@@ -140,8 +163,8 @@ fi
 # Neovim
 if [ -x "$(command -v nvim)" ]; then
   echo "Neovim found! replacing vim!"
-  alias vim="nvim"
-  alias vi="nvim"
+  alias vim='nvim'
+  alias vi='nvim'
 fi
 
 # Texlive
@@ -165,17 +188,23 @@ if [ -x "$(command -v rip)" ]; then
 fi
 
 # bpytop
-if [ -x "$(command -v ${HOMEBREW}/bin/pip3)" ]; then
-  if [ -x "$(command -v ${HOMEBREW}/bin/bpytop)" ]; then
-    echo "Locally installed bpytop found!"
-  alias bpytop="${HOMEBREW}/bin/pip3 install -U bpytop && bpytop"
-  fi
-fi
+#
+# --> Deprecated since we don't use bpytop anymore...
+#
+# if [ -x "$(command -v ${HOMEBREW}/bin/pip3)" ]; then
+#   if [ -x "$(command -v ${HOMEBREW}/bin/bpytop)" ]; then
+#     echo "Locally installed bpytop found!"
+#   alias bpytop="${HOMEBREW}/bin/pip3 install -U bpytop && bpytop"
+#   fi
+# fi
 
 # pypy
+#
+# --> Pypy on /opt
+#
 if [ -x "$(command -v ${HOMEBREW}/opt/pypy/bin/pypy3)" ]; then
   echo "pypy3 found in ${HOMEBREW}/opt/pypy/bin/pypy3 !! Extending PATH!"
-  export PATH=$HOMEBREW/opt/pypy/bin:$PATH
+  export PATH="${HOMEBREW}/opt/pypy/bin:${PATH}"
 fi
 
 # Enabling Starship
@@ -205,7 +234,7 @@ if [ -x "$(command -v spark)" ]; then
 fi
 
 if [ -x "$(command -v figlet)" ]; then
-  if [ -x $(command -v lolcat) ]; then
+  if [ -x "$(command -v lolcat)" ]; then
     figlet -w "$(/usr/bin/tput cols)" "$(uname -n)" | lolcat
   else
     figlet -w "$(/usr/bin/tput cols)" "$(uname -n)"
@@ -221,7 +250,7 @@ if [ -x "$(command -v neofetch)" ]; then
 fi
 
 # Sanitizing path
-path_sanitized=$(printf "%s" "$PATH" | awk -v RS=':' '!a[$1]++ { if (NR > 1) printf RS; printf $1 }')
+path_sanitized=$(printf "%s" "${PATH}" | awk -v RS=':' '!a[$1]++ { if (NR > 1) printf RS; printf $1 }')
 export PATH="${path_sanitized}"
 
 #
@@ -230,12 +259,12 @@ export PATH="${path_sanitized}"
 
 # Sublime Text3
 if [ -d "/Applications/Sublime Text.app" ]; then
-  export PATH="/Applications/Sublime Text.app/Contents/SharedSupport/bin/:$PATH"
+  export PATH="/Applications/Sublime Text.app/Contents/SharedSupport/bin/:${PATH}"
 fi
 
 # jEdit
 if [ -d "/Applications/jEdit.app" ]; then
-  export PATH="/Applications/jEdit.app/Contents/MacOS/:$PATH"
+  export PATH="/Applications/jEdit.app/Contents/MacOS/:${PATH}"
 fi
 
 # rm-improved - Setting it to MacOS trash bin
@@ -256,39 +285,51 @@ fi # fzf zsh integration.
 #
 #   Unified commit with message -> push script
 check_git() {
+
+  GIT_STAT="$(git rev-parse --is-inside-work-tree 2> /dev/null)"
+  if [[ "${GIT_STAT}" != *"true"* ]]; then
+    printf 'Current directory is not a git repo.\n'
+    return 1
+  fi
+
   if [ ! -x "$(command -v git)" ]; then
     printf 'git not found in PATH\n'
-    return;
+    return 1
   fi
   
   if [ ! -z "$1" ]; then
     if [ ! -x "$(command -v $1)" ]; then
       printf '%s not found in PATH\n' "$1"
+      return 1
     fi
-    return;
   fi
   
-  GIT_STAT="$(git rev-parse --is-inside-work-tree 2> /dev/null)"
-  if [[ "${GIT_STAT}" != *"true"* ]]; then
-    printf 'Current directory is not a git repo.\n'
-    return;
-  fi
+  return 0
 }
 
 gitc() {
-  check_git();
+  check_git
+  if [[ "$?" == "1" ]]; then
+    return;
+  fi
   git commit -a -m "\"${1}\"" && git push
 }
 
 # Cleaning up git repo from long time non-activity
 gcatchup() {
-  check_git();
+  check_git
+  if [[ "$?" == "1" ]]; then
+    return;
+  fi
   git fetch --all && git reset --hard origin/master && git pull
 }
 
 # Add tag to current repo
 gtag() {
-  check_git();
+  check_git
+  if [[ "$?" == "1" ]]; then
+    return;
+  fi
   git tag -a "\"${1}\""
 }
 
@@ -300,6 +341,9 @@ alias gaddall='git add .'
 gitlog2w() {
 
   check_git spark
+  if [[ "$?" == "1" ]]; then
+    return;
+  fi
 
   for day in $(seq 14 -1 0); do
     git log --before="${day} days" --after="$(("$day"+1)) days" --format=oneline | wc -l
@@ -310,6 +354,9 @@ gitlog2w() {
 gitlog8h() {
   
   check_git spark
+  if [[ "$?" == "1" ]]; then
+    return;
+  fi
 
   for hour in $(seq 8 -1 0); do
     git log --before="${hour} hours" --after="$(("$hour"+1)) hours" --format=oneline | wc -l
