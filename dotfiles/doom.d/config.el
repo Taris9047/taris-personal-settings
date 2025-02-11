@@ -21,13 +21,13 @@
       :desc "Dired jump to current"
       "d j" #'dired-jump
       (:after dired
-       (:map dired-mode-map
-        :leader
-        :desc "Peep-dired image previews"
-        "d p" #'peep-dired
-        :leader
-        :desc "Dired view file"
-        "d v" #'dired-view-file)))
+              (:map dired-mode-map
+               :leader
+               :desc "Peep-dired image previews"
+               "d p" #'peep-dired
+               :leader
+               :desc "Dired view file"
+               "d v" #'dired-view-file)))
 (evil-define-key 'normal dired-mode-map
   (kbd "h") 'dired-up-directory
   (kbd "l") 'dired-open-file) ; use dired-find-file instead if not using dired-open package
@@ -56,9 +56,9 @@
       :desc "Toggle tabs local display"
       "t C" #'centaur-tabs-local-mode)
 (evil-define-key 'normal centaur-tabs-mode-map (kbd "g <right>") 'centaur-tabs-forward        ; default Doom binding is 'g t'
-                                               (kbd "g <left>")  'centaur-tabs-backward       ; default Doom binding is 'g T'
-                                               (kbd "g <down>")  'centaur-tabs-forward-group
-                                               (kbd "g <up>")    'centaur-tabs-backward-group)
+  (kbd "g <left>")  'centaur-tabs-backward       ; default Doom binding is 'g T'
+  (kbd "g <down>")  'centaur-tabs-forward-group
+  (kbd "g <up>")    'centaur-tabs-backward-group)
 
 ;; Custom functions to detect linux distro
 (defun guess-linux-release(regexp)
@@ -194,24 +194,24 @@
 
 ;; Setup code block templates.
 ;; For Org-mode < 9.2
-(setq old-structure-template-alist
-      '(("py" "#+BEGIN_SRC python :results output\n?\n#+END_SRC" "")
-        ("ipy" "#+BEGIN_SRC ipython :results output\n?\n#+END_SRC" "")
-        ("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "")
-        ("hs" "#+BEGIN_SRC haskell\n?\n#+END_SRC" "")
-        ("laeq" "#+BEGIN_LaTeX\n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}\n#+END_LaTeX" "")
-        ("sh" "#+BEGIN_SRC shell\n?\n#+END_SRC" "")
-        ("r" "#+BEGIN_SRC R\n?\n#+END_SRC" "")
-        ("js" "#+BEGIN_SRC js\n?\n#+END_SRC" "")
-        ("http" "#+BEGIN_SRC http\n?\n#+END_SRC" "")
-        ("ditaa" "#+BEGIN_SRC ditaa :file\n?\n#+END_SRC" "")
-        ("dot" "#+BEGIN_SRC dot :file\n?\n#+END_SRC" "")
-        ("rp" "#+BEGIN_SRC R :results output graphics :file \n?\n#+END_SRC" "")
-        ("plantuml" "#+BEGIN_SRC plantuml :file\n?\n#+END_SRC" "")
-        ("n" "#+NAME: ?")
-        ("cap" "#+CAPTION: ?")))
+;;(setq old-structure-template-alist
+;;      '(("py" "#+BEGIN_SRC python :results output\n?\n#+END_SRC" "")
+;;        ("ipy" "#+BEGIN_SRC ipython :results output\n?\n#+END_SRC" "")
+;;        ("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "")
+;;        ("hs" "#+BEGIN_SRC haskell\n?\n#+END_SRC" "")
+;;        ("laeq" "#+BEGIN_LaTeX\n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}\n#+END_LaTeX" "")
+;;        ("sh" "#+BEGIN_SRC shell\n?\n#+END_SRC" "")
+;;        ("r" "#+BEGIN_SRC R\n?\n#+END_SRC" "")
+;;        ("js" "#+BEGIN_SRC js\n?\n#+END_SRC" "")
+;;        ("http" "#+BEGIN_SRC http\n?\n#+END_SRC" "")
+;;        ("ditaa" "#+BEGIN_SRC ditaa :file\n?\n#+END_SRC" "")
+;;        ("dot" "#+BEGIN_SRC dot :file\n?\n#+END_SRC" "")
+;;        ("rp" "#+BEGIN_SRC R :results output graphics :file \n?\n#+END_SRC" "")
+;;        ("plantuml" "#+BEGIN_SRC plantuml :file\n?\n#+END_SRC" "")
+;;        ("n" "#+NAME: ?")
+;;        ("cap" "#+CAPTION: ?")))
 ;; For Org-mode >= 9.2
-(setq new-structure-template-alist
+(setq org-structure-template-alist
       '(("py" . "src python :results output")
         ("ipy" . "src ipython :results output")
         ("el" . "src emacs-lisp")
@@ -237,10 +237,8 @@
 (if (version<  (org-version) "9.2")
     (dolist (ele old-structure-template-alist)
       (add-to-list 'org-structure-template-alist ele))
-  (dolist (ele new-structure-template-alist)
+  (dolist (ele org-structure-template-alist)
     (add-to-list 'org-structure-template-alist ele))
-  (dolist (ele my-tempo-keywords-alist)
-    (add-to-list 'org-tempo-keywords-alist ele))
   )
 
 (use-package! org-auto-tangle
@@ -524,12 +522,12 @@ to allow the TOC to be a collapseable tree."
 (add-to-list 'default-frame-alist '(width . 100) )
 
 (defun save-buffers-kill-emacs-with-confirm ()
- "jsled's special save-buffers-kill-emacs, but with confirm"
- (interactive)
- (if (null current-prefix-arg)
-     (if (y-or-n-p "Are you sure you want to quit?")
-         (save-buffers-kill-emacs))
-     (save-buffers-kill-emacs)))
+  "jsled's special save-buffers-kill-emacs, but with confirm"
+  (interactive)
+  (if (null current-prefix-arg)
+      (if (y-or-n-p "Are you sure you want to quit?")
+          (save-buffers-kill-emacs))
+    (save-buffers-kill-emacs)))
 (global-set-key "\C-x\C-c" 'save-buffers-kill-emacs-with-confirm)
 
 (setq max-lisp-eval-depth 10000)

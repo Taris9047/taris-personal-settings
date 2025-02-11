@@ -92,6 +92,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#zoxide---z-replacement][Zoxide - z replacement]]
 - [[#shell-extension][Shell extension]]
   - [[#starship][Starship]]
+  - [[#fzf---the-fuzzy-finder][FZF - The fuzzy finder]]
 - [[#final-start-up][Final start-up]]
   - [[#clear-screen-1][Clear screen]]
   - [[#run-neofetch][Run Neofetch]]
@@ -311,23 +312,24 @@ set fish_color_param brcyan
 
 ** Update ~/Settings directory at each login
 
-Running 'git pull' each time is kind of a chore. Let us run it everytime we log in.
+Running 'git pull' each time is kind of a chore. Let us run it every time we log in.
+--> Actually, deprecated here. Calling ```git pull``` every login sometimes causes a significant drag.
 
 *** Bash
 #+begin_src shell :tangle my_settings_bash
-[ -d "${HOME}/.settings" ] && cd "${HOME}/.settings" && git pull && cd -
+# [ -d "${HOME}/.settings" ] && cd "${HOME}/.settings" && git pull && cd -
 #+end_src
 
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh
-[ -d "${HOME}/.settings" ] && cd "${HOME}/.settings" && git pull && cd -
+# [ -d "${HOME}/.settings" ] && cd "${HOME}/.settings" && git pull && cd -
 #+end_src
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-if test -d "$HOME/.settings"
-    /bin/fish -c 'cd "$HOME/.settings" && git pull'
-end
+# if test -d "$HOME/.settings"
+#    /bin/fish -c 'cd "$HOME/.settings" && git pull'
+# end
 #+end_src
 
 ** Manpage reader
@@ -1062,31 +1064,83 @@ alias battery_stat='upower -i "( upower -e | grep BAT )"'
 *** Bash
 #+NAME: alias_git
 #+begin_src shell :tangle my_settings_bash
+check_git() {
+  GIT_STAT="$(git rev-parse --is-inside-work-tree 2> /dev/null)"
+  if [[ "${GIT_STAT}" != *"true"* ]]; then
+    printf 'Current directory is not a git repo.\n'
+    return 1
+  fi
+
+  if [ ! -x "$(command -v git)" ]; then
+    printf 'git not found in PATH\n'
+    return 1
+  fi
+
+  if [ ! -z "$1" ]; then
+    if [ ! -x "$(command -v $1)" ]; then
+      printf '%s not found in PATH\n' "$1"
+      return 1
+    fi
+  fi
+
+  return 0
+}
+
 gitc() {
-    git commit -a -m "\"${1}\""
-    git push
+  check_git
+  if [[ "$?" == "1" ]]; then
+    return;
+  fi
+  git commit -a -m "\"${1}\"" && git push
 }
+
+# Cleaning up git repo from long time non-activity
 gcatchup() {
-    git fetch --all
-    git reset --hard origin/master
-    git pull
+  check_git
+  if [[ "$?" == "1" ]]; then
+    return;
+  fi
+  git fetch --all && git reset --hard origin/master && git pull
 }
+
+# Add tag to current repo
 gtag() {
-    git tag -a "\"${1}\""
+  check_git
+  if [[ "$?" == "1" ]]; then
+    return;
+  fi
+  git tag -a "\"${1}\""
 }
+
+# git - add files
 alias gaddup='git add -u'
 alias gaddall='git add .'
+
+# Log git activity for past 2 weeks or 8 h
 gitlog2w() {
-    for day in $(seq 14 -1 0); do
-        git log --before="${day} days" --after="$("$day"+1) days" --format=oneline | wc -l
-    done | spark
+  check_git spark
+  if [[ "$?" == "1" ]]; then
+    return;
+  fi
+
+  for day in $(seq 14 -1 0); do
+    git log --before="${day} days" --after="$(("$day"+1)) days" --format=oneline | wc -l
+  done | spark
 }
+
 gitlog8h() {
-    for hour in $(seq 8 -1 0); do
-        git log --before="${hour} hours" --after="$("$hour"+1) hours" --format=oneline | wc -l
-    done | spark
+  check_git spark
+  if [[ "$?" == "1" ]]; then
+    return;
+  fi
+
+  for hour in $(seq 8 -1 0); do
+    git log --before="${hour} hours" --after="$(("$hour"+1)) hours" --format=oneline | wc -l
+  done | spark
 }
 #+end_src
+
+#+RESULTS: alias_git
 
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh :noweb yes
@@ -2724,6 +2778,31 @@ if type -q starship
     printf "$check_symbol Starship shell extension found! Let's start it as fish!\n"
     sleep "$line_delay"
     starship init fish | source
+end
+#+end_src
+
+** FZF - The fuzzy finder
+A shell integration for FZF fuzzy finder integration. More will come.
+
+*** Bash
+#+NAME: shellext_fzf
+#+begin_src shell :tangle my_settings_bash
+if [ -x "$(command -v fzf)" ]; then
+    eval "$(fzf --bash)"
+fi
+#+end+src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh
+if [ -x "$(command -v fzf)" ]; then
+    eval "$(fzf --zsh)"
+fi
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+if type -q fzf
+   fzf --fish | source
 end
 #+end_src
 

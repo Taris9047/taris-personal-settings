@@ -615,24 +615,24 @@ Note that this mode actually provides saving window layout.
 #+begin_src emacs-lisp
 ;; Setup code block templates.
 ;; For Org-mode < 9.2
-(setq old-structure-template-alist
-      '(("py" "#+BEGIN_SRC python :results output\n?\n#+END_SRC" "")
-        ("ipy" "#+BEGIN_SRC ipython :results output\n?\n#+END_SRC" "")
-        ("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "")
-        ("hs" "#+BEGIN_SRC haskell\n?\n#+END_SRC" "")
-        ("laeq" "#+BEGIN_LaTeX\n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}\n#+END_LaTeX" "")
-        ("sh" "#+BEGIN_SRC shell\n?\n#+END_SRC" "")
-        ("r" "#+BEGIN_SRC R\n?\n#+END_SRC" "")
-        ("js" "#+BEGIN_SRC js\n?\n#+END_SRC" "")
-        ("http" "#+BEGIN_SRC http\n?\n#+END_SRC" "")
-        ("ditaa" "#+BEGIN_SRC ditaa :file\n?\n#+END_SRC" "")
-        ("dot" "#+BEGIN_SRC dot :file\n?\n#+END_SRC" "")
-        ("rp" "#+BEGIN_SRC R :results output graphics :file \n?\n#+END_SRC" "")
-        ("plantuml" "#+BEGIN_SRC plantuml :file\n?\n#+END_SRC" "")
-        ("n" "#+NAME: ?")
-        ("cap" "#+CAPTION: ?")))
+;;(setq old-structure-template-alist
+;;      '(("py" "#+BEGIN_SRC python :results output\n?\n#+END_SRC" "")
+;;        ("ipy" "#+BEGIN_SRC ipython :results output\n?\n#+END_SRC" "")
+;;        ("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "")
+;;        ("hs" "#+BEGIN_SRC haskell\n?\n#+END_SRC" "")
+;;        ("laeq" "#+BEGIN_LaTeX\n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}\n#+END_LaTeX" "")
+;;        ("sh" "#+BEGIN_SRC shell\n?\n#+END_SRC" "")
+;;        ("r" "#+BEGIN_SRC R\n?\n#+END_SRC" "")
+;;        ("js" "#+BEGIN_SRC js\n?\n#+END_SRC" "")
+;;        ("http" "#+BEGIN_SRC http\n?\n#+END_SRC" "")
+;;        ("ditaa" "#+BEGIN_SRC ditaa :file\n?\n#+END_SRC" "")
+;;        ("dot" "#+BEGIN_SRC dot :file\n?\n#+END_SRC" "")
+;;        ("rp" "#+BEGIN_SRC R :results output graphics :file \n?\n#+END_SRC" "")
+;;        ("plantuml" "#+BEGIN_SRC plantuml :file\n?\n#+END_SRC" "")
+;;        ("n" "#+NAME: ?")
+;;        ("cap" "#+CAPTION: ?")))
 ;; For Org-mode >= 9.2
-(setq new-structure-template-alist
+(setq org-structure-template-alist
       '(("py" . "src python :results output")
         ("ipy" . "src ipython :results output")
         ("el" . "src emacs-lisp")
@@ -658,7 +658,7 @@ Note that this mode actually provides saving window layout.
 (if (version<  (org-version) "9.2")
     (dolist (ele old-structure-template-alist)
       (add-to-list 'org-structure-template-alist ele))
-  (dolist (ele new-structure-template-alist)
+  (dolist (ele org-structure-template-alist)
     (add-to-list 'org-structure-template-alist ele))
   (dolist (ele my-tempo-keywords-alist)
     (add-to-list 'org-tempo-keywords-alist ele))
