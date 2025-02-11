@@ -21,13 +21,13 @@
       :desc "Dired jump to current"
       "d j" #'dired-jump
       (:after dired
-              (:map dired-mode-map
-               :leader
-               :desc "Peep-dired image previews"
-               "d p" #'peep-dired
-               :leader
-               :desc "Dired view file"
-               "d v" #'dired-view-file)))
+       (:map dired-mode-map
+        :leader
+        :desc "Peep-dired image previews"
+        "d p" #'peep-dired
+        :leader
+        :desc "Dired view file"
+        "d v" #'dired-view-file)))
 (evil-define-key 'normal dired-mode-map
   (kbd "h") 'dired-up-directory
   (kbd "l") 'dired-open-file) ; use dired-find-file instead if not using dired-open package
@@ -56,9 +56,9 @@
       :desc "Toggle tabs local display"
       "t C" #'centaur-tabs-local-mode)
 (evil-define-key 'normal centaur-tabs-mode-map (kbd "g <right>") 'centaur-tabs-forward        ; default Doom binding is 'g t'
-  (kbd "g <left>")  'centaur-tabs-backward       ; default Doom binding is 'g T'
-  (kbd "g <down>")  'centaur-tabs-forward-group
-  (kbd "g <up>")    'centaur-tabs-backward-group)
+                                               (kbd "g <left>")  'centaur-tabs-backward       ; default Doom binding is 'g T'
+                                               (kbd "g <down>")  'centaur-tabs-forward-group
+                                               (kbd "g <up>")    'centaur-tabs-backward-group)
 
 ;; Custom functions to detect linux distro
 (defun guess-linux-release(regexp)
@@ -239,13 +239,9 @@
       (add-to-list 'org-structure-template-alist ele))
   (dolist (ele org-structure-template-alist)
     (add-to-list 'org-structure-template-alist ele))
+  (dolist (ele my-tempo-keywords-alist)
+    (add-to-list 'org-tempo-keywords-alist ele))
   )
-
-(use-package! org-auto-tangle
-  :defer t
-  :hook (org-mode . org-auto-tangle-mode)
-  :config
-  (setq org-auto-tangle-default t))
 
 (setq org-babel-default-header-args
       '((:session . "none")
@@ -254,7 +250,7 @@
         (:cache . "no")
         (:noweb . "no")
         (:hlines . "no")
-        (:tangle . "no")
+        (:tangle . "yes")
         (:comments . "link")))
 
 (evil-define-command evil-buffer-org-new (count file)
@@ -342,10 +338,14 @@ to allow the TOC to be a collapseable tree."
     (replace-regexp-in-string "<input [^>]+><label [^>]+>\\(.+?\\)</label></li>" "\\1</li>"
                               (funcall orig-fn toc-entries))))
 
-(setq doom-font (font-spec :family "Mononoki Nerd Font" :size 15)
+(map! :leader
+      (:desc "Tangle the buffer!!"
+             "v t" #'org-babel-tangle))
+
+(setq doom-font (font-spec :family "Mononoki Nerd Font" :size 16)
       doom-big-font (font-spec :family "Mononoki Nerd Font" :size 26)
-      doom-variable-pitch-font (font-spec :family "NanumSquare" :size 15)
-      doom-serif-font (font-spec :family "Mononoki Nerd Font" :size 15))
+      doom-variable-pitch-font (font-spec :family "NanumSquare" :size 16)
+      doom-serif-font (font-spec :family "Mononoki Nerd Font" :size 16))
 (after! doom-themes
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t))
@@ -474,11 +474,6 @@ to allow the TOC to be a collapseable tree."
 ;;       :desc "Search web for text between BEG/END"
 ;;       "s w" #'eww-search-words)
 
-(cond (IS-MAC
-       (setq mac-command-modifier 'meta
-             mac-option-modifier 'alt
-             mac-right-option-modifier 'alt)))
-
 ;; File management stuff
 (setq-default
  delete-by-moving-to-trash t
@@ -522,12 +517,12 @@ to allow the TOC to be a collapseable tree."
 (add-to-list 'default-frame-alist '(width . 100) )
 
 (defun save-buffers-kill-emacs-with-confirm ()
-  "jsled's special save-buffers-kill-emacs, but with confirm"
-  (interactive)
-  (if (null current-prefix-arg)
-      (if (y-or-n-p "Are you sure you want to quit?")
-          (save-buffers-kill-emacs))
-    (save-buffers-kill-emacs)))
+ "jsled's special save-buffers-kill-emacs, but with confirm"
+ (interactive)
+ (if (null current-prefix-arg)
+     (if (y-or-n-p "Are you sure you want to quit?")
+         (save-buffers-kill-emacs))
+     (save-buffers-kill-emacs)))
 (global-set-key "\C-x\C-c" 'save-buffers-kill-emacs-with-confirm)
 
 (setq max-lisp-eval-depth 10000)

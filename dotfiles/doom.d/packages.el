@@ -24,7 +24,6 @@
 (package! info-colors) ; Pretty manual
 (package! systemd) ; Editing systemd unit files
 (package! graphviz-dot-mode) ; graphviz
-(package! org-auto-tangle) ; org tangle
 (package! elvish-mode)
 (package! ob-elvish)
 (package! ob-cfengine3)

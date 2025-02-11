@@ -30,13 +30,13 @@
 - [[#org-mode][Org mode]]
   - [[#basic-org-mode-setup][Basic Org mode setup]]
   - [[#shortcut-for-src-blocks][Shortcut for SRC blocks]]
-  - [[#automatic-tangle][Automatic Tangle!]]
   - [[#header-arguments][Header arguments]]
   - [[#buffer-creation][Buffer Creation]]
   - [[#bullet-mode-sequence][Bullet mode sequence]]
   - [[#view-exported-file][View Exported File]]
   - [[#html-export][HTML Export]]
   - [[#toc-as-a-collapsable-tree][TOC As a Collapsable Tree]]
+  - [[#tangle-hotkey][Tangle Hotkey]]
 - [[#fonts][Fonts]]
   - [[#doom-font-config][Doom Font config.]]
 - [[#ivy-mode][Ivy Mode]]
@@ -55,7 +55,6 @@
   - [[#emms-music-player-stuff][EMMS music player stuff]]
   - [[#ews-web-browser][EWS Web browser]]
 - [[#misc-stuffs][Misc stuffs]]
-  - [[#os-x-apple-machines-modifiers-to-be-more-sane][OS X (Apple machines) modifiers to be more 'sane']]
   - [[#file-management-stuff][File management stuff]]
   - [[#more-undos][More Undos!]]
   - [[#window-split-behaviors][Window Split Behaviors]]
@@ -301,7 +300,6 @@ Here's init.el file for Doomemacs. Fundamental set ups are all done here. Howeve
 (package! info-colors) ; Pretty manual
 (package! systemd) ; Editing systemd unit files
 (package! graphviz-dot-mode) ; graphviz
-(package! org-auto-tangle) ; org tangle
 (package! elvish-mode)
 (package! ob-elvish)
 (package! ob-cfengine3)
@@ -313,7 +311,7 @@ Here's init.el file for Doomemacs. Fundamental set ups are all done here. Howeve
 :PROPERTIES:
 :header-args: :tangle config.el
 :END:
-Many settings were imported from these sources.
+Many settings were adopted from these sources.
 
 ** DistroTube's Gitlab.
     [[https://gitlab.com/dwt1/dotfiles/-/blob/master/.doom.d/config.org][DistroTube's GitLab repo. doom.d/config.org]]
@@ -343,7 +341,7 @@ Many settings were imported from these sources.
 :header-args: :tangle config.el
 :END:
 ** Header
-Setting up =lexical-binding= for this file.
+Setting up =lexical-binding= for the 'config.el' file.
 #+begin_src emacs-lisp
 ;;; ./config.el -*- lexical-binding: t; -*-
 #+end_src
@@ -665,17 +663,6 @@ Note that this mode actually provides saving window layout.
   )
 #+end_src
 
-** Automatic Tangle!
-In fact, this is called as 'asynchronous' tangle.
-
-#+begin_src emacs-lisp
-(use-package! org-auto-tangle
-  :defer t
-  :hook (org-mode . org-auto-tangle-mode)
-  :config
-  (setq org-auto-tangle-default t))
-#+end_src
-
 ** Header arguments
 #+begin_src emacs-lisp
 (setq org-babel-default-header-args
@@ -685,7 +672,7 @@ In fact, this is called as 'asynchronous' tangle.
         (:cache . "no")
         (:noweb . "no")
         (:hlines . "no")
-        (:tangle . "no")
+        (:tangle . "yes")
         (:comments . "link")))
 #+end_src
 
@@ -787,23 +774,32 @@ to allow the TOC to be a collapseable tree."
       (funcall orig-fn toc-entries)
     (replace-regexp-in-string "<input [^>]+><label [^>]+>\\(.+?\\)</label></li>" "\\1</li>"
                               (funcall orig-fn toc-entries))))
-
 #+end_src
+
+** Tangle Hotkey
+#+begin_src emacs-lisp
+(map! :leader
+      (:desc "Tangle the buffer!!"
+             "v t" #'org-babel-tangle))
+#+end_src
+
+#+RESULTS:
+
 * Fonts
 :PROPERTIES:
 :header-args: :tangle config.el
 :END:
 ** Doom Font config.
 
-I was trying out a few different nerd fonts but decided to settle down to mononoki. I guess the 'roundy-ness' sold me out. Variable pitch and serif fonts are free Korean fonts that are distributed by [[https:naver.com][Naver]].
+I was trying out a few different nerd fonts but decided to settle down to mononoki. I guess the 'roundy-ness' sold me out. Variable pitch and serif fonts are free Korean fonts distributed by [[https:naver.com][Naver]].
 
 You can download them from my Github repo as well: [[https://github.com/Taris9047/taris-personal-settings/releases/download/Nanum/NanumFonts.zip][Download Nanum Fonts]]
 
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "Mononoki Nerd Font" :size 15)
+(setq doom-font (font-spec :family "Mononoki Nerd Font" :size 16)
       doom-big-font (font-spec :family "Mononoki Nerd Font" :size 26)
-      doom-variable-pitch-font (font-spec :family "NanumSquare" :size 15)
-      doom-serif-font (font-spec :family "Mononoki Nerd Font" :size 15))
+      doom-variable-pitch-font (font-spec :family "NanumSquare" :size 16)
+      doom-serif-font (font-spec :family "Mononoki Nerd Font" :size 16))
 (after! doom-themes
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t))
@@ -814,6 +810,9 @@ You can download them from my Github repo as well: [[https://github.com/Taris904
 
 (setq global-prettify-symbols-mode t)
 #+end_src
+
+#+RESULTS:
+: t
 
 * Ivy Mode
 Ivy is a completion mechanism for Emacs.
@@ -1074,17 +1073,6 @@ MPV was mandatory for this. In fact, this player isn't actually a player but yet
 :PROPERTIES:
 :header-args: :tangle config.el
 :END:
-** OS X (Apple machines) modifiers to be more 'sane'
-
-This code has not been tested since my financial situation cannot support any newer Apple products and all the Apple machines in my inventory are abandoned old models. So, they were wiped out to run Linux instead of legacy OS X.
-
-#+begin_src emacs-lisp
-(cond (IS-MAC
-       (setq mac-command-modifier 'meta
-             mac-option-modifier 'alt
-             mac-right-option-modifier 'alt)))
-#+end_src
-
 ** File management stuff
 #+begin_src emacs-lisp
 ;; File management stuff
