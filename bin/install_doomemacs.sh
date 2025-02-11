@@ -4,7 +4,7 @@ SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 # Minimum allowed git version
 git_minimal='2.23.0'
-new_git_ver='2.36.0'
+new_git_ver='2.48.1'
 
 version_greater_equal() {
 	printf '%s\n%s\n' "$2" "$1" | sort -V -C
@@ -109,7 +109,9 @@ if [ -d "$HOME/.emacs.d" ] || [ -e "$HOME/.emacs" ] || [ -L "$HOME/.emacs.d" ]; 
 		echo "Wiping out previous emacs settings."
 		rm -rf "$HOME/.emacs"
 		rm -rf "$HOME/.emacs.d"
+    rm -rf "$HOME/.doom.d"
 		rm -rf "$HOME/.spacemacs"
+    rm -rf "$HOME/.local/share/doom"
 	fi
 fi
 

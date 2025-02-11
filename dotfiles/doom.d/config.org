@@ -341,12 +341,13 @@ Many settings were adopted from these sources.
 :header-args: :tangle config.el
 :END:
 ** Header
-Setting up =lexical-binding= for the 'config.el' file.
+Setting up =lexical-binding= for the 'config.el' file. 
 #+begin_src emacs-lisp
 ;;; ./config.el -*- lexical-binding: t; -*-
 #+end_src
 
 ** Window title
+Setting up Emacs Window title.
 #+begin_src emacs-lisp
 ;; Fallback buffer names
 (setq doom-fallback-buffer-name "► Doom"
@@ -390,8 +391,6 @@ Setting up =lexical-binding= for the 'config.el' file.
   (kbd "j") 'peep-dired-next-file
   (kbd "k") 'peep-dired-prev-file)
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
-(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-(setq dired-open-extensions '(("gif" . "sxiv")
                               ("jpg" . "sxiv")
                               ("png" . "sxiv")
                               ("mkv" . "mpv")
@@ -780,7 +779,7 @@ to allow the TOC to be a collapseable tree."
 #+begin_src emacs-lisp
 (map! :leader
       (:desc "Tangle the buffer!!"
-             "v t" #'org-babel-tangle))
+             "t t" #'org-babel-tangle))
 #+end_src
 
 #+RESULTS:

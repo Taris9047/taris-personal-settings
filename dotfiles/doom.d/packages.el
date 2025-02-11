@@ -1,3 +1,4 @@
+;; [[file:config.org::*Package list (packages.el)][Package list (packages.el):1]]
 ;;; packages.el -*- lexical-binding: t; -*-
 (package! all-the-icons-dired)
 (package! flycheck-aspell)
@@ -29,3 +30,4 @@
 (package! ob-cfengine3)
 (package! iedit)
 (package! annotate)
+;; Package list (packages.el):1 ends here
