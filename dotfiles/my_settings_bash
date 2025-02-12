@@ -137,6 +137,22 @@ set_lsd_as_ls() {
     fi
 }
 
+set_eza_as_ls() {
+    if [ -x "$(command -v eza)" ]; then
+        sleep "${line_delay}"
+        unalias ls ll lld l lt l. 2> /dev/null
+        alias ls='eza -hF --git --icons=auto'
+        alias ll='eza -halF --git --icons=auto'
+        alias l='eza -hF --git --icons=auto'
+        alias lt='eza -hF --git --icons=auto -T'
+        alias l.='eza -halF | egrep "^\."'
+        echo 'eza' >"$LS_MODE_SAVE"
+    else
+        printf 'It seems eza has not yet installed!!\nUsing the good old ls\n'
+        set_ls_as_ls
+    fi
+}
+
 set_ls() {
     if [ "$#" -eq 0 ]; then
         sleep 0
