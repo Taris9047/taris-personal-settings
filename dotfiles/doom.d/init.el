@@ -145,16 +145,10 @@
        ;;ocaml             ; an objective camel
        (org                     ; organize your plain life in plain text
         +pretty
-        +dragndrop
-        ;;+hugo
-        +noter
+        +publish
         +jupyter
-        +pandoc
         +gnuplot
-        ;;+pomodoro
-        +present
-        +org-bullets
-        +org-ql)
+        +present)
        php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
@@ -177,7 +171,6 @@
        yaml              ; JSON, but readable
 
        :email
-       (:if (executable-find "mu") (mu4e +org +gmail))
        ;;notmuch
        ;;(wanderlust +gmail)
 
@@ -189,14 +182,8 @@
        ;;(rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
-       :emms
-       ;;emms-setup
-       ;;emms-info
-       ;;emms-cue
-       ;;emms-mode-line
-
        :config
-       ;;literate
+       literate
        (default +bindings +smartparens)
        )
 ;; Init file (init.el):1 ends here

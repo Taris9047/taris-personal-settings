@@ -12,8 +12,6 @@
 (package! evil-tutor)
 (package! ivy-posframe)
 (package! mastodon)
-(package! org-bullets)
-(package! org-ql)
 (package! peep-dired)
 (package! pianobar)
 (package! rainbow-mode)
@@ -30,4 +28,5 @@
 (package! ob-cfengine3)
 (package! iedit)
 (package! annotate)
+(package! org-auto-tangle)
 ;; Package list (packages.el):1 ends here

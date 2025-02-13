@@ -120,6 +120,7 @@ ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/config.el" "${HOME}/.doom.d/config.el" 
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/packages.el" "${HOME}/.doom.d/packages.el" || true
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/config.org" "${HOME}/.doom.d/config.org" || true
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/aliases" "${HOME}/.doom.d/aliases" || true
+ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/profile" "${HOME}/.doom.d/profile" || true
 
 echo "Re-compiling doomemacs with the updated setting files!!"
 "$HOME/.emacs.d/bin/doom" -! sync -u

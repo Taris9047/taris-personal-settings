@@ -1,7 +1,22 @@
-;; [[file:config.org::*My credentials][My credentials:1]]
-(setq user-full-name "Taylor Shin"
-      user-mail-address "talezshin@gmail.com")
-;; My credentials:1 ends here
+;; [[file:config.org::*Emojis][Emojis:1]]
+(use-package emojify
+  :hook (after-init . global-emojify-mode))
+;; Emojis:1 ends here
+
+;; [[file:config.org::*Open Specific Files][Open Specific Files:1]]
+(map! :leader
+      (:prefix ("=" . "open file")
+       :desc "Edit agenda file" "=" #'(lambda () (interactive) (find-file "~/.org/start.org"))
+       :desc "Edit agenda file" "a" #'(lambda () (interactive) (find-file "~/.org/agenda.org"))
+       :desc "Edit doom config.org" "c" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/config.org"))
+       :desc "Edit doom init.el" "i" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/init.el"))
+       :desc "Edit doom packages.el" "p" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/packages.el")) ))
+
+(map! :leader
+      (:prefix ("= e" . "open eshell settings files")
+       :desc "Edit eshell aliases" "a" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/aliases"))
+       :desc "Edit eshell profile" "p" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/profile"))        ))
+;; Open Specific Files:1 ends here
 
 ;; [[file:config.org::*Header][Header:1]]
 ;;; ./config.el -*- lexical-binding: t; -*-
@@ -24,26 +39,46 @@
 
 ;; [[file:config.org::*Dired directory manager][Dired directory manager:1]]
 (map! :leader
-      :desc "Dired"
-      "d d" #'dired
-      :leader
-      :desc "Dired jump to current"
-      "d j" #'dired-jump
+      (:prefix ("d" . "dired")
+       :desc "Open dired" "d" #'dired
+       :desc "Dired jump to current" "j" #'dired-jump)
       (:after dired
        (:map dired-mode-map
-        :leader
-        :desc "Peep-dired image previews"
-        "d p" #'peep-dired
-        :leader
-        :desc "Dired view file"
-        "d v" #'dired-view-file)))
+        :desc "Peep-dired image previews" "d p" #'peep-dired
+        :desc "Dired view file"           "d v" #'dired-view-file)))
+
 (evil-define-key 'normal dired-mode-map
+  (kbd "M-RET") 'dired-display-file
   (kbd "h") 'dired-up-directory
-  (kbd "l") 'dired-open-file) ; use dired-find-file instead if not using dired-open package
-(evil-define-key 'normal peep-dired-mode-map
-  (kbd "j") 'peep-dired-next-file
-  (kbd "k") 'peep-dired-prev-file)
-(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
+  (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
+  (kbd "m") 'dired-mark
+  (kbd "t") 'dired-toggle-marks
+  (kbd "u") 'dired-unmark
+  (kbd "C") 'dired-do-copy
+  (kbd "D") 'dired-do-delete
+  (kbd "J") 'dired-goto-file
+  (kbd "M") 'dired-do-chmod
+  (kbd "O") 'dired-do-chown
+  (kbd "P") 'dired-do-print
+  (kbd "R") 'dired-do-rename
+  (kbd "T") 'dired-do-touch
+  (kbd "Y") 'dired-copy-filenamecopy-filename-as-kill ; copies filename to kill ring.
+  (kbd "Z") 'dired-do-compress
+  (kbd "+") 'dired-create-directory
+  (kbd "-") 'dired-do-kill-lines
+  (kbd "% l") 'dired-downcase
+  (kbd "% m") 'dired-mark-files-regexp
+  (kbd "% u") 'dired-upcase
+  (kbd "* %") 'dired-mark-files-regexp
+  (kbd "* .") 'dired-mark-extension
+  (kbd "* /") 'dired-mark-directories
+  (kbd "; d") 'epa-dired-do-decrypt
+  (kbd "; e") 'epa-dired-do-encrypt)
+;; Get file icons in dired
+(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+;; With dired-open plugin, you can launch external programs for certain extensions
+;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
+(setq dired-open-extensions '(("gif" . "sxiv")
                               ("jpg" . "sxiv")
                               ("png" . "sxiv")
                               ("mkv" . "mpv")
@@ -95,20 +130,36 @@
 
 ;; [[file:config.org::*Theme!][Theme!:2]]
 ;; Set different theme per distribution...
-(cond
- ((string= (guess-linux-distribution) "elementary")
-  (setq doom-theme 'doom-solarized-light))
- ((string= (guess-linux-distribution) "hamonikr")
-  (setq doom-theme 'doom-moonlight))
- ((string= (guess-linux-distribution) "linuxmint")
-  (setq doom-theme 'doom-henna))
- ((string= (guess-linux-distribution) "rhel")
-  (setq doom-theme 'doom-horizon))
- ((string= (guess-linux-distribution) "opensuse-leap")
-  (setq doom-theme 'doom-oceanic-next))
- ((string= (guess-linux-distribution) "debian")
-  (setq doom-theme 'doom-monokai-pro))
- (t (setq doom-theme 'doom-palenight)))
+(pcase system-type
+
+  ;; Linux
+  (gnu/linux
+   (cond
+    ((string= (guess-linux-distribution) "elementary")
+     (setq doom-theme 'doom-solarized-light))
+    ((string= (guess-linux-distribution) "hamonikr")
+     (setq doom-theme 'doom-moonlight))
+    ((string= (guess-linux-distribution) "linuxmint")
+     (setq doom-theme 'doom-henna))
+    ((string= (guess-linux-distribution) "rhel")
+     (setq doom-theme 'doom-horizon))
+    ((string= (guess-linux-distribution) "opensuse-leap")
+     (setq doom-theme 'doom-oceanic-next))
+    ((string= (guess-linux-distribution) "debian")
+     (setq doom-theme 'doom-monokai-pro))
+    (t (setq doom-theme 'doom-palenight))))
+
+  ;; MacOS
+  (darwin
+    (setq doom-theme 'doom-homage-white))
+
+;; BSD?
+  (berkeley-unix
+   (setq doom-theme 'doom-one-light))
+
+  ;; Windows
+  (windows-nt
+    (setq doom-theme 'doom-material))    )
 ;; Theme!:2 ends here
 
 ;; [[file:config.org::*Theme!][Theme!:3]]
@@ -166,33 +217,15 @@
       "w <left>" #'winner-undo)
 ;; Winner Mode:1 ends here
 
-;; [[file:config.org::*Quick Settings Edit Shortcuts][Quick Settings Edit Shortcuts:1]]
-(map! :leader
-      :desc "Edit agenda file"
-      "- a" #'(lambda () (interactive) (find-file "~/Org/agenda.org"))
-      :leader
-      :desc "Edit doom config.org"
-      "- c" #'(lambda () (interactive) (find-file "~/.doom.d/config.org"))
-      :leader
-      :desc "Edit eshell aliases"
-      "- e" #'(lambda () (interactive) (find-file "~/.doom.d/aliases"))
-      :leader
-      :desc "Edit doom init.el"
-      "- i" #'(lambda () (interactive) (find-file "~/.doom.d/init.el"))
-      :leader
-      :desc "Edit doom packages.el"
-      "- p" #'(lambda () (interactive) (find-file "~/.doom.d/packages.el")))
-;; Quick Settings Edit Shortcuts:1 ends here
-
 ;; [[file:config.org::*Basic Org mode setup][Basic Org mode setup:1]]
 (after! org
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-  (setq org-directory "~/Org/"
-        org-agenda-files '("~/Org/agenda.org")
+  (setq org-directory "~/.org/"
+        org-agenda-files '("~/.org/agenda.org")
         org-default-notes-file (expand-file-name "notes.org" org-directory)
         org-ellipsis " ▼ "
         org-log-done 'time
-        org-journal-dir "~/Org/journal/"
+        org-journal-dir "~/.org/journal/"
         org-journal-date-format "%B %d, %Y (%A) "
         org-journal-file-format "%Y-%m-%d.org"
         org-hide-emphasis-markers t
@@ -220,58 +253,38 @@
            "CANCELLED(c)" )))) ; Task has been cancelled
 ;; Basic Org mode setup:1 ends here
 
-;; [[file:config.org::*Shortcut for SRC blocks][Shortcut for SRC blocks:1]]
-;; Setup code block templates.
-;; For Org-mode < 9.2
-;;(setq old-structure-template-alist
-;;      '(("py" "#+BEGIN_SRC python :results output\n?\n#+END_SRC" "")
-;;        ("ipy" "#+BEGIN_SRC ipython :results output\n?\n#+END_SRC" "")
-;;        ("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "")
-;;        ("hs" "#+BEGIN_SRC haskell\n?\n#+END_SRC" "")
-;;        ("laeq" "#+BEGIN_LaTeX\n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}\n#+END_LaTeX" "")
-;;        ("sh" "#+BEGIN_SRC shell\n?\n#+END_SRC" "")
-;;        ("r" "#+BEGIN_SRC R\n?\n#+END_SRC" "")
-;;        ("js" "#+BEGIN_SRC js\n?\n#+END_SRC" "")
-;;        ("http" "#+BEGIN_SRC http\n?\n#+END_SRC" "")
-;;        ("ditaa" "#+BEGIN_SRC ditaa :file\n?\n#+END_SRC" "")
-;;        ("dot" "#+BEGIN_SRC dot :file\n?\n#+END_SRC" "")
-;;        ("rp" "#+BEGIN_SRC R :results output graphics :file \n?\n#+END_SRC" "")
-;;        ("plantuml" "#+BEGIN_SRC plantuml :file\n?\n#+END_SRC" "")
-;;        ("n" "#+NAME: ?")
-;;        ("cap" "#+CAPTION: ?")))
-;; For Org-mode >= 9.2
-(setq org-structure-template-alist
-      '(("py" . "src python :results output")
-        ("ipy" . "src ipython :results output")
-        ("el" . "src emacs-lisp")
-        ("hs" . "src haskell")
-        ("laeq" . "latex \n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}")
-        ("sh" . "src shell")
-        ("r" . "src R")
-        ("js" . "src js")
-        ("http" . "src http")
-        ("ditaa" . "src ditaa :file")
-        ("dot" . "src dot :file")
-        ("rp" . "src R :results output graphics :file ")
-        ("plantuml" . "src plantuml :file")
-        ))
-;; Keyword expansion also changed in 9.2
-(setq my-tempo-keywords-alist
-      '(("n" . "NAME")
-        ("cap" . "CAPTION")))
+;; [[file:config.org::*Org-agenda][Org-agenda:1]]
+(after! org
+  (setq org-agenda-files '("~/.org/agenda.org")))
 
-(when (version< (org-version) "9.2")
-  (add-to-list 'org-modules 'org-tempo))
-(require 'org-tempo)
-(if (version<  (org-version) "9.2")
-    (dolist (ele old-structure-template-alist)
-      (add-to-list 'org-structure-template-alist ele))
-  (dolist (ele org-structure-template-alist)
-    (add-to-list 'org-structure-template-alist ele))
-  (dolist (ele my-tempo-keywords-alist)
-    (add-to-list 'org-tempo-keywords-alist ele))
-  )
-;; Shortcut for SRC blocks:1 ends here
+(setq
+   ;; org-fancy-priorities-list '("[A]" "[B]" "[C]")
+   ;; org-fancy-priorities-list '("❗" "[B]" "[C]")
+   org-fancy-priorities-list '("🟥" "🟧" "🟨")
+   org-priority-faces
+   '((?A :foreground "#ff6c6b" :weight bold)
+     (?B :foreground "#98be65" :weight bold)
+     (?C :foreground "#c678dd" :weight bold))
+   org-agenda-block-separator 8411)
+
+(setq org-agenda-custom-commands
+      '(("v" "A better agenda view"
+         ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          (tags "PRIORITY=\"B\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "Medium-priority unfinished tasks:")))
+          (tags "PRIORITY=\"C\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "Low-priority unfinished tasks:")))
+          (tags "customtag"
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "Tasks marked with customtag:")))
+
+          (agenda "")
+          (alltodo "")))))
+;; Org-agenda:1 ends here
 
 ;; [[file:config.org::*Header arguments][Header arguments:1]]
 (setq org-babel-default-header-args
@@ -380,11 +393,13 @@ to allow the TOC to be a collapseable tree."
                               (funcall orig-fn toc-entries))))
 ;; TOC As a Collapsable Tree:1 ends here
 
-;; [[file:config.org::*Tangle Hotkey][Tangle Hotkey:1]]
-(map! :leader
-      (:desc "Tangle the buffer!!"
-             "t t" #'org-babel-tangle))
-;; Tangle Hotkey:1 ends here
+;; [[file:config.org::*Tangle on Save][Tangle on Save:1]]
+(use-package! org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
+;; Tangle on Save:1 ends here
 
 ;; [[file:config.org::*Doom Font config.][Doom Font config.:1]]
 (setq doom-font (font-spec :family "Mononoki Nerd Font" :size 16)
@@ -401,33 +416,6 @@ to allow the TOC to be a collapseable tree."
 
 (setq global-prettify-symbols-mode t)
 ;; Doom Font config.:1 ends here
-
-;; [[file:config.org::*Ivy-Posframe][Ivy-Posframe:1]]
-(setq ivy-posframe-display-functions-alist
-      '((swiper                     . ivy-posframe-display-at-point)
-        (complete-symbol            . ivy-posframe-display-at-point)
-        (counsel-M-x                . ivy-display-function-fallback)
-        (counsel-esh-history        . ivy-posframe-display-at-window-center)
-        (counsel-describe-function  . ivy-display-function-fallback)
-        (counsel-describe-variable  . ivy-display-function-fallback)
-        (counsel-find-file          . ivy-display-function-fallback)
-        (counsel-recentf            . ivy-display-function-fallback)
-        (counsel-register           . ivy-posframe-display-at-frame-bottom-window-center)
-        (dmenu                      . ivy-posframe-display-at-frame-top-center)
-        (nil                        . ivy-posframe-display))
-      ivy-posframe-height-alist
-      '((swiper . 20)
-        (dmenu . 20)
-        (t . 10)))
-(ivy-posframe-mode 1) ; 1 enables posframe-mode, 0 disables it.
-;; Ivy-Posframe:1 ends here
-
-;; [[file:config.org::*Ivy Keybindings][Ivy Keybindings:1]]
-(map! :leader
-      (:prefix ("v" . "Ivy")
-       :desc "Ivy push view" "v p" #'ivy-push-view
-       :desc "Ivy switch view" "v s" #'ivy-switch-view))
-;; Ivy Keybindings:1 ends here
 
 ;; [[file:config.org::*Registers (clipboard system?)][Registers (clipboard system?):1]]
 (map! :leader
@@ -467,13 +455,13 @@ to allow the TOC to be a collapseable tree."
 
 ;; [[file:config.org::*Emacs shell settings.][Emacs shell settings.:1]]
 (setq shell-file-name "/bin/bash"
-      eshell-aliases-file "~/.doom.d/aliases"
+      eshell-aliases-file "~/.settings/dotfiles/doom.d/aliases"
       eshell-history-size 5000
       eshell-buffer-maximum-lines 5000
       eshell-hist-ignoredups t
       eshell-scroll-to-bottom-on-input t
       eshell-destroy-buffer-when-process-dies t
-      eshell-visual-commands'("bash" "fish" "htop" "ssh" "top" "zsh")
+      eshell-visual-commands'("bash" "zsh" "htop" "ssh" "top" "fish")
       vterm-max-scrollback 5000)
 (map! :leader
       :desc "Eshell" "e s" #'eshell
@@ -516,66 +504,6 @@ to allow the TOC to be a collapseable tree."
       "e r" #'eval-region)
 ;; Evaluate Elisp expressions.:1 ends here
 
-;; [[file:config.org::*Elfeed stuff][Elfeed stuff:1]]
-;; (custom-set-variables
-;;  '(elfeed-feeds
-;;    (quote
-;;     (("https://www.reddit.com/r/linux.rss" reddit linux)
-;;      ("https://www.gamingonlinux.com/article_rss.php" gaming linux)
-;;      ("https://hackaday.com/blog/feed/" hackaday linux)
-;;      ("https://opensource.com/feed" opensource linux)
-;;      ("https://linux.softpedia.com/backend.xml" softpedia linux)
-;;      ("https://itsfoss.com/feed/" itsfoss linux)
-;;      ("https://www.zdnet.com/topic/linux/rss.xml" zdnet linux)
-;;      ("https://www.phoronix.com/rss.php" phoronix linux)
-;;      ("http://feeds.feedburner.com/d0od" omgubuntu linux)
-;;      ("https://www.computerworld.com/index.rss" computerworld linux)
-;;      ("https://www.networkworld.com/category/linux/index.rss" networkworld linux)
-;;      ("https://www.techrepublic.com/rssfeeds/topic/open-source/" techrepublic linux)
-;;      ("https://betanews.com/feed" betanews linux)
-;;      ("http://lxer.com/module/newswire/headlines.rss" lxer linux)
-;;      ("https://distrowatch.com/news/dwd.xml" distrowatch linux)))))
-;; Elfeed stuff:1 ends here
-
-;; [[file:config.org::*EMMS music player stuff][EMMS music player stuff:1]]
-;; (emms-all)
-;; (emms-default-players)
-;; (emms-mode-line 1)
-;; (emms-playing-time 1)
-;; (setq emms-source-file-default-directory "~/Music/"
-;;       emms-playlist-buffer-name "*Music*"
-;;       emms-info-asynchronously t
-;;       emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find)
-;; (map! :leader
-;;       :desc "Go to emms playlist"
-;;       "a a" #'emms-playlist-mode-go
-;;       :leader
-;;       :desc "Emms pause track"
-;;       "a x" #'emms-pause
-;;       :leader
-;;       :desc "Emms stop track"
-;;       "a s" #'emms-stop
-;;       :leader
-;;       :desc "Emms play previous track"
-;;       "a p" #'emms-previous
-;;       :leader
-;;       :desc "Emms play next track"
-;;       "a n" #'emms-next)
-;; EMMS music player stuff:1 ends here
-
-;; [[file:config.org::*EWS Web browser][EWS Web browser:1]]
-;; (setq browse-url-browser-function 'eww-browse-url)
-;; (map! :leader
-;;       :desc "Eww web browser"
-;;       "e w" #'eww
-;;       :leader
-;;       :desc "Eww reload page"
-;;       "e R" #'eww-reload
-;;       :leader
-;;       :desc "Search web for text between BEG/END"
-;;       "s w" #'eww-search-words)
-;; EWS Web browser:1 ends here
-
 ;; [[file:config.org::*File management stuff][File management stuff:1]]
 ;; File management stuff
 (setq-default
@@ -584,12 +512,12 @@ to allow the TOC to be a collapseable tree."
  x-stretch-cursor t)
 ;; File management stuff:1 ends here
 
-;; [[file:config.org::*More Undos!][More Undos!:1]]
+;; [[file:config.org::*More Undo!][More Undo!:1]]
 ;; Moar undos!
 (setq undo-limit 800000000
       evil-want-fine-undo t
       truncate-string-ellipsis "…")
-;; More Undos!:1 ends here
+;; More Undo!:1 ends here
 
 ;; [[file:config.org::*Window Split Behaviors][Window Split Behaviors:1]]
 (defun prefer-horizontal-split ()

@@ -2,6 +2,7 @@
 #+AUTHOR: Taylor Shin
 #+STARTUP: showeverything
 #+PROPERTY: header-args: :tangle-mode
+#+auto_tangle: t
 
 * My Shell Settings
 Let's use Orgmode to construct and manage shell script files more effectively! Automatic tangling will populate my_settings_<shell_name> files automatically.
@@ -2855,7 +2856,6 @@ end
 #+end_src
 
 ** Run Neofetch
-
 Neofetch is cool. But seeing this every time running a terminal window is cumbersome. So, It won't run once system uptime passes 2400 seconds.
 
 *** Bash

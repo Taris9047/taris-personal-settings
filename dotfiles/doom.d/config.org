@@ -1,6 +1,8 @@
+#+auto_tangle: t
 #+TITLE: Taris' Doomemacs Configuration!!
 #+AUTHOR: Taylor Shin
-#+PROPERTY: header-args :tangle-mode
+#+DESCRIPTION: Taylor's personal Doomemacs config.
+#+STARTUP: showeverything
 
 * Contents :toc:
 - [[#init-file-initel][Init file (init.el)]]
@@ -11,7 +13,8 @@
   -  [[#hangul-stuffs-are-referenced-from][Hangul stuffs are referenced from...]]
   -  [[#distro-detection-elisp-code-was-adopted-from][Distro detection elisp code was adopted from...]]
   -  [[#zzamboni-had-some-useful-macros][Zzamboni had some useful macros...]]
-- [[#my-credentials][My credentials]]
+- [[#emojis][Emojis]]
+- [[#open-specific-files][Open Specific Files]]
 - [[#window-titles-and-bookmarking][Window Titles and Bookmarking]]
   - [[#header][Header]]
   - [[#window-title][Window title]]
@@ -25,23 +28,18 @@
   - [[#line-number-manipulation-and-comment][Line number manipulation and Comment]]
   - [[#window-splits][Window Splits]]
   - [[#winner-mode][Winner Mode]]
-- [[#shortcut-keys-for-settings][Shortcut Keys for Settings]]
-  - [[#quick-settings-edit-shortcuts][Quick Settings Edit Shortcuts]]
 - [[#org-mode][Org mode]]
   - [[#basic-org-mode-setup][Basic Org mode setup]]
-  - [[#shortcut-for-src-blocks][Shortcut for SRC blocks]]
+  - [[#org-agenda][Org-agenda]]
   - [[#header-arguments][Header arguments]]
   - [[#buffer-creation][Buffer Creation]]
   - [[#bullet-mode-sequence][Bullet mode sequence]]
   - [[#view-exported-file][View Exported File]]
   - [[#html-export][HTML Export]]
   - [[#toc-as-a-collapsable-tree][TOC As a Collapsable Tree]]
-  - [[#tangle-hotkey][Tangle Hotkey]]
+  - [[#tangle-on-save][Tangle on Save]]
 - [[#fonts][Fonts]]
   - [[#doom-font-config][Doom Font config.]]
-- [[#ivy-mode][Ivy Mode]]
-  - [[#ivy-posframe][Ivy-Posframe]]
-  - [[#ivy-keybindings][Ivy Keybindings]]
 - [[#registers-clipboard-system][Registers (clipboard system?)]]
 - [[#shell-settings][Shell Settings]]
   - [[#emacs-shell-settings][Emacs shell settings.]]
@@ -50,13 +48,9 @@
   - [[#editor-font-settings][Editor Font Settings]]
   - [[#font-size-matching][Font Size Matching]]
 - [[#evaluate-elisp-expressions][Evaluate Elisp expressions.]]
-- [[#news-and-media-stuffs][News and Media Stuffs]]
-  - [[#elfeed-stuff][Elfeed stuff]]
-  - [[#emms-music-player-stuff][EMMS music player stuff]]
-  - [[#ews-web-browser][EWS Web browser]]
 - [[#misc-stuffs][Misc stuffs]]
   - [[#file-management-stuff][File management stuff]]
-  - [[#more-undos][More Undos!]]
+  - [[#more-undo][More Undo!]]
   - [[#window-split-behaviors][Window Split Behaviors]]
   - [[#show-battery-status][Show battery status]]
   - [[#graphviz][Graphviz]]
@@ -67,7 +61,7 @@
   - [[#lisp-eval-depth-crap][Lisp Eval Depth Crap]]
 
 * Init file (init.el)
-Here's init.el file for Doomemacs. Fundamental set ups are all done here. However, in openSUSE, they have some other settings on =/usr/share/X11/app-defaults/Emacs= file. I'm not sure why custom compiled Emacs follows this file's configuration though. The gnu.org clearly mentions that Emacs will search user's directory first.
+Here's =init.el= file for Doomemacs. Fundamental set ups are all done here. However, in openSUSE, they have some other settings on =/usr/share/X11/app-defaults/Emacs= file. I'm not sure why custom compiled Emacs follows this file's configuration though. =The gnu.org=  mentions that Emacs will search user's directory first.
 
 #+begin_src emacs-lisp :tangle init.el
 ;;; init.el -*- lexical-binding: t; -*-
@@ -216,16 +210,10 @@ Here's init.el file for Doomemacs. Fundamental set ups are all done here. Howeve
        ;;ocaml             ; an objective camel
        (org                     ; organize your plain life in plain text
         +pretty
-        +dragndrop
-        ;;+hugo
-        +noter
+        +publish
         +jupyter
-        +pandoc
         +gnuplot
-        ;;+pomodoro
-        +present
-        +org-bullets
-        +org-ql)
+        +present)
        php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
@@ -248,7 +236,6 @@ Here's init.el file for Doomemacs. Fundamental set ups are all done here. Howeve
        yaml              ; JSON, but readable
 
        :email
-       (:if (executable-find "mu") (mu4e +org +gmail))
        ;;notmuch
        ;;(wanderlust +gmail)
 
@@ -260,14 +247,8 @@ Here's init.el file for Doomemacs. Fundamental set ups are all done here. Howeve
        ;;(rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
-       :emms
-       ;;emms-setup
-       ;;emms-info
-       ;;emms-cue
-       ;;emms-mode-line
-
        :config
-       ;;literate
+       literate
        (default +bindings +smartparens)
        )
 #+end_src
@@ -287,8 +268,6 @@ Here's init.el file for Doomemacs. Fundamental set ups are all done here. Howeve
 (package! evil-tutor)
 (package! ivy-posframe)
 (package! mastodon)
-(package! org-bullets)
-(package! org-ql)
 (package! peep-dired)
 (package! pianobar)
 (package! rainbow-mode)
@@ -305,6 +284,7 @@ Here's init.el file for Doomemacs. Fundamental set ups are all done here. Howeve
 (package! ob-cfengine3)
 (package! iedit)
 (package! annotate)
+(package! org-auto-tangle)
 #+end_src
 
 * Packages Configuration (config.el)
@@ -328,14 +308,37 @@ Many settings were adopted from these sources.
 **  Zzamboni had some useful macros...
     [[https://zzamboni.org/post/my-doom-emacs-configuration-with-commentary/][Zzamboni.org]]
 
-* My credentials
+
+* Emojis
 :PROPERTIES:
 :header-args: :tangle config.el
 :END:
+Emacs with emojis!! huh
 #+begin_src emacs-lisp
-(setq user-full-name "Taylor Shin"
-      user-mail-address "talezshin@gmail.com")
+(use-package emojify
+  :hook (after-init . global-emojify-mode))
 #+end_src
+
+* Open Specific Files
+:PROPERTIES:
+:header-args: :tangle config.el
+:END:
+Some shortcuts to access Doomemacs setting files...
+#+begin_src emacs-lisp
+(map! :leader
+      (:prefix ("=" . "open file")
+       :desc "Edit agenda file" "=" #'(lambda () (interactive) (find-file "~/.org/start.org"))
+       :desc "Edit agenda file" "a" #'(lambda () (interactive) (find-file "~/.org/agenda.org"))
+       :desc "Edit doom config.org" "c" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/config.org"))
+       :desc "Edit doom init.el" "i" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/init.el"))
+       :desc "Edit doom packages.el" "p" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/packages.el")) ))
+
+(map! :leader
+      (:prefix ("= e" . "open eshell settings files")
+       :desc "Edit eshell aliases" "a" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/aliases"))
+       :desc "Edit eshell profile" "p" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/profile"))        ))
+#+end_src
+
 * Window Titles and Bookmarking
 :PROPERTIES:
 :header-args: :tangle config.el
@@ -371,26 +374,46 @@ Setting up Emacs Window title.
 ** Dired directory manager
 #+begin_src emacs-lisp
 (map! :leader
-      :desc "Dired"
-      "d d" #'dired
-      :leader
-      :desc "Dired jump to current"
-      "d j" #'dired-jump
+      (:prefix ("d" . "dired")
+       :desc "Open dired" "d" #'dired
+       :desc "Dired jump to current" "j" #'dired-jump)
       (:after dired
        (:map dired-mode-map
-        :leader
-        :desc "Peep-dired image previews"
-        "d p" #'peep-dired
-        :leader
-        :desc "Dired view file"
-        "d v" #'dired-view-file)))
+        :desc "Peep-dired image previews" "d p" #'peep-dired
+        :desc "Dired view file"           "d v" #'dired-view-file)))
+
 (evil-define-key 'normal dired-mode-map
+  (kbd "M-RET") 'dired-display-file
   (kbd "h") 'dired-up-directory
-  (kbd "l") 'dired-open-file) ; use dired-find-file instead if not using dired-open package
-(evil-define-key 'normal peep-dired-mode-map
-  (kbd "j") 'peep-dired-next-file
-  (kbd "k") 'peep-dired-prev-file)
-(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
+  (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
+  (kbd "m") 'dired-mark
+  (kbd "t") 'dired-toggle-marks
+  (kbd "u") 'dired-unmark
+  (kbd "C") 'dired-do-copy
+  (kbd "D") 'dired-do-delete
+  (kbd "J") 'dired-goto-file
+  (kbd "M") 'dired-do-chmod
+  (kbd "O") 'dired-do-chown
+  (kbd "P") 'dired-do-print
+  (kbd "R") 'dired-do-rename
+  (kbd "T") 'dired-do-touch
+  (kbd "Y") 'dired-copy-filenamecopy-filename-as-kill ; copies filename to kill ring.
+  (kbd "Z") 'dired-do-compress
+  (kbd "+") 'dired-create-directory
+  (kbd "-") 'dired-do-kill-lines
+  (kbd "% l") 'dired-downcase
+  (kbd "% m") 'dired-mark-files-regexp
+  (kbd "% u") 'dired-upcase
+  (kbd "* %") 'dired-mark-files-regexp
+  (kbd "* .") 'dired-mark-extension
+  (kbd "* /") 'dired-mark-directories
+  (kbd "; d") 'epa-dired-do-decrypt
+  (kbd "; e") 'epa-dired-do-encrypt)
+;; Get file icons in dired
+(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+;; With dired-open plugin, you can launch external programs for certain extensions
+;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
+(setq dired-open-extensions '(("gif" . "sxiv")
                               ("jpg" . "sxiv")
                               ("png" . "sxiv")
                               ("mkv" . "mpv")
@@ -398,6 +421,9 @@ Setting up Emacs Window title.
 #+end_src
 
 ** Centaur tabs
+:PROPERTIES:
+:header-args: :tangle config.el
+:END:
 #+begin_src emacs-lisp
 (setq centaur-tabs-set-bar 'over
       centaur-tabs-set-icons t
@@ -451,20 +477,36 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
 Ok, Let's customize emacs themes per distribution basis.
 #+begin_src emacs-lisp
 ;; Set different theme per distribution...
-(cond
- ((string= (guess-linux-distribution) "elementary")
-  (setq doom-theme 'doom-solarized-light))
- ((string= (guess-linux-distribution) "hamonikr")
-  (setq doom-theme 'doom-moonlight))
- ((string= (guess-linux-distribution) "linuxmint")
-  (setq doom-theme 'doom-henna))
- ((string= (guess-linux-distribution) "rhel")
-  (setq doom-theme 'doom-horizon))
- ((string= (guess-linux-distribution) "opensuse-leap")
-  (setq doom-theme 'doom-oceanic-next))
- ((string= (guess-linux-distribution) "debian")
-  (setq doom-theme 'doom-monokai-pro))
- (t (setq doom-theme 'doom-palenight)))
+(pcase system-type
+
+  ;; Linux
+  (gnu/linux
+   (cond
+    ((string= (guess-linux-distribution) "elementary")
+     (setq doom-theme 'doom-solarized-light))
+    ((string= (guess-linux-distribution) "hamonikr")
+     (setq doom-theme 'doom-moonlight))
+    ((string= (guess-linux-distribution) "linuxmint")
+     (setq doom-theme 'doom-henna))
+    ((string= (guess-linux-distribution) "rhel")
+     (setq doom-theme 'doom-horizon))
+    ((string= (guess-linux-distribution) "opensuse-leap")
+     (setq doom-theme 'doom-oceanic-next))
+    ((string= (guess-linux-distribution) "debian")
+     (setq doom-theme 'doom-monokai-pro))
+    (t (setq doom-theme 'doom-palenight))))
+
+  ;; MacOS
+  (darwin
+    (setq doom-theme 'doom-homage-white))
+
+;; BSD?
+  (berkeley-unix
+   (setq doom-theme 'doom-one-light))
+
+  ;; Windows
+  (windows-nt
+    (setq doom-theme 'doom-material))    )
 #+end_src
 
 And... some shortcut to test theme.
@@ -495,6 +537,9 @@ And... some shortcut to test theme.
 #+end_src
 
 ** Line number manipulation and Comment
+:PROPERTIES:
+:header-args: :tangle config.el
+:END:
 #+begin_src emacs-lisp
 (setq display-line-numbers-type t)
 (map! :leader
@@ -515,6 +560,9 @@ And... some shortcut to test theme.
 #+end_src
 
 ** Window Splits
+:PROPERTIES:
+:header-args: :tangle config.el
+:END:
 Setting up new window opening behavior. However, I usually prefer opening a new instance with Spc-o-f. But then again, console version may need this tuned well.
 
 #+begin_src emacs-lisp
@@ -524,6 +572,9 @@ Setting up new window opening behavior. However, I usually prefer opening a new 
 #+end_src
 
 ** Winner Mode
+:PROPERTIES:
+:header-args: :tangle config.el
+:END:
 Note that this mode actually provides saving window layout.
 
 #+begin_src emacs-lisp
@@ -535,38 +586,6 @@ Note that this mode actually provides saving window layout.
       "w <left>" #'winner-undo)
 #+end_src
 
-* Shortcut Keys for Settings
-:PROPERTIES:
-:header-args: :tangle config.el
-:END:
-** Quick Settings Edit Shortcuts
-
-| PATH TO FILE           | DESCRIPTION           | KEYBINDING |
-|------------------------+-----------------------+------------|
-| ~/Org/agenda.org       | /Edit agenda file/      | SPC - a    |
-| ~/.doom.d/config.org"  | /Edit doom config.org/  | SPC - c    |
-| ~/.doom.d/aliases"     | /Edit eshell aliases/   | SPC - e    |
-| ~/.doom.d/init.el"     | /Edit doom init.el/     | SPC - i    |
-| ~/.doom.d/packages.el" | /Edit doom packages.el/ | SPC - p    |
-
-#+begin_src emacs-lisp
-(map! :leader
-      :desc "Edit agenda file"
-      "- a" #'(lambda () (interactive) (find-file "~/Org/agenda.org"))
-      :leader
-      :desc "Edit doom config.org"
-      "- c" #'(lambda () (interactive) (find-file "~/.doom.d/config.org"))
-      :leader
-      :desc "Edit eshell aliases"
-      "- e" #'(lambda () (interactive) (find-file "~/.doom.d/aliases"))
-      :leader
-      :desc "Edit doom init.el"
-      "- i" #'(lambda () (interactive) (find-file "~/.doom.d/init.el"))
-      :leader
-      :desc "Edit doom packages.el"
-      "- p" #'(lambda () (interactive) (find-file "~/.doom.d/packages.el")))
-#+end_src
-
 * Org mode
 :PROPERTIES:
 :header-args: :tangle config.el
@@ -575,12 +594,12 @@ Note that this mode actually provides saving window layout.
 #+begin_src emacs-lisp
 (after! org
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-  (setq org-directory "~/Org/"
-        org-agenda-files '("~/Org/agenda.org")
+  (setq org-directory "~/.org/"
+        org-agenda-files '("~/.org/agenda.org")
         org-default-notes-file (expand-file-name "notes.org" org-directory)
         org-ellipsis " ▼ "
         org-log-done 'time
-        org-journal-dir "~/Org/journal/"
+        org-journal-dir "~/.org/journal/"
         org-journal-date-format "%B %d, %Y (%A) "
         org-journal-file-format "%Y-%m-%d.org"
         org-hide-emphasis-markers t
@@ -608,58 +627,38 @@ Note that this mode actually provides saving window layout.
            "CANCELLED(c)" )))) ; Task has been cancelled
 #+end_src
 
-** Shortcut for SRC blocks
+** Org-agenda
 #+begin_src emacs-lisp
-;; Setup code block templates.
-;; For Org-mode < 9.2
-;;(setq old-structure-template-alist
-;;      '(("py" "#+BEGIN_SRC python :results output\n?\n#+END_SRC" "")
-;;        ("ipy" "#+BEGIN_SRC ipython :results output\n?\n#+END_SRC" "")
-;;        ("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "")
-;;        ("hs" "#+BEGIN_SRC haskell\n?\n#+END_SRC" "")
-;;        ("laeq" "#+BEGIN_LaTeX\n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}\n#+END_LaTeX" "")
-;;        ("sh" "#+BEGIN_SRC shell\n?\n#+END_SRC" "")
-;;        ("r" "#+BEGIN_SRC R\n?\n#+END_SRC" "")
-;;        ("js" "#+BEGIN_SRC js\n?\n#+END_SRC" "")
-;;        ("http" "#+BEGIN_SRC http\n?\n#+END_SRC" "")
-;;        ("ditaa" "#+BEGIN_SRC ditaa :file\n?\n#+END_SRC" "")
-;;        ("dot" "#+BEGIN_SRC dot :file\n?\n#+END_SRC" "")
-;;        ("rp" "#+BEGIN_SRC R :results output graphics :file \n?\n#+END_SRC" "")
-;;        ("plantuml" "#+BEGIN_SRC plantuml :file\n?\n#+END_SRC" "")
-;;        ("n" "#+NAME: ?")
-;;        ("cap" "#+CAPTION: ?")))
-;; For Org-mode >= 9.2
-(setq org-structure-template-alist
-      '(("py" . "src python :results output")
-        ("ipy" . "src ipython :results output")
-        ("el" . "src emacs-lisp")
-        ("hs" . "src haskell")
-        ("laeq" . "latex \n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}")
-        ("sh" . "src shell")
-        ("r" . "src R")
-        ("js" . "src js")
-        ("http" . "src http")
-        ("ditaa" . "src ditaa :file")
-        ("dot" . "src dot :file")
-        ("rp" . "src R :results output graphics :file ")
-        ("plantuml" . "src plantuml :file")
-        ))
-;; Keyword expansion also changed in 9.2
-(setq my-tempo-keywords-alist
-      '(("n" . "NAME")
-        ("cap" . "CAPTION")))
+(after! org
+  (setq org-agenda-files '("~/.org/agenda.org")))
 
-(when (version< (org-version) "9.2")
-  (add-to-list 'org-modules 'org-tempo))
-(require 'org-tempo)
-(if (version<  (org-version) "9.2")
-    (dolist (ele old-structure-template-alist)
-      (add-to-list 'org-structure-template-alist ele))
-  (dolist (ele org-structure-template-alist)
-    (add-to-list 'org-structure-template-alist ele))
-  (dolist (ele my-tempo-keywords-alist)
-    (add-to-list 'org-tempo-keywords-alist ele))
-  )
+(setq
+   ;; org-fancy-priorities-list '("[A]" "[B]" "[C]")
+   ;; org-fancy-priorities-list '("❗" "[B]" "[C]")
+   org-fancy-priorities-list '("🟥" "🟧" "🟨")
+   org-priority-faces
+   '((?A :foreground "#ff6c6b" :weight bold)
+     (?B :foreground "#98be65" :weight bold)
+     (?C :foreground "#c678dd" :weight bold))
+   org-agenda-block-separator 8411)
+
+(setq org-agenda-custom-commands
+      '(("v" "A better agenda view"
+         ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          (tags "PRIORITY=\"B\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "Medium-priority unfinished tasks:")))
+          (tags "PRIORITY=\"C\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "Low-priority unfinished tasks:")))
+          (tags "customtag"
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "Tasks marked with customtag:")))
+
+          (agenda "")
+          (alltodo "")))))
 #+end_src
 
 ** Header arguments
@@ -775,11 +774,14 @@ to allow the TOC to be a collapseable tree."
                               (funcall orig-fn toc-entries))))
 #+end_src
 
-** Tangle Hotkey
+** Tangle on Save
+Attempt to tangle at save. Not working correctly at the moment...
 #+begin_src emacs-lisp
-(map! :leader
-      (:desc "Tangle the buffer!!"
-             "t t" #'org-babel-tangle))
+(use-package! org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
 #+end_src
 
 #+RESULTS:
@@ -813,37 +815,6 @@ You can download them from my Github repo as well: [[https://github.com/Taris904
 #+RESULTS:
 : t
 
-* Ivy Mode
-Ivy is a completion mechanism for Emacs.
-** Ivy-Posframe
-#+begin_src emacs-lisp
-(setq ivy-posframe-display-functions-alist
-      '((swiper                     . ivy-posframe-display-at-point)
-        (complete-symbol            . ivy-posframe-display-at-point)
-        (counsel-M-x                . ivy-display-function-fallback)
-        (counsel-esh-history        . ivy-posframe-display-at-window-center)
-        (counsel-describe-function  . ivy-display-function-fallback)
-        (counsel-describe-variable  . ivy-display-function-fallback)
-        (counsel-find-file          . ivy-display-function-fallback)
-        (counsel-recentf            . ivy-display-function-fallback)
-        (counsel-register           . ivy-posframe-display-at-frame-bottom-window-center)
-        (dmenu                      . ivy-posframe-display-at-frame-top-center)
-        (nil                        . ivy-posframe-display))
-      ivy-posframe-height-alist
-      '((swiper . 20)
-        (dmenu . 20)
-        (t . 10)))
-(ivy-posframe-mode 1) ; 1 enables posframe-mode, 0 disables it.
-#+end_src
-
-** Ivy Keybindings
-#+begin_src emacs-lisp
-(map! :leader
-      (:prefix ("v" . "Ivy")
-       :desc "Ivy push view" "v p" #'ivy-push-view
-       :desc "Ivy switch view" "v s" #'ivy-switch-view))
-#+end_src
-
 * Registers (clipboard system?)
 :PROPERTIES:
 :header-args: :tangle config.el
@@ -851,8 +822,8 @@ Ivy is a completion mechanism for Emacs.
 
 I'm not sure I would utilize it frequently. But at least it seems pretty neat to have. Emacs can do everything that KDE do... huh.
 
-| COMMAND                          | DESCRIPTION                      | KEYBINDING |
-|----------------------------------+----------------------------------+------------|
+| COMMAND                          | DESCRIPTION                        | KEYBINDING |
+|----------------------------------+------------------------------------+------------|
 | copy-to-register                 | /Copy to register/                 | SPC r c    |
 | frameset-to-register             | /Frameset to register/             | SPC r f    |
 | insert-register                  | /Insert contents of register/      | SPC r i    |
@@ -902,16 +873,19 @@ I'm not sure I would utilize it frequently. But at least it seems pretty neat to
 #+end_src
 
 * Shell Settings
+:PROPERTIES:
+:header-args: :tangle config.el
+:END:
 ** Emacs shell settings.
 #+begin_src emacs-lisp
 (setq shell-file-name "/bin/bash"
-      eshell-aliases-file "~/.doom.d/aliases"
+      eshell-aliases-file "~/.settings/dotfiles/doom.d/aliases"
       eshell-history-size 5000
       eshell-buffer-maximum-lines 5000
       eshell-hist-ignoredups t
       eshell-scroll-to-bottom-on-input t
       eshell-destroy-buffer-when-process-dies t
-      eshell-visual-commands'("bash" "fish" "htop" "ssh" "top" "zsh")
+      eshell-visual-commands'("bash" "zsh" "htop" "ssh" "top" "fish")
       vterm-max-scrollback 5000)
 (map! :leader
       :desc "Eshell" "e s" #'eshell
@@ -957,7 +931,7 @@ We may not use Hanja key on Emacs... Maybe we need to find some other way later.
 ** Font Size Matching
 
 | Font Test English | 한글 폰트 크기 |
-|-------------------+----------------|
+|-------------------+--------------|
 | English font!     | 한글 폰트 예시 |
 
 Well, it needs a lot of iterative effort to make it work... Check up the table width above to find out the best size ratio.
@@ -993,80 +967,6 @@ Some handy dev assistant for emacs-lisp language. A must have for elisp addicts.
       :desc "Evaluate elisp in region"
       "e r" #'eval-region)
 #+end_src
-* News and Media Stuffs
-:PROPERTIES:
-:header-args: :tangle config.el
-:END:
-
-This part is being deprecated now. I prefer to use a dedicated GUI tool, not a crude Emacs based implementations. These days, most of Linux installation support GUI interface and there are tons of beginner friendly Linux distributions and they all claim 'an excellent GUI'!! So, why would one stick to those stupid terminal based old school programs? Unless needed, of course.
-
-** Elfeed stuff
-RSS Feed from DistroTube. I'll change them later but I do not really rely on them. Most of people alreay relays immediate news via a lot of channel. So, missing an important news is pretty hard anyway.
-
-#+begin_src emacs-lisp
-;; (custom-set-variables
-;;  '(elfeed-feeds
-;;    (quote
-;;     (("https://www.reddit.com/r/linux.rss" reddit linux)
-;;      ("https://www.gamingonlinux.com/article_rss.php" gaming linux)
-;;      ("https://hackaday.com/blog/feed/" hackaday linux)
-;;      ("https://opensource.com/feed" opensource linux)
-;;      ("https://linux.softpedia.com/backend.xml" softpedia linux)
-;;      ("https://itsfoss.com/feed/" itsfoss linux)
-;;      ("https://www.zdnet.com/topic/linux/rss.xml" zdnet linux)
-;;      ("https://www.phoronix.com/rss.php" phoronix linux)
-;;      ("http://feeds.feedburner.com/d0od" omgubuntu linux)
-;;      ("https://www.computerworld.com/index.rss" computerworld linux)
-;;      ("https://www.networkworld.com/category/linux/index.rss" networkworld linux)
-;;      ("https://www.techrepublic.com/rssfeeds/topic/open-source/" techrepublic linux)
-;;      ("https://betanews.com/feed" betanews linux)
-;;      ("http://lxer.com/module/newswire/headlines.rss" lxer linux)
-;;      ("https://distrowatch.com/news/dwd.xml" distrowatch linux)))))
-#+end_src
-
-** EMMS music player stuff
-
-MPV was mandatory for this. In fact, this player isn't actually a player but yet another front end for MPV. Huh.
-
-#+begin_src emacs-lisp
-;; (emms-all)
-;; (emms-default-players)
-;; (emms-mode-line 1)
-;; (emms-playing-time 1)
-;; (setq emms-source-file-default-directory "~/Music/"
-;;       emms-playlist-buffer-name "*Music*"
-;;       emms-info-asynchronously t
-;;       emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find)
-;; (map! :leader
-;;       :desc "Go to emms playlist"
-;;       "a a" #'emms-playlist-mode-go
-;;       :leader
-;;       :desc "Emms pause track"
-;;       "a x" #'emms-pause
-;;       :leader
-;;       :desc "Emms stop track"
-;;       "a s" #'emms-stop
-;;       :leader
-;;       :desc "Emms play previous track"
-;;       "a p" #'emms-previous
-;;       :leader
-;;       :desc "Emms play next track"
-;;       "a n" #'emms-next)
-#+end_src
-
-** EWS Web browser
-#+begin_src emacs-lisp
-;; (setq browse-url-browser-function 'eww-browse-url)
-;; (map! :leader
-;;       :desc "Eww web browser"
-;;       "e w" #'eww
-;;       :leader
-;;       :desc "Eww reload page"
-;;       "e R" #'eww-reload
-;;       :leader
-;;       :desc "Search web for text between BEG/END"
-;;       "s w" #'eww-search-words)
-#+end_src
 
 * Misc stuffs
 :PROPERTIES:
@@ -1081,7 +981,7 @@ MPV was mandatory for this. In fact, this player isn't actually a player but yet
  x-stretch-cursor t)
 #+end_src
 
-** More Undos!
+** More Undo!
 #+begin_src emacs-lisp
 ;; Moar undos!
 (setq undo-limit 800000000
@@ -1111,7 +1011,6 @@ Horizontal split is more preferred these days: Wide monitors!!
 
 ** Graphviz
 Plotting tool!
-
 #+begin_src emacs-lisp
 (use-package! graphviz-dot-mode)
 #+end_src
