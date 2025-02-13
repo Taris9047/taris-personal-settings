@@ -1,9 +1,6 @@
-;; [[file:config.org::*Emojis][Emojis:1]]
 (use-package emojify
   :hook (after-init . global-emojify-mode))
-;; Emojis:1 ends here
 
-;; [[file:config.org::*Open Specific Files][Open Specific Files:1]]
 (map! :leader
       (:prefix ("=" . "open file")
        :desc "Edit agenda file" "=" #'(lambda () (interactive) (find-file "~/.org/start.org"))
@@ -16,28 +13,20 @@
       (:prefix ("= e" . "open eshell settings files")
        :desc "Edit eshell aliases" "a" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/aliases"))
        :desc "Edit eshell profile" "p" #'(lambda () (interactive) (find-file "~/.settings/dotfiles/doom.d/profile"))        ))
-;; Open Specific Files:1 ends here
 
-;; [[file:config.org::*Header][Header:1]]
 ;;; ./config.el -*- lexical-binding: t; -*-
-;; Header:1 ends here
 
-;; [[file:config.org::*Window title][Window title:1]]
 ;; Fallback buffer names
 (setq doom-fallback-buffer-name "► Doom"
       +doom-dashboard-name "► Doom")
-;; Window title:1 ends here
 
-;; [[file:config.org::*Bookmarking][Bookmarking:1]]
 (map! :leader
       :desc "List bookmarks"
       "b L" #'list-bookmarks
       :leader
       :desc "Save current bookmarks to bookmark file"
       "b w" #'bookmark-save)
-;; Bookmarking:1 ends here
 
-;; [[file:config.org::*Dired directory manager][Dired directory manager:1]]
 (map! :leader
       (:prefix ("d" . "dired")
        :desc "Open dired" "d" #'dired
@@ -83,9 +72,7 @@
                               ("png" . "sxiv")
                               ("mkv" . "mpv")
                               ("mp4" . "mpv")))
-;; Dired directory manager:1 ends here
 
-;; [[file:config.org::*Centaur tabs][Centaur tabs:1]]
 (setq centaur-tabs-set-bar 'over
       centaur-tabs-set-icons t
       centaur-tabs-gray-out-icons 'buffer
@@ -103,9 +90,7 @@
                                                (kbd "g <left>")  'centaur-tabs-backward       ; default Doom binding is 'g T'
                                                (kbd "g <down>")  'centaur-tabs-forward-group
                                                (kbd "g <up>")    'centaur-tabs-backward-group)
-;; Centaur tabs:1 ends here
 
-;; [[file:config.org::*Theme!][Theme!:1]]
 ;; Custom functions to detect linux distro
 (defun guess-linux-release(regexp)
   "Guess linux release"
@@ -126,9 +111,12 @@
 (defun guess-linux-distribution()
   "Guess linux distribution"
   (guess-linux-release "^ID=\"?\\(\\w*\\)\"?$"))
-;; Theme!:1 ends here
 
-;; [[file:config.org::*Theme!][Theme!:2]]
+(defun uname-s-output()
+  "returns the uname -s command output"
+  (let ((output (shell-command-to-string "uname -s")))
+    (replace-regexp-in-string "\n$" "" output)))
+
 ;; Set different theme per distribution...
 (pcase system-type
 
@@ -147,7 +135,11 @@
      (setq doom-theme 'doom-oceanic-next))
     ((string= (guess-linux-distribution) "debian")
      (setq doom-theme 'doom-monokai-pro))
-    (t (setq doom-theme 'doom-palenight))))
+;; For some strange reason, emacs-plus' system-type returns 'gnu/linux' instead of 'darwin'... huh...?
+    ((string= (uname-s-output) "Darwin")
+     (setq doom-theme 'doom-homage-white))
+;; For any other cases
+    (t (setq doom-theme 'doom-palenight)) ) )
 
   ;; MacOS
   (darwin
@@ -160,15 +152,11 @@
   ;; Windows
   (windows-nt
     (setq doom-theme 'doom-material))    )
-;; Theme!:2 ends here
 
-;; [[file:config.org::*Theme!][Theme!:3]]
 (map! :leader
       :desc "Load new theme"
       "h t" #'counsel-load-theme)
-;; Theme!:3 ends here
 
-;; [[file:config.org::*Window Navigation][Window Navigation:1]]
 (map! :map evil-window-map
       "SPC" #'rotate-layout
       ;; Navigation
@@ -181,9 +169,7 @@
       "C-<down>"        #'+evil/window-move-down
       "C-<up>"          #'+evil/window-move-up
       "C-<right>"       #'+evil/window-move-right)
-;; Window Navigation:1 ends here
 
-;; [[file:config.org::*Line number manipulation and Comment][Line number manipulation and Comment:1]]
 (setq display-line-numbers-type t)
 (map! :leader
       :desc "Comment or uncomment lines"
@@ -200,26 +186,19 @@
       :leader
       :desc "Toggle truncate lines"
       "t t" #'toggle-truncate-lines)
-;; Line number manipulation and Comment:1 ends here
 
-;; [[file:config.org::*Window Splits][Window Splits:1]]
 (defun prefer-horizontal-split ()
   (set-variable 'split-height-threshold nil t)
   (set-variable 'split-width-threshold 40 t)) ; make this as low as needed
-;; Window Splits:1 ends here
 
-;; [[file:config.org::*Winner Mode][Winner Mode:1]]
 (map! :leader
       :desc "Winner redo"
       "w <right>" #'winner-redo
       :leader
       :desc "Winner undo"
       "w <left>" #'winner-undo)
-;; Winner Mode:1 ends here
 
-;; [[file:config.org::*Basic Org mode setup][Basic Org mode setup:1]]
 (after! org
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
   (setq org-directory "~/.org/"
         org-agenda-files '("~/.org/agenda.org")
         org-default-notes-file (expand-file-name "notes.org" org-directory)
@@ -251,9 +230,7 @@
            "|"                 ; The pipe necessary to separate "active" states and "inactive" states
            "DONE(d)"           ; Task has been completed
            "CANCELLED(c)" )))) ; Task has been cancelled
-;; Basic Org mode setup:1 ends here
 
-;; [[file:config.org::*Org-agenda][Org-agenda:1]]
 (after! org
   (setq org-agenda-files '("~/.org/agenda.org")))
 
@@ -284,9 +261,7 @@
 
           (agenda "")
           (alltodo "")))))
-;; Org-agenda:1 ends here
 
-;; [[file:config.org::*Header arguments][Header arguments:1]]
 (setq org-babel-default-header-args
       '((:session . "none")
         (:results . "replace")
@@ -296,9 +271,7 @@
         (:hlines . "no")
         (:tangle . "yes")
         (:comments . "link")))
-;; Header arguments:1 ends here
 
-;; [[file:config.org::*Buffer Creation][Buffer Creation:1]]
 (evil-define-command evil-buffer-org-new (count file)
   "Creates a new ORG buffer replacing the current window, optionally
    editing a certain FILE"
@@ -313,13 +286,9 @@
 (map! :leader
       (:prefix "b"
        :desc "New empty ORG buffer" "o" #'evil-buffer-org-new))
-;; Buffer Creation:1 ends here
 
-;; [[file:config.org::*Bullet mode sequence][Bullet mode sequence:1]]
 (setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
-;; Bullet mode sequence:1 ends here
 
-;; [[file:config.org::*View Exported File][View Exported File:1]]
 (map! :map org-mode-map
       :localleader
       :desc "View exported file" "v" #'org-view-output-file)
@@ -347,9 +316,7 @@
   "Search for output files with these extensions, in order, viewing the first that matches")
 (defvar org-view-external-file-extensions '("html")
   "File formats that should be opened externally.")
-;; View Exported File:1 ends here
 
-;; [[file:config.org::*HTML Export][HTML Export:1]]
 (define-minor-mode org-fancy-html-export-mode
   "Toggle my fabulous org export tweaks. While this mode itself does a little bit,
 the vast majority of the change in behaviour comes from switch statements in:
@@ -370,9 +337,7 @@ the vast majority of the change in behaviour comes from switch statements in:
     (setq org-html-style-default org-html-style-plain
           org-html-meta-tags #'org-html-meta-tags-default
           org-html-checkbox-type 'html)))
-;; HTML Export:1 ends here
 
-;; [[file:config.org::*TOC As a Collapsable Tree][TOC As a Collapsable Tree:1]]
 (defadvice! org-html--format-toc-headline-colapseable (orig-fn headline info)
   "Add a label and checkbox to `org-html--format-toc-headline's usual output,
 to allow the TOC to be a collapseable tree."
@@ -391,17 +356,13 @@ to allow the TOC to be a collapseable tree."
       (funcall orig-fn toc-entries)
     (replace-regexp-in-string "<input [^>]+><label [^>]+>\\(.+?\\)</label></li>" "\\1</li>"
                               (funcall orig-fn toc-entries))))
-;; TOC As a Collapsable Tree:1 ends here
 
-;; [[file:config.org::*Tangle on Save][Tangle on Save:1]]
 (use-package! org-auto-tangle
   :defer t
   :hook (org-mode . org-auto-tangle-mode)
   :config
   (setq org-auto-tangle-default t))
-;; Tangle on Save:1 ends here
 
-;; [[file:config.org::*Doom Font config.][Doom Font config.:1]]
 (setq doom-font (font-spec :family "Mononoki Nerd Font" :size 16)
       doom-big-font (font-spec :family "Mononoki Nerd Font" :size 26)
       doom-variable-pitch-font (font-spec :family "NanumSquare" :size 16)
@@ -415,9 +376,7 @@ to allow the TOC to be a collapseable tree."
   '(font-lock-keyword-face :slant italic))
 
 (setq global-prettify-symbols-mode t)
-;; Doom Font config.:1 ends here
 
-;; [[file:config.org::*Registers (clipboard system?)][Registers (clipboard system?):1]]
 (map! :leader
       :desc "Copy to register"
       "r c" #'copy-to-register
@@ -451,9 +410,7 @@ to allow the TOC to be a collapseable tree."
       :leader
       :desc "Point to register"
       "r SPC" #'point-to-register)
-;; Registers (clipboard system?):1 ends here
 
-;; [[file:config.org::*Emacs shell settings.][Emacs shell settings.:1]]
 (setq shell-file-name "/bin/bash"
       eshell-aliases-file "~/.settings/dotfiles/doom.d/aliases"
       eshell-history-size 5000
@@ -466,9 +423,7 @@ to allow the TOC to be a collapseable tree."
 (map! :leader
       :desc "Eshell" "e s" #'eshell
       :desc "Counsel eshell history" "e h" #'counsel-esh-history)
-;; Emacs shell settings.:1 ends here
 
-;; [[file:config.org::*Editor Font Settings][Editor Font Settings:1]]
 (setq default-input-method "korean-hangul")
 (global-set-key (kbd "S-SPC") 'toggle-input-method)
 ;; Be sure to enable hardware Hangul key from Keyboard(XKB) Options to use this.
@@ -478,15 +433,11 @@ to allow the TOC to be a collapseable tree."
 (when (eq system-type 'gnu/linux)
   (set-fontset-font t 'hangul (font-spec :family "Noto Sans CJK KR" :size 16))
   )
-;; Editor Font Settings:1 ends here
 
-;; [[file:config.org::*Font Size Matching][Font Size Matching:1]]
 (setq face-font-rescale-alist
       '((".*hiragino.*" . 1.25)
         ("Noto Sans CJK KR" . 1.25)))
-;; Font Size Matching:1 ends here
 
-;; [[file:config.org::*Evaluate Elisp expressions.][Evaluate Elisp expressions.:1]]
 (map! :leader
       :desc "Evaluate elisp in buffer"
       "e b" #'eval-buffer
@@ -502,67 +453,49 @@ to allow the TOC to be a collapseable tree."
       :leader
       :desc "Evaluate elisp in region"
       "e r" #'eval-region)
-;; Evaluate Elisp expressions.:1 ends here
 
-;; [[file:config.org::*File management stuff][File management stuff:1]]
 ;; File management stuff
 (setq-default
  delete-by-moving-to-trash t
  window-combination-resize t
  x-stretch-cursor t)
-;; File management stuff:1 ends here
 
-;; [[file:config.org::*More Undo!][More Undo!:1]]
 ;; Moar undos!
 (setq undo-limit 800000000
       evil-want-fine-undo t
       truncate-string-ellipsis "…")
-;; More Undo!:1 ends here
 
-;; [[file:config.org::*Window Split Behaviors][Window Split Behaviors:1]]
 (defun prefer-horizontal-split ()
   (set-variable 'split-height-threshold nil t)
   (set-variable 'split-width-threshold 40 t)) ; make this as low as needed
 (add-hook 'markdown-mode-hook 'prefer-horizontal-split)
 (map! :leader
       :desc "Clone indirect buffer other window" "b c" #'clone-indirect-buffer-other-window)
-;; Window Split Behaviors:1 ends here
 
-;; [[file:config.org::*Show battery status][Show battery status:1]]
 (if (equal "Battery status not available"
            (battery))
     (display-battery-mode 1)
   (setq password-cache-expiry nil))
 (global-subword-mode 1)
-;; Show battery status:1 ends here
 
-;; [[file:config.org::*Graphviz][Graphviz:1]]
 (use-package! graphviz-dot-mode)
-;; Graphviz:1 ends here
 
-;; [[file:config.org::*iEdit settings][iEdit settings:1]]
 (use-package! iedit
   :defer
   :config
   (set-face-background 'iedit-occurrence "Magneta")
   :bind
   ("C-;" . iedit-mode))
-;; iEdit settings:1 ends here
 
-;; [[file:config.org::*measure-time macro][measure-time macro:1]]
 (defmacro ts/measure-time (&rest body)
   "Measure the time it takes to evaluate BODY."
   `(let ((time (current-time)))
      ,@body
      (float-time (time-since time))))
-;; measure-time macro:1 ends here
 
-;; [[file:config.org::*Initial Window Size][Initial Window Size:1]]
 (add-to-list 'default-frame-alist '(height . 60) )
 (add-to-list 'default-frame-alist '(width . 100) )
-;; Initial Window Size:1 ends here
 
-;; [[file:config.org::*Exit messages are... Annoying][Exit messages are... Annoying:1]]
 (defun save-buffers-kill-emacs-with-confirm ()
  "jsled's special save-buffers-kill-emacs, but with confirm"
  (interactive)
@@ -571,8 +504,5 @@ to allow the TOC to be a collapseable tree."
          (save-buffers-kill-emacs))
      (save-buffers-kill-emacs)))
 (global-set-key "\C-x\C-c" 'save-buffers-kill-emacs-with-confirm)
-;; Exit messages are... Annoying:1 ends here
 
-;; [[file:config.org::*Lisp Eval Depth Crap][Lisp Eval Depth Crap:1]]
 (setq max-lisp-eval-depth 10000)
-;; Lisp Eval Depth Crap:1 ends here

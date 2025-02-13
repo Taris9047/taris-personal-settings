@@ -1,4 +1,3 @@
-;; [[file:config.org::*Init file (init.el)][Init file (init.el):1]]
 ;;; init.el -*- lexical-binding: t; -*-
 (doom! :input
        ;;chinese
@@ -186,4 +185,3 @@
        literate
        (default +bindings +smartparens)
        )
-;; Init file (init.el):1 ends here

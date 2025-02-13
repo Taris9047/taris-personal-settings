@@ -472,7 +472,15 @@ Looks a bit complex since linux distro detection has been implemented. (Maybe we
 (defun guess-linux-distribution()
   "Guess linux distribution"
   (guess-linux-release "^ID=\"?\\(\\w*\\)\"?$"))
+
+(defun uname-s-output()
+  "returns the uname -s command output"
+  (let ((output (shell-command-to-string "uname -s")))
+    (replace-regexp-in-string "\n$" "" output)))
 #+end_src
+
+#+RESULTS:
+: uname-s-output
 
 Ok, Let's customize emacs themes per distribution basis.
 #+begin_src emacs-lisp
@@ -494,7 +502,11 @@ Ok, Let's customize emacs themes per distribution basis.
      (setq doom-theme 'doom-oceanic-next))
     ((string= (guess-linux-distribution) "debian")
      (setq doom-theme 'doom-monokai-pro))
-    (t (setq doom-theme 'doom-palenight))))
+;; For some strange reason, emacs-plus' system-type returns 'gnu/linux' instead of 'darwin'... huh...?
+    ((string= (uname-s-output) "Darwin")
+     (setq doom-theme 'doom-homage-white))
+;; For any other cases
+    (t (setq doom-theme 'doom-palenight)) ) )
 
   ;; MacOS
   (darwin
@@ -508,6 +520,9 @@ Ok, Let's customize emacs themes per distribution basis.
   (windows-nt
     (setq doom-theme 'doom-material))    )
 #+end_src
+
+#+RESULTS:
+: doom-palenight
 
 And... some shortcut to test theme.
 #+begin_src emacs-lisp
@@ -593,7 +608,6 @@ Note that this mode actually provides saving window layout.
 ** Basic Org mode setup
 #+begin_src emacs-lisp
 (after! org
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
   (setq org-directory "~/.org/"
         org-agenda-files '("~/.org/agenda.org")
         org-default-notes-file (expand-file-name "notes.org" org-directory)
@@ -811,9 +825,6 @@ You can download them from my Github repo as well: [[https://github.com/Taris904
 
 (setq global-prettify-symbols-mode t)
 #+end_src
-
-#+RESULTS:
-: t
 
 * Registers (clipboard system?)
 :PROPERTIES:

@@ -1,4 +1,3 @@
-;; [[file:config.org::*Package list (packages.el)][Package list (packages.el):1]]
 ;;; packages.el -*- lexical-binding: t; -*-
 (package! all-the-icons-dired)
 (package! flycheck-aspell)
@@ -29,4 +28,3 @@
 (package! iedit)
 (package! annotate)
 (package! org-auto-tangle)
-;; Package list (packages.el):1 ends here
