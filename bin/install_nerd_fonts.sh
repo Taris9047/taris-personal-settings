@@ -59,14 +59,10 @@ WORK_DIR="~/.tmp/.inst_nerd_fonts_workspace"
 
 FONTS_TO_INSTALL=( \
   "BitstreamVeraSansMono" \
-  "SourceCodePro" \
-  "SpaceMono" \
-  "Terminus" \
   "RobotoMono" \
   "Mononoki" \
-  "OpenDyslexic" \
-  "3270" \
   "JetBrainsMono" \
+  "Symbols" \
 )
 
 echo "Nerd Font installer! - From github repo."
