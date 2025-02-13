@@ -2,9 +2,11 @@
 
 SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
-# Minimum allowed git version
+# Minimum allowed utility versions
 git_minimal='2.23.0'
 new_git_ver='2.48.1'
+ripgrep_min_ver='11.0'
+fd_min_ver='7.3.0'
 
 version_greater_equal() {
 	printf '%s\n%s\n' "$2" "$1" | sort -V -C
@@ -12,7 +14,7 @@ version_greater_equal() {
 
 die() {
 	printf 'ERROR: %s\n' "$1"
-	exit -1
+	return 1
 }
 
 install_git_ubuntu() {
@@ -39,7 +41,7 @@ install_git() {
 		wget "https://www.kernel.org/pub/software/scm/git/git-${new_git_ver}.tar.xz" -O "${bld_dir}/git-${new_git_ver}.tar.xz" &&
 		tar xpvf "${bld_dir}/git-${new_git_ver}.tar.xz" &&
 		cd "${bld_dir}/git-${new_git_ver}/" &&
-		./configure --prefix=$HOME/.local &&
+		./configure --prefix="$HOME"/.local &&
 		make -j2 && make install &&
 		cd "$CWD" &&
 		rm -rf "$bld_dir"
@@ -52,12 +54,10 @@ if [ ! -x "$(command -v git)" ]; then
 	echo "git not found!! Exiting!!"
 	exit 1
 else
-	git_ver_stdout=$(echo $(git --version))
-	gvs_arr=($git_ver_stdout)
-	git_ver_str="${gvs_arr[2]}"
+	git_ver_str="$(git --version | awk '{print $3}')"
 	
 	# Ubuntu can use PPA fresh git. So, let's use it.
-	if [ ! -z "$(grep -i 'ubuntu' /etc/os-release)" ]; then
+	if ! grep -q 'ubuntu' /etc/os-release; then
 		version_greater_equal "${git_ver_str}" "${git_minimal}" || install_git_ubuntu
 	else
 		version_greater_equal "${git_ver_str}" "${git_minimal}" || install_git
@@ -69,10 +69,9 @@ if [ ! -x "$(command -v emacs)" ]; then
 	echo "Emacs not found!! Exiting!"
 	exit 1
 else
-	emacs_ver_stdout=$(echo $(emacs --version))
-	evs_arr=($emacs_ver_stdout)
-	emacs_ver_str="${evs_arr[2]}"
-	version_greater_equal "${emacs_ver_str}" "26.3" || die "emacs version 26.3+ is needed! Better use 27.1 or native-comp version."
+	emacs_ver_str="$(emacs --version | awk 'NR==1{print $3}')"
+	echo ${emacs_ver_str}
+	version_greater_equal "${emacs_ver_str}" "27.1" || die "emacs version 27.1+ is needed! Better use 29.4+ or native-comp version."
 fi
 
 echo "Checking ripgrep"
@@ -80,10 +79,8 @@ if [ ! -x "$(command -v rg)" ]; then
 	echo "ripgrep not found!! Exiting!"
 	exit 1
 else
-	rg_ver_stdout=$(echo $(rg --version))
-	rv_arr=($rg_ver_stdout)
-	rg_ver_str="${rv_arr[1]}"
-	version_greater_equal "${rg_ver_str}" "11.0" || die "ripgrep version 11.0+ is needed!"
+	rg_ver_str="$(rg --version | awk 'NR==1{print $2}')"
+	version_greater_equal "${rg_ver_str}" "${ripgrep_min_ver}" || die "ripgrep version ${ripgrep_min_ver}+ is needed!"
 fi
 
 echo "Checking find or fd"
@@ -96,10 +93,8 @@ echo "Checking fd-find (Optional)"
 if [ ! -x "$(command -v fd)" ]; then
 	echo "fd-find not found in the system but it's not the end of the world!"
 else
-	fd_ver_stdout=$(echo $(fd --version))
-	fv_arr=($fd_ver_stdout)
-	fd_ver_str="${fv_arr[1]}"
-	version_greater_equal "${fd_ver_str}" "7.3.0" || die "fd-find was found but we need 7.3.0+!! Update or remove it!"
+	fd_ver_str="$(fd --version | awk 'NR==1{print $2}')"
+	version_greater_equal "${fd_ver_str}" "${fd_min_ver}" || die "fd-find was found but we need ${fd_min_ver}+!! Update or remove it!"
 fi
 
 if [ -d "$HOME/.emacs.d" ] || [ -e "$HOME/.emacs" ] || [ -L "$HOME/.emacs.d" ]; then
@@ -116,10 +111,10 @@ if [ -d "$HOME/.emacs.d" ] || [ -e "$HOME/.emacs" ] || [ -L "$HOME/.emacs.d" ]; 
 fi
 
 echo "Let's install Doomemacs!!"
-git clone --depth 1 https://github.com/hlissner/doom-emacs "$HOME/.emacs.d" && "$HOME/.emacs.d/bin/doom" -! install
+git clone --depth 1 https://github.com/doomemacs/doomemacs "$HOME/.emacs.d" && "$HOME/.emacs.d/bin/doom" -! install || die 'Doom install failed!'
 
 echo "Ok, updating the doom.d setting files!!"
-rm -rvf ${HOME}/.doom.d/*
+rm -rvf "${HOME}"/.doom.d/*
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/init.el" "${HOME}/.doom.d/init.el" || true
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/config.el" "${HOME}/.doom.d/config.el" || true
 ln -sv "${SCRIPTPATH}/../dotfiles/doom.d/packages.el" "${HOME}/.doom.d/packages.el" || true
