@@ -302,7 +302,7 @@ do_brew_inst() {
   if [ ! -z "${BREW_CMD}" ]; then 
     if [ "${1}" = "emacs" ]; then
       "${BREW_CMD}" tap d12frosted/emacs-plus
-      "${BREW_CMD}" install emacs-plus
+      "${BREW_CMD}" install emacs-plus --with-native-comp
       ln -s "${HOMEBREW_PREFIX}/emacs-plus/Emacs.app /Applications/Emacs.app"
     elif [ "${1}" = "meld" ]; then
       "${BREW_CMD}" install --cask "${1}"
