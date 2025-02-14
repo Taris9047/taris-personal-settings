@@ -1,5 +1,20 @@
-#!/bin/sh
+#+TITLE: Taris' Environment config for Mac OS
+#+AUTHOR: Taylor Shin
+#+STARTUP: showeverything
+#+PROPERTY: header-args: :tangle-mode
+#+auto_tangle: t
 
+* Shell Header
+MacOS changed its main shell to zsh. But all my scripts are Bash based ones. So, let's just use =/bin/sh= instead of other shells.
+
+#+begin_src shell :tangle my_settings_osx 
+#!/bin/sh
+#+end_src
+
+* Default Path Stuffs
+Setting up default paths for hard compiled programs by myself. This folder must not collide or overlap with the Mac Brew or Macport!!
+
+#+begin_src shell :tangle my_settings_osx
 # Homebrew (not the Brew. My own homebrew dir)
 HBREW_PATH="${HOME}/.local"
 
@@ -14,6 +29,12 @@ fi
 
 # UDS - My own local compilation install system.
 UDS_DIR="${HOME}/.uds"
+#+end_src
+
+* Initiating 'git pull' at login
+This part is now deprecated due to slowdown issue. We can rather adjust =$HOME/.gitconfig.local= settings to set up timeout for git environment. But this will also screw up the entire git operation under slow network situation such as VPN connection.
+
+#+begin_src shell :tangle my_settings_osx
 
 # Update settings directories if git exists
 #
@@ -31,12 +52,23 @@ UDS_DIR="${HOME}/.uds"
 #   fi
 # fi
 
+#+end_src
+
+* Texlive
+We'll rather use MacTex installation instead of =$HOME/.texlive=. Therefore, the base path is not somewhere in =/opt= or any 'Linux' like folder. Mac OS stores 3rd party programs in =/Library= directory.
+
+#+begin_src shell :tangle my_settings_osx
 # Default texlive base path
 #
 # --> MacTex is more preferred.
 #
 texlive_base_path="/Library/Tex"
+#+end_src
 
+* Basic command tool aliases
+'nix' shell based command line tool aliases for my taste. They are almost identical to Linux counterparts.
+
+#+begin_src shell :tangle my_settings_osx
 # Aliases Added for my convenience
 alias ls='ls -pFhG'
 alias ll='ls -la'
@@ -47,7 +79,12 @@ alias cp='cp -i'
 alias grep='grep --color'
 alias df='df -h'
 alias sudo='sudo -H'
+#+end_src
 
+* Some utility functions
+A few shell based functions that helps many different situations.
+
+#+begin_src shell :tangle my_settings_osx
 # Delete certain files recursively!!
 delete_recursive ()
 {
@@ -84,6 +121,13 @@ delete_recursive ()
   done
 }
 
+#+end_src
+
+* Get OS Information
+
+A legacy of =Cygwin= environment set up lines, first written in 2004! Now it detecs what is Debian based Linux or RHEL. But then again, this is a dotfile for Mac OS. So, they will not cause any trouble(?).
+
+#+begin_src shell :tangle my_settings_osx
 # Get Linux distro. info.
 ARCH=$(uname -m)
 KERNEL=$(uname -r)
@@ -98,14 +142,24 @@ elif [ -f "/etc/redhat-release" ]; then
 else
     DISTRONAME="$(uname -s) $(uname -r)"
 fi
+#+end_src
 
+* Rust Cargo Stuff
+Make sure you have installed 'Rust' with 'Cargo' front end, or package manager. =uds -rust= usually install Rust and provides more packages to install. Among them, we have a few very important options.
+
+#+begin_src shell :tangle my_settings_osx
 # Rust
 if [ -d "${HOME}/.cargo" ]; then
   echo "Cargo directory detected at $HOME/.cargo"
   # export PATH=$HOME/.cargo/bin:$PATH
   source "${HOME}/.cargo/env"
 fi
+#+end_src
 
+* The "ls" alternatives
+For Mac, let's rather use 'preferred' list instead of implementing the 'settings file' type of approach. I don't like old stuff anyway. The ls alternative command priority is: eza > lsd > exa. They are all to be installed with Rust setup via 'uds.'
+
+#+begin_src shell :tangle my_settings_osx
 # Exa
 if [ -x "$(command -v exa)" ]; then
   echo "exa found! using it instead of ls"
@@ -151,27 +205,47 @@ if [ -x "$(command -v eza)" ]; then
   alias ezal='eza -halF --git --icons=auto'
   alias ezat='eza -halF --git --icons=auto -T'
 fi
+#+end_src
 
+* Bat - Cat alternative
+Bat: a way better (or prettier) alternative to cat.
+
+#+begin_src shell :tangle my_settings_osx
 # Bat
 if [ -x "$(command -v bat)" ]; then
   echo "Bat found! using it instead of cat"
   alias cat='bat'
 fi
+#+end_src
 
+* Neovim
+Yes! the Neovim! Let's substitute 'vim' with 'nvim'.
+
+#+begin_src shell :tangle my_settings_osx
 # Neovim
 if [ -x "$(command -v nvim)" ]; then
   echo "Neovim found! replacing vim!"
   alias vim='nvim'
   alias vi='nvim'
 fi
+#+end_src
 
+* rm-improved, rip
+Yeap, the rm that actually sends files to trashbin instead of deleting them permanently. This is yet another Rust based tool.
+
+#+begin_src shell :tangle my_settings_osx
 # Rip
 trash_location="${HOME}/.local/share/Trash/files/"
 if [ -x "$(command -v rip)" ]; then
   echo "rip, rm-improved found! Setting up graveyard at ${trash_location}"
   alias rip="rip --graveyard ${trash_location}"
 fi
+#+end_src
 
+* BPytop
+Python based =Btop++= tty console. Not very useful these days since Btop++, a C++ alternative works way better.
+
+#+begin_src shell :tangle my_settings_osx
 # bpytop
 #
 # --> Deprecated since we don't use bpytop anymore...
@@ -182,7 +256,12 @@ fi
 #     alias bpytop="${HOMEBREW}/bin/pip3 install -U bpytop && bpytop"
 #   fi
 # fi
+#+end_src
 
+* PyPy
+JIT based Python interpreter that provides faster script operation. Not sure it's being developted in these days.
+
+#+begin_src shell :tangle my_settings_osx
 # pypy
 #
 # --> Pypy on /opt
@@ -191,13 +270,28 @@ if [ -x "$(command -v ${HOMEBREW}/opt/pypy/bin/pypy3)" ]; then
   echo "pypy3 found in ${HOMEBREW}/opt/pypy/bin/pypy3 !! Extending PATH!"
   export PATH="${HOMEBREW}/opt/pypy/bin:${PATH}"
 fi
+#+end_src
 
+* The Starship
+The Starship shell extension.
+
+#+begin_src shell :tangle my_settings_osx
 # Enabling Starship
 [ -x "$(command -v starship)" ] && [ ! -f "${HOME}/.oh-my-zsh/oh-my-zsh.sh" ] && eval "$(starship init zsh)"
+#+end_src
 
+* The Mac Homebrew
+The Mac Homebrew project's shell settings.
+
+#+begin_src shell :tangle my_settings_osx
 # Brew - Done with .zprofile
 # [ -f "$(/opt/homebrew/bin/brew)" ] && eval "$(/opt/homebrew/bin/brew shellenv)" &> /dev/null
+#+end_src
 
+* Miniconda
+The environment set up for the 'Miniconda3' distribution. =conda= provides a 'confined' environment for a python project.
+
+#+begin_src shell :tangle my_settings_osx
 # Setting up miniconda3
 MINICONDA3_HOME="${HOME}/.miniconda3"
 if [ -f "${MINICONDA3_HOME}/bin/conda" ]; then
@@ -206,7 +300,12 @@ if [ -f "${MINICONDA3_HOME}/bin/conda" ]; then
   . "${MINICONDA3_HOME}/etc/profile.d/conda.sh" 
 
 fi
+#+end_src
 
+* Pretty Hostname
+Prints the =figlet= based pretty hostname. We need 'spart, figlet, lolcat' to be installed in the system to experience the 'modern' Linux.
+
+#+begin_src shell :tangle my_settings_osx
 # Showing hostname with decorations
 clear
 
@@ -225,7 +324,12 @@ if [ -x "$(command -v figlet)" ]; then
     figlet -w "$(/usr/bin/tput cols)" "$(uname -n)"
   fi
 fi
+#+end_src
 
+* Neofetch
+Just like the Linux, it will not run after 2400 seconds of uptime.
+
+#+begin_src shell :tangle my_settings_osx
 # Showing system info with neofetch
 check_uptime() {
   echo "$(sysctl kern.boottime | awk -F'[ ,]' '{print $5}')"
@@ -233,21 +337,43 @@ check_uptime() {
 if [ -x "$(command -v neofetch)" ]; then
   ([ "$(printf '%.0f' "$(check_uptime)")" -lt 2400 ]) && neofetch
 fi
+#+end_src
 
+* Cleaning up duplicates in PATH
+Literally, yes.
+
+#+begin_src shell :tangle my_settings_osx
 # Sanitizing path
 path_sanitized=$(printf "%s" "${PATH}" | awk -v RS=':' '!a[$1]++ { if (NR > 1) printf RS; printf $1 }')
 export PATH="${path_sanitized}"
+#+end_src
 
+* Editors
+
+#
+# Adding some more fun stuffs
+#
+
+** Sublime Text 3
+#+begin_src shell :tangle my_settings_osx
 # Sublime Text3
 if [ -d "/Applications/Sublime Text.app" ]; then
   export PATH="/Applications/Sublime Text.app/Contents/SharedSupport/bin/:${PATH}"
 fi
+#+end_src
 
+** jEdit
+#+begin_src shell :tangle my_settings_osx
 # jEdit
 if [ -d "/Applications/jEdit.app" ]; then
   export PATH="/Applications/jEdit.app/Contents/MacOS/:${PATH}"
 fi
+#+end_src
 
+** Setting up rm-improved's trashbin location 
+We'll obviously use the MacOS trashbin instead of making yet another hidden trash folder.
+
+#+begin_src shell :tangle my_settings_osx
 # rm-improved - Setting it to MacOS trash bin
 MACOS_BIN_LOC="${HOME}/.Trash"
 if [ -x "$(command -v rip)" ]; then
@@ -255,12 +381,23 @@ if [ -x "$(command -v rip)" ]; then
   export GRAVEYARD="${MACOS_BIN_LOC}"
   alias rip="rip --graveyard ${MACOS_BIN_LOC}"
 fi
+#+end_src
 
+* FZF
+The new dandy fuzzy finder. This part is under construction.
+
+#+begin_src shell :tangle my_settings_osx
 # fzf-environment
 if [ -x "$(command -v fzf)" ]; then
   eval "$(fzf --zsh)"
 fi # fzf zsh integration.
+#+end_src
 
+
+* Git Shortcuts
+Some aliases to save time at GitHub operation.
+
+#+begin_src shell :tangle my_settings_osx
 #
 # Git shortcuts
 #
@@ -344,3 +481,5 @@ gitlog8h() {
   done | spark
 
 }
+
+#+end_src
