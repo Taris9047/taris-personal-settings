@@ -1,4 +1,11 @@
 #!/bin/sh -e
+#
+# A Rclone based cloud drive backup script.
+# Prepared for Leila. A main server.
+#
+# Add this script to any cron entry to ensure this backup happens automatically.
+#
+
 
 die () {
   printf 'ERROR: %s\n' "$1"

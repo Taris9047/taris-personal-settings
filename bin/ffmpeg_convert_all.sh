@@ -2,7 +2,7 @@
 
 shopt -s extglob
 
-FFMPEG=$(command -v ffmpeg)
+FFMPEG="$(command -v ffmpeg)"
 
 if [ $FFMPEG == "" ]; then
 	echo "Whooops, FFMPEG can't be found!!"

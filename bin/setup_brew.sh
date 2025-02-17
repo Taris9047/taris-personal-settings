@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Yet another deprecated homebrew script....
+#
 ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 
 brew install -v python --with-framework
