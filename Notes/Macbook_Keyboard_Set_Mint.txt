@@ -1,3 +1,7 @@
+Keyboard set up tips for Macbook Pro (Intel) for Linux Mint. The 2008 MacBook Pro was a bit hectic to use Linux Mint due to innate Apple Keyboard functionality difference to Windows PCs. But they can be edited for better integration.
+
+--> The note is kind of deprecated now.
+
 https://forums.linuxmint.com/viewtopic.php?t=53917
 
 1.) In your menu(mintMenu if you use Mint), select Keyboard. This will bring up the keyboard preferences.
