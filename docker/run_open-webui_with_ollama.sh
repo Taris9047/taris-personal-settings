@@ -1,5 +1,15 @@
 #!/bin/sh
 
+#
+# Note: Do not forget to add a few environments to Ollama systemd file. If you have updated them...
+#
+# /etc/systemd/system/ollama.service
+#
+# --> Add those 2 lines below
+# Environment="OLLAMA_HOST=0.0.0.0"
+# Environment="OLLAMA_MODELS=/srv/ollama"
+#
+
 #-e OLLAMA_API_BASE_URL=http://127.0.0.1:11434/api \
 printf '** Setting up Open-Webui docker continer. **\n'
 
@@ -44,8 +54,7 @@ if [ ! -z "${DOCKER_CONTAINER_ID}" ]; then
   docker stop "${DOCKER_CONTAINER_ID}" && \
   docker container rm "${DOCKER_CONTAINER_ID}"
   DOCKER_IMG_ID="$(docker image ls | grep open-webui | awk '{print $3}')"
-  docker image rm "${DOCKER_IMG_ID}" || printf 'Previous Docker image deletion failed!!\n' \
-    && exit 1
+  docker image rm "${DOCKER_IMG_ID}" || printf 'Previous Docker image deletion failed!!\n'
 fi
 
 # Running the docker install
