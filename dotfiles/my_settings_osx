@@ -41,6 +41,7 @@ texlive_base_path="/Library/Tex"
 alias ls='ls -pFhG'
 alias ll='ls -la'
 alias l='ls -CF'
+alias l.='ls -a | egrep "^\."'
 alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
@@ -113,7 +114,9 @@ if [ -x "$(command -v exa)" ]; then
   alias ll='exa -lahF'
   alias l='exa -hF'
   alias lst='exa -hFT'
-  
+
+  alias l.='exa -a | egrep "^\."'
+
   # Also expanding exa aliases
   alias exa='exa -hF'
   alias exal='exa -lahF'
@@ -126,10 +129,13 @@ if [ -x "$(command -v lsd)" ]; then
   unalias ls
   unalias ll
   unalias l
+  unalias l.
   alias ls='lsd -hFX'
   alias ll='lsd -lahFX'
   alias l='lsd -hFX'
-  
+
+  alias l.='lsd -a | egrep "^\."'
+
   # Also expanding lsd aliases
   alias lsd='lsd -hFX'
   alias lsdl='lsd -lahFX'
@@ -142,11 +148,14 @@ if [ -x "$(command -v eza)" ]; then
   unalias ls
   unalias ll
   unalias l
+  unalias l.
   alias ls='eza -hF --git --icons=auto'
   alias ll='eza -halF --git --icons=auto'
   alias l='eza -hF --icons=auto'
   alias lst='eza -hF --git --icons=auto -T'
-  
+
+  alias l.='eza -a | egrep "^\."'
+
   alias eza='eza -hF --git --icons=auto'
   alias ezal='eza -halF --git --icons=auto'
   alias ezat='eza -halF --git --icons=auto -T'
@@ -185,11 +194,11 @@ fi
 
 # pypy
 #
-# --> Pypy on /opt
+# Just checking pypy3.. But we'll going to use pypy3 provided by conda these days.
 #
-if [ -x "$(command -v ${HOMEBREW}/opt/pypy/bin/pypy3)" ]; then
-  echo "pypy3 found in ${HOMEBREW}/opt/pypy/bin/pypy3 !! Extending PATH!"
-  export PATH="${HOMEBREW}/opt/pypy/bin:${PATH}"
+if [ -x "$(command -v pypy3)" ]; then
+  echo "pypy3 found in "$(command -v pypy3)" !! Extending PATH!"
+  export PATH="$(dirname "$(which pypy3)"):${PATH}"
 fi
 
 # Enabling Starship
@@ -344,3 +353,30 @@ gitlog8h() {
   done | spark
 
 }
+
+function hiddenOn() {
+    defaults write com.apple.Finder AppleShowAllFiles YES ;
+}
+
+f hiddenOff() {
+    defaults write com.apple.Finder AppleShowAllFiles NO ;
+}
+
+function pman() { ps=`mktemp -t manpageXXXX`.ps ; man -t $@ > "$ps" ; open "$ps" ; }
+
+function nicemount() {
+    (echo "DEVICE PATH TYPE FLAGS" && mount | awk '$2="";1') | column -t ;
+}
+
+function myip() {
+    ifconfig lo0 | grep 'inet ' | sed -e 's/:/ /' | awk '{print "lo0       : " $2}'
+    ifconfig en0 | grep 'inet ' | sed -e 's/:/ /' | awk '{print "en0 (IPv4): " $2 " " $3 " " $4 " " $5 " " $6}'
+    ifconfig en0 | grep 'inet6 ' | sed -e 's/ / /' | awk '{print "en0 (IPv6): " $2 " " $3 " " $4 " " $5 " " $6}'
+    ifconfig en1 | grep 'inet ' | sed -e 's/:/ /' | awk '{print "en1 (IPv4): " $2 " " $3 " " $4 " " $5 " " $6}'
+    ifconfig en1 | grep 'inet6 ' | sed -e 's/ / /' | awk '{print "en1 (IPv6): " $2 " " $3 " " $4 " " $5 " " $6}'
+}
+
+alias mailsize='/usr/bin/du -hs ~/Library/mail'
+
+alias dus='/usr/bin/du -sckxh * | sort -nr'
+[ -x "$(command -v emacs)" ] && alias adventure='emacs -batch -l dunnet'

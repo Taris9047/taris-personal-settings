@@ -48,6 +48,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#youtube-dl-shortcuts][youtube-dl shortcuts]]
   - [[#clear-screen][Clear screen]]
   - [[#use-uxterm-instead-of-xterm][Use UXterm instead of Xterm]]
+  - [[#a-few-more-fun-aliases][A few more fun aliases]]
 - [[#basic-functions-for-everyday-use][Basic Functions for everyday use]]
   - [[#prepending-system-path-variable][Prepending system PATH variable.]]
   - [[#extract-archive][Extract archive]]
@@ -544,18 +545,24 @@ set_ls() {
         printf "  %b Activating '%s' mode.\n" "${right_arrow_symbol}" "${LS_MODE}"
         set_exa_as_ls
         ;;
+    "eza")
+        printf "  %b Activating %s' mode.\n" "${right_arrow_symbol}" "${LS_MODE}"
+        set_eza_as_ls
+        ;;
     "ls")
         printf "  %b Activating '%s' mode.\n" "${right_arrow_symbol}" "${LS_MODE}"
         set_ls_as_ls
         ;;
     "*")
         printf "  %b Activating '%s' mode.\n" "${right_arrow_symbol}" "${LS_MODE}"
-        printf "    Select one of: lsd, exa, ls\n"
+        printf "    Select one of: lsd, exa, eza, ls\n"
         ;;
     esac
 }
 
 #+end_src
+
+#+RESULTS: env_ls_mode
 
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh :noweb yes
@@ -1354,6 +1361,28 @@ if test -f "(command -v urxvt)"
     alias rxvt='urxvt'
 end
 #+end_src
+
+** A few more fun aliases
+*** Bash
+#+NAME: FUN_ALIASES
+#+begin_src shell :tangle my_settings_bash
+alias dus='/usr/bin/du -sckxh * | sort -nr'
+[ -x "$(command -v emacs)" ] && alias adventure='emacs -batch -l dunnet'
+#+end_src
+
+*** Zsh
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<FUN_ALIASES>>
+#+end_src
+
+*** Fish
+#+begin_src fish :tangle my_settings_fish
+alias dus='/usr/bin/du -sckxh * | sort -nr'
+if test -f "$(command -v emacs)"
+    alias adventure='emacs -batch -l dunnet'
+end
+#+end_src
+
 * Basic Functions for everyday use
 ** Prepending system PATH variable.
 Apparently, there are much better ways to handle this kind of job and many newer shell versions will provide some kind of macro or internal functions to do this. But I would rather stay safe.
