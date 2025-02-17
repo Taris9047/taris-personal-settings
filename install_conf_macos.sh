@@ -132,6 +132,13 @@ printf 'Setting up starship config file\n'
 STARSHIP_CONF_FILE="${USR_DIR}/.config/starship.toml"
 [ ! -f "${STARSHIP_CONF_FILE}" ] && (ln -sfv "${SETTINGS_DIR}/dotfiles/starship.toml" "${STARSHIP_CONF_FILE}" || true)
 
+# Alacritty - an OpenGL based terminal
+printf 'Setting up Alacritty config file\n'
+ALACRITTY_CONF_FILE="${USR_DIR}/.config/alacritty.yml"
+ALACRITTY_CONF_FILE_TOML="${USR_DIR}/.config/alacritty.toml"
+rm -rf "${ALACRITTY_CONF_FILE}" "${ALACRITTY_CONF_FILE_TOML}"
+ln -sf "${SETTINGS_DIR}/dotfiles/alacritty.toml" "${ALACRITTY_CONF_FILE_TOML}" || true
+
 # Emacs - Not Doom nor Space. Just Emacs.
 if [ ! -d "${HOME}/.doom.d" ]; then
   printf 'Setting up Default emacsd.d\n'
