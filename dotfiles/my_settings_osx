@@ -362,7 +362,7 @@ f hiddenOff() {
     defaults write com.apple.Finder AppleShowAllFiles NO ;
 }
 
-function pman() { ps=`mktemp -t manpageXXXX`.ps ; man -t $@ > "$ps" ; open "$ps" ; }
+function pman() { man -t "${1}" 2>/dev/null | /usr/local/bin/ps2pdf - - | open -f -a Preview.app }
 
 function nicemount() {
     (echo "DEVICE PATH TYPE FLAGS" && mount | awk '$2="";1') | column -t ;
