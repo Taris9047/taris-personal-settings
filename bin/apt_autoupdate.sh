@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#
+# Ubuntu / Debian Linux package manager update script.
+#
+# --> Usually, those distributions shipped with a GUI autoupdate interface.
+# But they do not work out exactly every time. So, let's just cron the
+# operation with this file.
+#
+
 # Update the package lists
 apt update && apt upgrade -y
 
