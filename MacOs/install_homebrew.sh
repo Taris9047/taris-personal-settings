@@ -1,5 +1,15 @@
 #!/bin/sh
 
+echo "This script is deprecated!! Running this script may introduce library hell in your home directory."
+echo "Are you still going to continue? [y/N]"
+read answer
+if [ "$answer" != "${answer#[Yy]}" ] ;then
+    echo "Ok, continueing the operatin... you have been warned!!"
+else
+    echo "Canceling the script operation"
+	return 1
+fi
+
 HOMEBREW=$(command -v brew)
 
 if [[ -z $HOMEBREW ]]; then
