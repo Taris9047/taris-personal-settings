@@ -11,6 +11,16 @@ if [ -x "$(command -v vncstart)" ]; then
   exit 1
 fi
 
+VNCCMD="$(command -v vncserver)"
+TURBOVNC_DIR="/opt/TurboVNC"
+TURBOVNC='0'
+if [ -d "${TURBOVNC_DIR}" ]; then
+  if [ -x "$(command -v ${TURBOVNC_DIR}/bin/vncserver)" ]; then
+    VNCCMD="${TURBOVNC_DIR}/bin/vncserver"
+    TURBOVNC='1'
+  fi
+fi
+
 # ports to ignore: 5901-10
 
 # Tightvnc case
@@ -18,9 +28,13 @@ fi
 # Preferred port: 5907
 VNCPORT=':7'
 
-all_vnc_servers="$(ps -ef | grep 'Xtightvnc' | awk 'match($0, / :[0-9]+/) {print substr( $0, RSTART, RLENGTH)}')"
-my_vnc_servers="$(ps -ef | grep 'Xtightvnc' | awk 'match($0, / :[0-9]+/) {print substr( $0, RSTART, RLENGTH)}')"
-
+if [ "${TURBOVNC}" = "1" ]; then
+  all_vnc_servers="$(ps -ef | grep 'Xvnc' | awk 'match($0, / :[0-9]+/) {print substr( $0, RSTART, RLENGTH)}')"
+  my_vnc_servers="$(ps -ef | grep 'Xvnc' | awk 'match($0, / :[0-9]+/) {print substr( $0, RSTART, RLENGTH)}')"
+else
+  all_vnc_servers="$(ps -ef | grep 'Xtightvnc' | awk 'match($0, / :[0-9]+/) {print substr( $0, RSTART, RLENGTH)}')"
+  my_vnc_servers="$(ps -ef | grep 'Xtightvnc' | awk 'match($0, / :[0-9]+/) {print substr( $0, RSTART, RLENGTH)}')"
+fi
 #echo "${my_vnc_servers}"
 
 # Start XtightVNC server at given port
@@ -31,7 +45,7 @@ vncstart() {
     exit 1
   else
     printf 'Opening VNCServer at VNCPort %s\n' "${1}"
-    vncserver "${1}" -geometry "${VNC_GEOM}" -depth 24
+    "${VNCCMD}" "${1}" -geometry "${VNC_GEOM}" -depth 24
   fi
 }
 
@@ -42,7 +56,7 @@ vnckill() {
 
     if [ "${answer}" != "${answer#[Yy]}" ] ;then 
       printf 'Killing VNCServer@Port %s' "${1}"
-      vncserver -kill "${1}"
+      ${VNCCMD} -kill "${1}"
     else
       printf 'Not killing VNCServer@Port %s' "${1}"
     fi
