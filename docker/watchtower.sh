@@ -1,19 +1,11 @@
 #!/bin/sh
 
-export CONT_NAME=''
-
-if [ -n "$1" ]; then
-  CONT_NAME="$1"
-else
-  printf 'Please provide a container name to watch!\n'
-  return 1;
-fi
-
-printf 'Setting up watchtower for %s\n' "${CONT_NAME}"
+printf 'Setting up watchtower\n'
 
 docker run --detach \
-  --name watchtower-"${CONT_NAME}" \
+  --name watchtower \
+  -v /var/run/docker.sock:/var/run/docker.sock \
   containrrr/watchtower \
-  --interval 1m --cleanup --watch \""${CONT_NAME}"\"
+  --interval 60 --cleanup 
 
 
