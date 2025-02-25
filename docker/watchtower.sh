@@ -1,14 +1,19 @@
 #!/bin/sh
 
-if [ ! -x "$(command -v docker)" ]; then
-  printf 'Docker isn not installed!\n'
-  exit 1
+export CONT_NAME=''
+
+if [ -n "$1" ]; then
+  CONT_NAME="$1"
+else
+  printf 'Please provide a container name to watch!\n'
+  return 1;
 fi
 
-printf 'Installing and running watchtower\n'
+printf 'Setting up watchtower for %s\n' "${CONT_NAME}"
 
-docker run -d \
-  --name watchtower \
-  -v /var/run/docker.sock:/var/run/docker.sock \
+docker run --detach \
+  --name watchtower-"${CONT_NAME}" \
   containrrr/watchtower \
-  gitlab portainer nextcloud
+  --interval 1m --cleanup --watch \""${CONT_NAME}"\"
+
+

@@ -12,7 +12,6 @@ services:
         puma['worker_processes'] = 0
         postgresql['shared_buffers'] = "256MB"
         premetheus_monitoring['enable'] = false
-        gitlab_rails['gitlab_shell_ssh_port'] = 30001
         gitlab_rails['env'] = {
           'MALLOC_CONF' => 'dirty_decay_ms:1000,myzzy_decay_ms:1000'
         }
