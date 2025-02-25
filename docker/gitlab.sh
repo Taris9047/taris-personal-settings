@@ -6,6 +6,12 @@ if [ ! -d "$GITLAB_HOME" ]; then
 	sudo mkdir -p "$GITLAB_HOME"
 fi
 
+GITLAB_VER="latest"
+
+if [ -n "$1" ]; then
+  GITLAB_VER="${1}"
+fi
+
 MAIN_PORT="30000"
 SSH_PORT="30001"
 HTTPS_PORT="30443"
@@ -35,7 +41,7 @@ if [ -z "$(docker ps | grep gitlab)" ]; then
     --volume $GITLAB_HOME/logs:/var/log/gitlab \
     --volume $GITLAB_HOME/data:/var/opt/gitlab \
     --shm-size 256m \
-    gitlab/gitlab-ce:latest
+    gitlab/gitlab-ce:"${GITLAB_VER}"
 fi
 
 sudo -H truncate -s 0 $GITLAB_HOME/config/gitlab.rb
