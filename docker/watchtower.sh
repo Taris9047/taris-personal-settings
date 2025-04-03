@@ -1,6 +1,11 @@
 #!/bin/sh
 
-printf 'Setting up watchtower\n'
+printf 'Setting up Docker watchtower\n'
+
+if [ ! -x "$(command -v docker)" ]; then
+  printf 'Docker does not exist.\n'
+  exit 1
+fi
 
 docker run --detach \
   --name watchtower \
@@ -8,4 +13,4 @@ docker run --detach \
   containrrr/watchtower \
   --interval 60 --cleanup 
 
-
+printf 'Running watchtower!\n'

@@ -8,8 +8,10 @@ fi
 PORTAINER_HOME="/srv/portainer"
 
 if [ ! -d "${PORTAINER_HOME}" ]; then
-	sudo -p mkdir "${PORTAINER_HOME}"
-	printf "Portainer directory generated. Make sure you have write permission.\n"
+	mkdir -p "${PORTAINER_HOME}" || sudo mkdir -p "${PORTAINER_HOME}"
+  chown -R :docker "${PORTAINER_HOME}"
+  chmod -R 2775 "${PORTAINER_HOME}"
+	printf "Portainer directory generated. Make sure docker group have write permission.\n"
 	printf ' %s\n' "${PORTAINER_HOME}"
 	exit 0
 fi
