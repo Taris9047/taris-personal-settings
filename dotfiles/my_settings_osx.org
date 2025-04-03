@@ -536,6 +536,68 @@ function myip() {
 alias mailsize='/usr/bin/du -hs ~/Library/mail'
 #+end_src
 
+** Homebrew package Install/Upgrade Shortcuts
+MacOS do not provide any package management CLI tool naturally. But we can always rely those stuff on any open source projects such as Homebrew, MacPorts, pkgsrc, etc. However, Homebrew seems to be most versatile solution since it actually compiles from source, of course with binary installation called Casks, which avoids headaches with elevated permissions on some machines.
+
+#+begin_src shell :tangle my_settings_osx
+function brew_detect () {
+    if [ ! -x "$(command -v brew)" ]; then
+        printf 'Homebrew seems to be not installed on site.\n'
+        printf 'Refer https://brew.sh/ for installation instructions\n'
+        printf '\n'
+        return 1;
+    else
+        return 0;
+    fi
+}
+
+function pkgup () {
+    brew_detect && brew update && brew upgrade
+    return 0;
+}
+
+function pkgin () {
+
+    brew_detect || return 1;
+
+    if [ -z "$*" ]; then
+        printf 'Arguments are just same as brew\n'
+        printf 'i.e. to install, pkgin <some_brew_package>\n'
+        printf '\n'
+        return 1;
+    fi
+    pkgup && brew install "$@"
+}
+
+function pkgrm () {
+
+    brew_detect || return 1;
+
+    if [ -z "$*" ]; then
+        printf 'No arguments given, skipping command\n'
+        return 1;
+    fi
+    pkgup && brew remove "$@"
+}
+
+function pkglist () {
+    if [ "${1}" = "--all" ]; then
+        brew_detect && brew formulae
+        brew_detect && brew casks
+    elif [ "${1}" = "--installed" ]; then
+        brew_detect && brew list
+    else
+        printf 'Usage:\n'
+        printf 'pkglist --all: provide all the brewable formulae and casks\n'
+        printf 'pkglist --installed: lists all the installed formulae and casks\n'
+    fi
+    return 0;
+}
+
+#+end_src
+
+#+RESULTS:
+
 * More of interesting shell aliases
 #+begin_src shell :tangle my_settings_osx
 alias dus='/usr/bin/du -sckxh * | sort -nr'
