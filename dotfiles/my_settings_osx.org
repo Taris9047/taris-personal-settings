@@ -388,7 +388,7 @@ Some shortcuts for DoomEmacs. Just 'doomsync' for now.
 
 #+begin_src shell :tangle my_settings_osx
 # DoomEmacs
-if [ -d "$HOME/.doom.d" ] & [ -x "$(command -v $HOME/.emacs.d/bin/doom)" ]; then
+if [ -d "$HOME/.doom.d" ] && [ -x "$(command -v $HOME/.emacs.d/bin/doom)" ]; then
     export PATH="$HOME/.emacs.d/bin:$PATH"
     alias doomsync="$HOME/.emacs.d/bin/doom sync"
 fi
