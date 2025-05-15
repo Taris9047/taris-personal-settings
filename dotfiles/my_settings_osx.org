@@ -359,11 +359,12 @@ export PATH="${path_sanitized}"
 
 * Editors
 
-#
-# Adding some more fun stuffs
-#
+Editor settings and stuffs. Aliase settings for Sublime Text 3, jEdit, and DoomEmacs. On MacOS, we also have TextMate and BBEdit. But their settings can be managed with GUI interface rather than shell environment settings.
 
 ** Sublime Text 3
+
+General purpose programming editor.
+
 #+begin_src shell :tangle my_settings_osx
 # Sublime Text3
 if [ -d "/Applications/Sublime Text.app" ]; then
@@ -372,6 +373,9 @@ fi
 #+end_src
 
 ** jEdit
+
+Java based programmer's editor. Mainly for Synopsys input deck programming.
+
 #+begin_src shell :tangle my_settings_osx
 # jEdit
 if [ -d "/Applications/jEdit.app" ]; then
@@ -379,7 +383,18 @@ if [ -d "/Applications/jEdit.app" ]; then
 fi
 #+end_src
 
-** Setting up rm-improved's trashbin location 
+** DoomEmacs
+Some shortcuts for DoomEmacs. Just 'doomsync' for now.
+
+#+begin_src shell :tangle my_settings_osx
+# DoomEmacs
+if [ -d "$HOME/.doom.d" ] && [ -x "$(command -v $HOME/.emacs.d/bin/doom)" ]; then
+    export PATH="$HOME/.emacs.d/bin:$PATH"
+    alias doomsync="$HOME/.emacs.d/bin/doom sync"
+fi
+#+end_src
+
+* Setting up rm-improved's trashbin location
 We'll obviously use the MacOS trashbin instead of making yet another hidden trash folder.
 
 #+begin_src shell :tangle my_settings_osx

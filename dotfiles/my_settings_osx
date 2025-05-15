@@ -257,6 +257,12 @@ if [ -d "/Applications/jEdit.app" ]; then
   export PATH="/Applications/jEdit.app/Contents/MacOS/:${PATH}"
 fi
 
+# DoomEmacs
+if [ -d "$HOME/.doom.d" ] && [ -x "$(command -v $HOME/.emacs.d/bin/doom)" ]; then
+    export PATH="$HOME/.emacs.d/bin:$PATH"
+    alias doomsync="$HOME/.emacs.d/bin/doom sync"
+fi
+
 # rm-improved - Setting it to MacOS trash bin
 MACOS_BIN_LOC="${HOME}/.Trash"
 if [ -x "$(command -v rip)" ]; then

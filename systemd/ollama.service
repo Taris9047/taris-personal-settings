@@ -10,8 +10,10 @@ Restart=always
 RestartSec=3
 Environment="PATH=/usr/local/bin:/home/taris/.rbenv/shims:/home/taris/.rbenv/bin:/home/taris/.rbenv/shims/:/home/taris/.miniconda3/bin:/home/taris/.miniconda3/condabin:/home/taris/.emacs.d/bin:/home/taris/.rbenv/shims:/home/taris/.rbenv/bin:/home/taris/.local/.opt/julia/bin:/home/taris/.local/.opt/go/bin/bin:/home/taris/.local/.opt/go/bin:/home/taris/.cargo/bin:/home/taris/.local/.opt/bin:/home/taris/.local/bin:/home/taris/.settings/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/Synopsys/K_2015.06-SP2/bin:/usr/local/bin:/usr/local/sbin"
 
+# Setting up a dedicated ollama model directory
 Environment="OLLAMA_MODELS=/srv/ollama"
 
+# Allowing connection from Docker
 Environment="OLLAMA_HOST=0.0.0.0:11434"
 
 [Install]
