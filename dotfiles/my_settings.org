@@ -225,6 +225,8 @@ Tmux is a great terminal interface for any situation, even your favorite Xorg te
 
 Actually, using TMUX on every single instance of my own local system seems a bit of chore. I would rather use TMUX when I'm on remote connection instead.
 
+Latest fix redirects you to the most recent TMUX session if exists.
+
 *** Bash
 #+NAME: prefer_tmux_session
 #+begin_src shell :tangle my_settings_bash
@@ -232,9 +234,18 @@ stringcontain() {
 	[ -z "$1" ] || { [ -z "${2##*$1*}" ] && [ -n "$2" ]; }
 }
 
+function tmux_last_session() {
+    LAST_TMUX_SESSION=$(tmux list-sessions | awk -F ":" '{print$1}' | tail -n1);
+    if [ -z ${LAST_TMUX_SESSION} ]; then
+        tmux
+    else
+        tmux attach -t ${LAST_TMUX_SESSION}
+    fi
+}
+
 if [ -x "$(command -v tmux)" ] && ! stringcontain 'screen' "$TERM" && ! stringcontain 'tmux' "$TERM" && [ -z "$TMUX" ] && [ -n "$SSH_CLIENT" ]; then
 	printf '%b tmux has found!! Running it!\n' "${check_symbol}"
-	tmux
+	tmux_last_session
 	builtin exit
 fi
 #+end_src
