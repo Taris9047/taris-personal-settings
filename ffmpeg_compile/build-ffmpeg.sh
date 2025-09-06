@@ -91,7 +91,9 @@ COMPILER_SET+=" PKG_CONFIG_PATH=\"$PKG_CONFIG_PATH\""
 
 # Compiler Set reset for MacOS
 if [[ "${OSTYPE}" == "darwin"* ]]; then
-  COMPILER_SET=''
+  MJOBS=$(sysctl -n machdep.cpu.thread_count)
+  CONFIGURE_OPTIONS=("--enable-videotoolbox")
+  MACOS_LIBTOOL="$(which libtool)"
 fi
 
 # Detect compiler... if it really exists!
@@ -404,7 +406,7 @@ while (($# > 0)); do
        		echo "Error: A full static binary can only be build on Linux."
        		exit 1
        	fi
-       	LDEXEFLAGS="-static"
+       	LDEXEFLAGS="-static -fPIC"
 	    fi
 
 	    if [[ "$1" == "--cleanup" ]] || [[ "$1" == "--clean"  ]]; then
@@ -596,16 +598,19 @@ if build "libtool" "Git"; then
   build_done "libtool" "${CURRENT_PACKAGE_VERSION}"
 fi
 
-if [ ! -x "$(command -v cmake)" ]; then
-	if build "cmake" "3.31.0"; then
-	  download "https://cmake.org/files/LatestRelease/cmake-${CURRENT_PACKAGE_VERSION}.tar.gz" "cmake-${CURRENT_PACKAGE_VERSION}.tar.gz"
+#
+# Ok, let's use old cmake instead of new one...
+#
+# if [ ! -x "$(command -v cmake)" ]; then
+	if build "cmake" "3.31.7"; then
+	  download "https://github.com/Kitware/CMake/releases/download/v$CURRENT_PACKAGE_VERSION/cmake-$CURRENT_PACKAGE_VERSION.tar.gz" "cmake-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	  cd "$PACKAGES/cmake-${CURRENT_PACKAGE_VERSION}" || exit
 	  execute ./configure --prefix="${WORKSPACE}" --parallel="${MJOBS}" -- -DCMAKE_USE_OPENSSL=OFF
 	  execute make -j $MJOBS
 	  execute make install
 	  build_done "cmake" "${CURRENT_PACKAGE_VERSION}"
 	fi
-fi
+# fi
 
 
 if build "openssl" "3.4.0"; then
@@ -656,6 +661,20 @@ if [ ! -x  "${GIT}" ]; then
 		GIT="${WORKSPACE}/bin/git"
 	fi
 fi
+
+if build "giflib" "5.2.1"; then
+  download "https://netcologne.dl.sourceforge.net/project/giflib/giflib-$CURRENT_PACKAGE_VERSION.tar.gz"
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    wget  "https://sourceforge.net/p/giflib/bugs/_discuss/thread/4e811ad29b/c323/attachment/Makefile.patch"
+    execute patch -p0 --forward "${PACKAGES}/giflib-$CURRENT_PACKAGE_VERSION/Makefile" "${PACKAGES}/Makefile.patch" || true
+  fi
+  cd "${PACKAGES}"/giflib-$CURRENT_PACKAGE_VERSION || exit
+  #multicore build disabled for this library
+  execute make
+  execute make PREFIX="${WORKSPACE}" install
+  build_done "giflib" $CURRENT_PACKAGE_VERSION
+fi
+
 
 
 ## Media Libraries
@@ -848,7 +867,7 @@ if build "libwebp" "1.3.2"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libwebp")
 
-if build "libvpx" "1.15.0"; then
+if build "libvpx" "1.15.2"; then
 	download "https://github.com/webmproject/libvpx/archive/refs/tags/v${CURRENT_PACKAGE_VERSION}.tar.gz" "libvpx-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/libvpx-${CURRENT_PACKAGE_VERSION}" || exit
 
@@ -889,7 +908,7 @@ if build "xvidcore" "1.3.7"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libxvid")
 
-if build "x264" "be4f0200"; then
+if build "x264" "b35605ac"; then
 	download "https://code.videolan.org/videolan/x264/-/archive/$CURRENT_PACKAGE_VERSION/x264-$CURRENT_PACKAGE_VERSION.tar.gz" "x264-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES"/x264-${CURRENT_PACKAGE_VERSION} || exit
 
@@ -907,71 +926,70 @@ if build "x264" "be4f0200"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
 
-if build "x265" "3.4"; then
-  download "https://github.com/videolan/x265/archive/refs/tags/${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
-  cd "$PACKAGES"/x265-*/ || exit
-  cd source || exit
-  execute cmake . \
-    -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
-    -DCMAKE_C_COMPILER=\""${CC}"\" \
-    -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
-    -DCMAKE_C_FLAGS=\""${CFLAGS}"\" \
-    -DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
-    -DENABLE_SHARED=OFF \
-    -DBUILD_SHARED_LIBS=OFF
-  execute make -j $MJOBS
-  execute make install
-
-  if [ -n "${LDEXEFLAGS}" ]; then
-    sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}/lib/pkgconfig/x265.pc" # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
-  fi
-
-  build_done "x265" "${CURRENT_PACKAGE_VERSION}"
-fi
-
-#
-# x265 4.0 ... issue with mirror site. Rolling back to 3.4 which is hosted by Github
-#
-# if build "x265" "4.0"; then
-#   download "https://bitbucket.org/multicoreware/x265_git/downloads/x265_$CURRENT_PACKAGE_VERSION.tar.gz" "x265-$CURRENT_PACKAGE_VERSION.tar.gz"
-#   cd "${PACKAGES}/x265-${CURRENT_PACKAGE_VERSION}" || exit
-#   cd build/linux || exit
-#   rm -rf 8bit 10bit 12bit 2>/dev/null
-#   mkdir -p 8bit 10bit 12bit
-#   cd 12bit || exit
-#   execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF -DMAIN12=ON
+# if build "x265" "3.4"; then
+#   download "https://github.com/videolan/x265/archive/refs/tags/${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
+#   cd "$PACKAGES"/x265-*/ || exit
+#   cd source || exit
+#   execute cmake . \
+#     -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
+#     -DCMAKE_C_COMPILER=\""${CC}"\" \
+#     -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
+#     -DCMAKE_C_FLAGS=\""${CFLAGS}"\" \
+#     -DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
+#     -DENABLE_SHARED=OFF \
+#     -DBUILD_SHARED_LIBS=OFF \
+#     -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 #   execute make -j $MJOBS
-#   cd ../10bit || exit
-#   execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF
-#   execute make -j $MJOBS
-#   cd ../8bit || exit
-#   ln -sf ../10bit/libx265.a libx265_main10.a
-#   ln -sf ../12bit/libx265.a libx265_main12.a
-#   execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DEXTRA_LIB="x265_main10.a;x265_main12.a;-ldl" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON
-#   execute make -j $MJOBS
-#
-#   mv libx265.a libx265_main.a
-#
-#   if [[ "$OSTYPE" == "darwin"* ]]; then
-#     execute "${MACOS_LIBTOOL}" -static -o libx265.a libx265_main.a libx265_main10.a libx265_main12.a 2>/dev/null
-#   else
-#     execute ar -M <<EOF
-# CREATE libx265.a
-# ADDLIB libx265_main.a
-# ADDLIB libx265_main10.a
-# ADDLIB libx265_main12.a
-# SAVE
-# END
-# EOF
-#   fi
-#
 #   execute make install
 #
-#   if [ -n "$LDEXEFLAGS" ]; then
+#   if [ -n "${LDEXEFLAGS}" ]; then
 #     sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}/lib/pkgconfig/x265.pc" # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
 #   fi
-#  build_done "x265" "${CURRENT_PACKAGE_VERSION}"
-#fi
+#
+#   build_done "x265" "${CURRENT_PACKAGE_VERSION}"
+# fi
+
+
+if build "x265" "4.1"; then
+  download "http://ftp.videolan.org/pub/videolan/x265/x265_${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
+  cd "${PACKAGES}/x265-${CURRENT_PACKAGE_VERSION}" || exit
+  cd build/linux || exit
+  rm -rf 8bit 10bit 12bit 2>/dev/null
+  mkdir -p 8bit 10bit 12bit
+  cd 12bit || exit
+  execute "${WORKSPACE}"/bin/cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF -DMAIN12=ON
+  execute make -j $MJOBS
+  cd ../10bit || exit
+  execute "${WORKSPACE}"/bin/cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF
+  execute make -j $MJOBS
+  cd ../8bit || exit
+  ln -sf ../10bit/libx265.a libx265_main10.a
+  ln -sf ../12bit/libx265.a libx265_main12.a
+  execute "${WORKSPACE}"/bin/cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DEXTRA_LIB=\"x265_main10.a\;x265_main12.a\;-ldl\" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON
+  execute make -j $MJOBS
+
+  mv libx265.a libx265_main.a
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    "${MACOS_LIBTOOL}" -static -o libx265.a libx265_main.a libx265_main10.a libx265_main12.a 2>/dev/null
+  else
+    execute ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
+  fi
+
+  execute make install
+
+  if [ -n "$LDEXEFLAGS" ]; then
+    sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}/lib/pkgconfig/x265.pc" # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
+  fi
+ build_done "x265" "${CURRENT_PACKAGE_VERSION}"
+fi
 CONFIGURE_OPTIONS+=("--enable-libx265")
 
 if build "vid_stab" "1.1.1"; then
