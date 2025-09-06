@@ -407,6 +407,7 @@ while (($# > 0)); do
        		exit 1
        	fi
        	LDEXEFLAGS="-static -fPIC"
+        
 	    fi
 
 	    if [[ "$1" == "--cleanup" ]] || [[ "$1" == "--clean"  ]]; then
