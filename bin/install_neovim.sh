@@ -41,7 +41,8 @@ fi
 [ ! -x "$(command -v gcc)" ] && printf 'Error: we need a toolchain: i.e. build-essential\n' && exit 1
 
 # Making work directory...
-WORK_DIR="${HOME}/.neovim_install"
+#
+WORK_DIR="$(mktemp -d -t neovim-XXXXXXXXXXXXXXXX)"
 if [ ! -d "${WORK_DIR}" ]; then
   printf 'Making work directory: %s\n' "${WORK_DIR}" 
   mkdir -p "${WORK_DIR}"

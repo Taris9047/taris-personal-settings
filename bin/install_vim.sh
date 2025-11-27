@@ -2,8 +2,15 @@
 
 # Install vim...
 #
-GITREPO=/tmp/vim
+TMP_DIR="$(mktemp -d -t vim-XXXXXXXXXXXX)"
+GITREPO=${TMP_DIR}
 
+MY_DIR=`pwd`
+
+# Checking out vim o tmp directory
 git clone https://github.com/vim/vim.git "${GITREPO}" || exit -1
 
+# Compiling vim
 cd "${GITREPO}" && git pull && ./configure --prefix=/usr/local && make && sudo make install
+
+cd "${MY_DIR}"
