@@ -17,4 +17,4 @@ cd "#{WORK_DIR}/btop"
 make && sudo make install
 
 
-cd "$(OLD_DIR)"
+cd "${OLD_DIR}"
