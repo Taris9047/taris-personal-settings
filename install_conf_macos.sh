@@ -338,6 +338,9 @@ fi
 printf 'Setting up Tmux Package Manager (TPM)\n'
 [ ! -d "$HOME/.tmux/plugins/tpm" ] && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
+# Ghostty
+printf 'Setting up Ghostty Settings'
+[ -x "$(command -v ghostty)" ] && mkdir -p "${HOME}/.config/ghostty" && ln -sfv "${HOME}/.settings/dotfiles/ghostty/config ${HOME}/.config/ghostty/config"
 
 printf '\n'
 printf '\n**** Closing Comments ****\n'
