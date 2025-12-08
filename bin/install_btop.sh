@@ -14,7 +14,7 @@ cd "${WORK_DIR}"
 git clone "${URL}" "${WORK_DIR}/btop"
 cd "${WORK_DIR}/btop"
 
-make && sudo make install
+make ADDFLAGS=-march=native && sudo make install
 
 
 cd "${OLD_DIR}"
