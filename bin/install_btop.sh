@@ -5,16 +5,51 @@
 #
 
 URL='https://github.com/aristocratos/btop.git'
+BIN_URL='https://github.com/aristocratos/btop/releases/download/v1.4.5/btop-x86_64-linux-musl.tbz'
+
+sudo rm -rf /tmp/btop-*
 
 OLD_DIR=`pwd`
 WORK_DIR="$(mktemp -d -t btop-XXXXXXXX)"
 
 cd "${WORK_DIR}"
 
-git clone "${URL}" "${WORK_DIR}/btop"
-cd "${WORK_DIR}/btop"
+if [ $# -eq 0 ]; then
 
-make ADDFLAGS=-march=native && sudo make install
+    #
+    # Binary install
+    #
+    wget "${BIN_URL}" -O ./btop.tbz
+    tar xvf ./btop.tbz
+    cd ./btop/
+
+    sudo mkdir -p /usr/local
+    sudo ./install.sh
+
+else
+    
+    while [ $# -ne 0 ]
+    do
+        arg="$1"
+        case "$arg" in
+            -src)
+                #
+                # Compile install - Does not work on Ubuntu LTS
+                # GCC requirement is 14... Pretty hard on LTS 20.04 or 22.04
+                #
+                git clone "${URL}" "${WORK_DIR}/btop"
+                cd "${WORK_DIR}/btop"
+
+                make ADDFLAGS=-march=native && sudo make install
+                ;;
+            *)
+                break
+                ;;
+        esac
+        shift
+    done
+
+fi
 
 
 cd "${OLD_DIR}"
