@@ -734,3 +734,17 @@ set VPN_PATH "/opt/cisco/secureclient/bin/vpn"
 if type -q "$VPN_PATH"
     alias ucsc_vpn="$HOME/.settings/bin/vpn_connect_ucsc.sh"
 end
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+if test -f /home/taris/.miniconda3/bin/conda
+    eval /home/taris/.miniconda3/bin/conda "shell.fish" "hook" $argv | source
+else
+    if test -f "/home/taris/.miniconda3/etc/fish/conf.d/conda.fish"
+        . "/home/taris/.miniconda3/etc/fish/conf.d/conda.fish"
+    else
+        set -x PATH "/home/taris/.miniconda3/bin" $PATH
+    end
+end
+# <<< conda initialize <<<
+

@@ -12,6 +12,18 @@ sudo rm -rf /tmp/btop-*
 OLD_DIR=`pwd`
 WORK_DIR="$(mktemp -d -t btop-XXXXXXXX)"
 
+S_CC=gcc
+S_CXX=g++
+
+# Detect if gcc-14 exists 
+if [ -x "$(command -v gcc-14)" ]; then
+    printf 'GCC-14 found in the system. Trying with this compiler!\n'
+    printf 'It might crash!!\n'
+    S_CC="$(command -v gcc-14)"
+    S_CXX="$(command -v g++-14)"
+fi
+
+
 cd "${WORK_DIR}"
 
 if [ $# -eq 0 ]; then
@@ -40,7 +52,7 @@ else
                 git clone "${URL}" "${WORK_DIR}/btop"
                 cd "${WORK_DIR}/btop"
 
-                make ADDFLAGS=-march=native && sudo make install
+                CC=${S_CC} CXX=${S_CXX} make ADDFLAGS=-march=native && sudo make install
                 ;;
             *)
                 break
