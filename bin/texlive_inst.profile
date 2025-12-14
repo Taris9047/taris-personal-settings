@@ -2,13 +2,13 @@
 # It will NOT be updated and reflects only the
 # installation profile at installation time.
 selected_scheme scheme-full
-TEXDIR /home/taris/.texlive/2021
-TEXMFCONFIG ~/.texlive2021/texmf-config
+TEXDIR /home/taris/.texlive
+TEXMFCONFIG ~/.texlive/texmf-config
 TEXMFHOME ~/texmf
 TEXMFLOCAL /home/taris/.texlive/texmf-local
-TEXMFSYSCONFIG /home/taris/.texlive/2021/texmf-config
-TEXMFSYSVAR /home/taris/.texlive/2021/texmf-var
-TEXMFVAR ~/.texlive2021/texmf-var
+TEXMFSYSCONFIG /home/taris/.texlive/texmf-config
+TEXMFSYSVAR /home/taris/.texlive/texmf-var
+TEXMFVAR ~/.texlive-texmf-var
 binary_x86_64-linux 1
 instopt_adjustpath 0
 instopt_adjustrepo 1

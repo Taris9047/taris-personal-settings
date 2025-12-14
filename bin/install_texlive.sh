@@ -6,7 +6,7 @@ INST_SRC_DEFAULT="/tmp/texlive_install"
 
 DESTDIR="$HOME/.texlive"
 
-TEXLIVE_YEAR='2021'
+TEXLIVE_YEAR='2025'
 TEXLIVE_ISO_NAME="texlive${TEXLIVE_YEAR}.iso"
 TEXLIVE_ISO_URL="https://mirror.ctan.org/systems/texlive/Images/${TEXLIVE_ISO_NAME}"
 TEXLIVE_ISO_MD5_URL="https://mirror.ctan.org/systems/texlive/Images/${TEXLIVE_ISO_NAME}.iso.md5"
@@ -220,7 +220,7 @@ cd "$SRC_DIR" && ./install-tl --profile "$PROFILE" || die "Something went wrong 
 
 # Making a symbolic link for the newest Texlive
 # kinda brute force approach... change here later.
-texlive_years=(2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027 2028 2029 2030 2031 2032 2033 2035)
+texlive_years=(2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027 2028 2029 2030 2031 2032 2033 2034 2035 2036 2037 2038 2039 2040)
 texlive_base_path="$HOME/.texlive"
 texlive_year='current'
 texlive_arch='x86_64-linux'
