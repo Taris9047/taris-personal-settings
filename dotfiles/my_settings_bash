@@ -613,6 +613,27 @@ check_uptime() {
     echo "$(awk '{print $1}' /proc/uptime)"
 }
 
+if [ ! -x "$(command -v gedit)" ]; then
+
+  # In case of modern Gnome..
+  if [ -x "$(command -v gnome-text-editor)" ]; then
+    alias edit='gnome-text-editor'
+  fi
+
+  # In case of Cosmic
+  if [ -x "$(command -v cosmic-text-editor)" ]; then
+    alias edit='cosmic-text-editor'
+  fi
+
+  # In case of Linux Mint
+  if [ -x "$(command -v xed)" ]; then
+    alias edit='xed'
+  fi
+  
+else
+  alias edit="$(command -v gedit)"
+fi
+
 if [ -x "$(command -v alacritty)" ]; then
     if [ -n "$(cat /proc/cpuinfo | grep 'hypervisor')" ]; then
         alias alacritty="MESA_GL_VERSION_OVERRIDE=3.3 LIBGL_ALWAYS_SOFTWARE=1 alacritty"

@@ -56,6 +56,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#recursively-delete-files][Recursively delete files]]
   - [[#universal-open-function][Universal 'open' function]]
   - [[#check-uptime][Check uptime]]
+  - [[#editor-aliases---for-gedit][Editor aliases - for gedit]]
 - [[#settings-for-custom-installed-programs][Settings for Custom installed programs!]]
   - [[#alacritty][Alacritty]]
   - [[#snapd-stuff][Snapd stuff]]
@@ -1691,6 +1692,7 @@ check_uptime() {
 #+end_src
 
 *** Zsh
+
 #+begin_src shell :tangle my_settings_zsh :noweb yes
 <<func_uptime>>
 #+end_src
@@ -1701,6 +1703,46 @@ function check_uptime
     echo (awk '{print $1}' /proc/uptime)
 end
 #+end_src
+
+** Editor aliases - for gedit
+
+In recent Linux, gedit is dropped and replaced with newer(?) and better(hopefully) editors. And their executable names sometimes hard to remember. So, let's mak some aliases for them.
+
+*** Bash
+#+NAME: edit_aliases
+#+begin_src shell :tangle my_settings_bash
+
+if [ ! -x "$(command -v gedit)" ]; then
+
+  # In case of modern Gnome..
+  if [ -x "$(command -v gnome-text-editor)" ]; then
+    alias edit='gnome-text-editor'
+  fi
+
+  # In case of Cosmic
+  if [ -x "$(command -v cosmic-text-editor)" ]; then
+    alias edit='cosmic-text-editor'
+  fi
+
+  # In case of Linux Mint
+  if [ -x "$(command -v xed)" ]; then
+    alias edit='xed'
+  fi
+  
+else
+  alias edit="$(command -v gedit)"
+fi
+
+#+end_src
+
+*** Zsh
+
+#+begin_src shell :tangle my_settings_zsh :noweb yes
+<<edit_aliases>>
+#+end_src
+
+*** Fish
+Maybe later...
 
 * Settings for Custom installed programs!
 ** Alacritty

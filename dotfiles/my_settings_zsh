@@ -627,6 +627,27 @@ check_uptime() {
     echo "$(awk '{print $1}' /proc/uptime)"
 }
 
+if [ ! -x "$(command -v gedit)" ]; then
+
+  # In case of modern Gnome..
+  if [ -x "$(command -v gnome-text-editor)" ]; then
+    alias edit='gnome-text-editor'
+  fi
+
+  # In case of Cosmic
+  if [ -x "$(command -v cosmic-text-editor)" ]; then
+    alias edit='cosmic-text-editor'
+  fi
+
+  # In case of Linux Mint
+  if [ -x "$(command -v xed)" ]; then
+    alias edit='xed'
+  fi
+  
+else
+  alias edit="$(command -v gedit)"
+fi
+
 SNAP_BIN="/snap/bin"
 if [ -d "${SNAP_BIN}" ]; then
     printf '%b Snap executables have been found at %s\n' "${check_symbol}" "${SNAP_BIN}"
