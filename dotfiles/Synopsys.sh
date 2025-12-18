@@ -9,7 +9,7 @@ fi
 # Synopsys directory
 SYNOPSYS_DIR="$SYNOPSYS_PATH"
 SYNOPSYS_LICENSE='27000@license.soe.ucsc.edu'
-SYNOPSYS_VER='K_2015.06-SP2'
+SYNOPSYS_VER='current'
 
 STDB_PE="$HOME/Data/DB"
 
