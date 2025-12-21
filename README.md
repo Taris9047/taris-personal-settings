@@ -6,7 +6,7 @@ Some automation scripts for my own tool installation. Sometimes, you have to use
 Before running the curl script, we have to make sure some prerequisites installed. For example on Ubuntu...
 
 ```shell
-sudo apt install curl git ruby buil-essential
+sudo apt install curl git ruby build-essential
 ```
 
 Just run this line on your home directory. Hopefully, server admin is not a crazy person to omit <code>curl</code> from installation.
