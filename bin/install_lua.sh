@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 #
 # Lua 5.4 install script.
@@ -7,7 +7,7 @@
 URL='https://www.lua.org/ftp/lua-5.4.6.tar.gz'
 PATCH_URL='https://www.linuxfromscratch.org/patches/blfs/12.1/lua-5.4.6-shared_library-1.patch'
 
-WORK_DIR="#(mktemp -d -t lua5.4-XXXXXXXXXXXXXXXX)"
+WORK_DIR="$(mktemp -d -t lua5.4-XXXXXXXXXXXXXXXX)"
 CURR_DIR=`pwd`
 
 cd "${WORK_DIR}"
@@ -17,7 +17,7 @@ wget "${PATCH_URL}"
 tar xvf ./lua-5.4.6.tar.gz
 
 cd ./lua-5.4.6
-patch -Npl -i ../lua-5.4.6-shared_library-1.patch && make linux
+patch -Np1 -i ../lua-5.4.6-shared_library-1.patch && make linux
 
 # Making pkgconfig file
 cat > lua.pc << "EOF"
