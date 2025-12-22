@@ -329,6 +329,9 @@ if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
   append_source "${HOME}/.bashrc" "${DOTFILESDIR}/vte.sh"
 fi
 
+# Ghostty settings
+mkdir -p ${HOME}/.config/ghostty && ln -sfv $HOME/.settings/dotfiles/config/ghostty ${HOME}/.config/ghostty && echo "Ghostty settings installed."
+
 printf '\n'
 printf '\n**** Closing Comments ****\n'
 printf 'Run %s dir to set up Doomemacs stuffs.\n\n' "$SETTINGS_DIR/bin/install_doomemacs.sh"
