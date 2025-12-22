@@ -2075,11 +2075,18 @@ end
 *** Bash
 #+NAME: prog_golang
 #+begin_src shell :tangle my_settings_bash
-export GOROOT="${HOMEBREW}/.opt/go"
-export GOPATH="${HOMEBREW}/.opt/go/bin"
-if [ -d "$GOROOT" ]; then
+SYSTEM_GOROOT="/usr/local/go"
+if [ -d "${SYSTEM_GOROOT}" ]; then
+    export GOROOT="/usr/local/go"
+    export GOPATH="$HOME/.go"
+else
+    export GOROOT="${HOMEBREW}/.opt/go"
+    export GOPATH="${HOMEBREW}/.opt/go/bin"
+fi
+    
+if [ -x "$(command -v $GOROOT/bin/go)" ]; then
     printf '%b Golang has been found at %s\n' "${check_symbol}" "${GROOT}"
-    addpath "${GOPATH}/bin:${GOPATH}"
+    addpath "${GOROOT}/bin"
 fi
 #+end_src
 *** Zsh

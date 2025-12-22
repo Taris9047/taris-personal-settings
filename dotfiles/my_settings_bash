@@ -753,11 +753,18 @@ if [ -d "${HOMEBREW}/.opt/gcc4" ]; then
     addpath "${HOMEBREW}/.opt/gcc4/bin"
 fi
 
-export GOROOT="${HOMEBREW}/.opt/go"
-export GOPATH="${HOMEBREW}/.opt/go/bin"
-if [ -d "$GOROOT" ]; then
+SYSTEM_GOROOT="/usr/local/go"
+if [ -d "${SYSTEM_GOROOT}" ]; then
+    export GOROOT="/usr/local/go"
+    export GOPATH="$HOME/.go"
+else
+    export GOROOT="${HOMEBREW}/.opt/go"
+    export GOPATH="${HOMEBREW}/.opt/go/bin"
+fi
+    
+if [ -x "$(command -v $GOROOT/bin/go)" ]; then
     printf '%b Golang has been found at %s\n' "${check_symbol}" "${GROOT}"
-    addpath "${GOPATH}/bin:${GOPATH}"
+    addpath "${GOROOT}/bin"
 fi
 
 JULIA_ROOT="${HOMEBREW}/.opt/julia"
