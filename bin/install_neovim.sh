@@ -8,7 +8,7 @@
 
 CWD=dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 
-NVCHAD_GOOD_VER='v0.10.1'
+NVCHAD_GOOD_VER='v0.11.5'
 printf 'Current NvChad Recommendation: %s\n' "${NVCHAD_GOOD_VER}"
 
 
