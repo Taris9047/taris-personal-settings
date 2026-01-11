@@ -273,8 +273,8 @@ alias tmuxkillall='tmux kill-server'
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 alias tmuxkillall='tmux kill-server'
-if type -q tmux
-    if test "$TERM" != "*screen*" -a "$TERM" != "*tmux*" -a -z "$TMUX" -a -n "$SSH_CLIENT"
+if set -q SSH_CLIENT; or set -q SSH_TTY; or test $TERM == "*screen*"
+    if type -q tmux;
         tmux new
     end
     builtin exit
@@ -351,10 +351,6 @@ Running 'git pull' each time is kind of a chore. Let us run it every time we log
 #+begin_src fish :tangle my_settings_fish
 if type -q bat
     set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
-else if type -q vim and not type -q nvim
-    set -x MANPAGER '/bin/bash -c "vim -MRn -c \"set buftype=nofile showtabline=0 ft=man ts=8 nomod nolist norelativenumber nonu noma\" -c \"normal L\" -c \"nmap q :qa<CR>\"</dev/tty <(col -b)"'
-else if type -q nvim
-    set -x MANPAGER "nvim -c 'set ft=man' -"
 end
 #+end_src
 

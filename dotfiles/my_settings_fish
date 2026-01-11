@@ -26,8 +26,8 @@ set right_arrow_symbol "\033[1;37m\u2192\033[0m"
 set line_delay 0.05
 
 alias tmuxkillall='tmux kill-server'
-if type -q tmux
-    if test "$TERM" != "*screen*" -a "$TERM" != "*tmux*" -a -z "$TMUX" -a -n "$SSH_CLIENT"
+if set -q SSH_CLIENT; or set -q SSH_TTY; or test $TERM == "*screen*"
+    if type -q tmux;
         tmux new
     end
     builtin exit
@@ -47,10 +47,6 @@ set fish_color_param brcyan
 
 if type -q bat
     set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
-else if type -q vim and not type -q nvim
-    set -x MANPAGER '/bin/bash -c "vim -MRn -c \"set buftype=nofile showtabline=0 ft=man ts=8 nomod nolist norelativenumber nonu noma\" -c \"normal L\" -c \"nmap q :qa<CR>\"</dev/tty <(col -b)"'
-else if type -q nvim
-    set -x MANPAGER "nvim -c 'set ft=man' -"
 end
 
 set MYSETTINGSDIR "$HOME/.config/my_settings"
