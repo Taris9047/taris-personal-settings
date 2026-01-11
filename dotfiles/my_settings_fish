@@ -58,13 +58,14 @@ if not test -d "$MYSETTINGSDIR"
     mkdir -p "$MYSETTINGSDIR"
 end
 
+set DEF_LS_MODE 'lsd'
 set LS_MODE_SAVE "$MYSETTINGSDIR/ls_mode"
 if test -f "$LS_MODE_SAVE"
     set LS_MODE (cat "$LS_MODE_SAVE")
 else
-    set LS_MODE 'lsd'
+    set LS_MODE "$DEF_LS_MODE"
     touch "$LS_MODE_SAVE"
-    echo 'lsd' >"$LS_MODE_SAVE"
+    echo "$DEF_LS_MODE" >"$LS_MODE_SAVE"
 end
 
 set BATTHEMESAVE "$MYSETTINGSDIR/bat_theme"
@@ -90,11 +91,11 @@ function set_ls_as_ls
     alias l='ls -p -F -h --color=auto --show-control-chars'
     alias lt='tree'
     alias l.='ls -a | grep "^\."'
-    echo 'ls' >"$HOME/.ls_mode"
+    echo 'ls' >"$LS_MODE_SAVE"
 end
 
 function set_exa_as_ls
-    if type -q "exa"
+    if type -q exa
         sleep "$line_delay"
         alias ls='exa -hF --color=always --group-directories-first'
         alias ll='exa -lahF --color=always --group-directories-first'
@@ -102,12 +103,14 @@ function set_exa_as_ls
         alias l='exa -hF --color=always --group-directories-first'
         alias lt='exa -aT --color=always --group-directories-first'
         alias l.='exa -a | egrep "^\."'
-        echo 'exa' >"$HOME/.ls_mode"
+        echo 'exa' >"$LS_MODE_SAVE"
+    else
+        printf 'exa does not exist! No changes applied\n'
     end
 end
 
 function set_lsd_as_ls
-    if type -q "lsd"
+    if type -q lsd
         sleep "$line_delay"
         alias ls='lsd -hF --color=always --group-dirs=first'
         alias ll='lsd -lahF --color=always --group-dirs=first'
@@ -115,15 +118,32 @@ function set_lsd_as_ls
         alias l='lsd -hF --color=auto --group-dirs=first'
         alias lt='lsd -a --tree --color=fancy --group-dirs=first'
         alias l.='lsd -a | egrep "^\."'
-        echo 'lsd' >"$HOME/.ls_mode"
+        echo 'lsd' >"$LS_MODE_SAVE"
+    else
+        printf 'lsd does not exist! No changes applied\n'
+    end
+end
+
+function set_eza_as_ls
+    if type -q eza
+        sleep "$line_delay"
+        alias ls='eza -hF --git --icons=auto'
+        alias ll='eza -halF --git --icons=auto'
+        alias l='eza -hF --git --icons=auto'
+        alias lt='eza -hF --git --icons=auto -T'
+        alias l.='eza -halF | egrep "^\."'
+        echo 'eza' >"$LS_MODE_SAVE"
+    else
+        printf 'eza does not exist! No changes applied\n'
     end
 end
 
 function set_ls
-    if not count "$argv" >/dev/null
-        printf "$check_symbol Current ls mode is: $LS_MODE\n"
+
+    if count $argv >/dev/null
+        set LS_MODE "$argv[1]"
     else
-        set LS_MODE "$1"
+        set LS_MODE (cat $LS_MODE_SAVE)
     end
 
     switch "$LS_MODE"
@@ -139,9 +159,13 @@ function set_ls
             printf "  $right_arrow_symbol Activating '$LS_MODE' mode.\n"
             set_ls_as_ls
 
+        case "eza"
+            printf "  $right_arrow_symbol Activating '$LS_MODE' mode.\n"
+            set_eza_as_ls
+
         case "*"
             printf "  $right_arrow_symbol $LS_MODE is not available!\n"
-            printf "    Select one of: lsd, exa, ls\n"
+            printf "    Select one of: lsd, exa, eza, ls\n"
     end
 end
 set_ls
@@ -668,24 +692,24 @@ end
 if type -q bat
     printf "$check_symbol bat found! using it instead of cat\n"
     sleep "$line_delay"
-    set bat_theme "(cat $BATTHEMESAVE)"
+    set bat_theme (cat $BATTHEMESAVE)
     alias cat='bat --theme="$bat_theme"'
 end
 
 function set_bat_theme
     echo "$argv[1]" >"$BATTHEMESAVE"
-    set bat_theme "(cat $BATTHEMESAVE)"
+    set bat_theme (cat $BATTHEMESAVE)
     alias cat='bat --theme="$bat_theme"'
 end
 
 function bat_theme_light
     echo "Solariazed (light)" >"$BATTHEMESAVE"
-    set bat_theme "(cat $BATTHEMESAVE)"
+    set bat_theme (cat $BATTHEMESAVE)
     alias cat='bat --theme="$bat_theme"'
 end
 function bat_theme_dark
     echo Dracula >"$BATTHEMESAVE"
-    set bat_theme "(cat $BATTHEMESAVE)"
+    set bat_theme (cat $BATTHEMESAVE)
     alias cat='bat --theme="$bat_theme"'
 end
 
