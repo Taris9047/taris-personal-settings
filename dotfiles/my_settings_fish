@@ -169,6 +169,7 @@ set_ls
 set GOOGLE_DRIVE "$HOME/.google-drive"
 set GOOGLE_PHOTOS "$HOME/.google-photos"
 set ONE_DRIVE "$HOME/.onedrive"
+set ICLOUD_DRIVE "$HOME/.iclouddrive"
 
 set texlive_base_path "$HOME/.texlive"
 

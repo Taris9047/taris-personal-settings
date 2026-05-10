@@ -197,6 +197,7 @@ set_ls() {
 GOOGLE_DRIVE="${HOME}/.google-drive"
 GOOGLE_PHOTOS="${HOME}/.google-photos"
 ONE_DRIVE="${HOME}/.onedrive"
+ICLOUD_DRIVE="${HOME}/.iclouddrive"
 
 texlive_base_path="${HOME}/.texlive"
 

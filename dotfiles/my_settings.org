@@ -677,6 +677,7 @@ set_ls
 GOOGLE_DRIVE="${HOME}/.google-drive"
 GOOGLE_PHOTOS="${HOME}/.google-photos"
 ONE_DRIVE="${HOME}/.onedrive"
+ICLOUD_DRIVE="${HOME}/.iclouddrive"
 #+end_src
 
 *** Zsh
@@ -689,6 +690,7 @@ ONE_DRIVE="${HOME}/.onedrive"
 set GOOGLE_DRIVE "$HOME/.google-drive"
 set GOOGLE_PHOTOS "$HOME/.google-photos"
 set ONE_DRIVE "$HOME/.onedrive"
+set ICLOUD_DRIVE "$HOME/.iclouddrive"
 #+end_src
 
 ** Texlive home directory set
