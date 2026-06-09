@@ -1,6 +1,7 @@
 #!/bin/sh
 
 check_symbol="\033[1;32m\u2713\033[0m"
+right_arrow_symbol="\033[1;37m\u2192\033[0m"
 
 printf '\n%b WSL environment detected!! Activating it ...\n' "${check_symbol}"
 
@@ -47,8 +48,40 @@ elif [ -f "${iview64_cmd}" ]; then
   printf '%b Now you can run IrfanView with "iview" command.\n' "${check_symbol}"
 fi
 
-
-
+#
+# Ollama stuffs
+#
+if [ -f "${HOME}/.openclaw/completions/openclaw.bash" ]; then
+  . "${HOME}/.openclaw/completions/openclaw.bash"
+fi
+# Linuxbrew check
+if [ -x "$(command -v brew)" ]; then
+  printf '%b Homebrew detected, activating it.\n' "${check_symbol}"
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
+else
+  # Install homebrew
+  printf '%b Homebrew not detected, installing it.\n' "${check_symbol}"
+  sudo apt-get update 
+  sudo apt-get install build-essential procps curl file git
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
+fi
+# Winhost IP stuffs...
+export WIN_HOST_IP=$(ip route | grep default | awk '{print $3}')
+printf '%b Windows Host IP discovered: %s\n' "${check_symbol}" "${WIN_HOST_IP}"
+# default Ollama port
+OLLAMA_PORT='11434'
+if [ ! -x "$(command -v socat)" ]; then
+  printf '%b Socat is not on the system. Installing it\n' "${check_symbol}"
+  sudo apt-get update && sudo apt-get install -y socat
+fi
+if lsof -Pi :${OLLAMA_PORT} -sTCP:LISTEN -t >/dev/null ; then
+  printf '%b Port %s is already in use. Skipping socat execution\n' "${check_symbol}" "${OLLAMA_PORT}"
+else
+  # Run the socat port mapping for external ollama
+  printf '%b Running socat to map the IP port for Ollama\n' "${check_symbol}"
+  socat TCP-LISTEN:${OLLAMA_PORT},reuseaddr,fork TCP:${WIN_HOST_IP}:${OLLAMA_PORT} &
+fi
 
 
 
