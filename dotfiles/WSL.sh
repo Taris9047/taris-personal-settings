@@ -55,7 +55,7 @@ if [ -f "${HOME}/.openclaw/completions/openclaw.bash" ]; then
   . "${HOME}/.openclaw/completions/openclaw.bash"
 fi
 # Linuxbrew check
-if [ -x "$(command -v brew)" ]; then
+if [ -x "$(command -v /home/linuxbrew/.linuxbrew/bin/brew)" ]; then
   printf '%b Homebrew detected, activating it.\n' "${check_symbol}"
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
 else
