@@ -18,3 +18,8 @@ if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] || [ -n "$TMUX" ]; then
   fi
 fi
 . "$HOME/.cargo/env"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/taris/.lmstudio/bin"
+# End of LM Studio CLI section
+

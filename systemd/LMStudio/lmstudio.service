@@ -1,0 +1,15 @@
+[Unit]
+Description=LM Studio Server
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+User=taris
+Environment="HOME=/home/taris"
+ExecStartPre=/home/taris/.lmstudio/bin/lms daemon up
+ExecStartPre=/home/taris/.lmstudio/bin/lms load google/gemma-4-26b-a4b-qat --yes
+ExecStart=/home/taris/.lmstudio/bin/lms server start
+ExecStop=/home/taris/.lmstudio/bin/lms daemon down
+
+[Install]
+WantedBy=multi-user.target
