@@ -29,6 +29,7 @@ run_cmd() {
 			printf '%s\n' "$msg"
 		else
 			printf 'Error: Failed to execute: %s\n' "$cmd"
+		fi
 	fi
 }
 
