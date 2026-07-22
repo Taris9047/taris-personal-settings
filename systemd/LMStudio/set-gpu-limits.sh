@@ -24,7 +24,7 @@ if [ ! -z "${LIMIT_0}" ]; then
 fi
 
 if [ ! -z "${LIMIT_1}" ]; then
-	nvidia-smi -i 0 -pl "${LIMIT_1}" && \
+	nvidia-smi -i 1 -pl "${LIMIT_1}" && \
 	printf 'nvidia-smi: Power limit for GPU%d set to %dW\n' "1" "${LIMIT_1}"
 fi
 
