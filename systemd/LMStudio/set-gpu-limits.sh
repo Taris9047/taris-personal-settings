@@ -26,14 +26,21 @@ run_cmd() {
 		echo "[DRY-RUN] $cmd"
 	else
 		if eval "$cmd"; then
-			printf '%s\n' "$msg"
+			printf '✅ %s\n' "$msg"
 		else
-			printf 'Error: Failed to execute: %s\n' "$cmd"
+			printf '❌ Error: Failed to execute: %s\n' "$cmd"
 		fi
 	fi
 }
 
-# 1. Read in the configuration
+# 1. Root Privilege Check
+# We allow dry-run even if not root, but for real changes, we insist on sudo.
+if [ "$DRY_RUN" = false ] && [ "$EUID" -ne 0 ]; then
+    printf "❌ Error: This script must be run with root privileges (use sudo).\n"
+    exit 1
+fi
+
+# 2. Read in the configuration
 NVIDIA_LIMITS_FILE='/etc/nvidia-limits.conf'
 if [ ! -f "${NVIDIA_LIMITS_FILE}" ]; then
 	printf 'nvidia-limits.conf is not installed yet!\n'
@@ -41,20 +48,24 @@ if [ ! -f "${NVIDIA_LIMITS_FILE}" ]; then
 fi
 source "${NVIDIA_LIMITS_FILE}"
 
-# 2.5. Check nvidia-smi status
+# 3. Check nvidia-smi status
 if [ ! -x "$(command -v nvidia-smi)" ]; then
-	printf 'Error: nvidia-smi does not exist in the system!\nCheck NVIDIA Drivers!\n'
+	printf '❌ Error: nvidia-smi does not exist in the system!\nCheck NVIDIA Drivers!\n'
 	exit 1
 fi
 
 if [ -z "$(nvidia-smi -L | grep -iw UUID)" ]; then
-	printf 'Error: nvidia-smi does not show GPU UUIDs.\nPlease check driver installation status!\n'
+	printf '❌ Error: nvidia-smi does not show GPU UUIDs.\nPlease check driver installation status!\n'
 	exit 1
 fi
 
-# 3. Now do the NVIDIA thing...
+# 4. Now do the NVIDIA thing...
 echo "--- NVIDIA Power Limit Setup ---"
-if [ "$DRY_RUN" = true ]; then echo "Mode: DRY-RUN (No changes will be made)"; fi
+if [ "$DRY_RUN" = true ]; then 
+	echo "Mode: DRY-RUN (No changes will be made)"; 
+else
+	echo "Mode: Live (Applying Changes!)";
+fi
 
 #  1) persistence mode ON
 run_cmd "nvidia-smi -pm 1" "NVIDIA Persistence Mode: ON"
