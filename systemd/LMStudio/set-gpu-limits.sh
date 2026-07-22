@@ -75,7 +75,7 @@ if [ -n "${LIMIT_0}" ]; then
 fi
 
 if [ -n "${LIMIT_1}" ]; then
-	run_cmd "nvidia-smi -i 1 -pl ${LIMIT_0}" "nvidia-smi: Power limit for GPU 1 set to ${LIMIT_1}W"
+	run_cmd "nvidia-smi -i 1 -pl ${LIMIT_1}" "nvidia-smi: Power limit for GPU 1 set to ${LIMIT_1}W"
 fi
 
 echo "--------------------------------"
