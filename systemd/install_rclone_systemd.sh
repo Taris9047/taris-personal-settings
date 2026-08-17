@@ -54,7 +54,7 @@ enable_rclone_service 'google-drive' 'GoogleDrive'
 enable_rclone_service 'onedrive' 'MS Onedrive'
 # Added iCloudDrive recently
 # iCloud Drive
-enable_rclone_service 'icloud' 'iCloudDrive'
+enable_rclone_service 'iclouddrive' 'iCloudDrive'
 
 printf 'RClone Systemd Integration Enabled!!\n'
 
