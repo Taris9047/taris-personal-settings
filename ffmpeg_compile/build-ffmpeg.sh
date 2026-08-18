@@ -23,6 +23,9 @@ SYSTEM_CXX_MVER=$(echo $SYSTEM_GCC_VER | awk '{ split($0,a,/[.]/); print a[1] }'
 LATEST=false
 CURRENT_PACKAGE_VERSION=0
 
+# Compiled binaries
+BINARIES=("ffmpeg" "ffprobe" "ffplay")
+
 # Fallback compilers
 if [ ! -x "$(command -v clang)" ]; then
 	echo "Oops, clang can't be found!! Falling back to system GCC."
@@ -284,6 +287,27 @@ cleanup() {
 
 version() {
     echo "$0 $VERSION"
+}
+
+install_ffmpeg() {
+    # Detect if we need sudo by checking if the folder is writable
+    local cmd="cp -vfr"
+    [[ ! -w "$INSTALL_FOLDER" ]] && cmd="sudo cp -vfr"
+
+    echo "Starting installation to $INSTALL_FOLDER..."
+       for bin in "${BINARIES[@]}"; do
+        local src="$WORKSPACE/bin/$bin"
+        local dest="$INSTALL_FOLDER/$bin"
+
+        # Check if source exists before trying to copy
+        if [[ -f "$src" ]]; then
+            $cmd "$src" "$dest"
+        else
+            echo "⚠️  Skipping: $bin not found at $src"
+        fi
+    done
+
+    echo "✅ Done. ffmpeg installation complete."
 }
 
 # Adopted from
@@ -1202,32 +1226,11 @@ if build "ffmpeg" "snapshot"; then
 	verify_binary_type
 
 	if [[ $AUTOINSTALL == "yes" ]]; then
-		if [ ! -w "$INSTALL_FOLDER" ]; then
-			sudo cp -vfr "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
-			sudo cp -vfr "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
-			sudo cp -vfr "$WORKSPACE/bin/ffplay" "$INSTALL_FOLDER/ffplay"
-			echo "Done. ffmpeg is now installed to your system"
-		else
-			cp -vfr "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
-			cp -vfr "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
-			cp -vfr "$WORKSPACE/bin/ffplay" "$INSTALL_FOLDER/ffplay"
-			echo "Done. ffmpeg is now installed to your system"
-		fi
+		install_ffmpeg
 	elif [[ ! $SKIPINSTALL == "yes" ]]; then
-		read -r -p "Install the binary to your $INSTALL_FOLDER folder? [Y/n] " response
+		read -r -p "Install the binaries to $INSTALL_FOLDER? [Y/n] " response
 		case $response in
-		[yY][eE][sS] | [yY] | "")
-			if [ ! -w "$INSTALL_FOLDER" ]; then
-				sudo cp -vfr "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
-				sudo cp -vfr "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
-				sudo cp -vfr "$WORKSPACE/bin/ffplay" "$INSTALL_FOLDER/ffplay"
-			else
-				cp -vfr "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
-				cp -vfr "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
-				cp -vfr "$WORKSPACE/bin/ffplay" "$INSTALL_FOLDER/ffplay"
-			fi
-			echo "Done. ffmpeg is now installed to your system"
-			;;
+			[yY][eE][sS] | [yY] | "") install_ffmpeg ;;
 		esac
 	fi
 fi
