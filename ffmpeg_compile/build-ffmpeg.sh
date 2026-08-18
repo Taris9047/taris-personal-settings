@@ -1144,13 +1144,12 @@ if command_exists "nvcc"; then
 		fi
 	fi
 
-	if build "amf" "1.4.33.0"; then
-		amf_ver_short="${CURRENT_PACKAGE_VERSION::-2}"
-		download "https://github.com/GPUOpen-LibrariesAndSDKs/AMF/archive/refs/tags/v${amf_ver_short}.tar.gz" "AMF-${amf_ver_short}.tar.gz"
-		cd "$PACKAGES/AMF-${amf_ver_short}" || exit
+	if build "amf" "1.5.2"; then
+    download "https://github.com/GPUOpen-LibrariesAndSDKs/AMF/releases/download/v${CURRENT_PACKAGE_VERSION}/AMF-headers-v${CURRENT_PACKAGE_VERSION}.tar.gz" "AMF-${CURRENT_PACKAGE_VERSION}.tar.gz"
+		cd "$PACKAGES/AMF-${CURRENT_PACKAGE_VERSION}" || exit
 		execute rm -rf "${WORKSPACE}/include/AMF" 
 		execute mkdir -p "${WORKSPACE}/include/AMF"
-		execute cp -r "${PACKAGES}"/AMF-"${amf_ver_short}"/amf/public/include/* "${WORKSPACE}/include/AMF/"
+		execute cp -r "${PACKAGES}"/AMF-"${CURRENT_PACKAGE_VERSION}"/AMF/* "${WORKSPACE}/include/AMF/"
 		build_done "amf" "${amf_ver}"
 		CONFIGURE_OPTIONS+=("--enable-amf")
 	fi
