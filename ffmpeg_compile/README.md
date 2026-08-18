@@ -17,4 +17,5 @@ For Ubuntu:
 ocl-icd-opencl-dev
 opencl-headers
 
-
+### Help2man
+Help2man is also needed to compile libtool.

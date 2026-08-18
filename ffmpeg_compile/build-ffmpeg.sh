@@ -609,14 +609,14 @@ if build "help2man" "1.49.3"; then
 	build_done "help2man" "${CURRENT_PACKAGE_VERSION}"
 fi
 
-if build "libtool" "Git"; then
-  #download "https://ftpmirror.gnu.org/libtool/libtool-${CURRENT_PACKAGE_VERSION}.tar.gz" "libtool-${CURRENT_PACKAGE_VERSION}.tar.gz"
-  #cd "$PACKAGES/libtool-${CURRENT_PACKAGE_VERSION}" || exit
-  if [ -d "${PACKAGES}/libtool" ]; then
-  	rm -rf "${PACKAGES}/libtool"
-  fi
-  git clone git://git.savannah.gnu.org/libtool.git "${PACKAGES}/libtool" && cd "${PACKAGES}/libtool"
-  execute ./bootstrap
+if build "libtool" "2.4.6"; then
+  download "https://ftp.gnu.org/gnu/libtool/libtool-${CURRENT_PACKAGE_VERSION}.tar.xz" "libtool-${CURRENT_PACKAGE_VERSION}.tar.gz"
+  cd "$PACKAGES/libtool-${CURRENT_PACKAGE_VERSION}" || exit
+#   if [ -d "${PACKAGES}/libtool*" ]; then
+#   	rm -rf "${PACKAGES}/libtool*"
+#   fi
+  #git clone --depth 1 git://git.savannah.gnu.org/libtool.git "${PACKAGES}/libtool" && cd "${PACKAGES}/libtool"
+  #execute ./bootstrap
   execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --enable-static --disable-shared
   execute make -j $MJOBS
   execute make install
