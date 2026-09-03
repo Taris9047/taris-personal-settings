@@ -635,7 +635,7 @@ fi
 	  cd "${PACKAGES}/cmake-${CURRENT_PACKAGE_VERSION}" || exit
 	  execute \
       CC=\"${SYSTEM_GCC}\" CXX=\"${SYSTEM_CXX}\" \
-      LDFLAGS=\"-B/usr/bin/\" \
+      LDFLAGS=\"-B/usr/bin/\" \ # This part is important since we need to enforce system tools.
       ./bootstrap --prefix="${WORKSPACE}" --parallel="${MJOBS}" \
       --no-system-libs
 	  execute make -j $MJOBS
@@ -932,9 +932,9 @@ if build "xvidcore" "1.3.7"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libxvid")
 
-if build "x264" "b35605ac"; then
-	download "https://code.videolan.org/videolan/x264/-/archive/$CURRENT_PACKAGE_VERSION/x264-$CURRENT_PACKAGE_VERSION.tar.gz" "x264-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES"/x264-${CURRENT_PACKAGE_VERSION} || exit
+if build "x264" "git"; then
+  git clone --depth 1 https://code.videolan.org/videolan/x264.git "${PACKAGES}/x264-git"
+  cd "${PACKAGES}/x264-git" || exit
 
 	if [[ "$OSTYPE" == "linux-gnu" ]]; then
 		execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS=\"$CXXFLAGS\"
@@ -949,30 +949,6 @@ if build "x264" "b35605ac"; then
 	build_done "x264" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
-
-# if build "x265" "3.4"; then
-#   download "https://github.com/videolan/x265/archive/refs/tags/${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
-#   cd "$PACKAGES"/x265-*/ || exit
-#   cd source || exit
-#   execute cmake . \
-#     -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
-#     -DCMAKE_C_COMPILER=\""${CC}"\" \
-#     -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
-#     -DCMAKE_C_FLAGS=\""${CFLAGS}"\" \
-#     -DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
-#     -DENABLE_SHARED=OFF \
-#     -DBUILD_SHARED_LIBS=OFF \
-#     -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-#   execute make -j $MJOBS
-#   execute make install
-#
-#   if [ -n "${LDEXEFLAGS}" ]; then
-#     sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}/lib/pkgconfig/x265.pc" # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
-#   fi
-#
-#   build_done "x265" "${CURRENT_PACKAGE_VERSION}"
-# fi
-
 
 if build "x265" "4.2"; then
   download "http://ftp.videolan.org/pub/videolan/x265/x265_${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
