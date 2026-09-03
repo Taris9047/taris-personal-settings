@@ -8,8 +8,9 @@ VERSION="1.26.2"
 CWD="$(pwd -P)"
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
-CC="$(command -v clang)"
-CXX="$(command -v clang++)"
+
+source ./scripts/find_newest_clang.sh
+
 RETRY_DELAY=5
 
 # Get system gcc version
@@ -565,10 +566,10 @@ if build "nasm" "2.16.01"; then
 	build_done "nasm" "${CURRENT_PACKAGE_VERSION}"
 fi
 
-if build "libunistring" "1.2"; then
+if build "libunistring" "1.4.2"; then
 	download "https://ftp.gnu.org/gnu/libunistring/libunistring-${CURRENT_PACKAGE_VERSION}.tar.gz" "libunistring-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/libunistring-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --enable-static
 	execute make -j $MJOBS
 	execute make install
 	build_done "libunistring" "${CURRENT_PACKAGE_VERSION}"
@@ -628,9 +629,15 @@ fi
 #
 # if [ ! -x "$(command -v cmake)" ]; then
 	if build "cmake" "4.4.2"; then
-	  download "https://github.com/Kitware/CMake/releases/download/v$CURRENT_PACKAGE_VERSION/cmake-$CURRENT_PACKAGE_VERSION.tar.gz" "cmake-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	  cd "$PACKAGES/cmake-${CURRENT_PACKAGE_VERSION}" || exit
-	  execute ./configure --prefix="${WORKSPACE}" --parallel="${MJOBS}" -- -DCMAKE_USE_OPENSSL=OFF
+    echo "Deleteing previousely downloaded cmake packages..."
+    rm -rf "${PACKAGES}/cmake-${CURRENT_PACKAGE_VERSION}"
+	  download "https://github.com/Kitware/CMake/releases/download/v${CURRENT_PACKAGE_VERSION}/cmake-${CURRENT_PACKAGE_VERSION}.tar.gz" "cmake-${CURRENT_PACKAGE_VERSION}.tar.gz"
+	  cd "${PACKAGES}/cmake-${CURRENT_PACKAGE_VERSION}" || exit
+	  execute \
+      CC=\"${SYSTEM_GCC}\" CXX=\"${SYSTEM_CXX}\" \
+      LDFLAGS=\"-B/usr/bin/\" \
+      ./bootstrap --prefix="${WORKSPACE}" --parallel="${MJOBS}" \
+      --no-system-libs
 	  execute make -j $MJOBS
 	  execute make install
 	  build_done "cmake" "${CURRENT_PACKAGE_VERSION}"
