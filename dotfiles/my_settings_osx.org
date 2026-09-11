@@ -567,7 +567,7 @@ function brew_detect () {
 }
 
 function pkgup () {
-    brew_detect && brew update && brew upgrade
+    brew_detect && brew update && brew upgrade -y
     return 0;
 }
 
