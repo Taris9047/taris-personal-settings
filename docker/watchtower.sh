@@ -10,7 +10,7 @@ fi
 docker run --detach \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  containrrr/watchtower \
+  nickfedor/watchtower \
   --interval 60 --cleanup 
 
 printf 'Running watchtower!\n'

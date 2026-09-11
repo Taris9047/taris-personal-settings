@@ -159,7 +159,7 @@ set_ls() {
         LS_MODE="$1"
     fi
 
-    case "${LS_MODE}" in
+    case "$LS_MODE" in
     "lsd")
         printf "  %b Activating '%s' mode.\n" "${right_arrow_symbol}" "${LS_MODE}"
         set_lsd_as_ls
@@ -186,6 +186,7 @@ set_ls() {
 GOOGLE_DRIVE="${HOME}/.google-drive"
 GOOGLE_PHOTOS="${HOME}/.google-photos"
 ONE_DRIVE="${HOME}/.onedrive"
+ICLOUD_DRIVE="${HOME}/.iclouddrive"
 
 texlive_base_path="${HOME}/.texlive"
 

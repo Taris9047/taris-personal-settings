@@ -8,8 +8,9 @@ VERSION="1.26.2"
 CWD="$(pwd -P)"
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
-CC="$(command -v clang)"
-CXX="$(command -v clang++)"
+
+source ./scripts/find_newest_clang.sh
+
 RETRY_DELAY=5
 
 # Get system gcc version
@@ -23,6 +24,9 @@ SYSTEM_CXX_MVER=$(echo $SYSTEM_GCC_VER | awk '{ split($0,a,/[.]/); print a[1] }'
 LATEST=false
 CURRENT_PACKAGE_VERSION=0
 
+# Compiled binaries
+BINARIES=("ffmpeg" "ffprobe" "ffplay")
+
 # Fallback compilers
 if [ ! -x "$(command -v clang)" ]; then
 	echo "Oops, clang can't be found!! Falling back to system GCC."
@@ -35,7 +39,7 @@ LDLIBSTDCPP="-L/usr/lib/gcc/$SYSTEM_GCC_ARCH/$SYSTEM_CXX_MVER -L/usr/lib -L/usr/
 LDFLAGS_Z="-L${WORKSPACE}/lib"
 LDFLAGS="${LDFLAGS_Z} -lz $LDLIBSTDCPP"
 LDEXEFLAGS=""
-EXTRALIBS="-ldl -lpthread -lm -lz"
+EXTRALIBS="-ldl -lpthread -lm -lz -lmpg123"
 case "$CC" in
 */gcc | */clang)
 	CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIC -fPIE"
@@ -286,6 +290,27 @@ version() {
     echo "$0 $VERSION"
 }
 
+install_ffmpeg() {
+    # Detect if we need sudo by checking if the folder is writable
+    local cmd="cp -vfr"
+    [[ ! -w "$INSTALL_FOLDER" ]] && cmd="sudo cp -vfr"
+
+    echo "Starting installation to $INSTALL_FOLDER..."
+       for bin in "${BINARIES[@]}"; do
+        local src="$WORKSPACE/bin/$bin"
+        local dest="$INSTALL_FOLDER/$bin"
+
+        # Check if source exists before trying to copy
+        if [[ -f "$src" ]]; then
+            $cmd "$src" "$dest"
+        else
+            echo "⚠️  Skipping: $bin not found at $src"
+        fi
+    done
+
+    echo "✅ Done. ffmpeg installation complete."
+}
+
 # Adopted from
 #
 # https://stackoverflow.com/a/4025065
@@ -502,7 +527,7 @@ if [ -n "$LDEXEFLAGS" ]; then
 fi
 
 ## Base Libraries to build stuffs
-if build "zlib" "1.3.1"; then
+if build "zlib" "1.3.2"; then
 	download "https://www.zlib.net/zlib-${CURRENT_PACKAGE_VERSION}.tar.gz" "zlib-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/zlib-${CURRENT_PACKAGE_VERSION}" || exit
 	execute env "${COMPILER_SET_Z}" ./configure --static --prefix="${WORKSPACE}"
@@ -541,10 +566,10 @@ if build "nasm" "2.16.01"; then
 	build_done "nasm" "${CURRENT_PACKAGE_VERSION}"
 fi
 
-if build "libunistring" "1.2"; then
+if build "libunistring" "1.4.2"; then
 	download "https://ftp.gnu.org/gnu/libunistring/libunistring-${CURRENT_PACKAGE_VERSION}.tar.gz" "libunistring-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/libunistring-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --enable-static
 	execute make -j $MJOBS
 	execute make install
 	build_done "libunistring" "${CURRENT_PACKAGE_VERSION}"
@@ -585,14 +610,14 @@ if build "help2man" "1.49.3"; then
 	build_done "help2man" "${CURRENT_PACKAGE_VERSION}"
 fi
 
-if build "libtool" "Git"; then
-  #download "https://ftpmirror.gnu.org/libtool/libtool-${CURRENT_PACKAGE_VERSION}.tar.gz" "libtool-${CURRENT_PACKAGE_VERSION}.tar.gz"
-  #cd "$PACKAGES/libtool-${CURRENT_PACKAGE_VERSION}" || exit
-  if [ -d "${PACKAGES}/libtool" ]; then
-  	rm -rf "${PACKAGES}/libtool"
-  fi
-  git clone git://git.savannah.gnu.org/libtool.git "${PACKAGES}/libtool" && cd "${PACKAGES}/libtool"
-  execute ./bootstrap
+if build "libtool" "2.4.6"; then
+  download "https://ftp.gnu.org/gnu/libtool/libtool-${CURRENT_PACKAGE_VERSION}.tar.xz" "libtool-${CURRENT_PACKAGE_VERSION}.tar.gz"
+  cd "$PACKAGES/libtool-${CURRENT_PACKAGE_VERSION}" || exit
+#   if [ -d "${PACKAGES}/libtool*" ]; then
+#   	rm -rf "${PACKAGES}/libtool*"
+#   fi
+  #git clone --depth 1 git://git.savannah.gnu.org/libtool.git "${PACKAGES}/libtool" && cd "${PACKAGES}/libtool"
+  #execute ./bootstrap
   execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --enable-static --disable-shared
   execute make -j $MJOBS
   execute make install
@@ -603,10 +628,16 @@ fi
 # Ok, let's use old cmake instead of new one...
 #
 # if [ ! -x "$(command -v cmake)" ]; then
-	if build "cmake" "3.31.7"; then
-	  download "https://github.com/Kitware/CMake/releases/download/v$CURRENT_PACKAGE_VERSION/cmake-$CURRENT_PACKAGE_VERSION.tar.gz" "cmake-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	  cd "$PACKAGES/cmake-${CURRENT_PACKAGE_VERSION}" || exit
-	  execute ./configure --prefix="${WORKSPACE}" --parallel="${MJOBS}" -- -DCMAKE_USE_OPENSSL=OFF
+	if build "cmake" "4.4.2"; then
+    echo "Deleteing previousely downloaded cmake packages..."
+    rm -rf "${PACKAGES}/cmake-${CURRENT_PACKAGE_VERSION}"
+	  download "https://github.com/Kitware/CMake/releases/download/v${CURRENT_PACKAGE_VERSION}/cmake-${CURRENT_PACKAGE_VERSION}.tar.gz" "cmake-${CURRENT_PACKAGE_VERSION}.tar.gz"
+	  cd "${PACKAGES}/cmake-${CURRENT_PACKAGE_VERSION}" || exit
+	  execute \
+      CC=\"${SYSTEM_GCC}\" CXX=\"${SYSTEM_CXX}\" \
+      LDFLAGS=\"-B/usr/bin/\" \ # This part is important since we need to enforce system tools.
+      ./bootstrap --prefix="${WORKSPACE}" --parallel="${MJOBS}" \
+      --no-system-libs
 	  execute make -j $MJOBS
 	  execute make install
 	  build_done "cmake" "${CURRENT_PACKAGE_VERSION}"
@@ -614,7 +645,7 @@ fi
 # fi
 
 
-if build "openssl" "3.4.0"; then
+if build "openssl" "4.0.1"; then
 	download "https://www.openssl.org/source/openssl-${CURRENT_PACKAGE_VERSION}.tar.gz" "openssl-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/openssl-${CURRENT_PACKAGE_VERSION}" || exit 
 	if "${APPLE_SILICON}"; then
@@ -649,7 +680,7 @@ CONFIGURE_OPTIONS+=("--enable-openssl")
 #	build_done "trousers" "${CURRENT_PACKAGE_VERSION}"
 #fi
 
-# install git if the systen don't have git... probably won't happen in many cases.
+# install git if the systen don't have git... But really? not having git is extra ordinary situation these days...
 GIT="$(command -v git)"
 if [ ! -x  "${GIT}" ]; then
 	if build "git" "2.44.0"; then
@@ -663,8 +694,8 @@ if [ ! -x  "${GIT}" ]; then
 	fi
 fi
 
-if build "giflib" "5.2.1"; then
-  download "https://netcologne.dl.sourceforge.net/project/giflib/giflib-$CURRENT_PACKAGE_VERSION.tar.gz"
+if build "giflib" "6.1.3"; then
+  download "https://sourceforge.net/projects/giflib/files/giflib-6.x/giflib-${CURRENT_PACKAGE_VERSION}.tar.gz"
   if [[ "$OSTYPE" == "darwin"* ]]; then
     wget  "https://sourceforge.net/p/giflib/bugs/_discuss/thread/4e811ad29b/c323/attachment/Makefile.patch"
     execute patch -p0 --forward "${PACKAGES}/giflib-$CURRENT_PACKAGE_VERSION/Makefile" "${PACKAGES}/Makefile.patch" || true
@@ -774,10 +805,22 @@ if command_exists "meson"; then
 fi
 
 ## Audio Library
-if build "lame" "3.100"; then
-	download "https://netcologne.dl.sourceforge.net/project/lame/lame/${CURRENT_PACKAGE_VERSION}/lame-${CURRENT_PACKAGE_VERSION}.tar.gz" "lame-${CURRENT_PACKAGE_VERSION}.tar.gz"
+if build "libmpg123" "1.33.7"; then
+  download "https://sourceforge.net/projects/mpg123/files/mpg123/${CURRENT_PACKAGE_VERSION}/mpg123-${CURRENT_PACKAGE_VERSION}.tar.bz2"
+  cd "${PACKAGES}/mpg123-${CURRENT_PACKAGE_VERSION}" || exit
+  execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --enable-static --disable-shared
+  execute make -j "${MJOBS}"
+  execute make install
+
+  build_done "libmpg123" "${CURRENT_PACKAGE_VERSION}"
+fi
+
+if build "lame" "4.0"; then
+  download "https://sourceforge.net/projects/lame/files/lame/${CURRENT_PACKAGE_VERSION}/lame-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/lame-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+  LAME_CFLAGS="\"${CFLAGS} -std=gnu89 -Wno-error=implicit-function-declaration -Wno-error=incompatible-pointer-types\""
+  sed -i -e 's/^\(\s*hardcode_libdir_flag_spec\s*=\).*/\1/' configure
+	execute env "CC=${CC} CFLAGS=${LAME_CFLAGS}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
 
@@ -785,36 +828,16 @@ if build "lame" "3.100"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libmp3lame")
 
-if build "opencore" "0.1.6"; then
-	download "https://sourceforge.net/projects/opencore-amr/files/opencore-amr-${CURRENT_PACKAGE_VERSION}.tar.gz/download?use_mirror=gitenet" "opencore-amr-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/opencore-amr-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "$COMPILER_SET_GCC" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
+if build "libogg" "1.3.6"; then
+  download "https://downloads.xiph.org/releases/ogg/libogg-${CURRENT_PACKAGE_VERSION}.tar.xz"
+  cd "$PACKAGES/libogg-${CURRENT_PACKAGE_VERSION}/" || exit
+  execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static --docdir="${WORKSPACE}/share/doc/libogg-${CURRENT_PACKAGE_VERSION}"
+  execute make -j $MJOBS
+  execute make install
 
-	build_done "opencore" "${CURRENT_PACKAGE_VERSION}"
+  build_done "libogg" "${CURRENT_PACKAGE_VERSION}"
 fi
-CONFIGURE_OPTIONS+=("--enable-libopencore_amrnb" "--enable-libopencore_amrwb")
 
-if build "opus" "1.5.1"; then
-	download https://downloads.xiph.org/releases/opus/opus-${CURRENT_PACKAGE_VERSION}.tar.gz "opus-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/opus-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
-
-	build_done "opus" "${CURRENT_PACKAGE_VERSION}"
-fi
-CONFIGURE_OPTIONS+=("--enable-libopus")
-
-if build "libogg" "1.3.3"; then
-	download "https://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-${CURRENT_PACKAGE_VERSION}.tar.gz" "libogg-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/libogg-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
-	build_done "libogg" "${CURRENT_PACKAGE_VERSION}"
-fi
 
 if build "libvorbis" "1.3.7"; then
 	download "https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-${CURRENT_PACKAGE_VERSION}.tar.gz" "libvorbis-${CURRENT_PACKAGE_VERSION}.tar.gz"
@@ -857,10 +880,10 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libfdk-aac")
 
 ## Image Library
-if build "libwebp" "1.3.2"; then
-	download "https://github.com/webmproject/libwebp/archive/v${CURRENT_PACKAGE_VERSION}.tar.gz" "libwebp-${CURRENT_PACKAGE_VERSION}.tar.gz"
+if build "libwebp" "1.6.0"; then
+  download "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/libwebp-${CURRENT_PACKAGE_VERSION}" && ./autogen.sh
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static --enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras --enable-swap-16bit-csp
 	execute make -j $MJOBS
 	execute make install
 
@@ -909,9 +932,9 @@ if build "xvidcore" "1.3.7"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libxvid")
 
-if build "x264" "b35605ac"; then
-	download "https://code.videolan.org/videolan/x264/-/archive/$CURRENT_PACKAGE_VERSION/x264-$CURRENT_PACKAGE_VERSION.tar.gz" "x264-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES"/x264-${CURRENT_PACKAGE_VERSION} || exit
+if build "x264" "git"; then
+  git clone --depth 1 https://code.videolan.org/videolan/x264.git "${PACKAGES}/x264-git"
+  cd "${PACKAGES}/x264-git" || exit
 
 	if [[ "$OSTYPE" == "linux-gnu" ]]; then
 		execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS=\"$CXXFLAGS\"
@@ -927,31 +950,7 @@ if build "x264" "b35605ac"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
 
-# if build "x265" "3.4"; then
-#   download "https://github.com/videolan/x265/archive/refs/tags/${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
-#   cd "$PACKAGES"/x265-*/ || exit
-#   cd source || exit
-#   execute cmake . \
-#     -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
-#     -DCMAKE_C_COMPILER=\""${CC}"\" \
-#     -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
-#     -DCMAKE_C_FLAGS=\""${CFLAGS}"\" \
-#     -DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
-#     -DENABLE_SHARED=OFF \
-#     -DBUILD_SHARED_LIBS=OFF \
-#     -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-#   execute make -j $MJOBS
-#   execute make install
-#
-#   if [ -n "${LDEXEFLAGS}" ]; then
-#     sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}/lib/pkgconfig/x265.pc" # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
-#   fi
-#
-#   build_done "x265" "${CURRENT_PACKAGE_VERSION}"
-# fi
-
-
-if build "x265" "4.1"; then
+if build "x265" "4.2"; then
   download "http://ftp.videolan.org/pub/videolan/x265/x265_${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
   cd "${PACKAGES}/x265-${CURRENT_PACKAGE_VERSION}" || exit
   cd build/linux || exit
@@ -993,7 +992,7 @@ EOF
 fi
 CONFIGURE_OPTIONS+=("--enable-libx265")
 
-if build "vid_stab" "1.1.1"; then
+if build "vid_stab" "1.1.2"; then
 	download "https://github.com/georgmartius/vid.stab/archive/v${CURRENT_PACKAGE_VERSION}.tar.gz" "vid.stab-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "${PACKAGES}/vid.stab-${CURRENT_PACKAGE_VERSION}" || exit
 	execute env "${COMPILER_SET}" cmake . \
@@ -1004,6 +1003,7 @@ if build "vid_stab" "1.1.1"; then
 		-DBUILD_SHARED_LIBS=OFF \
 		-DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
 		-DUSE_OMP=OFF \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
 		-DENABLE_SHARED:bool=off 
 	execute make
 	execute make install
@@ -1014,7 +1014,7 @@ CONFIGURE_OPTIONS+=("--enable-libvidstab")
 
 if build "av1" "Git"; then
 	#download "https://aomedia.googlesource.com/aom/+archive/0f5cd05bb3d6209e2583ce682d1acd8e21ae24b8.tar.gz" "av1.tar.gz" "av1"
-	git clone https://aomedia.googlesource.com/aom "${PACKAGES}"/av1
+	git clone --depth 1 https://aomedia.googlesource.com/aom "${PACKAGES}"/av1
 	cd "${PACKAGES}"/av1 || exit
 	mkdir -p "${PACKAGES}"/aom_build
 	cd "${PACKAGES}"/aom_build || exit
@@ -1046,18 +1046,40 @@ CONFIGURE_OPTIONS+=("--enable-libaom")
 # 	build_done "libsdl"
 # fi
 
-if build "libsdl" "2.30.1"; then
-  download "https://github.com/libsdl-org/SDL/archive/refs/tags/release-${CURRENT_PACKAGE_VERSION}.tar.gz"
-  execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+if build "libsdl" "3.4.14"; then
+  download "https://github.com/libsdl-org/SDL/archive/refs/tags/release-${CURRENT_PACKAGE_VERSION}.tar.gz" "libsdl-${CURRENT_PACKAGE_VERSION}.tar.gz"
+  cd "${PACKAGES}/libsdl-${CURRENT_PACKAGE_VERSION}" || exit
+  rm -rfv ./build
+  mkdir ./build && cd ./build 
+  execute cmake -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
+        -DCMAKE_BUILD_TYPE="Release" \
+        -DSDL_TEST_LIBRARY=OFF \
+        -DSDL_STATIC=ON \
+        -DSDL_SHARED=OFF \
+        -DSDL_RPATH=OFF \
+        -DCMAKE_C_COMPILER=\"${CC}\" \
+        -DCMAKE_CXX_COMPILER=\"${CXX}\" \
+        -DCMAKE_C_FLAGS=\"${CFLAGS}\" \
+        -DCMAKE_CXX_FLAGS=\"${CXXFLAGS}\" \
+        -DSDL_UNIX_CONSOLE_BUILD=ON \
+        -DSDL_X11=OFF \
+        -DSDL_WAYLAND=OFF \
+        -W no-author -G \"Unix Makefiles\" \
+        ..
   execute make -j $MJOBS
   execute make install
+  cd ..
+
+  #execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+  #execute make -j $MJOBS
+  #execute make install
 
   build_done "libsdl" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 
 if [ ! -n "$nosrt" ]; then
-    if build "srt" "1.4.3"; then
+    if build "srt" "1.5.6"; then
 	    download "https://github.com/Haivision/srt/archive/v${CURRENT_PACKAGE_VERSION}.tar.gz" "srt-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	    cd "$PACKAGES/srt-${CURRENT_PACKAGE_VERSION}" || exit
 	    export OPENSSL_ROOT_DIR="${WORKSPACE}"
@@ -1068,14 +1090,15 @@ if [ ! -n "$nosrt" ]; then
 	    	-DCMAKE_CXX_COMPILER=\""$CXX"\" \
 	    	-DCMAKE_C_FLAGS=\""$CFLAGS"\" \
 	    	-DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
-	        -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
-	        -DCMAKE_INSTALL_LIBDIR=lib \
-	        -DCMAKE_INSTALL_BINDIR=bin \
-	        -DCMAKE_INSTALL_INCLUDEDIR=include \
-	        -DENABLE_SHARED=OFF \
-	        -DENABLE_STATIC=ON \
-	        -DENABLE_APPS=OFF \
-	        -DUSE_STATIC_LIBSTDCXX=ON
+	      -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
+	      -DCMAKE_INSTALL_LIBDIR=lib \
+	      -DCMAKE_INSTALL_BINDIR=bin \
+	      -DCMAKE_INSTALL_INCLUDEDIR=include \
+	      -DENABLE_SHARED=OFF \
+	      -DENABLE_STATIC=ON \
+	      -DENABLE_APPS=OFF \
+	      -DUSE_STATIC_LIBSTDCXX=ON \
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 	    execute make -j $MJOBS install
 
 	    if [ -n "$LDEXEFLAGS" ]; then
@@ -1128,13 +1151,12 @@ if command_exists "nvcc"; then
 		fi
 	fi
 
-	if build "amf" "1.4.33.0"; then
-		amf_ver_short="${CURRENT_PACKAGE_VERSION::-2}"
-		download "https://github.com/GPUOpen-LibrariesAndSDKs/AMF/archive/refs/tags/v${amf_ver_short}.tar.gz" "AMF-${amf_ver_short}.tar.gz"
-		cd "$PACKAGES/AMF-${amf_ver_short}" || exit
+	if build "amf" "1.5.2"; then
+    download "https://github.com/GPUOpen-LibrariesAndSDKs/AMF/releases/download/v${CURRENT_PACKAGE_VERSION}/AMF-headers-v${CURRENT_PACKAGE_VERSION}.tar.gz" "AMF-${CURRENT_PACKAGE_VERSION}.tar.gz"
+		cd "$PACKAGES/AMF-${CURRENT_PACKAGE_VERSION}" || exit
 		execute rm -rf "${WORKSPACE}/include/AMF" 
 		execute mkdir -p "${WORKSPACE}/include/AMF"
-		execute cp -r "${PACKAGES}"/AMF-"${amf_ver_short}"/amf/public/include/* "${WORKSPACE}/include/AMF/"
+		execute cp -r "${PACKAGES}"/AMF-"${CURRENT_PACKAGE_VERSION}"/AMF/* "${WORKSPACE}/include/AMF/"
 		build_done "amf" "${amf_ver}"
 		CONFIGURE_OPTIONS+=("--enable-amf")
 	fi
@@ -1153,7 +1175,7 @@ if build "ffmpeg" "snapshot"; then
 #    CONFIGURE_OPTIONS+=("--nvccflags=\"-ccbin $CC\"")
 #  fi
 
-	execute ./configure "${CONFIGURE_OPTIONS[@]}" \
+	execute env "${COMPILER_SET}" ./configure "${CONFIGURE_OPTIONS[@]}" \
 		--prefix="${WORKSPACE}" \
 		--cc=\""${CC}"\" \
 		--cxx=\""${CXX}"\" \
@@ -1187,32 +1209,11 @@ if build "ffmpeg" "snapshot"; then
 	verify_binary_type
 
 	if [[ $AUTOINSTALL == "yes" ]]; then
-		if [ ! -w "$INSTALL_FOLDER" ]; then
-			sudo cp -vfr "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
-			sudo cp -vfr "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
-			sudo cp -vfr "$WORKSPACE/bin/ffplay" "$INSTALL_FOLDER/ffplay"
-			echo "Done. ffmpeg is now installed to your system"
-		else
-			cp -vfr "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
-			cp -vfr "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
-			cp -vfr "$WORKSPACE/bin/ffplay" "$INSTALL_FOLDER/ffplay"
-			echo "Done. ffmpeg is now installed to your system"
-		fi
+		install_ffmpeg
 	elif [[ ! $SKIPINSTALL == "yes" ]]; then
-		read -r -p "Install the binary to your $INSTALL_FOLDER folder? [Y/n] " response
+		read -r -p "Install the binaries to $INSTALL_FOLDER? [Y/n] " response
 		case $response in
-		[yY][eE][sS] | [yY] | "")
-			if [ ! -w "$INSTALL_FOLDER" ]; then
-				sudo cp -vfr "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
-				sudo cp -vfr "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
-				sudo cp -vfr "$WORKSPACE/bin/ffplay" "$INSTALL_FOLDER/ffplay"
-			else
-				cp -vfr "$WORKSPACE/bin/ffmpeg" "$INSTALL_FOLDER/ffmpeg"
-				cp -vfr "$WORKSPACE/bin/ffprobe" "$INSTALL_FOLDER/ffprobe"
-				cp -vfr "$WORKSPACE/bin/ffplay" "$INSTALL_FOLDER/ffplay"
-			fi
-			echo "Done. ffmpeg is now installed to your system"
-			;;
+			[yY][eE][sS] | [yY] | "") install_ffmpeg ;;
 		esac
 	fi
 fi

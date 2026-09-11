@@ -1,0 +1,19 @@
+# To address a slight power deficiency, we are introducing power limits
+# to Leila's NVIDIA GPUs.
+#
+# Let's limit their power usage as below:
+# NVIDIA RTX 5060Ti 16GB --> 170W
+# NVIDIA RTX 3060 12GB --> 150W (lowest limit is 150)
+#
+[Unit]
+Description=Set NVIDIA Power Limits and Persistence Mode
+After=nvidia-persistenced.service
+Wants=nvidia-persistenced.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/set-gpu-limits.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
