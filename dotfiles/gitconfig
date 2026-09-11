@@ -3,7 +3,7 @@
 [core]
 	editor = vim
 	whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
-	excludesfile = ~/.gitignore
+	excludesfile = /Users/taris/.gitignore
 [sendemail]
 	smtpencryption = tls
 	smtpserver = smtp.gmail.com
@@ -225,3 +225,11 @@
 	directory = /storage/build/buildroot/output/build/bcc-v0.31.0/libbpf-tools/blazesym
 	directory = /storage/build/buildroot/output/build/bcc-v0.31.0/src/cc/libbpf
 	directory = /storage/build/buildroot/output/build/bcc-v0.31.0/libbpf-tools/bpftool
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[commit]
+	template = /Users/taris/.stCommitMsg
