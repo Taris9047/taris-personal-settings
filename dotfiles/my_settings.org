@@ -1026,9 +1026,15 @@ function snapup () {
     sudo snap refresh
 }
 
+function brewup () {
+    printf 'Updating homebrew packages\n'
+    brew update && brew upgrade -y
+}
+    
 function universal_pkgman_up () {
     [ -x "$(command -v flatpak)" ] && flatpakup 2>&1
     [ -x "$(command -v snap)" ] && snapup 2>&1
+    [ -x "$(command -v brew)" ] && brewup 2>&1
 }
 
 function pkgup () {
