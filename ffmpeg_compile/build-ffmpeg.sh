@@ -38,7 +38,7 @@ fi
 LDLIBSTDCPP="-L/usr/lib/gcc/$SYSTEM_GCC_ARCH/$SYSTEM_CXX_MVER -L/usr/lib -L/usr/lib64"
 LDFLAGS_Z="-L${WORKSPACE}/lib"
 LDFLAGS="${LDFLAGS_Z} -lz $LDLIBSTDCPP"
-LDEXEFLAGS=""
+LDEXEFLAGS="-fPIC"
 EXTRALIBS="-ldl -lpthread -lm -lz -lmpg123"
 case "$CC" in
 */gcc | */clang)
@@ -694,19 +694,30 @@ if [ ! -x  "${GIT}" ]; then
 	fi
 fi
 
-if build "giflib" "6.1.3"; then
-  download "https://sourceforge.net/projects/giflib/files/giflib-6.x/giflib-${CURRENT_PACKAGE_VERSION}.tar.gz"
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    wget  "https://sourceforge.net/p/giflib/bugs/_discuss/thread/4e811ad29b/c323/attachment/Makefile.patch"
-    execute patch -p0 --forward "${PACKAGES}/giflib-$CURRENT_PACKAGE_VERSION/Makefile" "${PACKAGES}/Makefile.patch" || true
-  fi
-  cd "${PACKAGES}"/giflib-$CURRENT_PACKAGE_VERSION || exit
-  #multicore build disabled for this library
-  execute make
-  execute make PREFIX="${WORKSPACE}" install
-  build_done "giflib" $CURRENT_PACKAGE_VERSION
-fi
+# if build "giflib" "6.1.3"; then
+#   download "https://sourceforge.net/projects/giflib/files/giflib-6.x/giflib-${CURRENT_PACKAGE_VERSION}.tar.gz"
+#   if [[ "$OSTYPE" == "darwin"* ]]; then
+#     wget  "https://raw.githubusercontent.com/pld-linux/giflib/refs/heads/master/giflib-make.patch" -O Makefile.patch || true
+#     execute patch -p0 --forward "${PACKAGES}/giflib-${CURRENT_PACKAGE_VERSION}/Makefile" "${PACKAGES}/giflib-${CURRENT_PACKAGE_VERSION}/Makefile.patch" || true
+#   fi
+#   cd "${PACKAGES}"/giflib-$CURRENT_PACKAGE_VERSION || exit
+#   #multicore build disabled for this library
+#   execute make
+#   execute make PREFIX="${WORKSPACE}" install
+#   build_done "giflib" $CURRENT_PACKAGE_VERSION
+# fi
 
+
+if build "lcms2" "2.17"; then
+  download "https://github.com/mm2/Little-CMS/releases/download/lcms$CURRENT_PACKAGE_VERSION/lcms2-$CURRENT_PACKAGE_VERSION.tar.gz"
+  execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+  execute make -j "$MJOBS"
+  execute make install
+  build_done "lcms2" "$CURRENT_PACKAGE_VERSION"
+fi
+# lcms2 is a libjxl dependency, but ffmpeg also uses it for ICC profile support
+# in the image decoders and for the iccdetect and iccgen filters.
+CONFIGURE_OPTIONS+=("--enable-lcms2")
 
 
 ## Media Libraries
@@ -819,6 +830,9 @@ if build "lame" "4.0"; then
   download "https://sourceforge.net/projects/lame/files/lame/${CURRENT_PACKAGE_VERSION}/lame-${CURRENT_PACKAGE_VERSION}.tar.gz"
 	cd "$PACKAGES/lame-${CURRENT_PACKAGE_VERSION}" || exit
   LAME_CFLAGS="\"${CFLAGS} -std=gnu89 -Wno-error=implicit-function-declaration -Wno-error=incompatible-pointer-types\""
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    awk '/#include/ && !done {print "#include <locale.h>"; done=1} {print}' frontend/parse.c > temp.c && mv temp.c frontend/parse.c
+  fi
   sed -i -e 's/^\(\s*hardcode_libdir_flag_spec\s*=\).*/\1/' configure
 	execute env "CC=${CC} CFLAGS=${LAME_CFLAGS}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
