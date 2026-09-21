@@ -913,3 +913,6 @@ if type -q "$VPN_PATH"
     alias ucsc_vpn="$HOME/.settings/bin/vpn_connect_ucsc.sh"
 end
 # Fish:1 ends here
+
+# Added by LM Studio CLI tool (lms)
+set -gx PATH $PATH /home/taris/.lmstudio/bin
