@@ -25,7 +25,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#default-setting-directory][Default Setting directory]]
   - [[#ls-mode-initial-set-up][ls mode initial set up]]
   - [[#bat-theme-initial-set-up][bat theme initial set up]]
-  - [[#homebrew-directory-set][Homebrew directory set]]
+  - [[#working-directory-set][Working directory set]]
   - [[#ls-mode-set---we-will-install-exa-and-lsd-later][ls mode set - We will install exa and lsd later.]]
   - [[#cloud-directories][Cloud directories]]
   - [[#texlive-home-directory-set][Texlive home directory set]]
@@ -431,24 +431,23 @@ if not test -f "$BATTHEMESAVE"
 end
 #+end_src
 
-** Homebrew directory set
+** Working directory set
 
 Custom compiled tools and libraries will be residing in this directory.
 
 *** Bash
 #+NAME: env_var_homebrew
 #+begin_src shell :tangle my_settings_bash
-HBREW_PATH="${HOME}/.local"
+export HBREW_PATH="${HOME}/.local"
 if [ -d "${HBREW_PATH}" ]; then
-    export HOMEBREW="${HBREW_PATH}"
-    printf "%b HOMEBREW directory is %s\n" "${check_symbol}" "${HOMEBREW}"
+    printf "%b HOMEBREW directory is %s\n" "${check_symbol}" "${HBREW_PATH}"
 
     sleep "${line_delay}"
-    export PATH="${HOMEBREW}/bin:${PATH}"
-    export PATH="${HOMEBREW}/.opt/bin:${PATH}"
-    [ ! -d "${HOMEBREW}" ] && mkdir -p "${HOMEBREW}"
-    [ ! -d "${HOMEBREW}/bin" ] && mkdir -p "${HOMEBREW}/bin"
-    [ ! -d "${HOMEBREW}/.opt" ] && mkdir -p "${HOMEBREW}/.opt"
+    export PATH="${HBREW_PATH}/bin:${PATH}"
+    export PATH="${HBREW_PATH}/.opt/bin:${PATH}"
+    [ ! -d "${HBREW_PATH}" ] && mkdir -p "${HBREW_PATH}"
+    [ ! -d "${HBREW_PATH}/bin" ] && mkdir -p "${HBREW_PATH}/bin"
+    [ ! -d "${HBREW_PATH}/.opt" ] && mkdir -p "${HBREW_PATH}/.opt"
 fi
 #+end_src
 
@@ -460,13 +459,10 @@ fi
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 set HBREW_PATH "$HOME/.local"
-if test -d "$HBREW_PATH"
-    set -U HOMEBREW "$HBREW_PATH"
-end
-printf "%b HOMEBREW directory is %s\n" "$check_symbol" "$HOMEBREW"
+printf "%b HOMEBREW directory is %s\n" "$check_symbol" "$HBREW_PATH"
 sleep "$line_delay"
-fish_add_path -aP "$HOMEBREW/bin"
-fish_add_path -aP "$HOMEBREW/.opt/bin"
+fish_add_path -aP "$HBREW_PATH/bin"
+fish_add_path -aP "$HBREW_PATH/.opt/bin"
 #+end_src
 
 ** ls mode set - We will install exa and lsd later.
@@ -851,9 +847,9 @@ end
 #+begin_src shell :tangle my_settings_bash
 if [ ! -x "$(command -v spark)" ]; then
 	printf '%b Installing spark!!\n' "${check_symbol}"
-	[ ! -d "$HOMEBREW/bin" ] && mkdir -pv "$HOMEBREW/bin"
-	sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o $HOMEBREW/bin/spark" && "chmod +x $HOMEBREW/bin/spark" || true
-    chmod +x "$HOMEBREW/bin/spark" || true
+	[ ! -d "${HBREW_PATH}/bin" ] && mkdir -pv "${HBREW_PATH}/bin"
+	sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o ${HBREW_PATH}/bin/spark" && "chmod +x ${HBREW_PATH}/bin/spark" || true
+    chmod +x "${HBREW_PATH}/bin/spark" || true
 fi
 #+end_src
 
@@ -867,11 +863,11 @@ fi
 if not type -q spark
     printf "%b Installing spark!!\n" "$check_symbol"
     printf "  %b Type in your password if you feel it's stuck!!\n" "$right_arrow_symbol"
-    if not test -d "$HOMEBREW/bin"
-        mkdir -pv "$HOMEBREW/bin"
+    if not test -d "$HBREW_PATH/bin"
+        mkdir -pv "$HBREW_PATH/bin"
     end
-    sh -c "curl \'https://raw.githubusercontent.com/holman/spark/master/spark\' -o $HOMEBREW/bin/spark
-    chmod +x $HOMEBREW/bin/spark"
+    sh -c "curl \'https://raw.githubusercontent.com/holman/spark/master/spark\' -o $HBREW_PATH/bin/spark
+    chmod +x ${HBREW_PATH}/bin/spark"
     or true
 end
 #+end_src
@@ -1942,9 +1938,9 @@ Recently started using this program... It's not really powerful nor versatile no
 *** Bash
 #+NAME: jEdit_env
 #+begin_src shell :tangle my_settings_bash
-JEDIT_PATH="${HOMEBREW}/.opt/jEdit/bin"
-[ -x "$(command -v $JEDIT_PATH/jedit)" ] && export PATH="${JEDIT_PATH}:${PATH}"
-[ -x "$(command -v "$HOMEBREW/bin/jedit")" ] && JEDIT_PATH="${HOMEBREW}/bin/jedit"
+JEDIT_PATH="${HBREW_PATH}/.opt/jEdit/bin"
+[ -x "$(command -v ${JEDIT_PATH}/jedit)" ] && export PATH="${JEDIT_PATH}:${PATH}"
+[ -x "$(command -v "${HBREW_PATH}/bin/jedit")" ] && JEDIT_PATH="${HBREW_PATH}/bin/jedit"
 printf '%b jEdit found at %s\n' "${check_symbol}" "${JEDIT_PATH}"
 #+end_src
 
@@ -1955,10 +1951,10 @@ printf '%b jEdit found at %s\n' "${check_symbol}" "${JEDIT_PATH}"
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-set JEDIT_PATH "$HOMEBREW/.opt/jEdit/bin"
+set JEDIT_PATH "$HBREW_PATH/.opt/jEdit/bin"
 if type -q "$JEDIT_PATH/jedit"
     addpath "$JEDIT_PATH"
-else if type -q "$HOMEBREW/bin/jedit"
+else if type -q "$HBREW_PATH/bin/jedit"
     sleep 0.01
 end
 printf '%b jEdit found at %s\n' "$check_symbol" "$JEDIT_PATH"
@@ -1970,8 +1966,8 @@ Emacs runs much faster with emacsclient which runs a daemon. Also, we are trying
 *** Bash
 #+NAME: prog_emacs
 #+begin_src shell :tangle my_settings_bash
-# Emacs selection path: $HOMEBREW/bin/emacs > /snap/bin/emacs > system emacs such as ... /usr/bin/emacs
-emacs_candidates=( "$HOMEBREW/bin/emacs" "$SNAP_BIN/emacs" "/usr/local/bin/emacs" "/usr/bin/emacs" )
+# Emacs selection path: $HBREW_PATH/bin/emacs > /snap/bin/emacs > system emacs such as ... /usr/bin/emacs
+emacs_candidates=( "$HBREW_PATH/bin/emacs" "$SNAP_BIN/emacs" "/usr/local/bin/emacs" "/usr/bin/emacs" )
 for emacs_cand in "${emacs_candidates[@]}"
 do
     if [ -x "${emacs_cand}" ]; then
@@ -2056,21 +2052,21 @@ These are default gccs compiled by =../unix_dev_setup= script. They were impleme
 *** Bash
 #+NAME: prog_homebrew_gcc
 #+begin_src shell :tangle my_settings_bash
-if [ -d "${HOMEBREW}/.opt/gcc-jit" ]; then
+if [ -d "${HBREW_PATH}/.opt/gcc-jit" ]; then
     printf '%b Gcc with libgccjit found in the system!\n' "${check_symbol}"
-    addpath "${HOMEBREW}/.opt/gcc-jit/bin"
+    addpath "${HBREW_PATH}/.opt/gcc-jit/bin"
 fi
-if [ -d "${HOMEBREW}/.opt/gcc9" ]; then
+if [ -d "${HBREW_PATH}/.opt/gcc9" ]; then
     printf '%b Gcc9 found in the system!\n' "${check_symbol}"
-    addpath "${HOMEBREW}/.opt/gcc9/bin"
+    addpath "${HBREW_PATH}/.opt/gcc9/bin"
 fi
-if [ -d "${HOMEBREW}/.opt/gcc8" ]; then
+if [ -d "${HBREW_PATH}/.opt/gcc8" ]; then
     printf '%b Gcc8 found in the system!\n' "${check_symbol}"
-    addpath "${HOMEBREW}/.opt/gcc8/bin"
+    addpath "${HBREW_PATH}/.opt/gcc8/bin"
 fi
-if [ -d "${HOMEBREW}/.opt/gcc4" ]; then
+if [ -d "${HBREW_PATH}/.opt/gcc4" ]; then
     printf '%b Gcc4 found in the system!\n' "${check_symbol}"
-    addpath "${HOMEBREW}/.opt/gcc4/bin"
+    addpath "${HBREW_PATH}/.opt/gcc4/bin"
 fi
 #+end_src
 
@@ -2081,21 +2077,21 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-if test -d "$HOMEBREW/.opt/gcc-jit"
+if test -d "$HBREW_PATH/.opt/gcc-jit"
     printf "$check_symbol Gcc with libgccjit found in the system!\n"
-    addpath "$HOMEBREW/.opt/gcc-jit/bin"
+    addpath "$HBREW_PATH/.opt/gcc-jit/bin"
 end
-if test -d "$HOMEBREW/.opt/gcc9"
+if test -d "$HBREW_PATH/.opt/gcc9"
     printf "$check_symbol Gcc9 found in the system!\n"
-    addpath "$HOMEBREW/.opt/gcc9/bin"
+    addpath "$HBREW_PATH/.opt/gcc9/bin"
 end
-if test -d "$HOMEBREW/.opt/gcc8"
+if test -d "$HBREW_PATH/.opt/gcc8"
     printf "$check_symbol Gcc8 found in the system!\n"
-    addpath "$HOMEBREW/.opt/gcc8/bin"
+    addpath "$HBREW_PATH/.opt/gcc8/bin"
 end
-if test -d "$HOMEBREW/.opt/gcc4"
+if test -d "$HBREW_PATH/.opt/gcc4"
     printf "$check_symbol Gcc4 found in the system!\n"
-    addpath "$HOMEBREW/.opt/gcc4/bin"
+    addpath "$HBREW_PATH/.opt/gcc4/bin"
 end
 #+end_src
 
@@ -2108,8 +2104,8 @@ if [ -d "${SYSTEM_GOROOT}" ]; then
     export GOROOT="/usr/local/go"
     export GOPATH="$HOME/.go"
 else
-    export GOROOT="${HOMEBREW}/.opt/go"
-    export GOPATH="${HOMEBREW}/.opt/go/bin"
+    export GOROOT="${HBREW_PATH}/.opt/go"
+    export GOPATH="${HBREW_PATH}/.opt/go/bin"
 fi
     
 if [ -x "$(command -v $GOROOT/bin/go)" ]; then
@@ -2123,8 +2119,8 @@ fi
 #+end_src
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-set GOROOT "$HOMEBREW/.opt/go"
-set GOPATH "$HOMEBREW/.opt/go/bin"
+set GOROOT "$HBREW_PATH/.opt/go"
+set GOPATH "$HBREW_PATH/.opt/go/bin"
 if test -d "$GOROOT"
     printf "$check_symbol Golang has been found at $GOROOT\n"
     addpath "$GOPATH"
@@ -2136,7 +2132,7 @@ Julia, the high performance scripting language. Will it replace Python? Who konw
 *** Bash
 #+NAME: prog_julia
 #+begin_src shell :tangle my_settings_bash
-JULIA_ROOT="${HOMEBREW}/.opt/julia"
+JULIA_ROOT="${HBREW_PATH}/.opt/julia"
 JULIA_BIN="${JULIA_ROOT}/bin"
 if [ -d "${JULIA_ROOT}" ] && [ -f "${JULIA_BIN}/julia" ]; then
     printf '%b Julia has been found at %s\n' "${check_symbol}" "${JULIA_ROOT}"
@@ -2149,7 +2145,7 @@ fi
 #+end_src
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-set JULIA_ROOT "$HOMEBREW/.opt/julia"
+set JULIA_ROOT "$HBREW_PATH/.opt/julia"
 set JULIA_BIN "$JULIA_ROOT/bin"
 if test -d "$JULIA_ROOT"
     and test -f "$JULIA_BIN/julia"
@@ -2191,7 +2187,7 @@ end
 *** Bash
 #+NAME: prog_ROOT
 #+begin_src shell :tangle my_settings_bash
-ROOT_DIR="${HOMEBREW}/.opt/ROOT"
+ROOT_DIR="${HBREW_PATH}/.opt/ROOT"
 if [ -x "$(command -v $ROOT_DIR/bin/root)" ]; then
     printf '%b ROOT Found! Applying its shell env.\n' "${check_symbol}"
     alias thisroot="${ROOT_DIR}/bin/thisroot.sh"
@@ -2205,7 +2201,7 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-set ROOT_DIR "$HOMEBREW/.opt/ROOT"
+set ROOT_DIR "$HBREW_PATH/.opt/ROOT"
 if type -q "$ROOT_DIR/bin/root"
     printf "$check_symbol ROOT Found! Applying its shell env.\n"
     alias thisroot="$ROOT_DIR/bin/thisroot.fish"
@@ -2324,10 +2320,10 @@ end
 *** Bash
 #+NAME: prog_pypy
 #+begin_src shell :tangle my_settings_bash
-if [ -x "$(command -v $HOMEBREW/.opt/pypy/bin/pypy3)" ]; then
-	printf "%b pypy3 found in ${HOMEBREW}/.opt/pypy/bin/pypy3!!\n" "${check_symbol}"
+if [ -x "$(command -v $HBREW_PATH/.opt/pypy/bin/pypy3)" ]; then
+	printf "%b pypy3 found in ${HBREW_PATH}/.opt/pypy/bin/pypy3!!\n" "${check_symbol}"
 	sleep "${line_delay}"
-	export PATH="${HOMEBREW}/.opt/pypy/bin:${PATH}"
+	export PATH="${HBREW_PATH}/.opt/pypy/bin:${PATH}"
 fi
 #+end_src
 
@@ -2338,10 +2334,10 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-if type -q "$HOMEBREW/.opt/pypy/bin/pypy3"
-    printf "$check_symbol pypy3 found in $HOMEBREW/.opt/pypy/bin/pypy3"
+if type -q "$HBREW_PATH/.opt/pypy/bin/pypy3"
+    printf "$check_symbol pypy3 found in $HBREW_PATH/.opt/pypy/bin/pypy3"
     sleep $line_delay
-    addpath "$HOMEBREW/.opt/pypy/bin"
+    addpath "$HBREW_PATH/.opt/pypy/bin"
 end
 #+end_src
 
@@ -2420,8 +2416,8 @@ We can install bpytop through the pyenv's python. But these kind of tools are be
 *** Bash
 #+NAME: prog_bashtop
 #+begin_src shell :tangle my_settings_bash
-BPYTOP_PATH="${HOMEBREW}/bin/bpytop"
-PIP3_PATH="${HOMEBREW}/bin/pip3"
+BPYTOP_PATH="${HBREW_PATH}/bin/bpytop"
+PIP3_PATH="${HBREW_PATH}/bin/pip3"
 
 if [ -x "$(command -v $HOME/.pyenv/shims/pip)" ]; then
     BPYTOP_PATH="${HOME}/.pyenv/shims/bpytop"
@@ -2444,13 +2440,13 @@ fi
 
 *** Fish
 #+begin_src fish :tangle my_settings_fish
-if type -q $HOMEBREW/bin/pip3
-    and type -q $HOMEBREW/bin/bpytop
+if type -q $HBREW_PATH/bin/pip3
+    and type -q $HBREW_PATH/bin/bpytop
     printf '$check_symbol Locally installed bpytop found!\n'
     sleep $line_delay
-    alias bpytop="$HOMEBREW/bin/pip3 install -U bpytop; $HOMEBREW/bin/bpytop"
-    alias htop="$HOMEBREW/bin/bpytop"
-    alias top="$HOMEBREW/bin/bpytop"
+    alias bpytop="$HBREW_PATH/bin/pip3 install -U bpytop; $HBREW_PATH/bin/bpytop"
+    alias htop="$HBREW_PATH/bin/bpytop"
+    alias top="$HBREW_PATH/bin/bpytop"
 end
 #+end_src
 
@@ -2924,7 +2920,7 @@ A shell integration for FZF fuzzy finder integration. More will come.
 if [ -x "$(command -v fzf)" ]; then
     eval "$(fzf --bash)"
 fi
-#+end+src
+#+end_src
 
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh
