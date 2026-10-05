@@ -275,10 +275,19 @@ alias rsync='rsync -azvh --info=progress2'
 alias sudo='sudo -H'
 alias free='free -m'
 
+function nala_check() {
+    nala_cmd="$(command -v nala)"
+    [ -x "${nala_cmd}" ] && export NALA_CMD="${nala_cmd}"
+    return 0
+}
+
 function aptup () {
-    if [ -x "$(command -v nala)" ]; then
+
+    nala_check
+    
+    if [ -x "${NALA_CMD}" ]; then
         printf 'nala detected!! Using it!!\n'
-        sudo nala update && sudo nala upgrade -y
+        sudo "${NALA_CMD}" update && sudo "${NALA_CMD}" upgrade -y
         return 0
     fi
 
@@ -294,9 +303,12 @@ function aptup () {
 }
 
 function aptin () {
-    if [ -x "$(command -v nala)" ]; then
+
+    nala_check
+
+    if [ -x "${NALA_CMD}" ]; then
         printf 'nala detected!! Using it!!\n'
-        aptup && sudo nala install -y "$@"
+        aptup && sudo "${NALA_CMD}" install -y "$@"
     else
         aptup && sudo apt-get -y install "$@"
     fi

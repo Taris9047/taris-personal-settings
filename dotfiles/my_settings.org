@@ -1,4 +1,4 @@
-#+TITLE: Taris' Doom Emacs Config
+#+TITLE: Taris' Shell Environment Configuratio for Linux-like OS
 #+AUTHOR: Taylor Shin
 #+STARTUP: showeverything
 #+PROPERTY: header-args: :tangle-mode
@@ -16,10 +16,10 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#adding-path-to-my-settings-bin-dir][Adding path to My Settings bin dir]]
   - [[#some-warning-messages-and-interactive-session-check][Some Warning messages and Interactive Session Check]]
   - [[#some-decorative-stuffs][Some decorative stuffs]]
-  - [[#prefer-tmux-if-available][Prefer Tmux if available.]]
+  - [[#prefer-tmux-if-available][Prefer TMUX if available.]]
   - [[#shell-options][Shell options]]
   - [[#terminal-type-and-history-control][Terminal type and history control]]
-  - [[#autocompletion-color---fish-only][Autocompletion color - Fish only]]
+  - [[#auto-completion-color---fish-only][Auto-Completion Color - Fish only]]
   - [[#update-settings-directory-at-each-login][Update ~/Settings directory at each login]]
   - [[#manpage-reader][Manpage reader]]
   - [[#default-setting-directory][Default Setting directory]]
@@ -28,7 +28,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#working-directory-set][Working directory set]]
   - [[#ls-mode-set---we-will-install-exa-and-lsd-later][ls mode set - We will install exa and lsd later.]]
   - [[#cloud-directories][Cloud directories]]
-  - [[#texlive-home-directory-set][Texlive home directory set]]
+  - [[#texlive-home-directory-set][TexLive home directory set]]
   - [[#default-cligui-editor-set][Default CLI/GUI editor set]]
   - [[#change-terminal-titles][Change terminal titles]]
   - [[#make-xterm-pretty-again][Make Xterm pretty again]]
@@ -50,7 +50,7 @@ My main shell is of course Bash but I'm trying to expand out into other shells s
   - [[#use-uxterm-instead-of-xterm][Use UXterm instead of Xterm]]
   - [[#a-few-more-fun-aliases][A few more fun aliases]]
 - [[#basic-functions-for-everyday-use][Basic Functions for everyday use]]
-  - [[#prepending-system-path-variable][Prepending system PATH variable.]]
+  - [[#prepending-system-path-variable][Prepending(?) system PATH variable.]]
   - [[#extract-archive][Extract archive]]
   - [[#navigate-upwards][Navigate upwards.]]
   - [[#recursively-delete-files][Recursively delete files]]
@@ -221,8 +221,8 @@ set right_arrow_symbol "\033[1;37m\u2192\033[0m"
 set line_delay 0.05
 #+end_src
 
-** Prefer Tmux if available.
-Tmux is a great terminal interface for any situation, even your favorite Xorg terminal emulator can crash and screw up everything you were doing. Tmux saves it! This part also referenced some other people's contribution at [[https://unix.stackexchange.com/questions/43601/how-can-i-set-my-default-shell-to-start-up-tmux][Stack Exchange]].
+** Prefer TMUX if available.
+TMUX is a great terminal interface for any situation, even your Xorg terminal emulator can crash and screw up everything you were doing. TMUX saves it! This part also referenced some other people's contribution at [[https://unix.stackexchange.com/questions/43601/how-can-i-set-my-default-shell-to-start-up-tmux][Stack Exchange]].
 
 Actually, using TMUX on every single instance of my own local system seems a bit of chore. I would rather use TMUX when I'm on remote connection instead.
 
@@ -259,7 +259,7 @@ In fact, forcing to run tmux as a mandatory shell environment makes some stupid 
 # fi
 #+end_src
 
-Also, we're adding some aliases for tmux
+Also, we're adding some aliases for TMUX
 #+NAME: tmux_aliases
 #+begin_src shell :tangle my_settings_bash
 alias tmuxkillall='tmux kill-server'
@@ -314,7 +314,7 @@ export HISTCONTROL="ignoredups:erasedups"
 set TERM "xterm-256color"
 #+end_src
 
-** Autocompletion color - Fish only
+** Auto-Completion Color - Fish only
 *** Fish
 #+begin_src fish :tangle my_settings_fish
 set fish_color_normal brcyan
@@ -665,7 +665,7 @@ set_ls
 #+end_src
 
 ** Cloud directories
-[[https://rclone.org/][RCLONE]] is a great tool for cloud service access. I'm using Google Drive and Microsoft's Onedrive. We can set up a remote drive access with RCLONE! These lines aren't actually installing or setting up the cloud services. But defines their mountpoints.
+[[https://rclone.org/][RCLONE]] is a great tool for cloud service access. I'm using Google Drive and Microsoft's OneDrive. We can set up a remote drive access with RCLONE! These lines aren't actually installing or setting up the cloud services. But defines their mount-points.
 
 *** Bash
 #+NAME: env_var_rclone
@@ -689,7 +689,7 @@ set ONE_DRIVE "$HOME/.onedrive"
 set ICLOUD_DRIVE "$HOME/.iclouddrive"
 #+end_src
 
-** Texlive home directory set
+** TexLive home directory set
 
 *** Bash
 #+NAME: env_var_texlive
@@ -904,7 +904,7 @@ end
 
 * Command line aliases
 
-Some basic aliases for linux binutils and other tools. OS X uses BSD based binutils has different options and acts a little bit differently and will be updated when I get an actually working Apple machine.
+Some basic aliases for linux =binutils= and other tools. OS X uses BSD based =binutils= has different options and acts a little bit differently. Thus, we implemented a separated =my_settings_osx.org= to handle the stuffs for MacOS.
 
 ** Binutils - Linux
 *** Bash
@@ -937,10 +937,20 @@ alias free='free -m'
 *** Bash
 #+NAME: alias_pkg_managers
 #+begin_src shell :tangle my_settings_bash
+
+function nala_check() {
+    nala_cmd="$(command -v nala)"
+    [ -x "${nala_cmd}" ] && export NALA_CMD="${nala_cmd}"
+    return 0
+}
+
 function aptup () {
-    if [ -x "$(command -v nala)" ]; then
+
+    nala_check
+    
+    if [ -x "${NALA_CMD}" ]; then
         printf 'nala detected!! Using it!!\n'
-        sudo nala update && sudo nala upgrade -y
+        sudo "${NALA_CMD}" update && sudo "${NALA_CMD}" upgrade -y
         return 0
     fi
 
@@ -956,9 +966,12 @@ function aptup () {
 }
 
 function aptin () {
-    if [ -x "$(command -v nala)" ]; then
+
+    nala_check
+
+    if [ -x "${NALA_CMD}" ]; then
         printf 'nala detected!! Using it!!\n'
-        aptup && sudo nala install -y "$@"
+        aptup && sudo "${NALA_CMD}" install -y "$@"
     else
         aptup && sudo apt-get -y install "$@"
     fi
@@ -1252,7 +1265,7 @@ fpath=(~/.zsh $fpath)
 # autoload -Uz compinit && compinit
 #+end_src
 
-However, we need to impelement some features to manipulate oh-my-zsh stuffs such as themes. Some themes do not like light-themed consoles. So, let's at least write some alias to change theme.
+However, we need to implement some features to manipulate oh-my-zsh stuffs such as themes. Some themes do not like light-themed consoles. So, let's at least write some alias to change theme.
 #+begin_src shell :tangle my_settings_zsh
 ztheme () {
   if [ -z "$ZSH" ]; then
@@ -1420,7 +1433,7 @@ end
 #+end_src
 
 * Basic Functions for everyday use
-** Prepending system PATH variable.
+** Prepending(?) system PATH variable.
 Apparently, there are much better ways to handle this kind of job and many newer shell versions will provide some kind of macro or internal functions to do this. But I would rather stay safe.
 
 *** Bash
