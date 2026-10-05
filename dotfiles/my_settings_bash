@@ -277,7 +277,8 @@ alias free='free -m'
 
 function nala_check() {
     nala_cmd="$(command -v nala)"
-    [ -x "${nala_cmd}" ] && export NALA_CMD="${nala_cmd}"
+    [ -x "${nala_cmd}" ] && export NALA_CMD="${nala_cmd}" && \
+        printf 'Nala detected: %s\nUsing it!!\n' "${NALA_CMD}"
     return 0
 }
 
@@ -286,7 +287,6 @@ function aptup () {
     nala_check
     
     if [ -x "${NALA_CMD}" ]; then
-        printf 'nala detected!! Using it!!\n'
         sudo "${NALA_CMD}" update && sudo "${NALA_CMD}" upgrade -y
         return 0
     fi
@@ -307,7 +307,6 @@ function aptin () {
     nala_check
 
     if [ -x "${NALA_CMD}" ]; then
-        printf 'nala detected!! Using it!!\n'
         aptup && sudo "${NALA_CMD}" install -y "$@"
     else
         aptup && sudo apt-get -y install "$@"
