@@ -950,14 +950,14 @@ function aptup () {
     nala_check
     
     if [ -x "${NALA_CMD}" ]; then
-        sudo "${NALA_CMD}" update && sudo "${NALA_CMD}" upgrade -y
+        sudo "${NALA_CMD}" update && sudo "${NALA_CMD}" upgrade -o DPkg::Lock::Timeout=60 -y
         return 0
     fi
 
     if [ -x "$(command -v apt-get)" ]; then
-        sudo apt-get -y update && sudo apt-get -y upgrade
+        sudo apt-get -y update && sudo apt-get upgrade -o DPkg::Lock::Timeout=60 -y
     elif [ -x "$(command -v apt)" ]; then
-        sudo apt -y update && sudo apt -y upgrade
+        sudo apt -y update && sudo apt upgrade -o DPkg::Lock::Timeout=60 -y
     else
         printf 'ERROR: Cannot find apt or apt-get in the system.\n'
         return 1
