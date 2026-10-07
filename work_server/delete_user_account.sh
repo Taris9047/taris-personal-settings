@@ -22,6 +22,13 @@ echo "2. The home directory: /home/$USERNAME"
 echo "3. The data directory: $TARGET_DIR"
 echo "------------------------------------"
 
+# PROTECT SUDOERS: Check if the user has sudo/admin privileges
+if groups "$USERNAME" | grep -qw "sudo"; then
+    echo "CRITICAL ERROR: '$USERNAME' is a member of the 'sudo' group!"
+    echo "To prevent accidental system lockout, this script will not delete administrators."
+    exit 1
+fi
+
 # Ask for confirmation
 read -p "Are you absolutely sure? (y/N): " confirm
 if [[ ! $confirm =~ ^[Yy]$ ]]; then
