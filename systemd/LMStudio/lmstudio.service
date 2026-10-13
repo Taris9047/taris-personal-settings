@@ -8,7 +8,7 @@ User=taris
 RemainAfterExit=yes
 Environment="HOME=/home/taris"
 ExecStartPre=/home/taris/.lmstudio/bin/lms daemon up
-ExecStartPre=/home/taris/.lmstudio/bin/lms load google/gemma-4-26b-a4b-qat --context-length 64000 --yes 
+ExecStartPre=/home/taris/.lmstudio/bin/lms load google/gemma-4-26b-a4b-qat --context-length 32768 --yes --gpu max 
 ExecStart=/home/taris/.lmstudio/bin/lms server start
 ExecStop=/home/taris/.lmstudio/bin/lms daemon down
 
