@@ -38,7 +38,7 @@ detect_gcc14() {
 inst_bin() {
   cd "${WORK_DIR}"
 
-  wget "${BIN_URL}" -O ./btop.tbz
+  wget "$1" -O ./btop.tbz
   tar xvf ./btop.tbz
   cd ./btop/
 
@@ -79,11 +79,11 @@ detect_platform () {
     # ARM Architectures (64-bit and 32-bit variants)
     aarch64 | arm64)
       PLATFORM="ARM (64-bit)"
-      inst_bin
+      inst_bin "${ARM_BIN_URL}"
       ;;
     arm* | aarch32)
       PLATFORM="ARM (32-bit)"
-      inst_bin
+      inst_bin "${ARM64_BIN_URL}"
       ;;
         
     # Fallback for alternative or unlisted architectures
