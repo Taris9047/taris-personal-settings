@@ -1007,11 +1007,7 @@ fi
 if [ -x "$(command -v zoxide)" ]; then
     printf '%b zoxide found! activating it!\n' "${check_symbol}"
     sleep "${line_delay}"
-    case "$(echo $MYSHELL)" in
-        *"bash") eval "$(zoxide init bash)"; alias cd='z' ;;
-        *"zsh") eval "$(zoxide init zsh)" ;;
-        *) eval "$(zoxide init posix --hook prompt)" ;;
-    esac
+    eval "$(zoxide init bash)"; alias cd='z'
 fi
 
 if [ -x "$(command -v starship)" ]; then

@@ -2862,17 +2862,17 @@ end
 if [ -x "$(command -v zoxide)" ]; then
     printf '%b zoxide found! activating it!\n' "${check_symbol}"
     sleep "${line_delay}"
-    case "$(echo $MYSHELL)" in
-        ,*"bash") eval "$(zoxide init bash)"; alias cd='z' ;;
-        ,*"zsh") eval "$(zoxide init zsh)" ;;
-        ,*) eval "$(zoxide init posix --hook prompt)" ;;
-    esac
+    eval "$(zoxide init bash)"; alias cd='z'
 fi
 #+end_src
 
 *** Zsh
 #+begin_src shell :tangle my_settings_zsh :noweb yes
-<<prog_zoxide>>
+if [ -x "$(command -v zoxide)" ]; then
+    printf '%b zoxide found! activating it!\n' "${check_symbol}"
+    sleep "${line_delay}"
+    eval "$(zoxide init zsh)"
+fi
 #+end_src
 
 *** Fish
