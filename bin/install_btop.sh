@@ -5,8 +5,11 @@
 #
 
 URL='https://github.com/aristocratos/btop.git'
-BIN_URL='https://github.com/aristocratos/btop/releases/download/v1.4.7/btop-arm-unknown-linux-musleabi.tar.gz'
+ARM_BIN_URL='https://github.com/aristocratos/btop/releases/download/v1.4.7/btop-arm-unknown-linux-musleabi.tar.gz'
+ARM64_BIN_URL='https://github.com/aristocratos/btop/releases/download/v1.4.7/btop-armv7-unknown-linux-musleabi.tar.gz'
 
+# Removing any previous work directory.
+printf 'Removing previous work dir..\.n'
 sudo rm -rf /tmp/btop-*
 
 OLD_DIR=`pwd`
@@ -17,7 +20,7 @@ S_CC=gcc
 S_CXX=g++
 
 # Detect if gcc-14 exists - The minimum requirement for btop at the moment. 
-detect_gcc14 () {
+detect_gcc14() {
   if [ -x "$(command -v gcc-14)" ]; then
     printf 'GCC-14 found in the system. Trying with this compiler!\n'
     printf 'It might crash!!\n'
@@ -32,7 +35,7 @@ detect_gcc14 () {
 # Functions to install BTOP depending on situation.
 #
 # Binary installation for ARM platform, such as Raspberry PI
-inst_bin () {
+inst_bin() {
   cd "${WORK_DIR}"
 
   wget "${BIN_URL}" -O ./btop.tbz
@@ -46,7 +49,7 @@ inst_bin () {
 }
 
 # Compilation install for modern Linux
-inst_src () {
+inst_src() {
   detect_gcc14
   cd "${WORK_DIR}"
   
