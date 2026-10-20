@@ -7,10 +7,12 @@ Type=oneshot
 User=taris
 RemainAfterExit=yes
 Environment="HOME=/home/taris"
+EnvironmentFile=/home/taris/.lms_model.env
 ExecStartPre=/home/taris/.lmstudio/bin/lms daemon up
-ExecStartPre=/home/taris/.lmstudio/bin/lms load google/gemma-4-26b-a4b-qat --context-length 32768 --yes --gpu max 
+ExecStartPre=/home/taris/.lmstudio/bin/lms unload --all
+ExecStartPre=/home/taris/.lmstudio/bin/lms load ${LM_MODEL} --context-length ${LM_CONTEXT} --yes 
 ExecStart=/home/taris/.lmstudio/bin/lms server start
 ExecStop=/home/taris/.lmstudio/bin/lms daemon down
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
