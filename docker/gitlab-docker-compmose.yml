@@ -3,7 +3,6 @@ services:
   name: gitlab
   web:
     image: 'gitlab/gitlab-ce:latest'
-    restart: always
     hostname: 'taris9047.ddns.net:30000'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
