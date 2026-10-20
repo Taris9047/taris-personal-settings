@@ -1,8 +1,8 @@
 version: '3.6'
 services:
-  name: gitlab
-  web:
+  gitlab:
     image: 'gitlab/gitlab-ce:latest'
+    restart: always
     hostname: 'taris9047.ddns.net:30000'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
@@ -27,6 +27,4 @@ services:
       - '/srv/gitlab/config:/etc/gitlab'
       - '/srv/gitlab/logs:/var/log/gitlab'
       - '/srv/gitlab/data:/var/opt/gitlab'
-    restart:
-      always
     shm_size: '256m'
