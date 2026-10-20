@@ -1,18 +1,18 @@
-version: '3.6'
 services:
   gitlab:
-    image: 'gitlab/gitlab-ce:latest'
+    container_name: gitlab-leila
+    image: gitlab/gitlab-ce:latest
     restart: always
-    hostname: 'taris9047.ddns.net:30000'
+    hostname: taris9047.ddns.net:30000
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://taris9047.ddns.net:30000'
+        gitlab_rails['gitlab_shell_ssh_port'] = 30443
         gitlab_rails['lfs_enabled'] = true
         puma['worker_processes'] = 0
         postgresql['shared_buffers'] = "256MB"
-        premetheus_monitoring['enable'] = false
         gitlab_rails['env'] = {
-          'MALLOC_CONF' => 'dirty_decay_ms:1000,myzzy_decay_ms:1000'
+          'MALLOC_CONF' => 'dirty_decay_ms:1000,muzzy_decay_ms:1000'
         }
         gitaly['env'] = {
           'LD_PRELOAD' => '/opt/gitlab/embedded/lib/libjemalloc.so',
@@ -20,11 +20,13 @@ services:
           'GITALY_COMMAND_SPAWN_MAX_PARALLEL' => '2'
         }
     ports:
-      - '30000:30000'
-      - '30443:443'
-      - '30001:22'
+      - 30000:30000
+      - 30443:443
+      - 30001:22
     volumes:
-      - '/srv/gitlab/config:/etc/gitlab'
-      - '/srv/gitlab/logs:/var/log/gitlab'
-      - '/srv/gitlab/data:/var/opt/gitlab'
-    shm_size: '256m'
+      - /srv/gitlab/config:/etc/gitlab
+      - /srv/gitlab/logs:/var/log/gitlab
+      - /srv/gitlab/data:/var/opt/gitlab
+    shm_size: 1G
+networks: {}
+
