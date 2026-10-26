@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=0.17.0
+Name=Alacritty
+GenericName=Alacritty
+Icon=/home/taris/.local/share/icons/alacritty-term.svg
+Exec=env WAYLAND_DISPLAY="" /home/taris/.cargo/bin/alacritty %U
+Terminal=false
+Categories=System
+Keywords=system
