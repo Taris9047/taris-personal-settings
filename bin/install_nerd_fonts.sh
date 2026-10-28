@@ -1,8 +1,9 @@
 #!/bin/bash
 
 CWD="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-GITHUB_URL='https://github.com/ryanoasis/nerd-fonts.git'
+GITHUB_URL='git@github.com:officialrajdeepsingh/nerd-fonts-installer.git'
 WORK_DIR="${HOME}/.tmp/.inst_nerd_fonts_workspace"
+FONT_INST_DIR="${HOME}/.local/share/fonts/"
 
 # ALL_FONTS:
 # 3270
@@ -59,10 +60,14 @@ WORK_DIR="${HOME}/.tmp/.inst_nerd_fonts_workspace"
 
 FONTS_TO_INSTALL=( \
   "BitstreamVeraSansMono" \
+  "FiraMono" \
+  "FiraCode" \
+  "Hack" \
+  "Noto" \
+  "SourceCodePro" \
   "RobotoMono" \
   "Mononoki" \
   "JetBrainsMono" \
-  "Symbols" \
 )
 
 echo "Nerd Font installer! - From github repo."
@@ -81,7 +86,7 @@ cd "$WORK_DIR" && \
 git clone --depth 1 $GITHUB_URL "$WORK_DIR/nerd-fonts"
 for fnt in "${FONTS_TO_INSTALL[@]}"
 do
-  echo "Installing $fnt ... "
+  echo "Installing font: ${fnt}"
   $WORK_DIR/nerd-fonts/install.sh --quiet "$fnt"
 done
 
