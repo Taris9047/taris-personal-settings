@@ -82,7 +82,7 @@ git clone --depth 1 $GITHUB_URL "$WORK_DIR/nerd-fonts"
 for fnt in "${FONTS_TO_INSTALL[@]}"
 do
   echo "Installing $fnt ... "
-  $WORK_DIR/nerd-fonts/install.sh -U -T -q "$fnt"
+  $WORK_DIR/nerd-fonts/install.sh --quiet "$fnt"
 done
 
 # Cleaning up
