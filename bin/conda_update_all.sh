@@ -37,4 +37,3 @@ done < "$tmp_file"
 rm -f "$tmp_file"
 
 printf 'All Conda environments have been updated!!\n'
-return 0
