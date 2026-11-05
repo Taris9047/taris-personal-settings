@@ -668,6 +668,7 @@ fi
       cd "${PACKAGES}/cmake-${CURRENT_PACKAGE_VERSION}" || exit
       execute \
       CC=\"${SYSTEM_GCC}\" CXX=\"${SYSTEM_CXX}\" \
+      CFLAGS=\""${CFLAGS_COMMON}"\" CXXFLAGS=\"${CFLAGS_COMMON}"\"" \
       LDFLAGS=\"-B/usr/bin/\" \ # This part is important since we need to enforce system tools.
       ./bootstrap --prefix="${WORKSPACE}" --parallel="${MJOBS}" \
       --no-system-libs

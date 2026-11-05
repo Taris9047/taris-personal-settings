@@ -3,16 +3,23 @@ Description=LM Studio Server
 After=network.target
 
 [Service]
-Type=oneshot
-User=taris
-RemainAfterExit=yes
-Environment="HOME=/home/taris"
-EnvironmentFile=/home/taris/.lms_model.env
-ExecStartPre=/home/taris/.lmstudio/bin/lms daemon up
-ExecStartPre=/home/taris/.lmstudio/bin/lms unload --all
-ExecStartPre=/home/taris/.lmstudio/bin/lms load ${LM_MODEL} --context-length ${LM_CONTEXT} --yes 
-ExecStart=/home/taris/.lmstudio/bin/lms server start
-ExecStop=/home/taris/.lmstudio/bin/lms daemon down
+Type=simple
+WorkingDirectory=%h
+
+# Environment variables
+EnvironmentFile=%h/.lms_model.env
+ExecStartPre=%h/.lmstudio/bin/lms daemon up
+
+# Actually start the server
+ExecStart=/bin/bash -c "$HOME/.lmstudio/bin/lms server start && tail -f /dev/null"
+
+# Stop procedures
+ExecStop=%h/.lmstudio/bin/lms server stop
+ExecStopPost=%h/.lmstudio/bin/lms daemon down
+
+# Restart Conditions
+Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=default.target
