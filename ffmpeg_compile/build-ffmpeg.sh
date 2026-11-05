@@ -561,6 +561,13 @@ check_command "g++"
 #check_command "curl"
 check_command "wget"
 
+# Checking versions.conf 
+if [ -f "./scripts/versions.conf" ]; then
+  source ./scripts/versions.conf
+else
+  echo "ERROR: versions.conf configuration tracking file cannot be found!!"
+  exit 1
+fi
 
 # if ! command_exists "cmake"; then
 #   echo "cmake not installed."
@@ -572,8 +579,8 @@ if [ -n "$LDEXEFLAGS" ]; then
 fi
 
 ## Base Libraries to build stuffs
-if build "zlib" "1.4"; then
-    download "https://www.zlib.net/zlib-${CURRENT_PACKAGE_VERSION}.tar.gz" "zlib-${CURRENT_PACKAGE_VERSION}.tar.gz"
+if build "zlib" "${ZLIB_VER}"; then
+    download "${ZLIB_URL}" "zlib-${CURRENT_PACKAGE_VERSION}.tar.gz"
     cd "$PACKAGES/zlib-${CURRENT_PACKAGE_VERSION}" || exit
     execute env "${COMPILER_SET_Z}" ./configure --static --prefix="${WORKSPACE}"
     execute make -j $MJOBS
@@ -584,8 +591,8 @@ LDFLAGS+=" -L/zlib/lib"
 
 # -Wno-int-conversion added to CFLAG to avoid error with clang.
 # reference: https://gitlab.freedesktop.org/pkg-config/pkg-config/-/issues/77
-if build "pkg-config" "0.29.2"; then
-    download "https://pkgconfig.freedesktop.org/releases/pkg-config-${CURRENT_PACKAGE_VERSION}.tar.gz" "pkg-config-${CURRENT_PACKAGE_VERSION}.tar.gz"
+if build "pkg-config" "$PKG_CONFIG_VER"; then
+    download "${PKG_CONFIG_URL}" "pkg-config-${CURRENT_PACKAGE_VERSION}.tar.gz"
     cd "$PACKAGES/pkg-config-${CURRENT_PACKAGE_VERSION}" || exit
     execute env "${COMPILER_SET} \"CFLAGS=$CFLAGS -Wno-int-conversion\"" ./configure --silent --prefix="${WORKSPACE}" --with-pc-path="${WORKSPACE}"/lib/pkgconfig --with-internal-glib --disable-host-tool -disable-shared 
     execute make -j $MJOBS
