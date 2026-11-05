@@ -123,7 +123,11 @@ fi
 
 # Setting up pkgconfig stuffs
 export PATH="${WORKSPACE}/bin:$PATH"
-PKG_CONFIG_PATH="${WORKSPACE}/lib/pkgconfig:${WORKSPACE}/lib64/pkgconfig"
+# Force tracking of localized workspace sub-folders on Debian/Trixie
+WORKSPACE_ARCH_PC="${WORKSPACE}/lib/${SYSTEM_GCC_ARCH}/pkgconfig"
+WORKSPACE_SHARE_PC="${WORKSPACE}/share/pkgconfig"
+WORKSPACE_BASE_PC="${WORKSPACE}/lib/pkgconfig"
+PKG_CONFIG_PATH="${WORKSPACE_BASE_PC}:${WORKSPACE_ARCH_PC}:${WORKSPACE_SHARE_PC}"
 PKG_CONFIG_PATH+=":/usr/local/lib/${SYSTEM_GCC_ARCH}/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib64/${SYSTEM_GCC_ARCH}/pkgconfig:/usr/local/lib64/pkgconfig"
 PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/${SYSTEM_GCC_ARCH}/pkgconfig:/usr/lib64/${SYSTEM_GCC_ARCH}/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig"
 export PKG_CONFIG_PATH
@@ -768,11 +772,10 @@ CONFIGURE_OPTIONS+=("--enable-lcms2")
 if command_exists "meson"; then
     if command_exists $PYTHON; then
 
-        if build "zix" "0.4.2"; then
+        if build "zix" "0.6.2"; then
             download "https://gitlab.com/drobilla/zix/-/archive/v${CURRENT_PACKAGE_VERSION}/zix-v${CURRENT_PACKAGE_VERSION}.tar.gz" "zix-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-            execute env "${COMPILER_SET}" meson setup build -Ddefault_library=static -Db_staticpic=true 
+            execute env "${COMPILER_SET}" meson setup build -Ddefault_library=static -Db_staticpic=true --prefix="${WORKSPACE}"
             cd ./build
-            execute meson configure -Dprefix="${WORKSPACE}" 
             execute meson compile
             execute meson install
 
@@ -797,11 +800,10 @@ if command_exists "meson"; then
             build_done "waflib" "${CURRENT_PACKAGE_VERSION}"
         fi
 
-        if build "serd" "0.32.2"; then
+        if build "serd" "0.32.10"; then
             download "https://gitlab.com/drobilla/serd/-/archive/v${CURRENT_PACKAGE_VERSION}/serd-v${CURRENT_PACKAGE_VERSION}.tar.gz" "serd-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-            execute env "${COMPILER_SET}" meson setup build -Dc_arg="--disable-shared" -Db_staticpic=true -Ddefault_library=static
+            execute env "${COMPILER_SET}" meson setup build -Db_staticpic=true -Ddefault_library=static --prefix="${WORKSPACE}"
             cd ./build
-            execute meson configure -Dprefix="${WORKSPACE}" 
             execute meson compile
             execute meson install
 
@@ -817,18 +819,17 @@ if command_exists "meson"; then
             build_done "pcre" "${CURRENT_PACKAGE_VERSION}"
         fi
 
-        if build "sord" "0.16.16"; then
+        if build "sord" "0.16.22"; then
             download "https://download.drobilla.net/sord-${CURRENT_PACKAGE_VERSION}.tar.xz" "sord-${CURRENT_PACKAGE_VERSION}.tar.xz"
-            execute env "${COMPILER_SET}" meson setup build -Dc_arg="-I${WORKSPACE}/include" -Db_staticpic=true -Ddefault_library=static
+            execute env "${COMPILER_SET}" meson setup build -Dc_args="-I${WORKSPACE}/include" -Db_staticpic=true -Ddefault_library=static --prefix="${WORKSPACE}"
             cd ./build
-            execute meson configure -Dprefix="${WORKSPACE}"
             execute meson compile
             execute meson install
 
             build_done "sord" "${CURRENT_PACKAGE_VERSION}"
         fi
 
-        if build "sratom" "0.6.16"; then
+        if build "sratom" "0.6.22"; then
             download "https://gitlab.com/lv2/sratom/-/archive/v${CURRENT_PACKAGE_VERSION}/sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz" "sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz"
             execute env "${COMPILER_SET}" meson setup build -Db_staticpic=true -Ddefault_library=static
             cd ./build
@@ -839,11 +840,10 @@ if command_exists "meson"; then
             build_done "sratom" "${CURRENT_PACKAGE_VERSION}"
         fi
 
-        if build "lilv" "0.24.24"; then
+        if build "lilv" "0.28.0"; then
             download "https://download.drobilla.net/lilv-${CURRENT_PACKAGE_VERSION}.tar.xz" "lilv-${CURRENT_PACKAGE_VERSION}.tar.xz"
-            execute env "${COMPILER_SET}" meson setup build -Db_staticpic=true -Ddefault_library=static -Dbindings_cpp=disabled
+            execute env "${COMPILER_SET}" meson setup build -Db_staticpic=true -Ddefault_library=static -Dbindings_cpp=disabled --prefix="${WORKSPACE}"
             cd ./build
-            execute meson configure -Dprefix="${WORKSPACE}"
             execute meson compile
             execute meson install   
 
