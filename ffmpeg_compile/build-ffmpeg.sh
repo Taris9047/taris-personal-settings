@@ -667,11 +667,11 @@ fi
       download "https://github.com/Kitware/CMake/releases/download/v${CURRENT_PACKAGE_VERSION}/cmake-${CURRENT_PACKAGE_VERSION}.tar.gz" "cmake-${CURRENT_PACKAGE_VERSION}.tar.gz"
       cd "${PACKAGES}/cmake-${CURRENT_PACKAGE_VERSION}" || exit
       execute \
-      CC=\"${SYSTEM_GCC}\" CXX=\"${SYSTEM_CXX}\" \
-      CFLAGS=\""${CFLAGS_COMMON}"\" CXXFLAGS=\"${CFLAGS_COMMON}"\"" \
-      LDFLAGS=\"-B/usr/bin/\" \ # This part is important since we need to enforce system tools.
-      ./bootstrap --prefix="${WORKSPACE}" --parallel="${MJOBS}" \
-      --no-system-libs
+        CC=\"${SYSTEM_GCC}\" CXX=\"${SYSTEM_CXX}\" \
+        CFLAGS=\""${CFLAGS_COMMON}"\" CXXFLAGS=\"${CFLAGS_COMMON}"\"" \
+        LDFLAGS=\"-B/usr/bin/ -Wl,-rpath,/usr/lib/${SYSTEM_GCC_ARCH} -Wl,-rpath-link,/usr/lib${SYSTEM_GCC_ARCH}\" \
+        ./bootstrap --prefix="${WORKSPACE}" --parallel="${MJOBS}" \
+        --no-system-libs
       execute make -j $MJOBS
       execute make install
       build_done "cmake" "${CURRENT_PACKAGE_VERSION}"
