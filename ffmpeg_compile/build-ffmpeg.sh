@@ -4,12 +4,15 @@
 # https://github.com/markus-perl/ffmpeg-build-script
 #
 
-VERSION="1.26.2"
+VERSION="1.26.3"
 CWD="$(pwd -P)"
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
 
+# Clang selector
 source ./scripts/find_newest_clang.sh
+
+# TODO: Package and URL information file.
 
 RETRY_DELAY=5
 
@@ -20,6 +23,12 @@ SYSTEM_GCC_ARCH=$("$SYSTEM_GCC" -dumpmachine)
 SYSTEM_GCC_VER=$("$SYSTEM_GCC" --version | grep ^gcc | sed 's/^.* //g')
 SYSTEM_CXX_MVER=$(echo $SYSTEM_GCC_VER | awk '{ split($0,a,/[.]/); print a[1] }')
 
+# Detect if the host toolchain requires modern standard overrides
+HOST_NEEDS_MODERN_STD=false
+if [ "$SYSTEM_CXX_MVER" -ge 13 ]; then
+    HOST_NEEDS_MODERN_STD=true
+fi
+
 # Temporary storage for package version control
 LATEST=false
 CURRENT_PACKAGE_VERSION=0
@@ -29,41 +38,17 @@ BINARIES=("ffmpeg" "ffprobe" "ffplay")
 
 # Fallback compilers
 if [ ! -x "$(command -v clang)" ]; then
-	echo "Oops, clang can't be found!! Falling back to system GCC."
-	CC="$(command -v gcc)"
-	CXX="$(command -v g++)"
+  echo "Oops, clang can't be found!! Falling back to system GCC."
+  CC="$(command -v gcc)"
+  CXX="$(command -v g++)"
 fi
-
-# Setting up build environments
-LDLIBSTDCPP="-L/usr/lib/gcc/$SYSTEM_GCC_ARCH/$SYSTEM_CXX_MVER -L/usr/lib -L/usr/lib64"
-LDFLAGS_Z="-L${WORKSPACE}/lib"
-LDFLAGS="${LDFLAGS_Z} -lz $LDLIBSTDCPP"
-LDEXEFLAGS="-fPIC"
-EXTRALIBS="-ldl -lpthread -lm -lz -lmpg123"
-case "$CC" in
-*/gcc | */clang)
-	CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fPIC -fPIE"
-	# CXXFLAGS="$CFLAGS"
-	CXXFLAGS="$CFLAGS -I/usr/include/c++/$SYSTEM_CXX_MVER -I/usr/include/$SYSTEM_GCC_ARCH/c++/$SYSTEM_CXX_MVER $LDLIBSTDCPP"
-	;;
-"$SYSTEM_GCC")
-	CFLAGS="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fno-semantic-interposition -fPIC -fPIE"
-	CXXFLAGS="$CFLAGS"
-	;;
-*)
-	echo "We do not support current compilers..."
-	echo "CC=$CC"
-	echo "CXX=$CXX"
-	exit 1
-	;;
-esac
 
 # Checking if it is ARM based CPU
 MACHINE=`uname -p`
 
 BLD_TYPE="x86_64-unknown-linux-gnu"
 if [ "$MACHINE" == "aarch64" ]; then
-	BLD_TYPE="aarch64-unknown-linux-gnu"
+    BLD_TYPE="aarch64-unknown-linux-gnu"
 fi
 
 APPLE_SILICON=false
@@ -74,6 +59,50 @@ if [[ ("$(uname -m)" == "arm64") && ("$OSTYPE" == "darwin"*) ]]; then
   APPLE_SILICON=true
 fi
 
+# Setting up build environments
+CFLAGS_COMMON="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fno-semantic-interposition -fPIC -fPIE"
+LDLIBSTDCPP="-L/usr/lib/gcc/$SYSTEM_GCC_ARCH/$SYSTEM_CXX_MVER -L/usr/lib -L/usr/lib64"
+LDFLAGS_Z="-L${WORKSPACE}/lib"
+LDFLAGS="${LDFLAGS_Z} -lz $LDLIBSTDCPP"
+LDEXEFLAGS="-fPIC"
+EXTRALIBS="-ldl -lpthread -lm -lz -lmpg123"
+case "$CC" in
+  "$SYSTEM_GCC")
+    CFLAGS="${CFLAGS_COMMON}"
+    CXXFLAGS="${CFLAGS}"
+  ;;
+  */clang)
+    # CLANG_GCC_FLAGS="--gcc-install-dir=/usr/lib/gcc/${SYSTEM_GCC_ARCH}/${SYSTEM_CXX_MVER}"
+    # CFLAGS="${CLANG_GCC_FLAGS} ${CFLAGS_COMMON}"
+    # CXXFLAGS="${CLANG_GCC_FLAGS} ${CFLAGS_COMMON}"
+    CFLAGS="${CFLAGS_COMMON}"
+    CXXFLAGS="${CFLAGS_COMMON}"
+    # CXXFLAGS="${CFLAGS} -I/usr/include/c++/$SYSTEM_CXX_MVER -I/usr/include/$SYSTEM_GCC_ARCH/c++/$SYSTEM_CXX_MVER $LDLIBSTDCPP"
+  ;;
+  *)
+    echo "We do not support current compilers..."
+    echo "CC=$CC"
+    echo "CXX=$CXX"
+    exit 1
+  ;;
+esac
+
+# Clang math problem?
+if [[ "$CC" == *"clang"* ]]; then
+  CFLAGS="$CFLAGS"
+fi
+if [[ "$CXX" == *"clang++"* ]]; then
+  CXXFLAGS="$CXXFLAGS"
+fi
+
+# Preparing CFLAGS/CXXFLAGS for older standard
+# --> This is due to modern LTS Linux systems ship with gcc>16
+CFLAGS_COMPAT="-std=gnu90 -pedantic -Wall -Wextra ${CFLAGS}"
+CXXFLAGS_COMPAT="-std=gnu++98 -pedantic -Wall -Westra ${CXXFLAGS}"
+CFLAGS_COMPAT11="-std=gnu11 -Wall -Wextra -Wshadow ${CFLAGS}"
+CXXFLAGS_COMPAT11="-std=gnu++11 -Wall -Wextra -Wshadow ${CXXFLAGS}"
+CFLAGS_COMPAT17="-std=gnu17 -Wall -Wextra -Wshadow ${CFLAGS}"
+CXXFLAGS_COMPAT17="-std=gnu++17 -Wall -Wextra -Wshadow ${CXXFLAGS}"
 
 NVCC_VER_THRSH="8.0.13"
 
@@ -81,14 +110,14 @@ CONFIGURE_OPTIONS=()
 
 INSTALL_FOLDER="$HOME/.local/bin"
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	INSTALL_FOLDER="/usr/local/bin"
+    INSTALL_FOLDER="/usr/local/bin"
 fi
 
 # Setting up pkgconfig stuffs
 export PATH="${WORKSPACE}/bin:$PATH"
-PKG_CONFIG_PATH="${WORKSPACE}/lib/pkgconfig:${WORKSPACE}/lib/${SYSTEM_GCC_ARCH}/pkgconfig"
-PKG_CONFIG_PATH+=":/usr/local/lib/$SYSTEM_GCC_ARCH/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib64/$SYSTEM_GCC_ARCH/pkgconfig:/usr/local/lib64/pkgconfig"
-PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/$SYSTEM_GCC_ARCH/pkgconfig:/usr/lib64/$SYSTEM_GCC_ARCH/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig"
+PKG_CONFIG_PATH="${WORKSPACE}/lib/pkgconfig:${WORKSPACE}/lib64/pkgconfig"
+PKG_CONFIG_PATH+=":/usr/local/lib/${SYSTEM_GCC_ARCH}/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib64/${SYSTEM_GCC_ARCH}/pkgconfig:/usr/local/lib64/pkgconfig"
+PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/${SYSTEM_GCC_ARCH}/pkgconfig:/usr/lib64/${SYSTEM_GCC_ARCH}/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig"
 export PKG_CONFIG_PATH
 
 COMPILER_SET+=" PKG_CONFIG_PATH=\"$PKG_CONFIG_PATH\""
@@ -102,9 +131,9 @@ fi
 
 # Detect compiler... if it really exists!
 if [ ! -x "$(command -v $CC)" ]; then
-	echo "$CC"
-	echo "No compiler found!!"
-	exit 1
+    echo "$CC"
+    echo "No compiler found!!"
+    exit 1
 fi
 
 # Detect python3
@@ -114,65 +143,65 @@ PYTHON="$(command -v python3)"
 # Speed up the process
 # Env Var NUMJOBS overrides automatic detection
 if [[ -n "$NUMJOBS" ]]; then
-	MJOBS="$NUMJOBS"
+    MJOBS="$NUMJOBS"
 elif [[ -f /proc/cpuinfo ]]; then
-	MJOBS=$(grep -c processor /proc/cpuinfo)
+    MJOBS=$(grep -c processor /proc/cpuinfo)
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-	MJOBS=$(sysctl -n machdep.cpu.thread_count)
-	CONFIGURE_OPTIONS+=("--enable-videotoolbox")
+    MJOBS=$(sysctl -n machdep.cpu.thread_count)
+    CONFIGURE_OPTIONS+=("--enable-videotoolbox")
 else
-	MJOBS=4
+    MJOBS=4
 fi
 
 # Functions...
 make_dir() {
-	if [ ! -d "$1" ]; then
-		if ! mkdir "$1"; then
-			printf "\n Failed to create dir %s" "$1"
-			exit 1
-		fi
-	fi
+    if [ ! -d "$1" ]; then
+        if ! mkdir "$1"; then
+            printf "\n Failed to create dir %s" "$1"
+            exit 1
+        fi
+    fi
 }
 
 remove_dir() {
-	if [ -d "$1" ]; then
-		rm -rf "$1"
-	else
-	    echo "$1 does not exist! Passing!"
-	fi
+    if [ -d "$1" ]; then
+        rm -rf "$1"
+    else
+        echo "$1 does not exist! Passing!"
+    fi
 }
 
 download() {
-	# download url [filename[dirname]]
+    # download url [filename[dirname]]
 
-	DOWNLOAD_PATH="$PACKAGES"
-	DOWNLOAD_FILE="${2:-"${1##*/}"}"
+    DOWNLOAD_PATH="$PACKAGES"
+    DOWNLOAD_FILE="${2:-"${1##*/}"}"
 
-	if [[ "$DOWNLOAD_FILE" =~ "tar." ]]; then
-		TARGETDIR="${DOWNLOAD_FILE%.*}"
-		TARGETDIR="${3:-"${TARGETDIR%.*}"}"
-	else
-		TARGETDIR="${3:-"${DOWNLOAD_FILE%.*}"}"
-	fi
+    if [[ "$DOWNLOAD_FILE" =~ "tar." ]]; then
+        TARGETDIR="${DOWNLOAD_FILE%.*}"
+        TARGETDIR="${3:-"${TARGETDIR%.*}"}"
+    else
+        TARGETDIR="${3:-"${DOWNLOAD_FILE%.*}"}"
+    fi
 
-	if [ ! -f "$DOWNLOAD_PATH/$DOWNLOAD_FILE" ]; then
-		echo "Downloading $1 as $DOWNLOAD_FILE"
-		# curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
-		wget "$1" -O "$DOWNLOAD_PATH/$DOWNLOAD_FILE"
+    if [ ! -f "$DOWNLOAD_PATH/$DOWNLOAD_FILE" ]; then
+        echo "Downloading $1 as $DOWNLOAD_FILE"
+        # curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
+        wget "$1" -O "$DOWNLOAD_PATH/$DOWNLOAD_FILE"
 
-		EXITCODE=$?
-		if [ "$EXITCODE" -ne 0 ]; then
-			echo ""
-			echo "Failed to download $1. Exitcode $EXITCODE. Retrying in $RETRY_DELAY seconds"
-			sleep $RETRY_DELAY
-			echo "Retrying to download $1...as $DOWNLOAD_FILE"
-			# curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
-			wget "$1" -O "$DOWNLOAD_PATH/$DOWNLOAD_FILE"
-			
-		fi
-		
-		EXITCODE=$?
-		if [ "$EXITCODE" -ne 0 ]; then
+        EXITCODE=$?
+        if [ "$EXITCODE" -ne 0 ]; then
+            echo ""
+            echo "Failed to download $1. Exitcode $EXITCODE. Retrying in $RETRY_DELAY seconds"
+            sleep $RETRY_DELAY
+            echo "Retrying to download $1...as $DOWNLOAD_FILE"
+            # curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$1"
+            wget "$1" -O "$DOWNLOAD_PATH/$DOWNLOAD_FILE"
+            
+        fi
+        
+        EXITCODE=$?
+        if [ "$EXITCODE" -ne 0 ]; then
             echo ""
             echo "The main download link could have died. Can you provide a mirror?"
             read -r -p "[URL]: " line
@@ -181,109 +210,109 @@ download() {
             echo "$ALT_URL"
             # curl -L --silent -o "$DOWNLOAD_PATH/$DOWNLOAD_FILE" "$ALT_URL"
             wget "$ALT_URL" -O "$DOWNLOAD_PATH/$DOWNLOAD_FILE"
-        fi		
+        fi      
 
-		EXITCODE=$?
-		if [ "$EXITCODE" -ne 0 ]; then
-			echo ""
-			echo "Failed to download $1. Exitcode $EXITCODE"
-			exit 1
-		fi
+        EXITCODE=$?
+        if [ "$EXITCODE" -ne 0 ]; then
+            echo ""
+            echo "Failed to download $1. Exitcode $EXITCODE"
+            exit 1
+        fi
 
-		echo "... Done"
-	else
-		echo "$DOWNLOAD_FILE has already downloaded."
-	fi
+        echo "... Done"
+    else
+        echo "$DOWNLOAD_FILE has already downloaded."
+    fi
 
-	make_dir "$DOWNLOAD_PATH/$TARGETDIR"
+    make_dir "$DOWNLOAD_PATH/$TARGETDIR"
 
-	if [ -n "$3" ]; then
-		if ! tar -xvf "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -C "$DOWNLOAD_PATH/$TARGETDIR" 2>/dev/null >/dev/null; then
-			echo "Failed to extract $DOWNLOAD_FILE"
-			exit 1
-		fi
-	else
-		if ! tar -xvf "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -C "$DOWNLOAD_PATH/$TARGETDIR" --strip-components 1 2>/dev/null >/dev/null; then
-			echo "Failed to extract $DOWNLOAD_FILE"
-			exit 1
-		fi
-	fi
+    if [ -n "$3" ]; then
+        if ! tar -xvf "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -C "$DOWNLOAD_PATH/$TARGETDIR" 2>/dev/null >/dev/null; then
+            echo "Failed to extract $DOWNLOAD_FILE"
+            exit 1
+        fi
+    else
+        if ! tar -xvf "$DOWNLOAD_PATH/$DOWNLOAD_FILE" -C "$DOWNLOAD_PATH/$TARGETDIR" --strip-components 1 2>/dev/null >/dev/null; then
+            echo "Failed to extract $DOWNLOAD_FILE"
+            exit 1
+        fi
+    fi
 
-	echo "Extracted $DOWNLOAD_FILE"
+    echo "Extracted $DOWNLOAD_FILE"
 
-	cd "$DOWNLOAD_PATH/$TARGETDIR" || (
-		echo "Error has occurred."
-		exit 1
-	)
+    cd "$DOWNLOAD_PATH/$TARGETDIR" || (
+        echo "Error has occurred."
+        exit 1
+    )
 }
 
 execute() {
-	echo "$ $*"
+    echo "$ $*"
 
-	OUTPUT="$(eval "$@" 2>&1)"
+    OUTPUT="$(eval "$@" 2>&1)"
 
-	# shellcheck disable=SC2181
-	if [ $? -ne 0 ]; then
-		echo "$OUTPUT"
-		echo ""
-		echo "Failed to Execute $*" >&2
-		exit 1
-	fi
+    # shellcheck disable=SC2181
+    if [ $? -ne 0 ]; then
+        echo "$OUTPUT"
+        echo ""
+        echo "Failed to Execute $*" >&2
+        exit 1
+    fi
 }
 
 build() {
-	echo ""
-	echo "building $1 - Version $2"
-	echo "======================="
+    echo ""
+    echo "building $1 - Version $2"
+    echo "======================="
 
-	CURRENT_PACKAGE_VERSION="$2"
-	if [ -f "$PACKAGES/$1.done" ]; then
-		if grep -Fx "$2" "$PACKAGES/$1.done" >/dev/null; then
-			echo "$1 version $2 already built. Remove $PACKAGES/$1.done lockfile to rebuild it."
-		elif $LATEST; then
-			echo "$1 is outdated and will be rebuilt with latest version $2"
-		else
-			echo "$1 is outdated, but will not be rebuilt. Pass in --latest to rebuild it or remove $PACKAGES/$1.done lockfile."
-			return 1
-		fi
-	fi
+    CURRENT_PACKAGE_VERSION="$2"
+    if [ -f "$PACKAGES/$1.done" ]; then
+        if grep -Fx "$2" "$PACKAGES/$1.done" >/dev/null; then
+            echo "$1 version $2 already built. Remove $PACKAGES/$1.done lockfile to rebuild it."
+        elif $LATEST; then
+            echo "$1 is outdated and will be rebuilt with latest version $2"
+        else
+            echo "$1 is outdated, but will not be rebuilt. Pass in --latest to rebuild it or remove $PACKAGES/$1.done lockfile."
+            return 1
+        fi
+    fi
 
-	return 0
+    return 0
 }
 
 command_exists() {
-	if [ -z "$1" ]; then
-		return 1
-	fi
-	
-	if ! [[ -x $(command -v "$1") ]]; then
-		return 1
-	fi
+    if [ -z "$1" ]; then
+        return 1
+    fi
+    
+    if ! [[ -x $(command -v "$1") ]]; then
+        return 1
+    fi
 
-	return 0
+    return 0
 }
 
 library_exists() {
-	local result=0
-	local output=$(pkg-config --exists --print-errors "$1" 2>&1 >/dev/null) || result=$?
-	if [ ! "$result" = "0" ]; then
-		return 0
-	fi
-	return 1
+    local result=0
+    local output=$(pkg-config --exists --print-errors "$1" 2>&1 >/dev/null) || result=$?
+    if [ ! "$result" = "0" ]; then
+        return 0
+    fi
+    return 1
 }
 
 build_done() {
-	touch "$PACKAGES"/"$1.done"
-	if [ ! -z "$2" ]; then
-		echo "$2" > "$1.done"
-	fi
+    touch "$PACKAGES"/"$1.done"
+    if [ ! -z "$2" ]; then
+        echo "$2" > "$1.done"
+    fi
 }
 
 cleanup() {
-	remove_dir "$PACKAGES"
-	remove_dir "$WORKSPACE"
-	echo "Cleanup done."
-	echo ""
+    remove_dir "$PACKAGES"
+    remove_dir "$WORKSPACE"
+    echo "Cleanup done."
+    echo ""
 }
 
 version() {
@@ -297,14 +326,14 @@ install_ffmpeg() {
 
     echo "Starting installation to $INSTALL_FOLDER..."
        for bin in "${BINARIES[@]}"; do
-        local src="$WORKSPACE/bin/$bin"
-        local dest="$INSTALL_FOLDER/$bin"
+        local src="${WORKSPACE}/bin/${bin}"
+        local dest="${INSTALL_FOLDER}/${bin}"
 
         # Check if source exists before trying to copy
-        if [[ -f "$src" ]]; then
-            $cmd "$src" "$dest"
+        if [[ -f "${src}" ]]; then
+            $cmd "${src}" "${dest}"
         else
-            echo "⚠️  Skipping: $bin not found at $src"
+            echo "⚠️  Skipping: $bin not found at ${src}"
         fi
     done
 
@@ -322,74 +351,74 @@ install_ffmpeg() {
 # esac
 
 vercomp() {
-	if [[ "$1" == "$2" ]]; then
-		return 0
-	fi
-	local IFS=.
-	local i ver1=($1) ver2=($2)
-	# fill empty fields in ver1 with zeros
-	for ((i = ${#ver1[@]}; i < ${#ver2[@]}; i++)); do
-		ver1[i]=0
-	done
-	for ((i = 0; i < ${#ver1[@]}; i++)); do
-		if [[ -z ${ver2[i]} ]]; then
-			# fill empty fields in ver2 with zeros
-			ver2[i]=0
-		fi
-		if ((10#${ver1[i]} > 10#${ver2[i]})); then
-			return 1
-		fi
-		if ((10#${ver1[i]} < 10#${ver2[i]})); then
-			return 2
-		fi
-	done
-	return 0
+    if [[ "$1" == "$2" ]]; then
+        return 0
+    fi
+    local IFS=.
+    local i ver1=($1) ver2=($2)
+    # fill empty fields in ver1 with zeros
+    for ((i = ${#ver1[@]}; i < ${#ver2[@]}; i++)); do
+        ver1[i]=0
+    done
+    for ((i = 0; i < ${#ver1[@]}; i++)); do
+        if [[ -z ${ver2[i]} ]]; then
+            # fill empty fields in ver2 with zeros
+            ver2[i]=0
+        fi
+        if ((10#${ver1[i]} > 10#${ver2[i]})); then
+            return 1
+        fi
+        if ((10#${ver1[i]} < 10#${ver2[i]})); then
+            return 2
+        fi
+    done
+    return 0
 }
 
 get_nvcc_ver() {
-	if [ -v "$(command -v nvcc)" ]; then
-		nvcc_ver="$(nvcc --version | grep -oP '^Cuda compilation.*release \K[0-9]+\.[0-9]+')"
-		echo "$nvcc_ver"
-	else
-		echo "0.0.0"
-	fi
+    if [ -v "$(command -v nvcc)" ]; then
+        nvcc_ver="$(nvcc --version | grep -oP '^Cuda compilation.*release \K[0-9]+\.[0-9]+')"
+        echo "$nvcc_ver"
+    else
+        echo "0.0.0"
+    fi
 }
 
 nvcc_ver_chk() {
-	vercomp $(get_nvcc_ver) $NVCC_VER_THRSH
-	case $? in
-	  0) echo 'Pass' ;;
-	  1) echo 'Pass' ;;
-	  2) echo 'Fail' ;;
-	esac
+    vercomp $(get_nvcc_ver) $NVCC_VER_THRSH
+    case $? in
+      0) echo 'Pass' ;;
+      1) echo 'Pass' ;;
+      2) echo 'Fail' ;;
+    esac
 }
 
 # Implemented due to gcc version mismatching problem on Ubuntu...
 #
 nvcc_ver_chk_ubuntu() {
-	vercomp $(get_nvcc_ver) "11.5.0"
-	case $? in
-	  0) echo 'Pass' ;;
-	  1) echo 'Pass' ;;
-	  2) echo 'Fail' ;;
-	esac
+    vercomp $(get_nvcc_ver) "11.5.0"
+    case $? in
+      0) echo 'Pass' ;;
+      1) echo 'Pass' ;;
+      2) echo 'Fail' ;;
+    esac
 }
 
 verify_binary_type() {
-	if ! command_exists "file"; then
-		return
-	fi
+    if ! command_exists "file"; then
+        return
+    fi
 
-	BINARY_TYPE=$(file "$WORKSPACE/bin/ffmpeg" | sed -n 's/^.*\:\ \(.*$\)/\1/p')
-	echo ""
-	case $BINARY_TYPE in
-	"Mach-O 64-bit executable arm64")
-		echo "Successfully built Apple Silicon (M1) for ${OSTYPE}: ${BINARY_TYPE}"
-		;;
-	*)
-		echo "Successfully built binary for ${OSTYPE}: ${BINARY_TYPE}"
-		;;
-	esac
+    BINARY_TYPE=$(file "$WORKSPACE/bin/ffmpeg" | sed -n 's/^.*\:\ \(.*$\)/\1/p')
+    echo ""
+    case $BINARY_TYPE in
+    "Mach-O 64-bit executable arm64")
+        echo "Successfully built Apple Silicon (M1) for ${OSTYPE}: ${BINARY_TYPE}"
+        ;;
+    *)
+        echo "Successfully built binary for ${OSTYPE}: ${BINARY_TYPE}"
+        ;;
+    esac
 }
 
 usage() {
@@ -398,12 +427,15 @@ usage() {
     echo "     --nosrt: ignore srt build"
     echo "     --sgcc: forces to use /usr/bin/gcc and /usr/bin/g++"
     echo "   --cleanup: remove all working dirs"
-	echo "   --clean: Same as cleanlup"
+    echo "   --clean: Same as cleanlup"
     echo "   --version: shows version info."
     echo "   --help: show this help"
     echo ""
 }
 
+#
+# Running the parameter detection.
+#
 bflag=''
 cflag=''
 nosrt=''
@@ -414,70 +446,70 @@ while (($# > 0)); do
   case "$1" in
     -h | --help)
         usage
-	    exit 0
-	    ;;
+        exit 0
+        ;;
 
-		--version)
-	    version
-	    exit 0
-	    ;;
-	
+        --version)
+        version
+        exit 0
+        ;;
+    
     -*)
       if [[ "$1" == "--build" ]]; then
         bflag='-b'
       fi
       if [[ "$1" == "--full-static" ]]; then
-      	if [[ "$OSTYPE" == "darwin"* ]]; then
-       		echo "Error: A full static binary can only be build on Linux."
-       		exit 1
-       	fi
-       	LDEXEFLAGS="-static -fPIC"
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            echo "Error: A full static binary can only be build on Linux."
+            exit 1
+        fi
+        LDEXEFLAGS="-static -fPIC"
         
-	    fi
+        fi
 
-	    if [[ "$1" == "--cleanup" ]] || [[ "$1" == "--clean"  ]]; then
+        if [[ "$1" == "--cleanup" ]] || [[ "$1" == "--clean"  ]]; then
         cflag='-c'
         cleanup
-	    fi
+        fi
 
-			if [[ "$1" == "--sgcc" ]]; then
-				sgcc='sgcc'
-			  CC="$SYSTEM_GCC"
-			  CXX="$SYSTEM_CXX"
-			fi
+            if [[ "$1" == "--sgcc" ]]; then
+                sgcc='sgcc'
+              CC="$SYSTEM_GCC"
+              CXX="$SYSTEM_CXX"
+            fi
 
-			if [[ "$1" =~ "--gcc_suffix="* ]]; then
-				if [ ! -z "$sgcc" ]; then
-					custom_gcc_suffix="$(echo "$1" | awk '{split($1,arr,"="); print arr[length(arr)]}')"
-					printf 'Selecting custom GCC with suffix: %s\n' "$custom_gcc_suffix"
-					CC="$CC$custom_gcc_suffix"
-					CXX="$CXX$custom_gcc_suffix"
-				fi
-			fi
+            if [[ "$1" =~ "--gcc_suffix="* ]]; then
+                if [ ! -z "$sgcc" ]; then
+                    custom_gcc_suffix="$(echo "$1" | awk '{split($1,arr,"="); print arr[length(arr)]}')"
+                    printf 'Selecting custom GCC with suffix: %s\n' "$custom_gcc_suffix"
+                    CC="$CC$custom_gcc_suffix"
+                    CXX="$CXX$custom_gcc_suffix"
+                fi
+            fi
 
-	    if [[ "$1" == "--nosrt" ]]; then
-        	nosrt='yes'
-	    fi
-		
-		if [[ "$1" == "--latest" ]]; then
-			LATEST=true
-		fi
+        if [[ "$1" == "--nosrt" ]]; then
+            nosrt='yes'
+        fi
+        
+        if [[ "$1" == "--latest" ]]; then
+            LATEST=true
+        fi
 
-	    shift
-	    ;;
-	  *)
-	    usage
-	    exit 1
-	    ;;
+        shift
+        ;;
+      *)
+        usage
+        exit 1
+        ;;
   esac
 done
 
 if [ -z "$bflag" ]; then
     if [ -z "$cflag" ]; then
         usage
-	    exit 1
-	fi
-	exit 0
+        exit 1
+    fi
+    exit 0
 fi
 
 echo "ffmpeg-build-script v$VERSION"
@@ -487,6 +519,7 @@ echo ""
 COMPILER_SET="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\" "
 COMPILER_SET_Z="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS_Z\" "
 COMPILER_SET_GCC="CC=/usr/bin/gcc CXX=/usr/bin/g++ CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=\"$LDFLAGS\" "
+COMPILER_SET_COMPAT="CC=\"$CC\" CXX=\"$CXX\" CFLAGS=\"$CFLAGS_COMPAT\" CXXFLAGS=\"$CXXFLAGS_COMPAT\" LDFLAGS=\"$LDFLAGS\" "
 
 echo "Compilers are..."
 echo "C Compiler=${CC}"
@@ -506,8 +539,8 @@ export PATH=${WORKSPACE}/bin:$PATH
 
 check_command () {
     if ! command_exists "$1"; then
-	    echo "$1 not installed on the system\!\!"
-	    exit 1
+        echo "$1 not installed on the system\!\!"
+        exit 1
     fi
 }
 
@@ -518,61 +551,61 @@ check_command "wget"
 
 
 # if ! command_exists "cmake"; then
-# 	echo "cmake not installed."
-# 	exit 1
+#   echo "cmake not installed."
+#   exit 1
 # fi
 
 if [ -n "$LDEXEFLAGS" ]; then
-	echo "Start the build in full static mode."
+    echo "Start the build in full static mode."
 fi
 
 ## Base Libraries to build stuffs
 if build "zlib" "1.3.2"; then
-	download "https://www.zlib.net/zlib-${CURRENT_PACKAGE_VERSION}.tar.gz" "zlib-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/zlib-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "${COMPILER_SET_Z}" ./configure --static --prefix="${WORKSPACE}"
-	execute make -j $MJOBS
-	execute make install
-	build_done "zlib" "${CURRENT_PACKAGE_VERSION}"
+    download "https://www.zlib.net/zlib-${CURRENT_PACKAGE_VERSION}.tar.gz" "zlib-${CURRENT_PACKAGE_VERSION}.tar.gz"
+    cd "$PACKAGES/zlib-${CURRENT_PACKAGE_VERSION}" || exit
+    execute env "${COMPILER_SET_Z}" ./configure --static --prefix="${WORKSPACE}"
+    execute make -j $MJOBS
+    execute make install
+    build_done "zlib" "${CURRENT_PACKAGE_VERSION}"
 fi
 LDFLAGS+=" -L/zlib/lib"
 
 # -Wno-int-conversion added to CFLAG to avoid error with clang.
 # reference: https://gitlab.freedesktop.org/pkg-config/pkg-config/-/issues/77
 if build "pkg-config" "0.29.2"; then
-	download "https://pkgconfig.freedesktop.org/releases/pkg-config-${CURRENT_PACKAGE_VERSION}.tar.gz" "pkg-config-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/pkg-config-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "${COMPILER_SET} \"CFLAGS=$CFLAGS -Wno-int-conversion\"" ./configure --silent --prefix="${WORKSPACE}" --with-pc-path="${WORKSPACE}"/lib/pkgconfig --with-internal-glib --disable-host-tool -disable-shared 
-	execute make -j $MJOBS
-	execute make install
-	build_done "pkg-config" "${CURRENT_PACKAGE_VERSION}"
+    download "https://pkgconfig.freedesktop.org/releases/pkg-config-${CURRENT_PACKAGE_VERSION}.tar.gz" "pkg-config-${CURRENT_PACKAGE_VERSION}.tar.gz"
+    cd "$PACKAGES/pkg-config-${CURRENT_PACKAGE_VERSION}" || exit
+    execute env "${COMPILER_SET} \"CFLAGS=$CFLAGS -Wno-int-conversion\"" ./configure --silent --prefix="${WORKSPACE}" --with-pc-path="${WORKSPACE}"/lib/pkgconfig --with-internal-glib --disable-host-tool -disable-shared 
+    execute make -j $MJOBS
+    execute make install
+    build_done "pkg-config" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "yasm" "1.3.0"; then
-	download "https://www.tortall.net/projects/yasm/releases/yasm-${CURRENT_PACKAGE_VERSION}.tar.gz" "yasm-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/yasm-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}"
-	execute make -j $MJOBS
-	execute make install
-	build_done "yasm" "${CURRENT_PACKAGE_VERSION}"
+    download "https://www.tortall.net/projects/yasm/releases/yasm-${CURRENT_PACKAGE_VERSION}.tar.gz" "yasm-${CURRENT_PACKAGE_VERSION}.tar.gz"
+    cd "$PACKAGES/yasm-${CURRENT_PACKAGE_VERSION}" || exit
+    execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}"
+    execute make -j $MJOBS
+    execute make install
+    build_done "yasm" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "nasm" "2.16.01"; then
-	download "https://www.nasm.us/pub/nasm/releasebuilds/${CURRENT_PACKAGE_VERSION}/nasm-${CURRENT_PACKAGE_VERSION}.tar.xz" "nasm-${CURRENT_PACKAGE_VERSION}.tar.xz"
-	cd "$PACKAGES"/nasm-${CURRENT_PACKAGE_VERSION} || exit
-	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
-	build_done "nasm" "${CURRENT_PACKAGE_VERSION}"
+    download "https://www.nasm.us/pub/nasm/releasebuilds/${CURRENT_PACKAGE_VERSION}/nasm-${CURRENT_PACKAGE_VERSION}.tar.xz" "nasm-${CURRENT_PACKAGE_VERSION}.tar.xz"
+    cd "$PACKAGES"/nasm-${CURRENT_PACKAGE_VERSION} || exit
+    execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+    execute make -j $MJOBS
+    execute make install
+    build_done "nasm" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "libunistring" "1.4.2"; then
-	download "https://ftp.gnu.org/gnu/libunistring/libunistring-${CURRENT_PACKAGE_VERSION}.tar.gz" "libunistring-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/libunistring-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --enable-static
-	execute make -j $MJOBS
-	execute make install
-	build_done "libunistring" "${CURRENT_PACKAGE_VERSION}"
+    download "https://ftp.gnu.org/gnu/libunistring/libunistring-${CURRENT_PACKAGE_VERSION}.tar.gz" "libunistring-${CURRENT_PACKAGE_VERSION}.tar.gz"
+    cd "$PACKAGES/libunistring-${CURRENT_PACKAGE_VERSION}" || exit
+    execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --enable-static
+    execute make -j $MJOBS
+    execute make install
+    build_done "libunistring" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "m4" "1.4.19"; then
@@ -603,18 +636,18 @@ if build "automake" "1.17"; then
 fi
 
 if build "help2man" "1.49.3"; then
-	download "https://ftp.gnu.org/gnu/help2man/help2man-${CURRENT_PACKAGE_VERSION}.tar.xz" "help2man-${CURRENT_PACKAGE_VERSION}.tar.xz"
-	execute ./configure --prefix="${WORKSPACE}"
-	execute make -j "${MJOBS}"
-	execute make install
-	build_done "help2man" "${CURRENT_PACKAGE_VERSION}"
+    download "https://ftp.gnu.org/gnu/help2man/help2man-${CURRENT_PACKAGE_VERSION}.tar.xz" "help2man-${CURRENT_PACKAGE_VERSION}.tar.xz"
+    execute ./configure --prefix="${WORKSPACE}"
+    execute make -j "${MJOBS}"
+    execute make install
+    build_done "help2man" "${CURRENT_PACKAGE_VERSION}"
 fi
 
 if build "libtool" "2.4.6"; then
   download "https://ftp.gnu.org/gnu/libtool/libtool-${CURRENT_PACKAGE_VERSION}.tar.xz" "libtool-${CURRENT_PACKAGE_VERSION}.tar.gz"
   cd "$PACKAGES/libtool-${CURRENT_PACKAGE_VERSION}" || exit
 #   if [ -d "${PACKAGES}/libtool*" ]; then
-#   	rm -rf "${PACKAGES}/libtool*"
+#       rm -rf "${PACKAGES}/libtool*"
 #   fi
   #git clone --depth 1 git://git.savannah.gnu.org/libtool.git "${PACKAGES}/libtool" && cd "${PACKAGES}/libtool"
   #execute ./bootstrap
@@ -628,36 +661,36 @@ fi
 # Ok, let's use old cmake instead of new one...
 #
 # if [ ! -x "$(command -v cmake)" ]; then
-	if build "cmake" "4.4.2"; then
+    if build "cmake" "4.4.2"; then
     echo "Deleteing previousely downloaded cmake packages..."
     rm -rf "${PACKAGES}/cmake-${CURRENT_PACKAGE_VERSION}"
-	  download "https://github.com/Kitware/CMake/releases/download/v${CURRENT_PACKAGE_VERSION}/cmake-${CURRENT_PACKAGE_VERSION}.tar.gz" "cmake-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	  cd "${PACKAGES}/cmake-${CURRENT_PACKAGE_VERSION}" || exit
-	  execute \
+      download "https://github.com/Kitware/CMake/releases/download/v${CURRENT_PACKAGE_VERSION}/cmake-${CURRENT_PACKAGE_VERSION}.tar.gz" "cmake-${CURRENT_PACKAGE_VERSION}.tar.gz"
+      cd "${PACKAGES}/cmake-${CURRENT_PACKAGE_VERSION}" || exit
+      execute \
       CC=\"${SYSTEM_GCC}\" CXX=\"${SYSTEM_CXX}\" \
       LDFLAGS=\"-B/usr/bin/\" \ # This part is important since we need to enforce system tools.
       ./bootstrap --prefix="${WORKSPACE}" --parallel="${MJOBS}" \
       --no-system-libs
-	  execute make -j $MJOBS
-	  execute make install
-	  build_done "cmake" "${CURRENT_PACKAGE_VERSION}"
-	fi
+      execute make -j $MJOBS
+      execute make install
+      build_done "cmake" "${CURRENT_PACKAGE_VERSION}"
+    fi
 # fi
 
 
 if build "openssl" "4.0.1"; then
-	download "https://www.openssl.org/source/openssl-${CURRENT_PACKAGE_VERSION}.tar.gz" "openssl-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/openssl-${CURRENT_PACKAGE_VERSION}" || exit 
-	if "${APPLE_SILICON}"; then
-		sed -n 's/\(##### GNU Hurd\)/"darwin64-arm64-cc" => { \n    inherit_from     => [ "darwin-common", asm("aarch64_asm") ],\n    CFLAGS           => add("-Wall"),\n    cflags           => add("-arch arm64 "),\n    lib_cppflags     => add("-DL_ENDIAN"),\n    bn_ops           => "SIXTY_FOUR_BIT_LONG", \n    perlasm_scheme   => "macosx", \n}, \n\1/g' Configurations/10-main.conf
-		execute env "${COMPILER_SET}" ./Configure --prefix="${WORKSPACE}" no-shared no-asm darwin64-arm64-cc
-	else	
-    execute env "${COMPILER_SET}" ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib 
-	fi
-	execute make -j $MJOBS
-	execute make install_sw
+    download "https://www.openssl.org/source/openssl-${CURRENT_PACKAGE_VERSION}.tar.gz" "openssl-${CURRENT_PACKAGE_VERSION}.tar.gz"
+    cd "$PACKAGES/openssl-${CURRENT_PACKAGE_VERSION}" || exit 
+    if "${APPLE_SILICON}"; then
+        sed -n 's/\(##### GNU Hurd\)/"darwin64-arm64-cc" => { \n    inherit_from     => [ "darwin-common", asm("aarch64_asm") ],\n    CFLAGS           => add("-Wall"),\n    cflags           => add("-arch arm64 "),\n    lib_cppflags     => add("-DL_ENDIAN"),\n    bn_ops           => "SIXTY_FOUR_BIT_LONG", \n    perlasm_scheme   => "macosx", \n}, \n\1/g' Configurations/10-main.conf
+        execute env "${COMPILER_SET}" ./Configure --prefix="${WORKSPACE}" --libdir=lib no-shared no-asm darwin64-arm64-cc
+    else    
+      execute env "${COMPILER_SET}" ./config --prefix="${WORKSPACE}" --libdir=lib --openssldir="${WORKSPACE}" no-shared zlib --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib 
+    fi
+    execute make -j $MJOBS
+    execute make install_sw
 
-	build_done "openssl" "${CURRENT_PACKAGE_VERSION}"
+    build_done "openssl" "${CURRENT_PACKAGE_VERSION}"
 fi 
 CONFIGURE_OPTIONS+=("--enable-openssl")
 
@@ -667,31 +700,31 @@ CONFIGURE_OPTIONS+=("--enable-openssl")
 #  if [[ "x86_64" == "${ARCH}" ]]; then
 #    OPENSSL_LIB="${WORKSPACE}"
 #  fi
-#	download "https://sourceforge.net/projects/trousers/files/trousers/${CURRENT_PACKAGE_VERSION}/trousers-${CURRENT_PACKAGE_VERSION}.tar.gz/download" "trousers-${CURRENT_PACKAGE_VERSION}.tar.gz"
-#	cd "$PACKAGES/trousers-${CURRENT_PACKAGE_VERSION}" || exit
-#	execute CC=\"$CC\" CXX=\"$CXX\" sh ./bootstrap.sh
-#	execute CC=\"$CC\" CXX=\"$CXX\" ./configure \
-#		--prefix="${WORKSPACE}" \
-#		--enable-static \
-#		--with-openssl="${OPENSSL_LIB}"
-#	execute make -j $MJOBS
-#	execute make install
+#   download "https://sourceforge.net/projects/trousers/files/trousers/${CURRENT_PACKAGE_VERSION}/trousers-${CURRENT_PACKAGE_VERSION}.tar.gz/download" "trousers-${CURRENT_PACKAGE_VERSION}.tar.gz"
+#   cd "$PACKAGES/trousers-${CURRENT_PACKAGE_VERSION}" || exit
+#   execute CC=\"$CC\" CXX=\"$CXX\" sh ./bootstrap.sh
+#   execute CC=\"$CC\" CXX=\"$CXX\" ./configure \
+#       --prefix="${WORKSPACE}" \
+#       --enable-static \
+#       --with-openssl="${OPENSSL_LIB}"
+#   execute make -j $MJOBS
+#   execute make install
 
-#	build_done "trousers" "${CURRENT_PACKAGE_VERSION}"
+#   build_done "trousers" "${CURRENT_PACKAGE_VERSION}"
 #fi
 
 # install git if the systen don't have git... But really? not having git is extra ordinary situation these days...
 GIT="$(command -v git)"
 if [ ! -x  "${GIT}" ]; then
-	if build "git" "2.44.0"; then
-		download "https://www.kernel.org/pub/software/scm/git/git-${CURRENT_PACKAGE_VERSION}.tar.xz" "git-${CURRENT_PACKAGE_VERSION}.tar.gz"
-		cd "$PACKAGES"/git-${CURRENT_PACKAGE_VERSION} || exit
-#		execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --with-openssl --with-zlib="${WORKSPACE}/lib" --with-lib="${WORKSPACE}/lib"
-		execute make -j $MJOBS
-		execute make install
-		build_done "git" "${CURRENT_PACKAGE_VERSION}"
-		GIT="${WORKSPACE}/bin/git"
-	fi
+    if build "git" "2.44.0"; then
+        download "https://www.kernel.org/pub/software/scm/git/git-${CURRENT_PACKAGE_VERSION}.tar.xz" "git-${CURRENT_PACKAGE_VERSION}.tar.gz"
+        cd "$PACKAGES"/git-${CURRENT_PACKAGE_VERSION} || exit
+#       execute env "${COMPILER_SET}" ./configure --prefix="${WORKSPACE}" --with-openssl --with-zlib="${WORKSPACE}/lib" --with-lib="${WORKSPACE}/lib"
+        execute make -j $MJOBS
+        execute make install
+        build_done "git" "${CURRENT_PACKAGE_VERSION}"
+        GIT="${WORKSPACE}/bin/git"
+    fi
 fi
 
 # if build "giflib" "6.1.3"; then
@@ -724,95 +757,95 @@ CONFIGURE_OPTIONS+=("--enable-lcms2")
 
 # Lv2 crap -- Now the build system is meson not waf. So skipping it for now..
 if command_exists "meson"; then
-	if command_exists $PYTHON; then
+    if command_exists $PYTHON; then
 
-		if build "zix" "0.4.2"; then
-			download "https://gitlab.com/drobilla/zix/-/archive/v${CURRENT_PACKAGE_VERSION}/zix-v${CURRENT_PACKAGE_VERSION}.tar.gz" "zix-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-			execute env "${COMPILER_SET}" meson setup build -Ddefault_library=static -Db_staticpic=true 
-			cd ./build
-			execute meson configure -Dprefix="${WORKSPACE}" 
-			execute meson compile
-			execute meson install
+        if build "zix" "0.4.2"; then
+            download "https://gitlab.com/drobilla/zix/-/archive/v${CURRENT_PACKAGE_VERSION}/zix-v${CURRENT_PACKAGE_VERSION}.tar.gz" "zix-v${CURRENT_PACKAGE_VERSION}.tar.gz"
+            execute env "${COMPILER_SET}" meson setup build -Ddefault_library=static -Db_staticpic=true 
+            cd ./build
+            execute meson configure -Dprefix="${WORKSPACE}" 
+            execute meson compile
+            execute meson install
 
-			build_done "zix" "${CURRENT_PACKAGE_VERSION}"
-		fi
+            build_done "zix" "${CURRENT_PACKAGE_VERSION}"
+        fi
 
-		if build "lv2" "1.18.10"; then
-			download "https://lv2plug.in/spec/lv2-${CURRENT_PACKAGE_VERSION}.tar.xz" "lv2-${CURRENT_PACKAGE_VERSION}.tar.xz"
-			# execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --lv2-user
-			# execute $PYTHON ./waf
-			# execute $PYTHON ./waf install
-			execute env "${COMPILER_SET}" meson setup build -Ddefault_library=static -Db_staticpic=true -Db_pie=true 
-			cd ./build
-			execute meson configure -Dprefix="${WORKSPACE}" 
-			execute meson compile
-			execute meson install
-			build_done "lv2" "${CURRENT_PACKAGE_VERSION}"
-		fi
+        if build "lv2" "1.18.10"; then
+            download "https://lv2plug.in/spec/lv2-${CURRENT_PACKAGE_VERSION}.tar.xz" "lv2-${CURRENT_PACKAGE_VERSION}.tar.xz"
+            # execute $PYTHON ./waf configure --prefix="${WORKSPACE}" --lv2-user
+            # execute $PYTHON ./waf
+            # execute $PYTHON ./waf install
+            execute env "${COMPILER_SET}" meson setup build -Ddefault_library=static -Db_staticpic=true -Db_pie=true 
+            cd ./build
+            execute meson configure -Dprefix="${WORKSPACE}" 
+            execute meson compile
+            execute meson install
+            build_done "lv2" "${CURRENT_PACKAGE_VERSION}"
+        fi
 
-		if build "waflib" "b600c928b221a001faeab7bd92786d0b25714bc8"; then
-			download "https://gitlab.com/drobilla/autowaf/-/archive/${CURRENT_PACKAGE_VERSION}/autowaf-${CURRENT_PACKAGE_VERSION}.tar.gz" "autowaf.tar.gz"
-			build_done "waflib" "${CURRENT_PACKAGE_VERSION}"
-		fi
+        if build "waflib" "b600c928b221a001faeab7bd92786d0b25714bc8"; then
+            download "https://gitlab.com/drobilla/autowaf/-/archive/${CURRENT_PACKAGE_VERSION}/autowaf-${CURRENT_PACKAGE_VERSION}.tar.gz" "autowaf.tar.gz"
+            build_done "waflib" "${CURRENT_PACKAGE_VERSION}"
+        fi
 
-		if build "serd" "0.32.2"; then
-			download "https://gitlab.com/drobilla/serd/-/archive/v${CURRENT_PACKAGE_VERSION}/serd-v${CURRENT_PACKAGE_VERSION}.tar.gz" "serd-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-			execute env "${COMPILER_SET}" meson setup build -Dc_arg="--disable-shared" -Db_staticpic=true -Ddefault_library=static
-			cd ./build
-			execute meson configure -Dprefix="${WORKSPACE}" 
-			execute meson compile
-			execute meson install
+        if build "serd" "0.32.2"; then
+            download "https://gitlab.com/drobilla/serd/-/archive/v${CURRENT_PACKAGE_VERSION}/serd-v${CURRENT_PACKAGE_VERSION}.tar.gz" "serd-v${CURRENT_PACKAGE_VERSION}.tar.gz"
+            execute env "${COMPILER_SET}" meson setup build -Dc_arg="--disable-shared" -Db_staticpic=true -Ddefault_library=static
+            cd ./build
+            execute meson configure -Dprefix="${WORKSPACE}" 
+            execute meson compile
+            execute meson install
 
-			build_done "serd" "${CURRENT_PACKAGE_VERSION}"
-		fi
+            build_done "serd" "${CURRENT_PACKAGE_VERSION}"
+        fi
 
-		if build "pcre" "8.45"; then
-			download "https://sourceforge.net/projects/pcre/files/pcre/${CURRENT_PACKAGE_VERSION}/pcre-${CURRENT_PACKAGE_VERSION}.tar.bz2"
-			execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-			execute make -j $MJOBS
-			execute make install
+        if build "pcre" "8.45"; then
+            download "https://sourceforge.net/projects/pcre/files/pcre/${CURRENT_PACKAGE_VERSION}/pcre-${CURRENT_PACKAGE_VERSION}.tar.bz2"
+            execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+            execute make -j $MJOBS
+            execute make install
 
-			build_done "pcre" "${CURRENT_PACKAGE_VERSION}"
-		fi
+            build_done "pcre" "${CURRENT_PACKAGE_VERSION}"
+        fi
 
-		if build "sord" "0.16.16"; then
-			download "https://download.drobilla.net/sord-${CURRENT_PACKAGE_VERSION}.tar.xz" "sord-${CURRENT_PACKAGE_VERSION}.tar.xz"
-			execute env "${COMPILER_SET}" meson setup build -Dc_arg="-I${WORKSPACE}/include" -Db_staticpic=true -Ddefault_library=static
-			cd ./build
-			execute meson configure -Dprefix="${WORKSPACE}"
-			execute meson compile
-			execute meson install
+        if build "sord" "0.16.16"; then
+            download "https://download.drobilla.net/sord-${CURRENT_PACKAGE_VERSION}.tar.xz" "sord-${CURRENT_PACKAGE_VERSION}.tar.xz"
+            execute env "${COMPILER_SET}" meson setup build -Dc_arg="-I${WORKSPACE}/include" -Db_staticpic=true -Ddefault_library=static
+            cd ./build
+            execute meson configure -Dprefix="${WORKSPACE}"
+            execute meson compile
+            execute meson install
 
-			build_done "sord" "${CURRENT_PACKAGE_VERSION}"
-		fi
+            build_done "sord" "${CURRENT_PACKAGE_VERSION}"
+        fi
 
-		if build "sratom" "0.6.16"; then
-			download "https://gitlab.com/lv2/sratom/-/archive/v${CURRENT_PACKAGE_VERSION}/sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz" "sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz"
-			execute env "${COMPILER_SET}" meson setup build -Db_staticpic=true -Ddefault_library=static
-			cd ./build
-			execute meson configure -Dprefix="${WORKSPACE}"
-			execute meson compile
-			execute meson install			
+        if build "sratom" "0.6.16"; then
+            download "https://gitlab.com/lv2/sratom/-/archive/v${CURRENT_PACKAGE_VERSION}/sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz" "sratom-v${CURRENT_PACKAGE_VERSION}.tar.gz"
+            execute env "${COMPILER_SET}" meson setup build -Db_staticpic=true -Ddefault_library=static
+            cd ./build
+            execute meson configure -Dprefix="${WORKSPACE}"
+            execute meson compile
+            execute meson install           
 
-			build_done "sratom" "${CURRENT_PACKAGE_VERSION}"
-		fi
+            build_done "sratom" "${CURRENT_PACKAGE_VERSION}"
+        fi
 
-		if build "lilv" "0.24.24"; then
-			download "https://download.drobilla.net/lilv-${CURRENT_PACKAGE_VERSION}.tar.xz" "lilv-${CURRENT_PACKAGE_VERSION}.tar.xz"
-			execute env "${COMPILER_SET}" meson setup build -Db_staticpic=true -Ddefault_library=static -Dbindings_cpp=disabled
-			cd ./build
-			execute meson configure -Dprefix="${WORKSPACE}"
-			execute meson compile
-			execute meson install	
+        if build "lilv" "0.24.24"; then
+            download "https://download.drobilla.net/lilv-${CURRENT_PACKAGE_VERSION}.tar.xz" "lilv-${CURRENT_PACKAGE_VERSION}.tar.xz"
+            execute env "${COMPILER_SET}" meson setup build -Db_staticpic=true -Ddefault_library=static -Dbindings_cpp=disabled
+            cd ./build
+            execute meson configure -Dprefix="${WORKSPACE}"
+            execute meson compile
+            execute meson install   
 
-			#CFLAGS+=" -I${WORKSPACE}/include/lilv-0"
-			#CXXFLAGS="${CFLAGS}"
+            #CFLAGS+=" -I${WORKSPACE}/include/lilv-0"
+            #CXXFLAGS="${CFLAGS}"
 
-			build_done "lilv" "${CURRENT_PACKAGE_VERSION}"
-		fi
+            build_done "lilv" "${CURRENT_PACKAGE_VERSION}"
+        fi
 
-		CONFIGURE_OPTIONS+=("--enable-lv2")
-	fi
+        CONFIGURE_OPTIONS+=("--enable-lv2")
+    fi
 fi
 
 ## Audio Library
@@ -828,17 +861,17 @@ fi
 
 if build "lame" "4.0"; then
   download "https://sourceforge.net/projects/lame/files/lame/${CURRENT_PACKAGE_VERSION}/lame-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/lame-${CURRENT_PACKAGE_VERSION}" || exit
+    cd "$PACKAGES/lame-${CURRENT_PACKAGE_VERSION}" || exit
   LAME_CFLAGS="\"${CFLAGS} -std=gnu89 -Wno-error=implicit-function-declaration -Wno-error=incompatible-pointer-types\""
   if [[ "$OSTYPE" == "darwin"* ]]; then
     awk '/#include/ && !done {print "#include <locale.h>"; done=1} {print}' frontend/parse.c > temp.c && mv temp.c frontend/parse.c
   fi
   sed -i -e 's/^\(\s*hardcode_libdir_flag_spec\s*=\).*/\1/' configure
-	execute env "CC=${CC} CFLAGS=${LAME_CFLAGS}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
+    execute env "CC=${CC} CFLAGS=${LAME_CFLAGS}" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+    execute make -j $MJOBS
+    execute make install
 
-	build_done "lame" "${CURRENT_PACKAGE_VERSION}"
+    build_done "lame" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libmp3lame")
 
@@ -854,60 +887,60 @@ fi
 
 
 if build "libvorbis" "1.3.7"; then
-	download "https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-${CURRENT_PACKAGE_VERSION}.tar.gz" "libvorbis-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/libvorbis-${CURRENT_PACKAGE_VERSION}" || exit 
+    download "https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-${CURRENT_PACKAGE_VERSION}.tar.gz" "libvorbis-${CURRENT_PACKAGE_VERSION}.tar.gz"
+    cd "$PACKAGES/libvorbis-${CURRENT_PACKAGE_VERSION}" || exit 
   sed "s/-force_cpusubtype_ALL//g" configure.ac >configure.ac.patched && \
     rm configure.ac && \
     mv configure.ac.patched configure.ac
   execute env "$COMPILER_SET" ./autogen.sh --prefix="${WORKSPACE}"
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest
-	execute make -j $MJOBS
-	execute make install
+    execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest
+    execute make -j $MJOBS
+    execute make install
 
-	build_done "libvorbis" "${CURRENT_PACKAGE_VERSION}"
+    build_done "libvorbis" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libvorbis")
 
 if build "libtheora" "1.1.1"; then
-	download "https://ftp.osuosl.org/pub/xiph/releases/theora/libtheora-${CURRENT_PACKAGE_VERSION}.tar.gz" "libtheora-${CURRENT_PACKAGE_VERSION}.tar.bz"
-	cd "$PACKAGES/libtheora-${CURRENT_PACKAGE_VERSION}" || exit
-	sed "s/-fforce-addr//g" configure >configure.patched
-	chmod +x configure.patched
-	mv configure.patched configure
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --build="${BLD_TYPE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --with-vorbis-libraries="${WORKSPACE}"/lib --with-vorbis-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest --disable-vorbistest --disable-examples --disable-asm --disable-spec
-	execute make -j $MJOBS
-	execute make install
+    download "https://ftp.osuosl.org/pub/xiph/releases/theora/libtheora-${CURRENT_PACKAGE_VERSION}.tar.gz" "libtheora-${CURRENT_PACKAGE_VERSION}.tar.bz"
+    cd "$PACKAGES/libtheora-${CURRENT_PACKAGE_VERSION}" || exit
+    sed "s/-fforce-addr//g" configure >configure.patched
+    chmod +x configure.patched
+    mv configure.patched configure
+    execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --build="${BLD_TYPE}" --with-ogg-libraries="${WORKSPACE}"/lib --with-ogg-includes="${WORKSPACE}"/include/ --with-vorbis-libraries="${WORKSPACE}"/lib --with-vorbis-includes="${WORKSPACE}"/include/ --enable-static --disable-shared --disable-oggtest --disable-vorbistest --disable-examples --disable-asm --disable-spec
+    execute make -j $MJOBS
+    execute make install
 
-	build_done "libtheora" "${CURRENT_PACKAGE_VERSION}"
+    build_done "libtheora" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libtheora")
 
 if build "fdk_aac" "2.0.3"; then
-	download "https://sourceforge.net/projects/opencore-amr/files/fdk-aac/fdk-aac-${CURRENT_PACKAGE_VERSION}.tar.gz/download?use_mirror=gigenet" "fdk-aac-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/fdk-aac-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
+    download "https://sourceforge.net/projects/opencore-amr/files/fdk-aac/fdk-aac-${CURRENT_PACKAGE_VERSION}.tar.gz/download?use_mirror=gigenet" "fdk-aac-${CURRENT_PACKAGE_VERSION}.tar.gz"
+    cd "$PACKAGES/fdk-aac-${CURRENT_PACKAGE_VERSION}" || exit
+    execute env "$COMPILER_SET_COMPAT" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+    execute make -j $MJOBS
+    execute make install
 
-	build_done "fdk_aac"
+    build_done "fdk_aac"
 fi
 CONFIGURE_OPTIONS+=("--enable-libfdk-aac")
 
 ## Image Library
 if build "libwebp" "1.6.0"; then
   download "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/libwebp-${CURRENT_PACKAGE_VERSION}" && ./autogen.sh
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static --enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras --enable-swap-16bit-csp
-	execute make -j $MJOBS
-	execute make install
+    cd "$PACKAGES/libwebp-${CURRENT_PACKAGE_VERSION}" && ./autogen.sh
+    execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static --enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras --enable-swap-16bit-csp
+    execute make -j $MJOBS
+    execute make install
 
-	build_done "libwebp" "${CURRENT_PACKAGE_VERSION}"
+    build_done "libwebp" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libwebp")
 
 if build "libvpx" "1.15.2"; then
-	download "https://github.com/webmproject/libvpx/archive/refs/tags/v${CURRENT_PACKAGE_VERSION}.tar.gz" "libvpx-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/libvpx-${CURRENT_PACKAGE_VERSION}" || exit
+    download "https://github.com/webmproject/libvpx/archive/refs/tags/v${CURRENT_PACKAGE_VERSION}.tar.gz" "libvpx-${CURRENT_PACKAGE_VERSION}.tar.gz"
+    cd "$PACKAGES/libvpx-${CURRENT_PACKAGE_VERSION}" || exit
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Applying Darwin patch"
@@ -916,33 +949,33 @@ if build "libvpx" "1.15.2"; then
   fi
   
   COMPILER_SET_BCK="${COMPILER_SET}"
-	execute env ./configure --prefix="${WORKSPACE}" --disable-unit-tests --disable-shared --disable-examples --as=yasm --enable-vp9-highbitdepth
-	execute make -j $MJOBS
-	execute make install
+    execute env ./configure --prefix="${WORKSPACE}" --disable-unit-tests --disable-shared --disable-examples --as=yasm --enable-vp9-highbitdepth
+    execute make -j $MJOBS
+    execute make install
 
-	build_done "libvpx" "${CURRENT_PACKAGE_VERSION}"
+    build_done "libvpx" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libvpx")
 
 ## Video Library
 if build "xvidcore" "1.3.7"; then
-	# download "https://downloads.xvid.com/downloads/xvidcore-${CURRENT_PACKAGE_VERSION}.tar.gz" "xvidcore-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	download "https://fossies.org/linux/misc/xvidcore-${CURRENT_PACKAGE_VERSION}.tar.gz" "xvidcore-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "$PACKAGES/xvidcore-${CURRENT_PACKAGE_VERSION}" || exit
-	cd build/generic || exit
-	execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
+    # download "https://downloads.xvid.com/downloads/xvidcore-${CURRENT_PACKAGE_VERSION}.tar.gz" "xvidcore-${CURRENT_PACKAGE_VERSION}.tar.gz"
+    download "https://fossies.org/linux/misc/xvidcore-${CURRENT_PACKAGE_VERSION}.tar.gz" "xvidcore-${CURRENT_PACKAGE_VERSION}.tar.gz"
+    cd "$PACKAGES/xvidcore-${CURRENT_PACKAGE_VERSION}" || exit
+    cd build/generic || exit
+    execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+    execute make -j $MJOBS
+    execute make install
 
-	if [[ -f ${WORKSPACE}/lib/libxvidcore.4.dylib ]]; then
-		execute rm "${WORKSPACE}/lib/libxvidcore.4.dylib"
-	fi
+    if [[ -f ${WORKSPACE}/lib/libxvidcore.4.dylib ]]; then
+        execute rm "${WORKSPACE}/lib/libxvidcore.4.dylib"
+    fi
 
-	if [[ -f ${WORKSPACE}/lib/libxvidcore.so ]]; then
-		execute rm "${WORKSPACE}"/lib/libxvidcore.so*
-	fi
+    if [[ -f ${WORKSPACE}/lib/libxvidcore.so ]]; then
+        execute rm "${WORKSPACE}"/lib/libxvidcore.so*
+    fi
 
-	build_done "xvidcore" "${CURRENT_PACKAGE_VERSION}"
+    build_done "xvidcore" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libxvid")
 
@@ -950,36 +983,93 @@ if build "x264" "git"; then
   git clone --depth 1 https://code.videolan.org/videolan/x264.git "${PACKAGES}/x264-git"
   cd "${PACKAGES}/x264-git" || exit
 
-	if [[ "$OSTYPE" == "linux-gnu" ]]; then
-		execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS=\"$CXXFLAGS\"
-	else
-		execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic
-	fi
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS=\"$CXXFLAGS\"
+    else
+        execute env "$COMPILER_SET" ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic
+    fi
 
-	execute make -j $MJOBS
-	execute make install
-	execute make install-lib-static
+    execute make -j $MJOBS
+    execute make install
+    execute make install-lib-static
 
-	build_done "x264" "${CURRENT_PACKAGE_VERSION}"
+    build_done "x264" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
 
-if build "x265" "4.2"; then
-  download "http://ftp.videolan.org/pub/videolan/x265/x265_${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
-  cd "${PACKAGES}/x265-${CURRENT_PACKAGE_VERSION}" || exit
+if build "x265" "4.3"; then
+  download "https://github.com/Multicorewareinc/x265/releases/download/${CURRENT_PACKAGE_VERSION}/x265_${CURRENT_PACKAGE_VERSION}.tar.gz"
+  # download "http://ftp.videolan.org/pub/videolan/x265/x265_${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz"
+  cd "${PACKAGES}/x265_${CURRENT_PACKAGE_VERSION}" || exit
+  
+  # Defining CXX flags for x265
+  CFLAGS_X265="${CFLAGS_COMPAT11} -Wno-error=invalid-constexpr"
+  CXXFLAGS_X265="${CXXFLAGS_COMPAT11} -Wno-error=invalid-constexpr -Wno-register -include cstdint"
+  
+  if [ "${HOST_NEEDS_MODERN_STD}" = true ]; then
+    # 1. Force CMakeLists to use modern C++17 definitions instead of hardcoded C++11/C++98
+    sed -i 's/add_definitions(-std=gnu++11)/add_definitions(-std=gnu++17 -Wno-invalid-constexpr)/g' source/CMakeLists.txt
+    sed -i 's/add_definitions(-std=gnu++98)/add_definitions(-std=gnu++17 -Wno-invalid-constexpr)/g' source/CMakeLists.txt
+
+    # 2. Force the matching C standard definition up from C11 to C17
+    sed -i 's/-std=gnu11/-std=gnu17/g' source/CMakeLists.txt
+
+    # 3. Strip out any hardcoded global -pedantic rules that cause compilation failures
+    sed -i 's/-pedantic//g' source/CMakeLists.txt
+  fi
+  
   cd build/linux || exit
   rm -rf 8bit 10bit 12bit 2>/dev/null
   mkdir -p 8bit 10bit 12bit
+  
+  # Working on 12 bit
   cd 12bit || exit
-  execute "${WORKSPACE}"/bin/cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF -DMAIN12=ON
+  execute "${WORKSPACE}"/bin/cmake ../../../source \
+    -DCMAKE_C_COMPILER=\""${CC}"\" \
+    -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
+    -DCMAKE_C_FLAGS=\""${CFLAGS_X265}"\" \
+    -DCMAKE_CXX_FLAGS=\""${CXXFLAGS_X265}"\" \
+    -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
+    -DENABLE_SHARED=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DHIGH_BIT_DEPTH=ON \
+    -DENABLE_HDR10_PLUS=ON \
+    -DEXPORT_C_API=OFF \
+    -DENABLE_CLI=OFF \
+    -DMAIN12=ON
   execute make -j $MJOBS
+  
+  # 10 bit
   cd ../10bit || exit
-  execute "${WORKSPACE}"/bin/cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF
-  execute make -j $MJOBS
+  execute "${WORKSPACE}"/bin/cmake ../../../source \
+    -DCMAKE_C_COMPILER=\""${CC}"\" \
+    -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
+    -DCMAKE_C_FLAGS=\""${CFLAGS_X265}"\" \
+    -DCMAKE_CXX_FLAGS=\""${CXXFLAGS_X265}"\" \
+    -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
+    -DENABLE_SHARED=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DHIGH_BIT_DEPTH=ON \
+    -DENABLE_HDR10_PLUS=ON \
+    -DEXPORT_C_API=OFF \
+    -DENABLE_CLI=OFF
+  execute  make -j $MJOBS
+  
+  # Lastly 8 bit
   cd ../8bit || exit
   ln -sf ../10bit/libx265.a libx265_main10.a
   ln -sf ../12bit/libx265.a libx265_main12.a
-  execute "${WORKSPACE}"/bin/cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DEXTRA_LIB=\"x265_main10.a\;x265_main12.a\;-ldl\" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON
+  execute "${WORKSPACE}"/bin/cmake ../../../source \
+    -DCMAKE_C_COMPILER=\""${CC}"\" \
+    -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
+    -DCMAKE_C_FLAGS=\""${CFLAGS_X265}"\" \
+    -DCMAKE_CXX_FLAGS=\""${CXXFLAGS_X265}"\" \
+    -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
+    -DENABLE_SHARED=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DEXTRA_LIB=\"x265_main10.a\;x265_main12.a\;-ldl\" \
+    -DEXTRA_LINK_FLAGS=-L. \
+    -DLINKED_10BIT=ON
   execute make -j $MJOBS
 
   mv libx265.a libx265_main.a
@@ -1007,57 +1097,57 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libx265")
 
 if build "vid_stab" "1.1.2"; then
-	download "https://github.com/georgmartius/vid.stab/archive/v${CURRENT_PACKAGE_VERSION}.tar.gz" "vid.stab-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	cd "${PACKAGES}/vid.stab-${CURRENT_PACKAGE_VERSION}" || exit
-	execute env "${COMPILER_SET}" cmake . \
-		-DCMAKE_C_COMPILER=\""${CC}"\" \
-		-DCMAKE_CXX_COMPILER=\""${CXX}"\" \
-		-DCMAKE_C_FLAGS=\""${CFLAGS}"\" \
-		-DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
-		-DBUILD_SHARED_LIBS=OFF \
-		-DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
-		-DUSE_OMP=OFF \
+    download "https://github.com/georgmartius/vid.stab/archive/v${CURRENT_PACKAGE_VERSION}.tar.gz" "vid.stab-${CURRENT_PACKAGE_VERSION}.tar.gz"
+    cd "${PACKAGES}/vid.stab-${CURRENT_PACKAGE_VERSION}" || exit
+    execute env "${COMPILER_SET}" cmake . \
+        -DCMAKE_C_COMPILER=\""${CC}"\" \
+        -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
+        -DCMAKE_C_FLAGS=\""${CFLAGS}"\" \
+        -DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
+        -DBUILD_SHARED_LIBS=OFF \
+        -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" \
+        -DUSE_OMP=OFF \
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-		-DENABLE_SHARED:bool=off 
-	execute make
-	execute make install
+        -DENABLE_SHARED:bool=off 
+    execute make
+    execute make install
 
-	build_done "vid_stab" "${CURRENT_PACKAGE_VERSION}"
+    build_done "vid_stab" "${CURRENT_PACKAGE_VERSION}"
 fi
 CONFIGURE_OPTIONS+=("--enable-libvidstab")
 
 if build "av1" "Git"; then
-	#download "https://aomedia.googlesource.com/aom/+archive/0f5cd05bb3d6209e2583ce682d1acd8e21ae24b8.tar.gz" "av1.tar.gz" "av1"
-	git clone --depth 1 https://aomedia.googlesource.com/aom "${PACKAGES}"/av1
-	cd "${PACKAGES}"/av1 || exit
-	mkdir -p "${PACKAGES}"/aom_build
-	cd "${PACKAGES}"/aom_build || exit
-	execute env "${COMPILER_SET}" cmake -DENABLE_TESTS=0 -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib "${PACKAGES}"/av1
-	execute make -j $MJOBS
-	execute make install
+    #download "https://aomedia.googlesource.com/aom/+archive/0f5cd05bb3d6209e2583ce682d1acd8e21ae24b8.tar.gz" "av1.tar.gz" "av1"
+    git clone --depth 1 https://aomedia.googlesource.com/aom "${PACKAGES}"/av1
+    cd "${PACKAGES}"/av1 || exit
+    mkdir -p "${PACKAGES}"/aom_build
+    cd "${PACKAGES}"/aom_build || exit
+    execute env "${COMPILER_SET}" cmake -DENABLE_TESTS=0 -DCMAKE_INSTALL_PREFIX:PATH="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib "${PACKAGES}"/av1
+    execute make -j $MJOBS
+    execute make install
 
-	build_done "av1" "GIT"
+    build_done "av1" "GIT"
 fi
 CONFIGURE_OPTIONS+=("--enable-libaom")
 
 ## Other Library
 # if build "libsdl"; then
-# 	download "https://www.libsdl.org/release/SDL2-${libsdl_ver}.tar.gz"
-# #	execute env "$COMPILER_SET" ./autogen.sh && ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+#   download "https://www.libsdl.org/release/SDL2-${libsdl_ver}.tar.gz"
+# # execute env "$COMPILER_SET" ./autogen.sh && ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 #     mkdir -p "${PACKAGES}/SDL2-${libsdl_ver}-build" && cd "${PACKAGES}/SDL2-${libsdl_ver}-build" || exit
 #     execute cmake -S "${PACKAGES}/SDL2-${libsdl_ver}" -B . \
-#     	-DCMAKE_C_COMPILER=\"$CC\" \
-#     	-DCMAKE_CXX_COMPILER=\"$CXX\" \
-#     	-DCMAKE_C_FLAGS=\"$CFLAGS\" \
-#     	-DCMAKE_CXX_FLAGS=\"$CXXFLAGS\" \
+#       -DCMAKE_C_COMPILER=\"$CC\" \
+#       -DCMAKE_CXX_COMPILER=\"$CXX\" \
+#       -DCMAKE_C_FLAGS=\"$CFLAGS\" \
+#       -DCMAKE_CXX_FLAGS=\"$CXXFLAGS\" \
 #         -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
 #         -DCMAKE_INSTALL_LIBDIR="lib" \
 #         -DENABLE_SHARED=OFF \
 #         -DSDL_STATIC=ON
-# 	execute make -j $MJOBS
-# 	execute make install
+#   execute make -j $MJOBS
+#   execute make install
 
-# 	build_done "libsdl"
+#   build_done "libsdl"
 # fi
 
 if build "libsdl" "3.4.14"; then
@@ -1094,32 +1184,38 @@ fi
 
 if [ ! -n "$nosrt" ]; then
     if build "srt" "1.5.6"; then
-	    download "https://github.com/Haivision/srt/archive/v${CURRENT_PACKAGE_VERSION}.tar.gz" "srt-${CURRENT_PACKAGE_VERSION}.tar.gz"
-	    cd "$PACKAGES/srt-${CURRENT_PACKAGE_VERSION}" || exit
-	    export OPENSSL_ROOT_DIR="${WORKSPACE}"
-	    export OPENSSL_LIB_DIR="${WORKSPACE}"/lib
-	    export OPENSSL_INCLUDE_DIR="${WORKSPACE}"/include/
-	    execute cmake . \
-	    	-DCMAKE_C_COMPILER=\""$CC"\" \
-	    	-DCMAKE_CXX_COMPILER=\""$CXX"\" \
-	    	-DCMAKE_C_FLAGS=\""$CFLAGS"\" \
-	    	-DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
-	      -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
-	      -DCMAKE_INSTALL_LIBDIR=lib \
-	      -DCMAKE_INSTALL_BINDIR=bin \
-	      -DCMAKE_INSTALL_INCLUDEDIR=include \
-	      -DENABLE_SHARED=OFF \
-	      -DENABLE_STATIC=ON \
-	      -DENABLE_APPS=OFF \
-	      -DUSE_STATIC_LIBSTDCXX=ON \
-        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-	    execute make -j $MJOBS install
+        download "https://github.com/Haivision/srt/archive/v${CURRENT_PACKAGE_VERSION}.tar.gz" "srt-${CURRENT_PACKAGE_VERSION}.tar.gz"
+        cd "$PACKAGES/srt-${CURRENT_PACKAGE_VERSION}" || exit
+        export OPENSSL_ROOT_DIR="${WORKSPACE}"
+        export OPENSSL_LIB_DIR="${WORKSPACE}"/lib
+        export OPENSSL_INCLUDE_DIR="${WORKSPACE}"/include/
+        
+        STATIC_CPP_LINK="ON"
+        if [ "${HOST_NEEDS_MODERN_STD}" = true ]; then
+          STATIC_CPP_LINK="OFF"
+        fi
+        
+        execute cmake . \
+          -DCMAKE_C_COMPILER=\""${CC}"\" \
+          -DCMAKE_CXX_COMPILER=\""${CXX}"\" \
+          -DCMAKE_C_FLAGS=\""${CFLAGS}"\" \
+          -DCMAKE_CXX_FLAGS=\""${CXXFLAGS}"\" \
+          -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" \
+          -DCMAKE_INSTALL_LIBDIR=lib \
+          -DCMAKE_INSTALL_BINDIR=bin \
+          -DCMAKE_INSTALL_INCLUDEDIR=include \
+          -DENABLE_SHARED=OFF \
+          -DENABLE_STATIC=ON \
+          -DENABLE_APPS=OFF \
+          -DUSE_STATIC_LIBSTDCXX="${STATIC_CPP_LINK}" \
+          -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        execute make -j $MJOBS install
 
-	    if [ -n "$LDEXEFLAGS" ]; then
-		    sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}"/lib/pkgconfig/srt.pc # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
-	    fi
+        if [ -n "$LDEXEFLAGS" ] && [ "$HOST_NEEDS_MODERN_STD" = false ]; then
+            sed -i.backup 's/-lgcc_s/-lgcc_eh/g' "${WORKSPACE}"/lib/pkgconfig/srt.pc # The -i.backup is intended and required on MacOS: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
+        fi
 
-	    build_done "srt" "${CURRENT_PACKAGE_VERSION}"
+        build_done "srt" "${CURRENT_PACKAGE_VERSION}"
     fi
     CONFIGURE_OPTIONS+=("--enable-libsrt")
 fi
@@ -1129,59 +1225,59 @@ fi
 ##
 if command_exists "nvcc"; then
 
-	if build "nv-codec" "12.1.14.0"; then
-		download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n${CURRENT_PACKAGE_VERSION}/nv-codec-headers-${CURRENT_PACKAGE_VERSION}.tar.gz" "nv-codec-headers-${CURRENT_PACKAGE_VERSION}.tar.gz"
-		cd "$PACKAGES/nv-codec-headers-${CURRENT_PACKAGE_VERSION}" || exit
-		sed -i "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-${CURRENT_PACKAGE_VERSION}/Makefile && execute make install
-		build_done "nv-codec" "${CURRENT_PACKAGE_VERSION}"
-	fi
+    if build "nv-codec" "12.1.14.0"; then
+        download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n${CURRENT_PACKAGE_VERSION}/nv-codec-headers-${CURRENT_PACKAGE_VERSION}.tar.gz" "nv-codec-headers-${CURRENT_PACKAGE_VERSION}.tar.gz"
+        cd "$PACKAGES/nv-codec-headers-${CURRENT_PACKAGE_VERSION}" || exit
+        sed -i "s#PREFIX = /usr/local#PREFIX = ${WORKSPACE}#g" "$PACKAGES"/nv-codec-headers-${CURRENT_PACKAGE_VERSION}/Makefile && execute make install
+        build_done "nv-codec" "${CURRENT_PACKAGE_VERSION}"
+    fi
 
-	# Extracting cuda path
-	CUDA_BASE_PATH=''
-	if [ ! -z "$CUDA_PATH"  ]; then
-		CUDA_BASE_PATH="$CUDA_PATH"
-	else
-		CUDA_BASE_PATH="$( command -v nvcc | awk '{split($1,A,"/"); for (i=1; i<length(A)-1; i++ ) (i==1) ? jp = A[i] : jp = jp"/"A[i]; printf "%s", jp}')"
-	fi
+    # Extracting cuda path
+    CUDA_BASE_PATH=''
+    if [ ! -z "$CUDA_PATH"  ]; then
+        CUDA_BASE_PATH="$CUDA_PATH"
+    else
+        CUDA_BASE_PATH="$( command -v nvcc | awk '{split($1,A,"/"); for (i=1; i<length(A)-1; i++ ) (i==1) ? jp = A[i] : jp = jp"/"A[i]; printf "%s", jp}')"
+    fi
 
-	CFLAGS="$CFLAGS -I$CUDA_BASE_PATH/include"
-	LDFLAGS="$LDFLAGS -L$CUDA_BASE_PATH/lib64"
+    CFLAGS="$CFLAGS -I$CUDA_BASE_PATH/include"
+    LDFLAGS="$LDFLAGS -L$CUDA_BASE_PATH/lib64"
 
-	#CONFIGURE_OPTIONS+=("--nvccflags=-gencode arch=compute_52,code=sm_52")
-	CONFIGURE_OPTIONS+=("--enable-cuda-nvcc" "--enable-cuvid" "--enable-nvdec" "--enable-nvenc" "--enable-cuda-llvm" "--enable-ffnvcodec")
+    #CONFIGURE_OPTIONS+=("--nvccflags=-gencode arch=compute_52,code=sm_52")
+    CONFIGURE_OPTIONS+=("--enable-cuda-nvcc" "--enable-cuvid" "--enable-nvdec" "--enable-nvenc" "--enable-cuda-llvm" "--enable-ffnvcodec")
 
-	if [ -z "$LDEXEFLAGS" ]; then
-		CONFIGURE_OPTIONS+=("--enable-libnpp") # Only libnpp cannot be statically linked.
-	fi
+    if [ -z "$LDEXEFLAGS" ]; then
+        CONFIGURE_OPTIONS+=("--enable-libnpp") # Only libnpp cannot be statically linked.
+    fi
 
-	CONFIGURE_OPTIONS+=("--nvccflags=\"-allow-unsupported-compiler -gencode arch=compute_52,code=sm_52 \"")
+    CONFIGURE_OPTIONS+=("--nvccflags=\"-allow-unsupported-compiler -gencode arch=compute_52,code=sm_52 \"")
 
-	if [ -z "$LDEXEFLAGS" ]; then
-		if library_exists "libva"; then
-			if build "vaapi"; then
-				build_done "vaapi"su
-			fi
-			CONFIGURE_OPTIONS+=("--enable-vaapi")
-		fi
-	fi
+    if [ -z "$LDEXEFLAGS" ]; then
+        if library_exists "libva"; then
+            if build "vaapi"; then
+                build_done "vaapi"su
+            fi
+            CONFIGURE_OPTIONS+=("--enable-vaapi")
+        fi
+    fi
 
-	if build "amf" "1.5.2"; then
+    if build "amf" "1.5.2"; then
     download "https://github.com/GPUOpen-LibrariesAndSDKs/AMF/releases/download/v${CURRENT_PACKAGE_VERSION}/AMF-headers-v${CURRENT_PACKAGE_VERSION}.tar.gz" "AMF-${CURRENT_PACKAGE_VERSION}.tar.gz"
-		cd "$PACKAGES/AMF-${CURRENT_PACKAGE_VERSION}" || exit
-		execute rm -rf "${WORKSPACE}/include/AMF" 
-		execute mkdir -p "${WORKSPACE}/include/AMF"
-		execute cp -r "${PACKAGES}"/AMF-"${CURRENT_PACKAGE_VERSION}"/AMF/* "${WORKSPACE}/include/AMF/"
-		build_done "amf" "${amf_ver}"
-		CONFIGURE_OPTIONS+=("--enable-amf")
-	fi
+        cd "$PACKAGES/AMF-${CURRENT_PACKAGE_VERSION}" || exit
+        execute rm -rf "${WORKSPACE}/include/AMF" 
+        execute mkdir -p "${WORKSPACE}/include/AMF"
+        execute cp -r "${PACKAGES}"/AMF-"${CURRENT_PACKAGE_VERSION}"/AMF/* "${WORKSPACE}/include/AMF/"
+        build_done "amf" "${amf_ver}"
+        CONFIGURE_OPTIONS+=("--enable-amf")
+    fi
 
 elif command_exists "clinfo"; then
   CONFIGURE_OPTIONS+=("--enable-opencl")
 fi
 
 if build "ffmpeg" "snapshot"; then
-	download "https://ffmpeg.org/releases/ffmpeg-${CURRENT_PACKAGE_VERSION}.tar.bz2" "ffmpeg-${CURRENT_PACKAGE_VERSION}.tar.bz2"
-	cd "$PACKAGES/ffmpeg-${CURRENT_PACKAGE_VERSION}" || exit
+    download "https://ffmpeg.org/releases/ffmpeg-${CURRENT_PACKAGE_VERSION}.tar.bz2" "ffmpeg-${CURRENT_PACKAGE_VERSION}.tar.bz2"
+    cd "$PACKAGES/ffmpeg-${CURRENT_PACKAGE_VERSION}" || exit
 
 #  if [ "&(nvcc_ver_chk_ubuntu)" = "Fail" ] & [ -x "$(command -v gcc-10)" ]; then
 #    CC="$(command -v gcc-10)"
@@ -1189,47 +1285,47 @@ if build "ffmpeg" "snapshot"; then
 #    CONFIGURE_OPTIONS+=("--nvccflags=\"-ccbin $CC\"")
 #  fi
 
-	execute env "${COMPILER_SET}" ./configure "${CONFIGURE_OPTIONS[@]}" \
-		--prefix="${WORKSPACE}" \
-		--cc=\""${CC}"\" \
-		--cxx=\""${CXX}"\" \
-		--dep-cc=\""${CC}"\" \
-		--disable-debug \
-		--disable-doc \
-		--disable-shared \
-		--enable-gpl \
-		--enable-nonfree \
-		--enable-pthreads \
-		--enable-static \
-		--enable-small \
-		--enable-version3 \
-		--extra-cflags=\""${CFLAGS}"\" \
-		--extra-cxxflags=\""${CXXFLAGS} ${LDLIBSTDCPP}"\" \
-		--extra-ldexeflags=\""${LDEXEFLAGS}"\" \
-		--extra-ldflags=\""${LDFLAGS}"\" \
-    --extra-libs=\""${EXTRALIBS}"\" \
-    --optflags="\"-O3 -march=native -fomit-frame-pointer -pipe\"" \
-		--pkgconfigdir=\""${WORKSPACE}/lib/pkgconfig"\" \
-		--pkg-config-flags="--static" || exit 1
-	execute make -j $MJOBS || exit 1
-	execute make install || exit 1
+    execute env "${COMPILER_SET}" ./configure "${CONFIGURE_OPTIONS[@]}" \
+        --prefix="${WORKSPACE}" \
+        --cc=\""${CC}"\" \
+        --cxx=\""${CXX}"\" \
+        --dep-cc=\""${CC}"\" \
+        --disable-debug \
+        --disable-doc \
+        --disable-shared \
+        --enable-gpl \
+        --enable-nonfree \
+        --enable-pthreads \
+        --enable-static \
+        --enable-small \
+        --enable-version3 \
+        --extra-cflags=\""${CFLAGS}"\" \
+        --extra-cxxflags=\""${CXXFLAGS} ${LDLIBSTDCPP}"\" \
+        --extra-ldexeflags=\""${LDEXEFLAGS}"\" \
+        --extra-ldflags=\""${LDFLAGS}"\" \
+        --extra-libs=\""${EXTRALIBS} -lstdc++"\" \
+        --optflags="\"-O3 -march=native -fomit-frame-pointer -pipe\"" \
+        --pkgconfigdir=\""${WORKSPACE}/lib/pkgconfig"\" \
+        --pkg-config-flags="--static" || exit 1
+    execute make -j $MJOBS || exit 1
+    execute make install || exit 1
 
-	##
-	## Installing the binary!
-	##
-	echo ""
-	echo "Building done. The binary can be found here: $WORKSPACE/bin/ffmpeg"
-	echo ""
-	verify_binary_type
+    ##
+    ## Installing the binary!
+    ##
+    echo ""
+    echo "Building done. The binary can be found here: $WORKSPACE/bin/ffmpeg"
+    echo ""
+    verify_binary_type
 
-	if [[ $AUTOINSTALL == "yes" ]]; then
-		install_ffmpeg
-	elif [[ ! $SKIPINSTALL == "yes" ]]; then
-		read -r -p "Install the binaries to $INSTALL_FOLDER? [Y/n] " response
-		case $response in
-			[yY][eE][sS] | [yY] | "") install_ffmpeg ;;
-		esac
-	fi
+    if [[ $AUTOINSTALL == "yes" ]]; then
+        install_ffmpeg
+    elif [[ ! $SKIPINSTALL == "yes" ]]; then
+        read -r -p "Install the binaries to $INSTALL_FOLDER? [Y/n] " response
+        case $response in
+            [yY][eE][sS] | [yY] | "") install_ffmpeg ;;
+        esac
+    fi
 fi
 
 exit 0
