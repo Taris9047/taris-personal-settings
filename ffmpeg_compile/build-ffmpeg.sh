@@ -60,7 +60,15 @@ if [[ ("$(uname -m)" == "arm64") && ("$OSTYPE" == "darwin"*) ]]; then
 fi
 
 # Setting up build environments
-CFLAGS_COMMON="-I${WORKSPACE}/include -O3 -march=native -pipe -fomit-frame-pointer -fno-semantic-interposition -fPIC -fPIE"
+MACHINE_ARCH="$(uname -m)"
+MARCH='native'
+if [[ "$MACHINE_ARCH" == "aarch64" || "$MACHINE_ARCH" == "arm64" ]]; then
+  MARCH='armv8-a'
+elif [[ "$MACHINE_ARCH" == "armv" ]]; then
+  MARCH='armv7-a'
+fi
+CFLAGS_COMMON="-I${WORKSPACE}/include -O3 -march=${MARCH} -pipe -fomit-frame-pointer -fno-semantic-interposition -fPIC -fPIE"
+
 LDLIBSTDCPP="-L/usr/lib/gcc/$SYSTEM_GCC_ARCH/$SYSTEM_CXX_MVER -L/usr/lib -L/usr/lib64"
 LDFLAGS_Z="-L${WORKSPACE}/lib"
 LDFLAGS="${LDFLAGS_Z} -lz $LDLIBSTDCPP"
