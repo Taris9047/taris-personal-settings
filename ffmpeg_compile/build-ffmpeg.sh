@@ -560,7 +560,7 @@ if [ -n "$LDEXEFLAGS" ]; then
 fi
 
 ## Base Libraries to build stuffs
-if build "zlib" "1.3.2"; then
+if build "zlib" "1.4"; then
     download "https://www.zlib.net/zlib-${CURRENT_PACKAGE_VERSION}.tar.gz" "zlib-${CURRENT_PACKAGE_VERSION}.tar.gz"
     cd "$PACKAGES/zlib-${CURRENT_PACKAGE_VERSION}" || exit
     execute env "${COMPILER_SET_Z}" ./configure --static --prefix="${WORKSPACE}"
