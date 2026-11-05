@@ -1005,7 +1005,7 @@ if build "x265" "4.3"; then
   
   # Defining CXX flags for x265
   CFLAGS_X265="${CFLAGS_COMPAT11} -Wno-error=invalid-constexpr"
-  CXXFLAGS_X265="${CXXFLAGS_COMPAT11} -Wno-error=invalid-constexpr -Wno-register -include cstdint"
+  CXXFLAGS_X265="${CXXFLAGS_COMPAT11} -Wno-error=invalid-constexpr -Wno-register"
   
   if [ "${HOST_NEEDS_MODERN_STD}" = true ]; then
     # 1. Force CMakeLists to use modern C++17 definitions instead of hardcoded C++11/C++98
@@ -1017,6 +1017,10 @@ if build "x265" "4.3"; then
 
     # 3. Strip out any hardcoded global -pedantic rules that cause compilation failures
     sed -i 's/-pedantic//g' source/CMakeLists.txt
+
+    CXXFLAGS_X265+=" -include cstdint"
+  else
+    CXXFLAGS_X265+=" -include stdint.h"
   fi
   
   cd build/linux || exit
