@@ -64,9 +64,9 @@ fi
 MACHINE_ARCH="$(uname -m)"
 APPLE_SILICON=false
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
+if [[ "${OSTYPE}" == "darwin"* ]]; then
     BLD_TYPE="${MACHINE_ARCH}-apple-darwin"
-    if [[ "$MACHINE_ARCH" == "arm64" ]]; then
+    if [[ "${MACHINE_ARCH}" == "arm64" ]]; then
         export ARCH=arm64
         export MACOSX_DEPLOYMENT_TARGET=11.0
         APPLE_SILICON=true
@@ -79,27 +79,28 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     STDLIB_LINK="-lc++"
 else
     BLD_TYPE="${MACHINE_ARCH}-unknown-linux-gnu"
-    if [[ "$MACHINE_ARCH" == "aarch64" ]]; then
+    if [[ "${MACHINE_ARCH}" == "aarch64" ]]; then
         # Jetson Orin Nano (Cortex-A78AE) and RPi 4/5 support -mcpu=native
         # GCC on ARM64 prefers -mcpu=native over -march=native; fallback to armv8-a
-        if "$SYSTEM_GCC" -mcpu=native -E - </dev/null >/dev/null 2>&1; then
+        if "${SYSTEM_GCC}" -mcpu=native -E - </dev/null >/dev/null 2>&1; then
             MARCH="native"
         else
             MARCH="armv8-a"
         fi
-    elif [[ "$MACHINE_ARCH" == "armv"* ]]; then
+    elif [[ "${MACHINE_ARCH}" == "armv"* ]]; then
         MARCH="armv7-a"
     else
         MARCH="native"
     fi
-    LDLIBSTDCPP="-L/usr/lib/gcc/$SYSTEM_GCC_ARCH/$SYSTEM_CXX_MVER -L/usr/lib -L/usr/lib64"
+    LDLIBSTDCPP="-L/usr/lib/${SYSTEM_GCC_ARCH}/${SYSTEM_CXX_MVER} -L/usr/lib/gcc/${SYSTEM_GCC_ARCH}/${SYSTEM_CXX_MVER} -L/lib/gcc/${SYSTEM_GCC_ARCH}/${SYSTEM_CXX_MVER} -L/usr/lib -L/usr/lib64"
+    LDLIBSTDCPP+=" -Wl,-rpath-link=/usr/lib/${SYSTEM_GCC_ARCH}/${SYSTEM_CXX_MVER}"
     STDLIB_LINK="-lstdc++"
 fi
 
 CFLAGS_COMMON="-I${WORKSPACE}/include -O3 -pipe -fomit-frame-pointer -fno-semantic-interposition -fPIC -fPIE"
-if [[ "$OSTYPE" == "darwin"* && "$APPLE_SILICON" == true ]]; then
+if [[ "$OSTYPE" == "darwin"* && "${APPLE_SILICON}" == true ]]; then
     CFLAGS_COMMON+=" -arch arm64"
-elif [[ "$MACHINE_ARCH" == "aarch64" && "$MARCH" == "native" ]]; then
+elif [[ "$MACHINE_ARCH" == "aarch64" && "${MARCH}" == "native" ]]; then
     CFLAGS_COMMON+=" -mcpu=native"
 else
     CFLAGS_COMMON+=" -march=${MARCH}"
@@ -898,7 +899,7 @@ if command_exists "meson"; then
 
         if build "zix" "${ZIX_VER}"; then
             download "${ZIX_URL}"
-            execute env "${COMPILER_SET}" meson setup build -Ddefault_library=static -Db_staticpic=true --prefix="${WORKSPACE}"
+            execute env "${COMPILER_SET}" meson setup build -Ddefault_library=static -Db_staticpic=true --prefix="${WORKSPACE}" -Dbenchmarks=disabled -Dtests=disabled
             cd ./build
             execute meson compile
             execute meson install
