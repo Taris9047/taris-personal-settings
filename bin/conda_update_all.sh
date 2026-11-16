@@ -30,7 +30,7 @@ while IFS= read -r env_path; do
     printf '==========================================\n'
         
     # Update all packages in the specific path without prompting
-    conda update --prefix "$env_path" --all -y
+    conda update --prefix "$env_path" --all --yes
   fi
 done < "$tmp_file"
 

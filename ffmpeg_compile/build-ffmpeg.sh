@@ -116,7 +116,7 @@ case "$CC" in
   "$SYSTEM_GCC")
     CFLAGS="${CFLAGS_COMMON}"
     CXXFLAGS="${CFLAGS}"
-  ;;
+    ;;
   */clang)
     # CLANG_GCC_FLAGS="--gcc-install-dir=/usr/lib/gcc/${SYSTEM_GCC_ARCH}/${SYSTEM_CXX_MVER}"
     # CFLAGS="${CLANG_GCC_FLAGS} ${CFLAGS_COMMON}"
@@ -124,22 +124,14 @@ case "$CC" in
     CFLAGS="${CFLAGS_COMMON}"
     CXXFLAGS="${CFLAGS_COMMON}"
     # CXXFLAGS="${CFLAGS} -I/usr/include/c++/$SYSTEM_CXX_MVER -I/usr/include/$SYSTEM_GCC_ARCH/c++/$SYSTEM_CXX_MVER $LDLIBSTDCPP"
-  ;;
+    ;;
   *)
     echo "We do not support current compilers..."
     echo "CC=$CC"
     echo "CXX=$CXX"
     exit 1
-  ;;
+    ;;
 esac
-
-# Clang math problem?
-if [[ "$CC" == *"clang"* ]]; then
-  CFLAGS="$CFLAGS"
-fi
-if [[ "$CXX" == *"clang++"* ]]; then
-  CXXFLAGS="$CXXFLAGS"
-fi
 
 # Preparing CFLAGS/CXXFLAGS for older standard
 # --> This is due to modern LTS Linux systems ship with gcc>16
@@ -156,7 +148,7 @@ CONFIGURE_OPTIONS=()
 
 INSTALL_FOLDER="$HOME/.local/bin"
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    INSTALL_FOLDER="/usr/local/bin"
+  INSTALL_FOLDER="/usr/local/bin"
 fi
 
 # Setting up pkgconfig stuffs
@@ -181,9 +173,9 @@ fi
 
 # Detect compiler... if it really exists!
 if [ ! -x "$(command -v $CC)" ]; then
-    echo "$CC"
-    echo "No compiler found!!"
-    exit 1
+  echo "$CC"
+  echo "No compiler found!!"
+  exit 1
 fi
 
 # Detect python3
@@ -193,14 +185,14 @@ PYTHON="$(command -v python3)"
 # Speed up the process
 # Env Var NUMJOBS overrides automatic detection
 if [[ -n "$NUMJOBS" ]]; then
-    MJOBS="$NUMJOBS"
+  MJOBS="$NUMJOBS"
 elif [[ -f /proc/cpuinfo ]]; then
-    MJOBS=$(grep -c processor /proc/cpuinfo)
+  MJOBS=$(grep -c processor /proc/cpuinfo)
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-    MJOBS=$(sysctl -n machdep.cpu.thread_count)
-    CONFIGURE_OPTIONS+=("--enable-videotoolbox")
+  MJOBS=$(sysctl -n machdep.cpu.thread_count)
+  CONFIGURE_OPTIONS+=("--enable-videotoolbox")
 else
-    MJOBS=4
+  MJOBS=4
 fi
 
 # Functions...
@@ -681,6 +673,26 @@ if build "zlib" "${ZLIB_VER}"; then
 fi
 LDFLAGS+=" -L/zlib/lib"
 
+# BZip2
+if build "bzip2" "${BZIP2_VER}"; then
+  download "${BZIP2_URL}" "bzip2-${BZIP2_VER}.tar.gz"
+  cd "${PACKAGES}/bzip2-${BZIP2_VER}" || exit
+  execute env "${COMPILER_SET}" make PREFIX="${WORKSPACE}" install
+  # Post install stuffs 
+  # Installing shared library to workspace
+  cp -av libbz2.so.* "${WORKSPACE}/lib"
+  ln -sv libbz2.so.${BZIP2_VER} "${WORKSPACE}/lib/libbz2.so"
+  # Insalling binary to workspace
+  cp -v bzip2-shared "${WORKSPACE}/bin/bzip2"
+  for i in ${WORKSPACE}/bin/{bzcat,bunzip2}; do
+    ln -sfv bzip2 $i
+  done
+  
+  build_done "bzip2" "${BZIP2_VER}"
+fi
+CONFIGURE_OPTIONS+=("--enable-bzlib")
+
+
 # -Wno-int-conversion added to CFLAG to avoid error with clang.
 # reference: https://gitlab.freedesktop.org/pkg-config/pkg-config/-/issues/77
 if build "pkg-config" "${PKG_CONFIG_VER}"; then
@@ -769,10 +781,12 @@ if build "libtool" "${LIBTOOL_VER}"; then
 fi
 
 # Handling CMake
+SYS_CMAKE='/usr/bin/cmake'
 get_cmake_ver() {
-    if command_exists "cmake"; then
+    SYS_CMAKE=$(PATH=$(echo "$PATH" | sed -e "s#${WORKSPACE}/bin:##g" -e "s#:${WORKSPACE}/bin##g") which cmake)
+    if command_exists "${SYS_CMAKE}"; then
         # Extracts X.Y.Z portably across macOS and Linux
-        cmake --version | head -n 1 | sed -n 's/^.*version \([0-9][0-9.]*\).*$/\1/p'
+        "$SYS_CMAKE" --version | head -n 1 | sed -n 's/^.*version \([0-9][0-9.]*\).*$/\1/p'
     else
         echo "0.0.0"
     fi
@@ -790,8 +804,7 @@ cmake_ver_chk() {
 
 if cmake_ver_chk; then
     echo "Found modern system CMake ($(get_cmake_ver) > ${CMAKE_SYSTEM_MIN_VER}). Skipping manual compile."
-    make_dir "${WORKSPACE}/bin"
-    ln -sf "$(command -v cmake)" "${WORKSPACE}/bin/cmake"
+    ln -sf "${SYS_CMAKE}" "${WORKSPACE}/bin/cmake"
 elif build "cmake" "${CMAKE_VER}"; then
     echo "Deleteing previousely downloaded cmake packages..."
     rm -rf "${PACKAGES}/cmake-${CURRENT_PACKAGE_VERSION}"
@@ -1159,7 +1172,10 @@ if build "x265" "${X265_VER}"; then
     sed_inplace 's/add_definitions(-std=gnu++98)/add_definitions(-std=gnu++17 -Wno-invalid-constexpr)/g' source/CMakeLists.txt
 
     # 2. Force the matching C standard definition up from C11 to C17
+    sed_inplace 's/-std=gnu++11/-std=gnu++17/g' source/CMakeLists.txt
+    sed_inplace 's/-std=c++11/-std=c++17/g' source/CMakeLists.txt
     sed_inplace 's/-std=gnu11/-std=gnu17/g' source/CMakeLists.txt
+    sed_inplace 's/-std=gnu++98/-std=gnu++17/g' source/CMakeLists.txt
 
     # 3. Strip out any hardcoded global -pedantic rules that cause compilation failures
     sed_inplace 's/-pedantic//g' source/CMakeLists.txt
