@@ -6,6 +6,11 @@ tmp_file="/tmp/conda_envs_list.$$"
 if [ -x "$(command -v conda)" ]; then
   rm -rf '/tmp/conda_envs_list.*'
   conda env list | sed '/^#/d; /^$/d; s/.*[[:space:]]//' > "$tmp_file"
+  
+  # Accepting the conda channel licenses
+  conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+  conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
 else
   printf 'Error! No Conda found in the path!!\n'
   exit 1
